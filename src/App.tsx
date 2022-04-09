@@ -1,10 +1,13 @@
-import Button from '@mui/material/Button';
+import * as React from 'react';
+import Main from './Layout/main';
+import DashboardScreen from './screens/Dashboard';
 
 function App() {
+
   return (
-    <div className="App">
-      <Button variant="contained">Hello World</Button>
-    </div>
+    <Main>
+      <DashboardScreen />
+    </Main>
   );
 }
 

@@ -1,0 +1,5 @@
+@font-face {
+  font-family: "VazirFarsiNumbers";
+  src: local("VazirFarsiNumbers"), url(./fonts/vazir-fd.ttf) format("truetype");
+  font-weight: 100;
+}
