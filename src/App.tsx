@@ -1,13 +1,9 @@
-import * as React from 'react';
-import Main from './Layout/main';
-import DashboardScreen from './screens/Dashboard';
+import MainRouter from './router'
 
 function App() {
 
   return (
-    <Main>
-      <DashboardScreen />
-    </Main>
+    <MainRouter />
   );
 }
 

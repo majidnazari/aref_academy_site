@@ -5,7 +5,7 @@ import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { mainListItems, secondaryListItems } from './listItems';
+import { MainListItems, secondaryListItems } from './listItems';
 
 const drawerWidth: number = 240;
 
@@ -55,7 +55,7 @@ const Sidebar = ({ toggleDrawer, open = true }: SidebarProps) => {
         </Toolbar>
         <Divider />
         <List component="nav">
-            {mainListItems}
+            <MainListItems/>
             <Divider sx={{ my: 1 }} />
             {secondaryListItems}
         </List>

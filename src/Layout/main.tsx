@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Sidebar from './sildebar';
 import Topbar from './topbar';
-
+import { Outlet } from "react-router-dom";
 
 let theme = createTheme({
     typography: {
@@ -24,11 +24,11 @@ let theme = createTheme({
 }, faIR);
 theme = responsiveFontSizes(theme);
 
-interface childProps {
-    children: any;
-}
+// interface childProps {
+//     children: any;
+// }
 
-const Main = ({ children }: childProps) => {
+const Main = () => {
     const [open, setOpen] = React.useState(true);
     const toggleDrawer = () => {
         setOpen(!open);
@@ -55,7 +55,7 @@ const Main = ({ children }: childProps) => {
                 }}
             >
                 <Toolbar />
-                {children}
+                <Outlet />
             </Box>
         </Box>
     </ThemeProvider>)
