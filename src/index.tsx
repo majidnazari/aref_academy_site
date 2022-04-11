@@ -3,11 +3,15 @@ import createRoot from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
+import AppContextProvider from './components/AppContext';
+
 
 createRoot.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <AppContextProvider >
+        <App />
+      </AppContextProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
