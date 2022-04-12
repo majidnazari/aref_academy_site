@@ -9,6 +9,17 @@ import Sidebar from './sildebar';
 import Topbar from './topbar';
 import { Outlet } from "react-router-dom";
 
+import rtlPlugin from 'stylis-plugin-rtl';
+import { prefixer } from 'stylis';
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
+
+// Create rtl cache
+const cacheRtl = createCache({
+    key: 'muirtl',
+    stylisPlugins: [prefixer, rtlPlugin],
+});
+
 let theme = createTheme({
     typography: {
         fontFamily: [
@@ -34,31 +45,35 @@ const Main = () => {
         setOpen(!open);
     };
 
-    return (<ThemeProvider theme={theme} >
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
+    return (
+        <CacheProvider value={cacheRtl}>
+            <ThemeProvider theme={theme} >
+                <Box sx={{ display: 'flex' }}>
+                    <CssBaseline />
 
-            <Topbar open={open} toggleDrawer={toggleDrawer} />
+                    <Topbar open={open} toggleDrawer={toggleDrawer} />
 
-            <Sidebar open={open} toggleDrawer={toggleDrawer} />
+                    <Sidebar open={open} toggleDrawer={toggleDrawer} />
 
-            <Box
-                component="main"
-                sx={{
-                    backgroundColor: (theme) =>
-                        theme.palette.mode === 'light'
-                            ? theme.palette.grey[100]
-                            : theme.palette.grey[900],
-                    flexGrow: 1,
-                    height: '100vh',
-                    overflow: 'auto',
-                }}
-            >
-                <Toolbar />
-                <Outlet />
-            </Box>
-        </Box>
-    </ThemeProvider>)
+                    <Box
+                        component="main"
+                        sx={{
+                            backgroundColor: (theme) =>
+                                theme.palette.mode === 'light'
+                                    ? theme.palette.grey[100]
+                                    : theme.palette.grey[900],
+                            flexGrow: 1,
+                            height: '100vh',
+                            overflow: 'auto',
+                        }}
+                    >
+                        <Toolbar />
+                        <Outlet />
+                    </Box>
+                </Box>
+            </ThemeProvider>
+        </CacheProvider>
+    )
 }
 
 export default Main;

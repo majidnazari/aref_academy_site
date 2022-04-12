@@ -6,6 +6,7 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { MainListItems, SecondaryListItems } from './listItems';
+import Typography from '@mui/material/Typography';
 
 const drawerWidth: number = 240;
 
@@ -45,21 +46,28 @@ const Sidebar = ({ toggleDrawer, open = true }: SidebarProps) => {
             sx={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'flex-end',
+                justifyContent: 'space-between',
                 px: [1],
             }}
         >
+            <Typography component="h3" sx={{
+                pl: [7],
+                color: 'info.main'
+            }} >
+                نام کاربری
+            </Typography>
+
             <IconButton onClick={() => toggleDrawer()}>
                 <ChevronRightIcon />
             </IconButton>
         </Toolbar>
         <Divider />
-        <List component="nav">
-            <MainListItems/>
+        <List component="nav" >
+            <MainListItems />
             <Divider sx={{ my: 1 }} />
             <SecondaryListItems />
         </List>
-    </Drawer>)
+    </Drawer >)
 }
 
 export default Sidebar;

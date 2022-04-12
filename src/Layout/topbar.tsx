@@ -24,7 +24,7 @@ const AppBar = styled(MuiAppBar, {
         duration: theme.transitions.duration.leavingScreen,
     }),
     ...(open && {
-        marginRight: drawerWidth,
+        marginLeft: drawerWidth,
         width: `calc(100% - ${drawerWidth}px)`,
         transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
@@ -51,7 +51,7 @@ const Topbar = ({ toggleDrawer, open = true }: TopbarProps) => {
                 aria-label="open drawer"
                 onClick={() => toggleDrawer()}
                 sx={{
-                    marginLeft: '36px',
+                    marginRight: '36px',
                     ...(open && { display: 'none' }),
                 }}
             >
@@ -64,7 +64,7 @@ const Topbar = ({ toggleDrawer, open = true }: TopbarProps) => {
                 noWrap
                 sx={{ flexGrow: 1 }}
             >
-                داشبورد آکادمی عارف
+                آکادمی عارف
             </Typography>
             <IconButton color="inherit">
                 <Badge badgeContent={4} color="secondary">
