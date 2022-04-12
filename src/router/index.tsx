@@ -18,10 +18,16 @@ const MainRouter = () => {
     return (
 
         <Routes>
-            {isLogged ? <Route path="/" element={<Main />}>
-                <Route index element={<DashboardScreen />} />
-                <Route path="/signout" element={<SignoutScreen />} />
-            </Route> : <Route path="/" element={<SigninScreen />} />}
+            {
+                isLogged ?
+                    <Route path="/" element={<Main />}>
+                        <Route index element={<DashboardScreen />} />
+                        <Route path="/signout" element={<SignoutScreen />} />
+                        <Route path="*" element={<DashboardScreen />} />
+                    </Route>
+                    :
+                    <Route path="*" element={<SigninScreen />} />
+            }
         </Routes>
     )
 }

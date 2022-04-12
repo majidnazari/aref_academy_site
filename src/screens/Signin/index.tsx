@@ -18,6 +18,8 @@ import rtlPlugin from 'stylis-plugin-rtl';
 import { prefixer } from 'stylis';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
+import { signin } from '../../services/apis/auth';
+
 
 function Copyright(props: any) {
     return (
@@ -53,9 +55,24 @@ let theme = createTheme({
 
 const SigninScreen = () => {
     const authContext = useContext(AuthContext);
-    const loginHandler = () => {
-        authContext.login(true);
-        setToken("asdasdasdasdasdasdasd32132");
+    const loginHandler = async () => {
+        try {
+            console.log("SigninScreen");
+            const tokenResult = await signin({
+                email: "majidnazarister@gmail.com",
+                password: "12345"
+            })
+            console.log("SigninScreen:", tokenResult);
+            authContext.login(true);
+            setToken(tokenResult.token);
+            // const users = await getUsers();
+            // console.log("users:",users);
+        } catch (error) {
+            console.log(error);
+        }
+
+        //authContext.login(true);
+        //setToken("asdasdasdasdasdasdasd32132");
     }
 
 
