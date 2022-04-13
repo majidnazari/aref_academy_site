@@ -1,4 +1,4 @@
-import { useContext, useState, FC } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../../components/AppContext';
 import { setToken } from '../../utils/auth';
 
@@ -158,7 +158,7 @@ const SigninScreen = () => {
                                     disabled={loading}
                                     sx={{ mt: 3, mb: 2 }}
                                 >
-                                    {loading?<CircularProgress size={15} color="primary" />:null}
+                                    {loading ? <CircularProgress size={15} color="primary" /> : null}
                                     ورود
                                 </Button>
                                 <Grid container>
