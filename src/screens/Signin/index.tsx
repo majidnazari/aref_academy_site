@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState, FC } from 'react';
 import { AuthContext } from '../../components/AppContext';
 import { setToken } from '../../utils/auth';
 
@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { faIR } from '@mui/material/locale';
 import bg from '../../assets/img/login-ng.jpeg';
@@ -19,6 +20,7 @@ import { prefixer } from 'stylis';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { signin } from '../../services/apis/auth';
+import MessageDialogs from '../../components/MessageDialogs';
 
 
 function Copyright(props: any) {
@@ -55,24 +57,44 @@ let theme = createTheme({
 
 const SigninScreen = () => {
     const authContext = useContext(AuthContext);
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [tmpComponent, setTmpComponent] = useState<any>({});
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const showErrorMessage: any = (title: string, message: any) => {
+        setTmpComponent(
+            <MessageDialogs
+                open={true}
+                title={title}
+                body={message}
+                callBack={() => setTmpComponent(null)}
+            />);
+    }
+
+    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setEmail(event.target.value);
+    }
+    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setPassword(event.target.value);
+    }
     const loginHandler = async () => {
         try {
-            console.log("SigninScreen");
+            setLoading(true);
             const tokenResult = await signin({
-                email: "majidnazarister@gmail.com",
-                password: "12345"
+                email,//: "majidnazarister@gmail.com",
+                password//: "12345"
             })
-            console.log("SigninScreen:", tokenResult);
+
             authContext.login(true);
             setToken(tokenResult.token);
             // const users = await getUsers();
             // console.log("users:",users);
-        } catch (error) {
-            console.log(error);
+            setLoading(false);
+        } catch (error: any) {
+            setLoading(false);
+            showErrorMessage("", error.response.data.error);
         }
-
-        //authContext.login(true);
-        //setToken("asdasdasdasdasdasdasd32132");
     }
 
 
@@ -81,6 +103,7 @@ const SigninScreen = () => {
             <ThemeProvider theme={theme}>
                 <Grid container component="main" sx={{ height: '100vh' }}>
                     <CssBaseline />
+
                     <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                         <Box
                             sx={{
@@ -107,6 +130,8 @@ const SigninScreen = () => {
                                     name="email"
                                     autoComplete="number"
                                     autoFocus
+                                    value={email}
+                                    onChange={handleEmailChange}
                                 />
                                 <TextField
                                     margin="normal"
@@ -117,14 +142,23 @@ const SigninScreen = () => {
                                     type="password"
                                     id="password"
                                     autoComplete="current-password"
+                                    value={password}
+                                    onChange={handlePasswordChange}
+                                    onKeyPress={(ev) => {
+                                        if (ev.key === 'Enter') {
+                                            loginHandler();
+                                        }
+                                    }}
                                 />
 
                                 <Button
                                     onClick={loginHandler}
                                     fullWidth
                                     variant="contained"
+                                    disabled={loading}
                                     sx={{ mt: 3, mb: 2 }}
                                 >
+                                    {loading?<CircularProgress size={15} color="primary" />:null}
                                     ورود
                                 </Button>
                                 <Grid container>
@@ -150,6 +184,7 @@ const SigninScreen = () => {
                     />
 
                 </Grid>
+                {tmpComponent?.props?.open && tmpComponent}
             </ThemeProvider>
         </CacheProvider>
     );
