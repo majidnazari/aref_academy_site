@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
 import { getToken, removeToken } from "../utils/auth";
-
+import { showError } from "../utils/swlAlert";
 
 const token = getToken();
 const headers: any = {
@@ -26,6 +26,10 @@ const onResponseError = (error: AxiosError): Promise<AxiosError> => {
   if (error.response && error.response.status === 401) {
     removeToken();
     window.location.href = "/";
+  }
+  if (error.response && error.response.status >= 400) {
+    showError(error.response.data.error);
+    return Promise.reject(error);
   }
   return Promise.reject(error);
 }
