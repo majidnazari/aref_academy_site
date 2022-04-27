@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import DashboardScreen from '../screens/Dashboard';
+import UsersScreen from '../screens/Users';
 import SigninScreen from '../screens/Signin';
 import SignoutScreen from '../screens/Signout';
 import Main from '../Layout/main';
@@ -22,6 +23,7 @@ const MainRouter = () => {
                 isLogged ?
                     <Route path="/" element={<Main />}>
                         <Route index element={<DashboardScreen />} />
+                        <Route path="/users" element={<UsersScreen />} />
                         <Route path="/signout" element={<SignoutScreen />} />
                         <Route path="*" element={<DashboardScreen />} />
                     </Route>

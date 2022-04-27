@@ -20,6 +20,8 @@ import { prefixer } from 'stylis';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { signin } from '../../services/apis/auth';
+import { LOGIN_MUTATION } from './gql';
+import { useMutation } from '@apollo/client';
 //import MessageDialogs from '../../components/MessageDialogs';
 
 
@@ -59,18 +61,7 @@ const SigninScreen = () => {
     const authContext = useContext(AuthContext);
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    // const [tmpComponent, setTmpComponent] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
-
-    // const showErrorMessage: any = (title: string, message: any) => {
-    //     setTmpComponent(
-    //         <MessageDialogs
-    //             open={true}
-    //             title={title}
-    //             body={message}
-    //             callBack={() => setTmpComponent(null)}
-    //         />);
-    // }
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setEmail(event.target.value);
@@ -80,31 +71,21 @@ const SigninScreen = () => {
     }
     const loginHandler = async () => {
         setLoading(true);
-        const tokenResult = await signin({
-            email,//: "majidnazarister@gmail.com",
-            password//: "12345" 
-        }).finally(() => setLoading(false));
-        authContext.login(true);
-        setToken(tokenResult.token);
-        //setLoading(false);
-        // try {
-        //     setLoading(true);
-        //     const tokenResult = await signin({
-        //         email,//: "majidnazarister@gmail.com",
-        //         password//: "12345"
-        //     })
-
-        //     authContext.login(true);
-        //     setToken(tokenResult.token);
-        //     // const users = await getUsers();
-        //     // console.log("users:",users);
-        //     setLoading(false);
-        // } catch (error: any) {
-        //     setLoading(false);
-        //     showErrorMessage("", error.response.data.error);
-        // }
+        login().then(res => {
+            authContext.login(true);
+            setToken(res.data.login.access_token);
+            console.log(res);
+        }).finally(() => {
+            setLoading(false);
+        });
     }
 
+    const [login] = useMutation(LOGIN_MUTATION, {
+        variables: {
+            username: email,
+            password: password
+        }
+    });
 
     return (
         <CacheProvider value={cacheRtl}>

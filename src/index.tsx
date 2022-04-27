@@ -5,14 +5,22 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 import AppContextProvider from './components/AppContext';
 
+import {
+
+  ApolloProvider,
+
+} from "@apollo/client";
+import apolloClient from "./services/apollo";
 
 createRoot.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <AppContextProvider >
-        <App />
-      </AppContextProvider>
-    </BrowserRouter>
+    <ApolloProvider client={apolloClient}>
+      <BrowserRouter>
+        <AppContextProvider >
+          <App />
+        </AppContextProvider>
+      </BrowserRouter>
+    </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
