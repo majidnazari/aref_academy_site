@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -10,8 +10,48 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import Skeleton from '@mui/material/Skeleton';
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { GET_USERS, DELETE_USER } from './gql';
+import { useMutation, useQuery } from '@apollo/client';
+import PaginatorInfo from '../../interfaces/paginator-info.interface';
+import Swal from 'sweetalert2';
+import { showSuccess, showConfirm } from "../../utils/swlAlert";
+interface UserData {
+    id: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+}
 
 const UersScreen = () => {
+    const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
+        count: 0,
+        currentPage: 1,
+        firstItem: 0,
+        hasMorePages: false,
+        lastItem: 0,
+        lastPage: 1,
+        perPage: 10,
+        total: 0,
+    });
+    const [users, setUsers] = useState<UserData[]>();
+
+    const { fetchMore, refetch } = useQuery(GET_USERS, {
+        variables: {
+            first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
+            page: 1,
+        },
+        onCompleted: (data) => {
+            setPageInfo(data.getUsers.paginatorInfo);
+            setUsers(data.getUsers.data);
+        }
+    });
+
+    const [delUser] = useMutation(DELETE_USER)
+
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: theme.palette.common.black,
@@ -32,56 +72,97 @@ const UersScreen = () => {
         },
     }));
 
-    function createData(
-        index: number,
-        name: string,
-        calories: number,
-        fat: number,
-        carbs: number,
-    ) {
-        return { index, name, calories, fat, carbs };
+    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        setUsers([]);
+        fetchMore({
+            variables: {
+                first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
+                page: value,
+            },
+            updateQuery: (prev, { fetchMoreResult }) => {
+                setPageInfo(fetchMoreResult.getUsers.paginatorInfo);
+                setUsers(fetchMoreResult.getUsers.data);
+            }
+        });
+    };
+
+    function deleteUser(id: number) {
+        showConfirm(() => {
+            delUser(
+                {
+                    variables: {
+                        id: id
+                    }
+                }
+            ).then(() => {
+                refetch();
+                showSuccess('کابر با موفقیت حذف شد.');
+            });
+        });
+    };
+    if (!users || users.length === 0) {
+        return <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Skeleton width="100%" height={100} />
+            <Skeleton variant="rectangular" width="100%" height={300} />
+        </Container>
+            ;
     }
 
-    const rows = [
-        createData(1, 'Frozen yoghurt', 159, 6.0, 24),
-        createData(2, 'Ice cream sandwich', 237, 9.0, 37),
-        createData(3, 'Eclair', 262, 16.0, 24),
-        createData(4, 'Cupcake', 305, 3.7, 67),
-        createData(5, 'Gingerbread', 356, 16.0, 49),
-    ];
-
-    const [page, setPage] = React.useState(1);
-    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        setPage(value);
-    };
     return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <Table aria-label="customized table">
                 <TableHead>
                     <TableRow>
                         <StyledTableCell align="left">ردیف</StyledTableCell>
                         <StyledTableCell align="left">نام</StyledTableCell>
                         <StyledTableCell align="left">نام خانوادگی</StyledTableCell>
                         <StyledTableCell align="left">نام کاربری</StyledTableCell>
-                        <StyledTableCell align="left">دسترسی</StyledTableCell>
+                        <StyledTableCell align="left">گروه کاربری</StyledTableCell>
+                        <StyledTableCell align="left">ویرایش</StyledTableCell>
+                        <StyledTableCell align="left">حذف</StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
-                        <StyledTableRow key={row.index}>
+                    {users.map((element: UserData, index: number) => (
+                        <StyledTableRow key={element.id}>
                             <StyledTableCell align="left">
-                                {row.index}
+                                {index + 1}
                             </StyledTableCell>
-                            <StyledTableCell align="left">{row.calories}</StyledTableCell>
-                            <StyledTableCell align="left">{row.fat}</StyledTableCell>
-                            <StyledTableCell align="left">{row.carbs}</StyledTableCell>
-                            <StyledTableCell align="left">{row.name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.first_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.last_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.email}</StyledTableCell>
+                            <StyledTableCell align="left">{element.first_name}</StyledTableCell>
+                            <StyledTableCell align="left"><Button
+                                size="small"
+                                onClick={() => console.log(element.id)}
+                                variant="outlined"
+                                startIcon={<EditIcon />}
+                                color="success"
+                            >
+                                ویرایش
+                            </Button></StyledTableCell>
+                            <StyledTableCell align="left">
+                                <Button
+                                    size="small"
+                                    onClick={() => deleteUser(element.id)}
+                                    variant="outlined"
+                                    startIcon={<DeleteIcon />}
+                                    color="error"
+                                >
+                                    حذف
+                                </Button>
+                            </StyledTableCell>
+
                         </StyledTableRow>
                     ))}
                 </TableBody>
             </Table>
-            <Stack spacing={5} sx={{my:2}}>
-                <Pagination count={10} page={page} onChange={handleChange} />
+            <Stack spacing={5} sx={{ my: 2 }}>
+                <Pagination
+                    count={pageInfo.lastPage}
+                    page={pageInfo.currentPage}
+                    onChange={handleChange}
+                />
             </Stack>
         </TableContainer>
 

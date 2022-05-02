@@ -22,3 +22,26 @@ export const showError = (msg: any): any => {
         title: generateErrorTextMessage(msg)
     })
 }
+
+export const showSuccess = (msg: any): any => {
+    Toast.fire({
+        icon: 'success',
+        title: msg
+    })
+}
+
+export const showConfirm = (callBack:Function): any => {
+    Swal.fire({
+        text: "آیا اطمینان دارید؟",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        cancelButtonText: "خیر",
+        confirmButtonText: 'بله!',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            callBack();
+        }
+    })
+}

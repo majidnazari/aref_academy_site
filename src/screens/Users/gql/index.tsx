@@ -2,17 +2,34 @@ import { gql } from '@apollo/client';
 
 export const GET_USERS = gql`
     query GET_USERS(
-        $first: String!
+        $first: Int!
         $page: Int!
-    )
-    users(first:$first,page:$page){
+    ){
+    getUsers(first:$first,page:$page){
         data{
-        id
-        first_name
-        last_name
-        type
-        email     
-        is_teacher
+          id
+          first_name
+          last_name
+          email
         }
-    }
+        paginatorInfo{
+          count
+          currentPage
+          firstItem
+          hasMorePages
+          lastItem
+          lastPage
+          perPage
+          total
+        }
+      }
+    }  
+`;
+
+export const DELETE_USER = gql`
+    mutation Delete_user ($id:ID!) {  
+        deleteUser(id:$id){
+            id
+        }
+    }  
 `;
