@@ -13,11 +13,15 @@ import Stack from '@mui/material/Stack';
 import Skeleton from '@mui/material/Skeleton';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
+import Box from '@mui/material/Box';
 import { GET_USERS, DELETE_USER } from './gql';
 import { useMutation, useQuery } from '@apollo/client';
 import PaginatorInfo from '../../interfaces/paginator-info.interface';
-import Swal from 'sweetalert2';
+import {
+    useNavigate
+} from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 interface UserData {
     id: number;
@@ -27,6 +31,7 @@ interface UserData {
 }
 
 const UersScreen = () => {
+    const navigate = useNavigate();
     const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
         count: 0,
         currentPage: 1,
@@ -109,6 +114,19 @@ const UersScreen = () => {
     }
 
     return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Box
+            display="flex"
+            justifyContent="flex-end"
+            alignItems="flex-end"
+        >
+            <Button
+                variant="contained"
+                startIcon={<AddCircleIcon />}
+                sx={{ mb: 4 }}
+                onClick={() => navigate('/users/create')} >
+                افزودن کاربر جدید
+            </Button>
+        </Box>
         <TableContainer component={Paper}>
             <Table aria-label="customized table">
                 <TableHead>
@@ -134,8 +152,10 @@ const UersScreen = () => {
                             <StyledTableCell align="left">{element.first_name}</StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"
-                                onClick={() => console.log(element.id)}
-                                variant="outlined"
+                                onClick={() => {
+                                    navigate(`/users/edit/${element.id}`);
+                                }}
+                                variant="contained"
                                 startIcon={<EditIcon />}
                                 color="success"
                             >
@@ -145,7 +165,7 @@ const UersScreen = () => {
                                 <Button
                                     size="small"
                                     onClick={() => deleteUser(element.id)}
-                                    variant="outlined"
+                                    variant="contained"
                                     startIcon={<DeleteIcon />}
                                     color="error"
                                 >
@@ -165,8 +185,7 @@ const UersScreen = () => {
                 />
             </Stack>
         </TableContainer>
-
-    </Container>)
+    </Container >)
 }
 
 export default UersScreen;
