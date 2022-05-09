@@ -7,7 +7,7 @@ export const GET_USERS = gql`
     ){
     getUsers(first:$first,page:$page){
         data{
-          id
+          userId
           first_name
           last_name
           email
@@ -32,4 +32,26 @@ export const DELETE_USER = gql`
             id
         }
     }  
+`;
+
+export const CREATE_USER = gql`
+    mutation Create_user (
+        $email:String!,
+        $password:String!,
+        $first_name:String!,
+        $last_name:String!
+        $group_id:Int!
+      ) 
+      {
+        createUser( 
+          email:$email,
+          password:$password,
+          first_name:$first_name,
+          last_name:$last_name,
+          group_id:group_id
+          )
+          {
+            id
+        }
+    }
 `;

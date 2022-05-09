@@ -24,7 +24,7 @@ import {
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 interface UserData {
-    id: number;
+    userId: number;
     email: string;
     first_name: string;
     last_name: string;
@@ -142,7 +142,7 @@ const UersScreen = () => {
                 </TableHead>
                 <TableBody>
                     {users.map((element: UserData, index: number) => (
-                        <StyledTableRow key={element.id}>
+                        <StyledTableRow key={element.userId}>
                             <StyledTableCell align="left">
                                 {index + 1}
                             </StyledTableCell>
@@ -153,7 +153,7 @@ const UersScreen = () => {
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {
-                                    navigate(`/users/edit/${element.id}`);
+                                    navigate(`/users/edit/${element.userId}`);
                                 }}
                                 variant="contained"
                                 startIcon={<EditIcon />}
@@ -164,7 +164,7 @@ const UersScreen = () => {
                             <StyledTableCell align="left">
                                 <Button
                                     size="small"
-                                    onClick={() => deleteUser(element.id)}
+                                    onClick={() => deleteUser(element.userId)}
                                     variant="contained"
                                     startIcon={<DeleteIcon />}
                                     color="error"
