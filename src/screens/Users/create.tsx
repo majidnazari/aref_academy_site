@@ -28,9 +28,9 @@ interface UserData {
 
 const UersCreateScreen = () => {
     const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<any>();
-    const [first_name, setFirstName] = useState<any>();
-    const [last_name, setLastName] = useState<any>();
+    const [password, setPassword] = useState<string>();
+    const [first_name, setFirstName] = useState<string>();
+    const [last_name, setLastName] = useState<string>();
     const [group_id, setGroupId] = useState<string>("");
     const [createUser] = useMutation(CREATE_USER);
 
@@ -62,7 +62,7 @@ const UersCreateScreen = () => {
                     label="نام"
                     id="first_name"
                     value={first_name}
-                    onChange={setFirstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                 />
             </Grid>
 
@@ -72,7 +72,7 @@ const UersCreateScreen = () => {
                     label="نام خانوادگی"
                     id="last_name"
                     value={last_name}
-                    onChange={setLastName}
+                    onChange={(e) => setLastName(e.target.value)}
                 />
             </Grid>
             <Grid item xs={12} md={4} lg={4}  >
@@ -90,7 +90,7 @@ const UersCreateScreen = () => {
                     label="رمز عبور"
                     id="password"
                     value={password}
-                    onChange={setPassword}
+                    onChange={(e) => setPassword(e.target.value)}
                 />
             </Grid>
             <Grid item xs={12} md={4} lg={4}  >
