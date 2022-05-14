@@ -74,7 +74,6 @@ const SigninScreen = () => {
         login().then(res => {
             authContext.login(true);
             setToken(res.data.login.access_token);
-            console.log(res);
         }).finally(() => {
             setLoading(false);
         });

@@ -5,7 +5,7 @@ import {
     ApolloLink,
     concat,
 } from "@apollo/client";
-import { getToken } from "../utils/auth";
+import { getToken , removeToken } from "../utils/auth";
 import { onError } from '@apollo/client/link/error';
 import { showError } from "../utils/swlAlert";
 
@@ -29,6 +29,10 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 const logoutLink = onError((networkError) => {
     console.log(networkError);
     if (networkError.response?.errors) {
+        if(networkError.response.errors[0].message === "Unauthenticated.") {
+            removeToken();
+            window.location.href = "/login";
+        }
         showError(networkError.response.errors[0].message);
     }
 })

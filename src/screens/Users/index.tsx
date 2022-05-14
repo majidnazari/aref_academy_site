@@ -16,7 +16,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import Box from '@mui/material/Box';
-import { GET_USERS, DELETE_USER } from './gql';
+import { GET_USERS } from './gql/query';
+import { DELETE_USER } from './gql/mutation';
 import { useMutation, useQuery } from '@apollo/client';
 import PaginatorInfo from '../../interfaces/paginator-info.interface';
 import {
@@ -24,10 +25,13 @@ import {
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 interface UserData {
-    userId: number;
+    id: number;
     email: string;
     first_name: string;
     last_name: string;
+    groups: [{
+        persian_name: string;
+    }];
 }
 
 const UersScreen = () => {
@@ -52,7 +56,8 @@ const UersScreen = () => {
         onCompleted: (data) => {
             setPageInfo(data.getUsers.paginatorInfo);
             setUsers(data.getUsers.data);
-        }
+        },
+        fetchPolicy: "no-cache"
     });
 
     const [delUser] = useMutation(DELETE_USER)
@@ -142,18 +147,18 @@ const UersScreen = () => {
                 </TableHead>
                 <TableBody>
                     {users.map((element: UserData, index: number) => (
-                        <StyledTableRow key={element.userId}>
+                        <StyledTableRow key={element.id}>
                             <StyledTableCell align="left">
                                 {index + 1}
                             </StyledTableCell>
                             <StyledTableCell align="left">{element.first_name}</StyledTableCell>
                             <StyledTableCell align="left">{element.last_name}</StyledTableCell>
                             <StyledTableCell align="left">{element.email}</StyledTableCell>
-                            <StyledTableCell align="left">{element.first_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.groups[0].persian_name}</StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {
-                                    navigate(`/users/edit/${element.userId}`);
+                                    navigate(`/users/edit/${element.id}`);
                                 }}
                                 variant="contained"
                                 startIcon={<EditIcon />}
@@ -164,7 +169,7 @@ const UersScreen = () => {
                             <StyledTableCell align="left">
                                 <Button
                                     size="small"
-                                    onClick={() => deleteUser(element.userId)}
+                                    onClick={() => deleteUser(element.id)}
                                     variant="contained"
                                     startIcon={<DeleteIcon />}
                                     color="error"

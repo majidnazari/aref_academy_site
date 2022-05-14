@@ -3,55 +3,108 @@ import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import InputLabel from '@mui/material/InputLabel';
+import FormHelperText from '@mui/material/FormHelperText';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { CREATE_USER } from './gql';
-import { useMutation } from '@apollo/client';
-import PaginatorInfo from '../../interfaces/paginator-info.interface';
-import { showSuccess, showConfirm } from "../../utils/swlAlert";
+import { CREATE_USER } from './gql/mutation';
+import { GET_GROUPS } from './gql/query';
+import { useMutation, useQuery } from '@apollo/client';
+import { showSuccess } from "../../utils/swlAlert";
 import { Grid } from '@mui/material';
-import { Password } from '@mui/icons-material';
-interface UserData {
+interface GroupData {
     id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-    group_id: number;
+    persian_name: string;
+}
+
+interface ErrorData {
+    email?: string;
+    first_name?: string;
+    last_name?: string;
+    password?: string;
+    group_id?: string;
 }
 
 const UersCreateScreen = () => {
     const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>();
-    const [first_name, setFirstName] = useState<string>();
-    const [last_name, setLastName] = useState<string>();
+    const [password, setPassword] = useState<string>("");
+    const [first_name, setFirstName] = useState<string>("");
+    const [last_name, setLastName] = useState<string>("");
     const [group_id, setGroupId] = useState<string>("");
+    const [groups, setGroups] = useState<GroupData[]>([]);
+    const [error, setError] = useState<ErrorData>({});
     const [createUser] = useMutation(CREATE_USER);
+    useQuery(GET_GROUPS, {
+        variables: {
+            first: 100,
+            page: 1,
+        },
+        onCompleted: (data) => {
+            console.log(data.getGroups.data)
+            setGroups(data.getGroups.data);
+        }
+    });
 
     const handleChange = (event: SelectChangeEvent<string>) => {
         setGroupId(event.target.value);
     };
 
     const createUserHandler = () => {
+        if (!validateForm()) return;
         createUser({
             variables: {
-                email,
-                first_name,
-                last_name,
-                group_id,
+                email: email,
+                password: password,
+                first_name: first_name,
+                last_name: last_name,
+                group_id: parseInt(group_id, 10),
             }
         }).then(() => {
             showSuccess('کابر با موفقیت اضافه شد.');
+            setEmail("");
+            setPassword("");
+            setFirstName("");
+            setLastName("");
+            setGroupId("");
         });
 
     }
 
+    const validateForm = () => {
+        let out = true;
+        let result: ErrorData = {};
+        setError({});
+        if (!email) {
+            result = { ...result, email: 'ایمیل را وارد کنید.' };
+            out = false;
+        }
+
+        if (!password) {
+            result = { ...result, password: 'رمز عبور را وارد کنید.' };
+            out = false;
+        }
+        else if (password.length < 6) {
+            result = { ...result, password: 'رمز عبور حداقل 6 کاراکتر باید باشد.' };
+            out = false;
+        }
+
+        if (!first_name) {
+            result = { ...result, first_name: 'نام را وارد کنید.' };
+            out = false;
+        }
+        if (!last_name) {
+            result = { ...result, last_name: 'نام خانوادگی را وارد کنید.' };
+            out = false;
+        }
+        if (!group_id) {
+            result = { ...result, group_id: 'گروه را انتخاب کنید.' };
+            out = false;
+        }
+        setError(result);
+        return out;
+    }
     return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <h1>ایجاد کاربر جدید</h1>
 
@@ -62,7 +115,10 @@ const UersCreateScreen = () => {
                     label="نام"
                     id="first_name"
                     value={first_name}
-                    onChange={(e) => setFirstName(e.target.value)}
+                    onChange={(e: any) => setFirstName(e.target.value)}
+                    error={error.first_name ? true : false}
+                    helperText={error.first_name ? error.first_name : ""}
+                    variant="filled"
                 />
             </Grid>
 
@@ -73,6 +129,9 @@ const UersCreateScreen = () => {
                     id="last_name"
                     value={last_name}
                     onChange={(e) => setLastName(e.target.value)}
+                    error={error.last_name ? true : false}
+                    helperText={error.last_name ? error.last_name : ""}
+                    variant="filled"
                 />
             </Grid>
             <Grid item xs={12} md={4} lg={4}  >
@@ -82,6 +141,9 @@ const UersCreateScreen = () => {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    error={error.email ? true : false}
+                    helperText={error.email ? error.email : ""}
+                    variant="filled"
                 />
             </Grid>
             <Grid item xs={12} md={4} lg={4}  >
@@ -91,28 +153,35 @@ const UersCreateScreen = () => {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    error={error.password ? true : false}
+                    helperText={error.password ? error.password : ""}
+                    variant="filled"
                 />
             </Grid>
             <Grid item xs={12} md={4} lg={4}  >
                 <FormControl sx={{ width: "100%" }}>
-                    <InputLabel htmlFor="grouped-select">
-                        گروه‌کاربری
-                    </InputLabel>
                     <Select
                         defaultValue=""
                         id="grouped-select"
-                        label="Grouping"
                         value={group_id}
                         onChange={handleChange}
+                        error={error.group_id ? true : false}
+                        variant="filled"
+                        displayEmpty
                     >
                         <MenuItem value="" disabled >
                             <em>گروه‌کاربری</em>
                         </MenuItem>
-                        <MenuItem value={1}>Option 1</MenuItem>
-                        <MenuItem value={2}>Option 2</MenuItem>
-                        <MenuItem value={3}>Option 3</MenuItem>
-                        <MenuItem value={4}>Option 4</MenuItem>
+                        {
+                            groups.map((group) => {
+                                return <MenuItem
+                                    value={group.id}
+                                    key={group.id}>{group.persian_name}
+                                </MenuItem>
+                            })
+                        }
                     </Select>
+                    {error.group_id ? <FormHelperText error >{error.group_id}</FormHelperText> : ""}
                 </FormControl>
             </Grid>
         </Grid>
