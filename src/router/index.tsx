@@ -1,8 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
 import DashboardScreen from '../screens/Dashboard';
+
 import UsersScreen from '../screens/Users';
 import UsersEditScreen from '../screens/Users/edit';
 import UsersCreateScreen from '../screens/Users/create';
+
+import YearsScreen from '../screens/Years';
+import YearsEditScreen from '../screens/Years/edit';
+import YearsCreateScreen from '../screens/Years/create';
+
 import SigninScreen from '../screens/Signin';
 import SignoutScreen from '../screens/Signout';
 import Main from '../Layout/main';
@@ -30,6 +36,12 @@ const MainRouter = () => {
                             <Route path="" element={<UsersScreen />} />
                             <Route path="edit/:userId" element={<UsersEditScreen />} />
                             <Route path="create" element={<UsersCreateScreen />} />
+                            <Route path="*" element={<NoMatch />} />
+                        </Route>
+                        <Route path="years" >
+                            <Route path="" element={<YearsScreen />} />
+                            <Route path="edit/:yearId" element={<YearsEditScreen />} />
+                            <Route path="create" element={<YearsCreateScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
                         <Route path="/signout" element={<SignoutScreen />} />

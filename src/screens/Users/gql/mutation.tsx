@@ -29,3 +29,35 @@ export const CREATE_USER = gql`
         }
     
 `;
+
+export const EDIT_USER = gql `
+    mutation EDIT_USER(
+        $id:ID!,
+        $email:String,
+        $first_name:String,
+        $last_name:String,
+        $group_id:Int
+        )
+        {
+        updateUser(input:{
+            id:$id,
+            email:$email,
+            first_name:$first_name,
+            last_name:$last_name,
+            group_id:$group_id
+        }){
+            id,
+            first_name,
+            last_name,
+            email,
+            created_at,
+            updated_at,
+            groups{
+            id,
+            user_id_creator,
+            name,
+            type
+            }
+        }
+    }
+`;

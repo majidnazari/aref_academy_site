@@ -91,7 +91,7 @@ export const MainListItems = () => {
 };
 
 export const SecondaryListItems = () => {
-
+    let navigate = useNavigate();
     return (
         <React.Fragment>
             <ListSubheader component="div" inset>
@@ -112,7 +112,7 @@ export const SecondaryListItems = () => {
                 <ListItemText primary="تعریف دبیر" />
             </ListItemButton>
 
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate('/years')} >
                 <ListItemIcon>
                     <AssignmentIcon />
                 </ListItemIcon>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ChangeEventHandler, useState } from 'react';
 import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
@@ -42,7 +42,6 @@ const UersCreateScreen = () => {
             page: 1,
         },
         onCompleted: (data) => {
-            console.log(data.getGroups.data)
             setGroups(data.getGroups.data);
         }
     });
@@ -77,7 +76,11 @@ const UersCreateScreen = () => {
         let result: ErrorData = {};
         setError({});
         if (!email) {
-            result = { ...result, email: 'ایمیل را وارد کنید.' };
+            result = { ...result, email: 'موبایل را وارد کنید.' };
+            out = false;
+        }
+        else if (email.length !== 11) {
+            result = { ...result, email: 'موبایل باید ۱۱ رقم باشد.' };
             out = false;
         }
 
@@ -99,7 +102,7 @@ const UersCreateScreen = () => {
             out = false;
         }
         if (!group_id) {
-            result = { ...result, group_id: 'گروه را انتخاب کنید.' };
+            result = { ...result, group_id: 'گروه کاربری را انتخاب کنید.' };
             out = false;
         }
         setError(result);

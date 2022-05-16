@@ -16,7 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import Box from '@mui/material/Box';
-import { GET_USERS } from './gql/query';
+import { GET_YEARS } from './gql/query';
 import { DELETE_USER } from './gql/mutation';
 import { useMutation, useQuery } from '@apollo/client';
 import PaginatorInfo from '../../interfaces/paginator-info.interface';
@@ -24,18 +24,18 @@ import {
     useNavigate
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
-import { Typography } from '@mui/material';
-interface UserData {
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
+
+
+interface YearData {
     id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-    groups: [{
-        persian_name: string;
-    }];
+    active: string;
+    name: string;
+    user_id_creator: number;
 }
 
-const UersScreen = () => {
+const YearsScreen = () => {
     const navigate = useNavigate();
     const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
         count: 0,
@@ -47,16 +47,16 @@ const UersScreen = () => {
         perPage: 10,
         total: 0,
     });
-    const [users, setUsers] = useState<UserData[]>();
+    const [years, setYears] = useState<YearData[] | null>(null);
 
-    const { fetchMore, refetch } = useQuery(GET_USERS, {
+    const { fetchMore, refetch } = useQuery(GET_YEARS, {
         variables: {
             first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
             page: 1,
         },
         onCompleted: (data) => {
-            setPageInfo(data.getUsers.paginatorInfo);
-            setUsers(data.getUsers.data);
+            setPageInfo(data.getYears.paginatorInfo);
+            setYears(data.getYears.data);
         },
         fetchPolicy: "no-cache"
     });
@@ -84,15 +84,15 @@ const UersScreen = () => {
     }));
 
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        setUsers([]);
+        setYears([]);
         fetchMore({
             variables: {
                 first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
                 page: value,
             },
             updateQuery: (prev, { fetchMoreResult }) => {
-                setPageInfo(fetchMoreResult.getUsers.paginatorInfo);
-                setUsers(fetchMoreResult.getUsers.data);
+                setPageInfo(fetchMoreResult.getYears.paginatorInfo);
+                setYears(fetchMoreResult.getYears.data);
             }
         });
     };
@@ -107,22 +107,39 @@ const UersScreen = () => {
                 }
             ).then(() => {
                 refetch();
-                showSuccess('کابر با موفقیت حذف شد.');
+                showSuccess('حذف با موفقیت انجام شد.');
             });
         });
     };
-    if (!users || users.length === 0) {
+    if (!years) {
         return <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Skeleton width="100%" height={100} />
             <Skeleton variant="rectangular" width="100%" height={300} />
         </Container>
             ;
     }
+    if (years.length === 0) {
+        return <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Box
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="flex-end"
+            >
+                <Button
+                    variant="contained"
+                    startIcon={<AddCircleIcon />}
+                    sx={{ mb: 4 }}
+                    onClick={() => navigate('/years/create')} >
+                    افزودن سال تحصیلی جدید
+                </Button>
+            </Box>
+            <div>
+                داده ای وجود ندارد ...
+            </div>
+        </Container>
+    }
 
     return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" color="InfoText" >
-            مدیریت کاربران
-        </Typography>
         <Box
             display="flex"
             justifyContent="flex-end"
@@ -132,8 +149,8 @@ const UersScreen = () => {
                 variant="contained"
                 startIcon={<AddCircleIcon />}
                 sx={{ mb: 4 }}
-                onClick={() => navigate('/users/create')} >
-                افزودن کاربر جدید
+                onClick={() => navigate('/years/create')} >
+                افزودن سال تحصیلی جدید
             </Button>
         </Box>
         <TableContainer component={Paper}>
@@ -142,27 +159,25 @@ const UersScreen = () => {
                     <TableRow>
                         <StyledTableCell align="left">ردیف</StyledTableCell>
                         <StyledTableCell align="left">نام</StyledTableCell>
-                        <StyledTableCell align="left">نام خانوادگی</StyledTableCell>
-                        <StyledTableCell align="left">نام کاربری</StyledTableCell>
-                        <StyledTableCell align="left">گروه کاربری</StyledTableCell>
+                        <StyledTableCell align="left">وضعیت</StyledTableCell>
+                        <StyledTableCell align="left">کاربر ثبت کننده</StyledTableCell>
                         <StyledTableCell align="left">ویرایش</StyledTableCell>
                         <StyledTableCell align="left">حذف</StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {users.map((element: UserData, index: number) => (
+                    {years.map((element: YearData, index: number) => (
                         <StyledTableRow key={element.id}>
                             <StyledTableCell align="left">
                                 {index + 1}
                             </StyledTableCell>
-                            <StyledTableCell align="left">{element.first_name}</StyledTableCell>
-                            <StyledTableCell align="left">{element.last_name}</StyledTableCell>
-                            <StyledTableCell align="left">{element.email}</StyledTableCell>
-                            <StyledTableCell align="left">{element.groups[0].persian_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.active ? <CheckBoxIcon color="success" /> : <DoDisturbOnIcon />}</StyledTableCell>
+                            <StyledTableCell align="left">{element.user_id_creator}</StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {
-                                    navigate(`/users/edit/${element.id}`);
+                                    navigate(`/years/edit/${element.id}`);
                                 }}
                                 variant="contained"
                                 startIcon={<EditIcon />}
@@ -197,4 +212,4 @@ const UersScreen = () => {
     </Container >)
 }
 
-export default UersScreen;
+export default YearsScreen;

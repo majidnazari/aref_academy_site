@@ -52,3 +52,19 @@ export const GET_GROUPS = gql`
     }
   } 
 `;
+
+export const GET_A_USER = gql`
+    query GET_A_USERS(
+        $id: ID!
+    ){
+      getUser(id:$id){
+        id
+        first_name
+        last_name
+        email
+        groups{
+          id
+        }
+      }
+    }  
+`;
