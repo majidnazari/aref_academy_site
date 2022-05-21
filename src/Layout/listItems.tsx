@@ -98,18 +98,11 @@ export const SecondaryListItems = () => {
                 Saved reports
             </ListSubheader>
 
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate('/courses')} >
                 <ListItemIcon>
                     <AssignmentIcon />
                 </ListItemIcon>
                 <ListItemText primary="تعریف کلاس" />
-            </ListItemButton>
-
-            <ListItemButton>
-                <ListItemIcon>
-                    <AssignmentIcon />
-                </ListItemIcon>
-                <ListItemText primary="تعریف دبیر" />
             </ListItemButton>
 
             <ListItemButton onClick={() => navigate('/years')} >
