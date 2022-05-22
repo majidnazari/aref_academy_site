@@ -10,18 +10,14 @@ export const DELETE_COURSE = gql`
 
 export const CREATE_COURSE = gql`
     mutation CREATE_COURSE(
-        $id: ID
-        $user_id_creator: Int
-        $year_id: Int
-        $teacher_id: Int
-        $name: String
-        $lesson: String
-        $type: String
+        $year_id: Int!
+        $teacher_id: Int!
+        $name: String!
+        $lesson: String!
+        $type: String!
         )
         {
             createCourse(input:{
-                id: $id
-                user_id_creator: $user_id_creator
                 year_id: $year_id
                 teacher_id: $teacher_id
                 name: $name
@@ -34,17 +30,23 @@ export const CREATE_COURSE = gql`
     
 `;
 
-export const EDIT_YEAR = gql`
-    mutation EDIT_YEAR(
-        $id:ID!,
-        $name:String,
-        $active:Boolean
-        )
-        {
-        updateYear(input:{
-            id:$id,
-            name:$name,
-            active:$active
+export const EDIT_COURSE = gql`
+mutation EDIT_COURSE(
+    $id: ID!
+    $year_id: Int
+    $teacher_id: Int
+    $name: String
+    $lesson: String
+    $type: String
+    )
+    {
+        updateCourse(input:{
+            id: $id
+            year_id: $year_id
+            teacher_id: $teacher_id
+            name: $name
+            lesson: $lesson
+            type: $type
         }){
             id
         }

@@ -17,15 +17,14 @@ import {
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormHelperText from '@mui/material/FormHelperText';
-
+import { lessonsObject, typesObject } from '../../constants';
 
 interface ErrorData {
     name?: string;
-    year_id?: number;
-    teacher_id?: number;
+    year_id?: string;
+    teacher_id?: string;
     lesson?: string;
     type?: string;
-    user_id_creator?: number;
 }
 
 interface CourseData {
@@ -44,29 +43,48 @@ interface CourseData {
 const CoursesCreateScreen = () => {
     const [name, setName] = useState<string>("");
     const [yearId, setYearId] = useState<string>("");
+    const [teacherId, setTeacherId] = useState<string>("1");
+    const [lesson, setLesson] = useState<string>("");
+    const [type, setType] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
     const [createCourse] = useMutation(CREATE_COURSE);
     const navigate = useNavigate();
 
+
     const { data: allYears } = useQuery(GET_YEARS, {
         variables: {
             first: 100,
             page: 1,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }]
         }
     });
 
     const handleChangeYear = (event: SelectChangeEvent<string>) => {
         setYearId(event.target.value);
     };
+    const handleChangeLesson = (event: SelectChangeEvent<string>) => {
+        setLesson(event.target.value);
+    };
+
+    const handleChangeType = (event: SelectChangeEvent<string>) => {
+        setType(event.target.value);
+    };
 
     const createCourseHandler = () => {
         if (!validateForm()) return;
         setLoading(true);
+
         createCourse({
             variables: {
                 name: name,
-                active: false
+                year_id: Number(yearId),
+                teacher_id: Number(teacherId),
+                lesson: lesson,
+                type: type
             }
         }).then(() => {
             showSuccess(' درس جدید با موفقیت اضافه شد.');
@@ -86,9 +104,28 @@ const CoursesCreateScreen = () => {
             result = { ...result, name: 'نام درس را وارد کنید.' };
             out = false;
         }
+        if (!yearId) {
+            result = { ...result, year_id: ' سال را وارد کنید.' };
+            out = false;
+        }
+        if (!teacherId) {
+            result = { ...result, teacher_id: 'نام دبیر را وارد کنید.' };
+            out = false;
+        }
+        if (!lesson) {
+            result = { ...result, lesson: 'نام درس پایه را وارد کنید.' };
+            out = false;
+        }
+        if (!type) {
+            result = { ...result, type: 'نوع را وارد کنید.' };
+            out = false;
+        }
         setError(result);
         return out;
     }
+
+
+
     return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <h1>ایجاد درس جدید</h1>
 
@@ -136,34 +173,56 @@ const CoursesCreateScreen = () => {
                 <TextField
                     fullWidth
                     label="دبیر"
-                    value={name}
+                    value={teacherId}
                     onChange={(e: any) => setName(e.target.value)}
-                    error={error.name ? true : false}
-                    helperText={error.name ? error.name : ""}
+                    error={error.teacher_id ? true : false}
+                    helperText={error.teacher_id ? error.teacher_id : ""}
                     variant="filled"
                 />
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
-                <TextField
-                    fullWidth
-                    label="درس"
-                    value={name}
-                    onChange={(e: any) => setName(e.target.value)}
-                    error={error.name ? true : false}
-                    helperText={error.name ? error.name : ""}
-                    variant="filled"
-                />
+                <FormControl sx={{ width: "100%" }}>
+                    <Select
+                        defaultValue=""
+                        id="grouped-select"
+                        value={lesson}
+                        onChange={handleChangeLesson}
+                        error={error.lesson ? true : false}
+                        variant="filled"
+                        displayEmpty
+                    >
+                        <MenuItem value="" disabled >
+                            <em>درس پایه</em>
+                        </MenuItem>
+                        {Object.keys(lessonsObject).map((key, index) => (
+                            <MenuItem key={index} value={key}>{lessonsObject[key]}</MenuItem>
+                        ))
+                        }
+                    </Select>
+                    {error.lesson ? <FormHelperText error >{error.lesson}</FormHelperText> : ""}
+                </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
-                <TextField
-                    fullWidth
-                    label="نوع"
-                    value={name}
-                    onChange={(e: any) => setName(e.target.value)}
-                    error={error.name ? true : false}
-                    helperText={error.name ? error.name : ""}
-                    variant="filled"
-                />
+                <FormControl sx={{ width: "100%" }}>
+                    <Select
+                        defaultValue=""
+                        id="grouped-select"
+                        value={type}
+                        onChange={handleChangeType}
+                        error={error.type ? true : false}
+                        variant="filled"
+                        displayEmpty
+                    >
+                        <MenuItem value="" disabled >
+                            <em>نوع</em>
+                        </MenuItem>
+                        {Object.keys(typesObject).map((key, index) => (
+                            <MenuItem key={index} value={key}>{typesObject[key]}</MenuItem>
+                        ))
+                        }
+                    </Select>
+                    {error.type ? <FormHelperText error >{error.type}</FormHelperText> : ""}
+                </FormControl>
             </Grid>
         </Grid>
         <Box mt={2}>

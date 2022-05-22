@@ -24,16 +24,24 @@ import {
     useNavigate
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
+import { typesObject, lessonsObject } from '../../constants';
+
 
 
 interface CourseData {
     id: number;
     name: string;
-    user_id_creator: number;
-    year_id: number;
-    teacher_id: number;
+    user: {
+        first_name: string;
+        last_name: string;
+    };
+    year: {
+        name: string;
+    };
+    teacher: {
+        first_name: string;
+        last_name: string;
+    };
     lesson: string;
     type: string;
     created_at: string;
@@ -166,6 +174,7 @@ const CoursesScreen = () => {
                         <StyledTableCell align="left">ردیف</StyledTableCell>
                         <StyledTableCell align="left">نام درس</StyledTableCell>
                         <StyledTableCell align="left">سال</StyledTableCell>
+                        <StyledTableCell align="left">دبیر</StyledTableCell>
                         <StyledTableCell align="left">کاربر ثبت کننده</StyledTableCell>
                         <StyledTableCell align="left">رشته</StyledTableCell>
                         <StyledTableCell align="left">نوع</StyledTableCell>
@@ -180,10 +189,12 @@ const CoursesScreen = () => {
                                 {index + 1}
                             </StyledTableCell>
                             <StyledTableCell align="left">{element.name}</StyledTableCell>
-                            <StyledTableCell align="left">{element.year_id}</StyledTableCell>
-                            <StyledTableCell align="left">{element.user_id_creator}</StyledTableCell>
-                            <StyledTableCell align="left">{element.lesson}</StyledTableCell>
-                            <StyledTableCell align="left">{element.type}</StyledTableCell>
+                            <StyledTableCell align="left">{element.year.name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.teacher.first_name} {element.teacher.last_name}</StyledTableCell>
+
+                            <StyledTableCell align="left">{element.user.first_name} {element.user.last_name}</StyledTableCell>
+                            <StyledTableCell align="left">{lessonsObject[element.lesson]}</StyledTableCell>
+                            <StyledTableCell align="left">{typesObject[element.type]}</StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {

@@ -8,15 +8,23 @@ export const GET_COURSES = gql`
       getCourses(first:$first,page:$page){
         data{
           id
-          user_id_creator
-          year_id
-          teacher_id
           name
           lesson
           type
           created_at
           updated_at
           deleted_at
+          user{
+            first_name
+            last_name
+          }
+          year{
+            name
+          }
+          teacher{
+            first_name
+            last_name
+          }
         }
         paginatorInfo{
           count
@@ -44,9 +52,6 @@ export const GET_A_COURSE = gql`
           name
           lesson
           type
-          created_at
-          updated_at
-          deleted_at
         }
     }  
 `;
@@ -55,8 +60,9 @@ export const GET_YEARS = gql`
     query GET_YEARS(
         $first: Int!
         $page: Int!
+        $orderBy: [OrderByClause!]
     ){
-      getYears(first:$first,page:$page){
+      getYears(first:$first,page:$page,orderBy:$orderBy){
         data{
           id
           user_id_creator
