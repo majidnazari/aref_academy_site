@@ -102,7 +102,7 @@ export const SecondaryListItems = () => {
                 <ListItemIcon>
                     <AssignmentIcon />
                 </ListItemIcon>
-                <ListItemText primary="تعریف کلاس" />
+                <ListItemText primary="مدیریت کلاس‌ها" />
             </ListItemButton>
 
             <ListItemButton onClick={() => navigate('/years')} >

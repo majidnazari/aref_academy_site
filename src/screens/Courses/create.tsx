@@ -17,10 +17,11 @@ import {
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormHelperText from '@mui/material/FormHelperText';
-import { lessonsObject, typesObject } from '../../constants';
+import { lessonsObject, typesObject, educationLevelsObject } from '../../constants';
 
 interface ErrorData {
     name?: string;
+    education_level?: string;
     year_id?: string;
     teacher_id?: string;
     lesson?: string;
@@ -31,6 +32,7 @@ interface CourseData {
     id: number;
     name: string;
     user_id_creator: number;
+    education_level: string;
     year_id: number;
     teacher_id: number;
     lesson: string;
@@ -42,6 +44,7 @@ interface CourseData {
 
 const CoursesCreateScreen = () => {
     const [name, setName] = useState<string>("");
+    const [educationLevel, setEducationLevel] = useState<string>("");
     const [yearId, setYearId] = useState<string>("");
     const [teacherId, setTeacherId] = useState<string>("1");
     const [lesson, setLesson] = useState<string>("");
@@ -56,6 +59,7 @@ const CoursesCreateScreen = () => {
         variables: {
             first: 100,
             page: 1,
+            active:true,
             orderBy: [{
                 column: 'id',
                 order: 'DESC'
@@ -63,13 +67,15 @@ const CoursesCreateScreen = () => {
         }
     });
 
+    const handleChangeEducationLevel = (event: SelectChangeEvent<string>) => {
+        setEducationLevel(event.target.value);
+    };
     const handleChangeYear = (event: SelectChangeEvent<string>) => {
         setYearId(event.target.value);
     };
     const handleChangeLesson = (event: SelectChangeEvent<string>) => {
         setLesson(event.target.value);
     };
-
     const handleChangeType = (event: SelectChangeEvent<string>) => {
         setType(event.target.value);
     };
@@ -101,7 +107,11 @@ const CoursesCreateScreen = () => {
         let result: ErrorData = {};
         setError({});
         if (!name) {
-            result = { ...result, name: 'نام درس را وارد کنید.' };
+            result = { ...result, name: ' کد درس را وارد کنید.' };
+            out = false;
+        }
+        if (!educationLevel) {
+            result = { ...result, education_level: ' مقطع را وارد کنید.' };
             out = false;
         }
         if (!yearId) {
@@ -127,19 +137,40 @@ const CoursesCreateScreen = () => {
 
 
     return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <h1>ایجاد درس جدید</h1>
+        <h1>ایجاد کلاس جدید</h1>
 
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
             <Grid item xs={12} md={4} lg={4} >
                 <TextField
                     fullWidth
-                    label="نام"
+                    label="کد"
                     value={name}
                     onChange={(e: any) => setName(e.target.value)}
                     error={error.name ? true : false}
                     helperText={error.name ? error.name : ""}
                     variant="filled"
                 />
+            </Grid>
+            <Grid item xs={12} md={4} lg={4} >
+                <FormControl sx={{ width: "100%" }}>
+                    <Select
+                        defaultValue=""
+                        value={educationLevel}
+                        onChange={handleChangeEducationLevel}
+                        error={error.education_level ? true : false}
+                        variant="filled"
+                        displayEmpty
+                    >
+                        <MenuItem value="" disabled >
+                            <em> مقطع</em>
+                        </MenuItem>
+                        {Object.keys(educationLevelsObject).map((key, index) => (
+                            <MenuItem key={index} value={key}>{educationLevelsObject[key]}</MenuItem>
+                        ))
+                        }
+                    </Select>
+                    {error.year_id ? <FormHelperText error >{error.year_id}</FormHelperText> : ""}
+                </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
                 <FormControl sx={{ width: "100%" }}>
@@ -231,7 +262,7 @@ const CoursesCreateScreen = () => {
                 startIcon={<AddCircleIcon />} color="primary" onClick={createCourseHandler}
                 disabled={loading}
             >
-                ایجاد درس جدید
+                ایجاد کلاس جدید
                 {loading ? <CircularProgress size={15} color="primary" /> : null}
             </Button>
         </Box>

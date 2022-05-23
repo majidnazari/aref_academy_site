@@ -67,6 +67,10 @@ const CoursesScreen = () => {
         variables: {
             first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
             page: 1,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }]
         },
         onCompleted: (data) => {
             setPageInfo(data.getCourses.paginatorInfo);
@@ -75,7 +79,7 @@ const CoursesScreen = () => {
         fetchPolicy: "no-cache"
     });
 
-    const [delUser] = useMutation(DELETE_COURSE)
+    const [delCourse] = useMutation(DELETE_COURSE)
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -103,6 +107,10 @@ const CoursesScreen = () => {
             variables: {
                 first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
                 page: value,
+                orderBy: [{
+                    column: 'id',
+                    order: 'DESC'
+                }]
             },
             updateQuery: (prev, { fetchMoreResult }) => {
                 setPageInfo(fetchMoreResult.getCourses.paginatorInfo);
@@ -111,9 +119,9 @@ const CoursesScreen = () => {
         });
     };
 
-    function deleteUser(id: number) {
+    function deleteCourse(id: number) {
         showConfirm(() => {
-            delUser(
+            delCourse(
                 {
                     variables: {
                         id: id
@@ -144,7 +152,7 @@ const CoursesScreen = () => {
                     startIcon={<AddCircleIcon />}
                     sx={{ mb: 4 }}
                     onClick={() => navigate('/courses/create')} >
-                    افزودن درس جدید
+                    افزودن کلاس جدید
                 </Button>
             </Box>
             <div>
@@ -164,7 +172,7 @@ const CoursesScreen = () => {
                 startIcon={<AddCircleIcon />}
                 sx={{ mb: 4 }}
                 onClick={() => navigate('/courses/create')} >
-                افزودن درس جدید
+                افزودن کلاس جدید
             </Button>
         </Box>
         <TableContainer component={Paper}>
@@ -172,12 +180,13 @@ const CoursesScreen = () => {
                 <TableHead>
                     <TableRow>
                         <StyledTableCell align="left">ردیف</StyledTableCell>
-                        <StyledTableCell align="left">نام درس</StyledTableCell>
+                        <StyledTableCell align="left"> کد</StyledTableCell>
                         <StyledTableCell align="left">سال</StyledTableCell>
                         <StyledTableCell align="left">دبیر</StyledTableCell>
                         <StyledTableCell align="left">کاربر ثبت کننده</StyledTableCell>
                         <StyledTableCell align="left">رشته</StyledTableCell>
                         <StyledTableCell align="left">نوع</StyledTableCell>
+                        <StyledTableCell align="left">جلسات</StyledTableCell>
                         <StyledTableCell align="left">ویرایش</StyledTableCell>
                         <StyledTableCell align="left">حذف</StyledTableCell>
                     </TableRow>
@@ -198,6 +207,17 @@ const CoursesScreen = () => {
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {
+                                    //navigate(`/courses/edit/${element.id}`);
+                                }}
+                                variant="contained"
+                                // startIcon={<EditIcon />}
+                                color="primary"
+                            >
+                               جلسات
+                            </Button></StyledTableCell>
+                            <StyledTableCell align="left"><Button
+                                size="small"
+                                onClick={() => {
                                     navigate(`/courses/edit/${element.id}`);
                                 }}
                                 variant="contained"
@@ -209,7 +229,7 @@ const CoursesScreen = () => {
                             <StyledTableCell align="left">
                                 <Button
                                     size="small"
-                                    onClick={() => deleteUser(element.id)}
+                                    onClick={() => deleteCourse(element.id)}
                                     variant="contained"
                                     startIcon={<DeleteIcon />}
                                     color="error"

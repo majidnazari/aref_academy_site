@@ -60,9 +60,10 @@ export const GET_YEARS = gql`
     query GET_YEARS(
         $first: Int!
         $page: Int!
+        $active: Boolean
         $orderBy: [OrderByClause!]
     ){
-      getYears(first:$first,page:$page,orderBy:$orderBy){
+      getYears(first:$first,page:$page,active:$active,orderBy:$orderBy){
         data{
           id
           user_id_creator

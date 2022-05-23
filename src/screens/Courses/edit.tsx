@@ -23,6 +23,7 @@ import { lessonsObject, typesObject } from '../../constants';
 
 interface ErrorData {
     name?: string;
+    education_level?: string;
     year_id?: string;
     teacher_id?: string;
     lesson?: string;
@@ -32,6 +33,7 @@ interface ErrorData {
 interface CourseData {
     id: number;
     user_id_creator: number;
+    education_level: string;
     year_id: number;
     teacher_id: number;
     name: string;
@@ -41,6 +43,7 @@ interface CourseData {
 
 const CoursesEditScreen = () => {
     const [name, setName] = useState<string>("");
+    const [educationLevel, setEducationLevel] = useState<string>("");
     const [yearId, setYearId] = useState<string>("");
     const [teacherId, setTeacherId] = useState<string>("1");
     const [lesson, setLesson] = useState<string>("");
@@ -68,6 +71,10 @@ const CoursesEditScreen = () => {
             }]
         }
     });
+
+    const handleChangeEducationLevel = (event: SelectChangeEvent<string>) => {
+        setEducationLevel(event.target.value);
+    };
 
     const handleChangeYear = (event: SelectChangeEvent<string>) => {
         setYearId(event.target.value);
@@ -119,7 +126,11 @@ const CoursesEditScreen = () => {
         let result: ErrorData = {};
         setError({});
         if (!name) {
-            result = { ...result, name: 'نام درس را وارد کنید.' };
+            result = { ...result, name: 'کد درس را وارد کنید.' };
+            out = false;
+        }
+        if (!educationLevel) {
+            result = { ...result, education_level: ' مقطع را وارد کنید.' };
             out = false;
         }
         if (!yearId) {
@@ -143,19 +154,44 @@ const CoursesEditScreen = () => {
     }
 
     return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <h1>ویرایش درس</h1>
+        <h1>ویرایش کلاس</h1>
 
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
             <Grid item xs={12} md={4} lg={4} >
                 <TextField
                     fullWidth
-                    label="نام"
+                    label="کد درس"
                     value={name}
                     onChange={(e: any) => setName(e.target.value)}
                     error={error.name ? true : false}
                     helperText={error.name ? error.name : ""}
                     variant="filled"
                 />
+            </Grid>
+            <Grid item xs={12} md={4} lg={4} >
+                <FormControl sx={{ width: "100%" }}>
+                    <Select
+                        defaultValue=""
+                        value={educationLevel}
+                        onChange={handleChangeEducationLevel}
+                        error={error.education_level ? true : false}
+                        variant="filled"
+                        displayEmpty
+                    >
+                        <MenuItem value="" disabled >
+                            <em> مقطع</em>
+                        </MenuItem>
+                        {
+                            allYears.getYears.data.map((year: any) => {
+                                return <MenuItem
+                                    value={year.id}
+                                    key={year.id}>{year.name}
+                                </MenuItem>
+                            })
+                        }
+                    </Select>
+                    {error.year_id ? <FormHelperText error >{error.year_id}</FormHelperText> : ""}
+                </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
                 <FormControl sx={{ width: "100%" }}>
