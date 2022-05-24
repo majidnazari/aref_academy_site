@@ -24,9 +24,7 @@ import {
     useNavigate
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
-import { typesObject, lessonsObject } from '../../constants';
-
-
+import { typesObject, lessonsObject, educationLevelsObject } from '../../constants';
 
 interface CourseData {
     id: number;
@@ -44,6 +42,7 @@ interface CourseData {
     };
     lesson: string;
     type: string;
+    education_level: string;
     created_at: string;
     updated_at: string;
     deleted_at: string;
@@ -186,6 +185,7 @@ const CoursesScreen = () => {
                         <StyledTableCell align="left">کاربر ثبت کننده</StyledTableCell>
                         <StyledTableCell align="left">رشته</StyledTableCell>
                         <StyledTableCell align="left">نوع</StyledTableCell>
+                        <StyledTableCell align="left">مقطع</StyledTableCell>
                         <StyledTableCell align="left">جلسات</StyledTableCell>
                         <StyledTableCell align="left">ویرایش</StyledTableCell>
                         <StyledTableCell align="left">حذف</StyledTableCell>
@@ -204,6 +204,7 @@ const CoursesScreen = () => {
                             <StyledTableCell align="left">{element.user.first_name} {element.user.last_name}</StyledTableCell>
                             <StyledTableCell align="left">{lessonsObject[element.lesson]}</StyledTableCell>
                             <StyledTableCell align="left">{typesObject[element.type]}</StyledTableCell>
+                            <StyledTableCell align="left">{educationLevelsObject[element.education_level]}</StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {

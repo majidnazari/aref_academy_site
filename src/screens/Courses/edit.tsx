@@ -9,7 +9,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { EDIT_COURSE } from './gql/mutation';
-import { GET_A_COURSE, GET_YEARS } from './gql/query';
+import { GET_A_COURSE, GET_YEARS, GET_USERS } from './gql/query';
 import { useMutation, useQuery } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
 import { Grid } from '@mui/material';
@@ -18,7 +18,10 @@ import {
 } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import FormHelperText from '@mui/material/FormHelperText';
-import { lessonsObject, typesObject } from '../../constants';
+import { lessonsObject, typesObject, educationLevelsObject } from '../../constants';
+import {
+    useNavigate
+} from "react-router-dom"
 
 
 interface ErrorData {
@@ -72,6 +75,14 @@ const CoursesEditScreen = () => {
         }
     });
 
+    const { data: teachers } = useQuery(GET_USERS, {
+        variables: {
+            first: 1000,
+            page: 1,
+            group_id: 5
+        }
+    });
+
     const handleChangeEducationLevel = (event: SelectChangeEvent<string>) => {
         setEducationLevel(event.target.value);
     };
@@ -79,7 +90,9 @@ const CoursesEditScreen = () => {
     const handleChangeYear = (event: SelectChangeEvent<string>) => {
         setYearId(event.target.value);
     };
-
+    const handleChangeTeacher = (event: SelectChangeEvent<string>) => {
+        setTeacherId(event.target.value);
+    };
     const handleChangeLesson = (event: SelectChangeEvent<string>) => {
         setLesson(event.target.value);
     };
@@ -96,6 +109,7 @@ const CoursesEditScreen = () => {
             setTeacherId(CourseInfo.teacher_id.toString());
             setLesson(CourseInfo.lesson);
             setType(CourseInfo.type);
+            setEducationLevel(CourseInfo.education_level);
         }
 
     }, [courseData]);
@@ -111,7 +125,8 @@ const CoursesEditScreen = () => {
                 year_id: Number(yearId),
                 teacher_id: Number(teacherId),
                 lesson: lesson,
-                type: type
+                type: type,
+                education_level: educationLevel
             }
         }).then(() => {
             showSuccess('ویرایش با موفقیت انجام شد');
@@ -152,7 +167,7 @@ const CoursesEditScreen = () => {
         setError(result);
         return out;
     }
-
+    const navigate = useNavigate();
     return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <h1>ویرایش کلاس</h1>
 
@@ -170,27 +185,26 @@ const CoursesEditScreen = () => {
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
                 <FormControl sx={{ width: "100%" }}>
-                    <Select
-                        defaultValue=""
-                        value={educationLevel}
-                        onChange={handleChangeEducationLevel}
-                        error={error.education_level ? true : false}
-                        variant="filled"
-                        displayEmpty
-                    >
-                        <MenuItem value="" disabled >
-                            <em> مقطع</em>
-                        </MenuItem>
-                        {
-                            allYears.getYears.data.map((year: any) => {
-                                return <MenuItem
-                                    value={year.id}
-                                    key={year.id}>{year.name}
-                                </MenuItem>
-                            })
-                        }
-                    </Select>
-                    {error.year_id ? <FormHelperText error >{error.year_id}</FormHelperText> : ""}
+                    <FormControl sx={{ width: "100%" }}>
+                        <Select
+                            defaultValue=""
+                            value={educationLevel}
+                            onChange={handleChangeEducationLevel}
+                            error={error.education_level ? true : false}
+                            variant="filled"
+                            displayEmpty
+                        >
+                            <MenuItem value="" disabled >
+                                <em> مقطع</em>
+                            </MenuItem>
+                            {Object.keys(educationLevelsObject).map((key, index) => (
+                                <MenuItem key={index} value={key}>{educationLevelsObject[key]}</MenuItem>
+                            ))
+                            }
+                        </Select>
+                        {error.education_level ? <FormHelperText error >{error.education_level}</FormHelperText> : ""}
+                    </FormControl>
+                    {error.education_level ? <FormHelperText error >{error.education_level}</FormHelperText> : ""}
                 </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
@@ -222,15 +236,32 @@ const CoursesEditScreen = () => {
                 </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
-                <TextField
-                    fullWidth
-                    label="دبیر"
-                    value={teacherId}
-                    onChange={(e: any) => setName(e.target.value)}
-                    error={error.teacher_id ? true : false}
-                    helperText={error.teacher_id ? error.teacher_id : ""}
-                    variant="filled"
-                />
+                <FormControl sx={{ width: "100%" }}>
+                    <Select
+                        defaultValue=""
+                        value={teacherId}
+                        onChange={handleChangeTeacher}
+                        error={error.teacher_id ? true : false}
+                        variant="filled"
+                        displayEmpty
+                    >
+                        <MenuItem value="" disabled >
+                            <em>دبیر</em>
+                        </MenuItem>
+                        {teachers ?
+                            teachers.getUsers.data.map((teacher: any) => {
+                                return <MenuItem
+                                    value={teacher.id}
+                                    key={teacher.id}>
+                                    {teacher.first_name} {teacher.last_name}
+                                </MenuItem>
+                            }) : <MenuItem value="" disabled >
+                                <em>در حال بارگذاری ...</em>
+                            </MenuItem>
+                        }
+                    </Select>
+                    {error.teacher_id ? <FormHelperText error >{error.teacher_id}</FormHelperText> : ""}
+                </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
                 <FormControl sx={{ width: "100%" }}>
@@ -279,6 +310,7 @@ const CoursesEditScreen = () => {
         </Grid>
         <Box mt={2}>
             <Button
+                sx={{ float: "left" }}
                 variant="contained"
                 startIcon={<SaveIcon />} color="primary" onClick={editCourseHandler}
                 disabled={loading}
@@ -286,7 +318,18 @@ const CoursesEditScreen = () => {
                 ثبت تغییرات
                 {loading ? <CircularProgress size={15} color="primary" /> : null}
             </Button>
+
+            <Button
+                sx={{ float: "right" }}
+                variant="contained"
+                color="secondary" 
+                onClick={() => navigate(`/courses`)}
+                disabled={loading}
+            >
+                بازگشت
+            </Button>
         </Box>
+
     </Container >)
 }
 

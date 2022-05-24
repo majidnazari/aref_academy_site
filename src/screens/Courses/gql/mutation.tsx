@@ -15,6 +15,7 @@ export const CREATE_COURSE = gql`
         $name: String!
         $lesson: String!
         $type: String!
+        $education_level: String!
         )
         {
             createCourse(input:{
@@ -23,6 +24,7 @@ export const CREATE_COURSE = gql`
                 name: $name
                 lesson: $lesson
                 type: $type
+                education_level: $education_level
             }){
                 id
             }
@@ -38,6 +40,7 @@ mutation EDIT_COURSE(
     $name: String
     $lesson: String
     $type: String
+    $education_level: String
     )
     {
         updateCourse(input:{
@@ -47,6 +50,7 @@ mutation EDIT_COURSE(
             name: $name
             lesson: $lesson
             type: $type
+            education_level: $education_level
         }){
             id
         }

@@ -25,6 +25,7 @@ export const GET_COURSES = gql`
             first_name
             last_name
           }
+          education_level
         }
         paginatorInfo{
           count
@@ -52,6 +53,7 @@ export const GET_A_COURSE = gql`
           name
           lesson
           type
+          education_level
         }
     }  
 `;
@@ -79,6 +81,22 @@ export const GET_YEARS = gql`
           lastPage
           perPage
           total
+        }
+      }
+    }  
+`;
+
+export const GET_USERS = gql`
+    query GET_USERS(
+        $first: Int!
+        $page: Int!
+        $group_id:Int
+    ){
+    getUsers(first:$first,page:$page,group_id:$group_id){
+        data{
+          id
+          first_name
+          last_name
         }
       }
     }  

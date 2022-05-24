@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import { CREATE_COURSE } from './gql/mutation';
-import { GET_YEARS } from './gql/query';
+import { GET_YEARS, GET_USERS } from './gql/query';
 import { useMutation, useQuery } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
 import { FormControl, Grid } from '@mui/material';
@@ -28,20 +28,6 @@ interface ErrorData {
     type?: string;
 }
 
-interface CourseData {
-    id: number;
-    name: string;
-    user_id_creator: number;
-    education_level: string;
-    year_id: number;
-    teacher_id: number;
-    lesson: string;
-    type: string;
-    created_at: string;
-    updated_at: string;
-    deleted_at: string;
-}
-
 const CoursesCreateScreen = () => {
     const [name, setName] = useState<string>("");
     const [educationLevel, setEducationLevel] = useState<string>("");
@@ -59,11 +45,19 @@ const CoursesCreateScreen = () => {
         variables: {
             first: 100,
             page: 1,
-            active:true,
+            active: true,
             orderBy: [{
                 column: 'id',
                 order: 'DESC'
             }]
+        }
+    });
+
+    const { data: teachers } = useQuery(GET_USERS, {
+        variables: {
+            first: 1000,
+            page: 1,
+            group_id: 5
         }
     });
 
@@ -72,6 +66,9 @@ const CoursesCreateScreen = () => {
     };
     const handleChangeYear = (event: SelectChangeEvent<string>) => {
         setYearId(event.target.value);
+    };
+    const handleChangeTeacher = (event: SelectChangeEvent<string>) => {
+        setTeacherId(event.target.value);
     };
     const handleChangeLesson = (event: SelectChangeEvent<string>) => {
         setLesson(event.target.value);
@@ -90,7 +87,8 @@ const CoursesCreateScreen = () => {
                 year_id: Number(yearId),
                 teacher_id: Number(teacherId),
                 lesson: lesson,
-                type: type
+                type: type,
+                education_level: educationLevel
             }
         }).then(() => {
             showSuccess(' درس جدید با موفقیت اضافه شد.');
@@ -136,7 +134,7 @@ const CoursesCreateScreen = () => {
 
 
 
-    return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }} >
         <h1>ایجاد کلاس جدید</h1>
 
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
@@ -169,7 +167,7 @@ const CoursesCreateScreen = () => {
                         ))
                         }
                     </Select>
-                    {error.year_id ? <FormHelperText error >{error.year_id}</FormHelperText> : ""}
+                    {error.education_level ? <FormHelperText error >{error.education_level}</FormHelperText> : ""}
                 </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
@@ -201,15 +199,32 @@ const CoursesCreateScreen = () => {
                 </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
-                <TextField
-                    fullWidth
-                    label="دبیر"
-                    value={teacherId}
-                    onChange={(e: any) => setName(e.target.value)}
-                    error={error.teacher_id ? true : false}
-                    helperText={error.teacher_id ? error.teacher_id : ""}
-                    variant="filled"
-                />
+                <FormControl sx={{ width: "100%" }}>
+                    <Select
+                        defaultValue=""
+                        value={teacherId}
+                        onChange={handleChangeTeacher}
+                        error={error.teacher_id ? true : false}
+                        variant="filled"
+                        displayEmpty
+                    >
+                        <MenuItem value="" disabled >
+                            <em>دبیر</em>
+                        </MenuItem>
+                        {teachers ?
+                            teachers.getUsers.data.map((teacher: any) => {
+                                return <MenuItem
+                                    value={teacher.id}
+                                    key={teacher.id}>
+                                    {teacher.first_name} {teacher.last_name}
+                                </MenuItem>
+                            }) : <MenuItem value="" disabled >
+                                <em>در حال بارگذاری ...</em>
+                            </MenuItem>
+                        }
+                    </Select>
+                    {error.teacher_id ? <FormHelperText error >{error.teacher_id}</FormHelperText> : ""}
+                </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
                 <FormControl sx={{ width: "100%" }}>
