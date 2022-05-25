@@ -13,6 +13,9 @@ import TextField from '@mui/material/TextField';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
+import { Button } from "@mui/material";
+import CircularProgress from '@mui/material/CircularProgress';
+import moment from 'moment';
 
 
 
@@ -44,6 +47,8 @@ const CreateMultiSessions = () => {
     const [startTime, setStartTime] = useState<Date | null>(null);
     const [endTime, setEndtTime] = useState<Date | null>(null);
     const [price, setPrice] = useState<string>("0");
+    const [special, setSpecial] = useState<string>("0");
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleChange = (event: SelectChangeEvent<typeof days>) => {
         const {
@@ -52,6 +57,9 @@ const CreateMultiSessions = () => {
         setDays(
             typeof value === 'string' ? value.split(',') : value,
         );
+    };
+    const handleChangeSpecial = (event: SelectChangeEvent<string>) => {
+        setSpecial(event.target.value);
     };
 
     return (
@@ -78,7 +86,7 @@ const CreateMultiSessions = () => {
                     </Select>
                 </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6} md={4} xl={2}  >
+            <Grid item xs={12} sm={6} md={4} xl={4}  >
                 <LocalizationProvider
                     dateAdapter={AdapterJalali}
                 >
@@ -93,7 +101,7 @@ const CreateMultiSessions = () => {
                     />
                 </LocalizationProvider>
             </Grid>
-            <Grid item xs={12} sm={6} md={4} xl={2}  >
+            <Grid item xs={12} sm={6} md={4} xl={4}  >
                 <LocalizationProvider
                     dateAdapter={AdapterJalali}
                 >
@@ -108,7 +116,7 @@ const CreateMultiSessions = () => {
                     />
                 </LocalizationProvider>
             </Grid>
-            <Grid item xs={12} sm={6} md={4} xl={2}  >
+            <Grid item xs={12} sm={6} md={4} xl={3}  >
                 <LocalizationProvider dateAdapter={AdapterJalali}>
                     <MobileTimePicker
                         label="ساعت شروع"
@@ -120,7 +128,7 @@ const CreateMultiSessions = () => {
                     />
                 </LocalizationProvider>
             </Grid>
-            <Grid item xs={12} sm={6} md={4} xl={2}  >
+            <Grid item xs={12} sm={6} md={4} xl={3}  >
                 <LocalizationProvider dateAdapter={AdapterJalali}>
                     <MobileTimePicker
                         label="ساعت پایان"
@@ -134,13 +142,53 @@ const CreateMultiSessions = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4} xl={2}  >
                 <TextField
-                    label="قیمت"
+                    label="قیمت-تومان"
+                    style={{ width: "100%" }}
+                    value={price}
                     onChange={(e) => {
-                        //const tmp: string = e.target.value;
+                        if (isNaN(Number(e.target.value.replace(/,/g, '')))) {
+                            setPrice("");
+                            return;
+                        }
+                        e.target.value = Number(e.target.value.replace(/,/g, '')).toLocaleString();;
                         setPrice(e.target.value);
-                    }
-                    }
+                    }}
                 />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} xl={2}  >
+                <FormControl sx={{ width: "100%" }}>
+                    <InputLabel id="special-label">فوق العاده</InputLabel>
+                    <Select
+                        labelId="special-label"
+                        value={special}
+                        onChange={handleChangeSpecial}
+                        input={<OutlinedInput label="فوق العاده" />}
+                    >
+
+                        <MenuItem value="0">
+                            خیر
+                        </MenuItem>
+
+                        <MenuItem value="1">
+                            بله
+                        </MenuItem>
+                    </Select>
+                </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} xl={2}  >
+                <Button
+                    onClick={() => {
+                        console.log(moment(startDate).format("YYYY-MM-DD"));
+                        console.log(moment(startTime).format("HH:mm"));
+                    }}
+                    fullWidth
+                    variant="contained"
+                    disabled={loading}
+                    sx={{ p: 2 }}
+                >
+                    {loading ? <CircularProgress size={15} color="primary" /> : null}
+                    ذخیره
+                </Button>
             </Grid>
         </Grid>
     )
