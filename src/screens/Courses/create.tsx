@@ -18,6 +18,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormHelperText from '@mui/material/FormHelperText';
 import { lessonsObject, typesObject, educationLevelsObject } from '../../constants';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 interface ErrorData {
     name?: string;
@@ -32,7 +33,7 @@ const CoursesCreateScreen = () => {
     const [name, setName] = useState<string>("");
     const [educationLevel, setEducationLevel] = useState<string>("");
     const [yearId, setYearId] = useState<string>("");
-    const [teacherId, setTeacherId] = useState<string>("1");
+    const [teacherId, setTeacherId] = useState<string>("");
     const [lesson, setLesson] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
@@ -134,7 +135,7 @@ const CoursesCreateScreen = () => {
 
 
 
-    return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }} >
+    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }} >
         <h1>ایجاد کلاس جدید</h1>
 
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
@@ -273,12 +274,23 @@ const CoursesCreateScreen = () => {
         </Grid>
         <Box mt={2}>
             <Button
+            sx={{ float: "left" }}
                 variant="contained"
                 startIcon={<AddCircleIcon />} color="primary" onClick={createCourseHandler}
                 disabled={loading}
             >
                 ایجاد کلاس جدید
                 {loading ? <CircularProgress size={15} color="primary" /> : null}
+            </Button>
+            <Button
+                sx={{ float: "right" }}
+                variant="contained"
+                color="secondary" 
+                onClick={() => navigate(`/courses`)}
+                disabled={loading}
+            >
+                 <ArrowBackIcon />
+                بازگشت
             </Button>
         </Box>
     </Container >)

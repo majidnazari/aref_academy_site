@@ -112,14 +112,14 @@ const YearsScreen = () => {
         });
     };
     if (!years) {
-        return <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Skeleton width="100%" height={100} />
             <Skeleton variant="rectangular" width="100%" height={300} />
         </Container>
             ;
     }
     if (years.length === 0) {
-        return <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Box
                 display="flex"
                 justifyContent="flex-end"
@@ -139,7 +139,7 @@ const YearsScreen = () => {
         </Container>
     }
 
-    return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Box
             display="flex"
             justifyContent="flex-end"

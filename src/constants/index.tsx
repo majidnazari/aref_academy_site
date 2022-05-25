@@ -25,3 +25,13 @@ export const educationLevelsObject: any = {
     '13': 'فارغ التحصیل',
     '14': 'دانشجو',
 }
+
+export const dayOfWeeksObject: any = {
+    'شنبه': 'Saturday',
+    'یکشنبه': 'Sunday',
+    'دوشنبه': 'Monday',
+    'سه شنبه': 'Tuesday',
+    'چهارشنبه': 'Wednesday',
+    'پنج شنبه': 'Thursday',
+    'جمعه': 'Friday',
+}

@@ -16,7 +16,11 @@ import { showSuccess } from "../../utils/swlAlert";
 import { Grid } from '@mui/material';
 import {
     useParams
-} from "react-router-dom"
+} from "react-router-dom";
+import {
+    useNavigate
+} from "react-router-dom";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 interface GroupData {
     id: number;
@@ -49,6 +53,7 @@ const UersEditScreen = () => {
     const [group_id, setGroupId] = useState<string>("");
     const [groups, setGroups] = useState<GroupData[]>([]);
     const [error, setError] = useState<ErrorData>({});
+    const navigate = useNavigate();
     const [editUser] = useMutation(EDIT_USER);
     const params = useParams<string>();
     const userId = params.userId;
@@ -129,7 +134,7 @@ const UersEditScreen = () => {
     }
 
 
-    return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <h4>ویرایش حساب کاربری</h4>
     
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
@@ -201,6 +206,15 @@ const UersEditScreen = () => {
             <Button variant="contained"
                 startIcon={<SaveIcon />} color="primary" onClick={editUserHandler}>
                 ثبت تغییرات
+            </Button>
+            <Button
+                sx={{ float: "right" }}
+                variant="contained"
+                color="secondary" 
+                onClick={() => navigate(`/users`)}
+            >
+                 <ArrowBackIcon />
+                بازگشت
             </Button>
         </Box>
     </Container >)

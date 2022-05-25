@@ -14,6 +14,10 @@ import { GET_GROUPS } from './gql/query';
 import { useMutation, useQuery } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
 import { Grid } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import {
+    useNavigate
+} from "react-router-dom";
 interface GroupData {
     id: number;
     persian_name: string;
@@ -35,6 +39,7 @@ const UersCreateScreen = () => {
     const [group_id, setGroupId] = useState<string>("");
     const [groups, setGroups] = useState<GroupData[]>([]);
     const [error, setError] = useState<ErrorData>({});
+    const navigate = useNavigate();
     const [createUser] = useMutation(CREATE_USER);
     useQuery(GET_GROUPS, {
         variables: {
@@ -108,7 +113,7 @@ const UersCreateScreen = () => {
         setError(result);
         return out;
     }
-    return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <h1>ایجاد کاربر جدید</h1>
 
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
@@ -189,9 +194,20 @@ const UersCreateScreen = () => {
             </Grid>
         </Grid>
         <Box mt={2}>
-            <Button variant="contained"
+            <Button 
+                variant="contained"
+                sx={{ float: "left" }}
                 startIcon={<AddCircleIcon />} color="primary" onClick={createUserHandler}>
                 ایجاد کاربر
+            </Button>
+            <Button
+                sx={{ float: "right" }}
+                variant="contained"
+                color="secondary" 
+                onClick={() => navigate(`/users`)}
+            >
+                 <ArrowBackIcon />
+                بازگشت
             </Button>
         </Box>
     </Container >)

@@ -112,14 +112,14 @@ const UersScreen = () => {
         });
     };
     if (!users || users.length === 0) {
-        return <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Skeleton width="100%" height={100} />
             <Skeleton variant="rectangular" width="100%" height={300} />
         </Container>
             ;
     }
 
-    return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Typography variant="h4" color="InfoText" >
             مدیریت کاربران
         </Typography>

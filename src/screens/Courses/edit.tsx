@@ -21,7 +21,8 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { lessonsObject, typesObject, educationLevelsObject } from '../../constants';
 import {
     useNavigate
-} from "react-router-dom"
+} from "react-router-dom";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 
 interface ErrorData {
@@ -48,7 +49,7 @@ const CoursesEditScreen = () => {
     const [name, setName] = useState<string>("");
     const [educationLevel, setEducationLevel] = useState<string>("");
     const [yearId, setYearId] = useState<string>("");
-    const [teacherId, setTeacherId] = useState<string>("1");
+    const [teacherId, setTeacherId] = useState<string>("");
     const [lesson, setLesson] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
@@ -168,7 +169,7 @@ const CoursesEditScreen = () => {
         return out;
     }
     const navigate = useNavigate();
-    return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <h1>ویرایش کلاس</h1>
 
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
@@ -326,6 +327,7 @@ const CoursesEditScreen = () => {
                 onClick={() => navigate(`/courses`)}
                 disabled={loading}
             >
+                 <ArrowBackIcon />
                 بازگشت
             </Button>
         </Box>

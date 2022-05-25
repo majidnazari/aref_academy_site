@@ -94,7 +94,7 @@ const YearsEditScreen = () => {
         return out;
     }
 
-    return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <h1>ویرایش حساب کاربری</h1>
 
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >

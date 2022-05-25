@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 
 const DashboardScreen = () => {
-    return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Grid container spacing={1}>
             {/* Chart */}
             <Grid item xs={12} md={8} lg={9}>

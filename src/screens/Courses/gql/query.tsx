@@ -26,6 +26,7 @@ export const GET_COURSES = gql`
             last_name
           }
           education_level
+          financial_status
         }
         paginatorInfo{
           count

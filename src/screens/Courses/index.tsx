@@ -25,6 +25,8 @@ import {
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 import { typesObject, lessonsObject, educationLevelsObject } from '../../constants';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import CheckIcon from '@mui/icons-material/Check';
 
 interface CourseData {
     id: number;
@@ -43,6 +45,7 @@ interface CourseData {
     lesson: string;
     type: string;
     education_level: string;
+    financial_status: string;
     created_at: string;
     updated_at: string;
     deleted_at: string;
@@ -133,14 +136,14 @@ const CoursesScreen = () => {
         });
     };
     if (!courses) {
-        return <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Skeleton width="100%" height={100} />
             <Skeleton variant="rectangular" width="100%" height={300} />
         </Container>
             ;
     }
     if (courses.length === 0) {
-        return <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Box
                 display="flex"
                 justifyContent="flex-end"
@@ -160,7 +163,7 @@ const CoursesScreen = () => {
         </Container>
     }
 
-    return (<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Box
             display="flex"
             justifyContent="flex-end"
@@ -186,6 +189,7 @@ const CoursesScreen = () => {
                         <StyledTableCell align="left">رشته</StyledTableCell>
                         <StyledTableCell align="left">نوع</StyledTableCell>
                         <StyledTableCell align="left">مقطع</StyledTableCell>
+                        <StyledTableCell align="left">تایید حسابداری</StyledTableCell>
                         <StyledTableCell align="left">جلسات</StyledTableCell>
                         <StyledTableCell align="left">ویرایش</StyledTableCell>
                         <StyledTableCell align="left">حذف</StyledTableCell>
@@ -205,16 +209,21 @@ const CoursesScreen = () => {
                             <StyledTableCell align="left">{lessonsObject[element.lesson]}</StyledTableCell>
                             <StyledTableCell align="left">{typesObject[element.type]}</StyledTableCell>
                             <StyledTableCell align="left">{educationLevelsObject[element.education_level]}</StyledTableCell>
+                            <StyledTableCell align="center">
+                                {element.financial_status === 'approved' ?
+                                    (<CheckIcon color="success" />) : (<ReportProblemIcon color="disabled" />)
+                                }
+                            </StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {
-                                    //navigate(`/courses/edit/${element.id}`);
+                                    navigate(`/courses/${element.id}/sessions`);
                                 }}
                                 variant="contained"
                                 // startIcon={<EditIcon />}
                                 color="primary"
                             >
-                               جلسات
+                                جلسات
                             </Button></StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"
