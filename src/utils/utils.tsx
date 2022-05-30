@@ -12,3 +12,11 @@ export const generateErrorTextMessage = (body: any): string => {
     }
     return '';
 }
+
+export const setDarktheme = (isDarkTheme: string) => {
+    localStorage.setItem('isDarkTheme', isDarkTheme);
+}
+
+export const getDarktheme = () => {
+    return localStorage.getItem('isDarkTheme') === 'true' ? true : false;
+}

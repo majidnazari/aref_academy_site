@@ -4,10 +4,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import ListItemText from '@mui/material/ListItemText';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
-import { dayOfWeeksObject } from '../../../constants/index';
 import AdapterJalali from '@date-io/date-fns-jalali';
 import TextField from '@mui/material/TextField';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -16,48 +13,25 @@ import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import { Button } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
 import moment from 'moment';
-import { CREATE_MULTI_SESSIONS } from '../gql/mutation';
+import { CREATE_SINGLE_SESSION } from '../gql/mutation';
 import { useMutation } from '@apollo/client';
 import FormHelperText from '@mui/material/FormHelperText';
 import { showSuccess } from "../../../utils/swlAlert";
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
-
-const daysOfWeek = [
-    'شنبه',
-    'یکشنبه',
-    'دوشنبه',
-    'سه شنبه',
-    'چهارشنبه',
-    'پنج شنبه',
-    'جمعه'
-];
 interface IProps {
     courseId: number;
     callBack: () => void;
 }
 
 interface ErrorData {
-    days?: string;
     startDate?: string;
     endDate?: string;
     startTime?: string;
     endTime?: string;
 }
 
-const CreateMultiSessions = ({ courseId, callBack }: IProps) => {
-    const [days, setDays] = useState<string[]>([]);
+const CreateSingleSession = ({ courseId, callBack }: IProps) => {
     const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
     const [startTime, setStartTime] = useState<Date | null>(null);
     const [endTime, setEndtTime] = useState<Date | null>(null);
     const [price, setPrice] = useState<string>("0");
@@ -65,43 +39,28 @@ const CreateMultiSessions = ({ courseId, callBack }: IProps) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
 
+    const [insertSingleSession] = useMutation(CREATE_SINGLE_SESSION);
 
-    const [insertMultiCourse] = useMutation(CREATE_MULTI_SESSIONS);
-
-    const handleChange = (event: SelectChangeEvent<typeof days>) => {
-        const {
-            target: { value },
-        } = event;
-        setDays(
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    };
     const handleChangeSpecial = (event: SelectChangeEvent<string>) => {
         setSpecial(event.target.value);
     };
 
-    const insertMultiSessions = () => {
+    const insertSession = () => {
         if (!validation()) return;
-        setLoading(true);
-        const daysTmp = [];
-        for (let i = 0; i < days.length; i++) {
-            daysTmp.push(dayOfWeeksObject[days[i]]);
-        }
+        setLoading(true);       
         const variables = {
             course_id: courseId,
-            days: daysTmp,
             start_date: moment(startDate).format("YYYY-MM-DD"),
-            end_date: moment(endDate).format("YYYY-MM-DD"),
             start_time: moment(startTime).format("HH:mm"),
             end_time: moment(endTime).format("HH:mm"),
             price: Number(price.replace(/,/g, '')),
             special: special === '1'
         };
         console.log({ variables });
-        insertMultiCourse({ variables })
+        insertSingleSession({ variables })
             .then(() => {
                 setLoading(false);
-                showSuccess("جلسات جدید با موفقیت ایجاد شد");
+                showSuccess("جلسه جدید با موفقیت ایجاد شد");
                 callBack();
             })
             .finally(() => {
@@ -113,16 +72,8 @@ const CreateMultiSessions = ({ courseId, callBack }: IProps) => {
         let out = true;
         let result: ErrorData = {};
         setError({});
-        if (days.length === 0) {
-            result = { ...result, days: "لطفا روز های دوره را انتخاب کنید" };
-            out = false;
-        }
         if (!startDate) {
             result = { ...result, startDate: "لطفا تاریخ شروع را انتخاب کنید" };
-            out = false;
-        }
-        if (!endDate) {
-            result = { ...result, endDate: "لطفا تاریخ پایان را انتخاب کنید" };
             out = false;
         }
         if (!startTime) {
@@ -140,29 +91,6 @@ const CreateMultiSessions = ({ courseId, callBack }: IProps) => {
     return (
         <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4} xl={4}  >
-                <FormControl sx={{ width: "100%" }}>
-                    <InputLabel id="demo-multiple-checkbox-label">انتخاب روزهای هفته</InputLabel>
-                    <Select
-                        labelId="demo-multiple-checkbox-label"
-                        id="demo-multiple-checkbox"
-                        multiple
-                        value={days}
-                        onChange={handleChange}
-                        input={<OutlinedInput label="انتخاب روزهای هفته" />}
-                        renderValue={(selected) => selected.join(', ')}
-                        MenuProps={MenuProps}
-                    >
-                        {daysOfWeek.map((name) => (
-                            <MenuItem key={name} value={name}>
-                                <Checkbox checked={days.indexOf(name) > -1} />
-                                <ListItemText primary={name} />
-                            </MenuItem>
-                        ))}
-                    </Select>
-                    {error.days ? <FormHelperText error >{error.days}</FormHelperText> : ""}
-                </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} xl={4}  >
                 <LocalizationProvider
                     dateAdapter={AdapterJalali}
                 >
@@ -179,22 +107,6 @@ const CreateMultiSessions = ({ courseId, callBack }: IProps) => {
                 {error.startDate ? <FormHelperText error >{error.startDate}</FormHelperText> : ""}
             </Grid>
             <Grid item xs={12} sm={6} md={4} xl={4}  >
-                <LocalizationProvider
-                    dateAdapter={AdapterJalali}
-                >
-                    <DatePicker
-                        label="تاریخ پایان"
-                        value={endDate}
-                        onChange={(newValue) => {
-                            setEndDate(newValue);
-                        }}
-                        renderInput={(params) => <TextField {...params} style={{ width: "100%" }} />}
-                        mask="____/__/__"
-                    />
-                </LocalizationProvider>
-                {error.endDate ? <FormHelperText error >{error.endDate}</FormHelperText> : ""}
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} xl={3}  >
                 <LocalizationProvider dateAdapter={AdapterJalali}>
                     <MobileTimePicker
                         label="ساعت شروع"
@@ -207,7 +119,7 @@ const CreateMultiSessions = ({ courseId, callBack }: IProps) => {
                 </LocalizationProvider>
                 {error.startTime ? <FormHelperText error >{error.startTime}</FormHelperText> : ""}
             </Grid>
-            <Grid item xs={12} sm={6} md={4} xl={3}  >
+            <Grid item xs={12} sm={6} md={4} xl={4}  >
                 <LocalizationProvider dateAdapter={AdapterJalali}>
                     <MobileTimePicker
                         label="ساعت پایان"
@@ -244,7 +156,6 @@ const CreateMultiSessions = ({ courseId, callBack }: IProps) => {
                         onChange={handleChangeSpecial}
                         input={<OutlinedInput label="فوق العاده" />}
                     >
-
                         <MenuItem value="0">
                             خیر
                         </MenuItem>
@@ -258,7 +169,7 @@ const CreateMultiSessions = ({ courseId, callBack }: IProps) => {
             <Grid item xs={12} sm={12} md={12} xl={12}  >
                 <Button
                     onClick={() => {
-                        insertMultiSessions();
+                        insertSession();
                     }}
                     variant="contained"
                     disabled={loading}
@@ -270,4 +181,4 @@ const CreateMultiSessions = ({ courseId, callBack }: IProps) => {
         </Grid>
     )
 }
-export default CreateMultiSessions;
+export default CreateSingleSession;

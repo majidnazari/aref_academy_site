@@ -1,5 +1,5 @@
 
-import * as React from 'react';
+import React, { useState } from 'react';
 import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
 import { faIR } from '@mui/material/locale';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,6 +13,8 @@ import rtlPlugin from 'stylis-plugin-rtl';
 import { prefixer } from 'stylis';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
+import { setDarktheme, getDarktheme } from '../utils/utils';
+
 
 // Create rtl cache
 const cacheRtl = createCache({
@@ -20,30 +22,38 @@ const cacheRtl = createCache({
     stylisPlugins: [prefixer, rtlPlugin],
 });
 
-let theme = createTheme({
-    typography: {
-        fontFamily: [
-            '-apple-system',
-            'BlinkMacSystemFont',
-            'VazirFarsiNumbers',
-        ].join(','),
-    },
-    direction: 'rtl',
-    palette: {
-        mode: 'light',
-    },
-}, faIR);
-theme = responsiveFontSizes(theme);
-
 // interface childProps {
 //     children: any;
 // }
 
 const Main = () => {
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = useState(true);
+    const [isDarkTheme, setIsDarkTheme] = useState(getDarktheme());
+
     const toggleDrawer = () => {
         setOpen(!open);
     };
+
+    const setDarkthemeForAll = (isDarkTheme: boolean) => {
+        setIsDarkTheme(isDarkTheme);
+        setDarktheme(isDarkTheme ? 'true' : 'false');
+    }
+
+    let theme = createTheme({
+        typography: {
+            fontFamily: [
+                '-apple-system',
+                'BlinkMacSystemFont',
+                'VazirFarsiNumbers',
+            ].join(','),
+        },
+        direction: 'rtl',
+        palette: {
+            mode: isDarkTheme ? 'dark' : 'light',
+        },
+    }, faIR);
+    theme = responsiveFontSizes(theme);
+
 
     return (
         <CacheProvider value={cacheRtl}>
@@ -51,7 +61,12 @@ const Main = () => {
                 <Box sx={{ display: 'flex' }}>
                     <CssBaseline />
 
-                    <Topbar open={open} toggleDrawer={toggleDrawer} />
+                    <Topbar
+                        open={open}
+                        toggleDrawer={toggleDrawer}
+                        setDarktheme={setDarkthemeForAll}
+                        isDarkTheme={isDarkTheme}
+                    />
 
                     <Sidebar open={open} toggleDrawer={toggleDrawer} />
 

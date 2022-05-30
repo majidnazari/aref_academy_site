@@ -1,5 +1,5 @@
+import { useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
-
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -7,7 +7,8 @@ import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 
 const drawerWidth: number = 240;
 
@@ -36,9 +37,11 @@ const AppBar = styled(MuiAppBar, {
 interface TopbarProps {
     toggleDrawer: Function;
     open: boolean;
+    isDarkTheme: boolean;
+    setDarktheme: (inp: boolean) => void;
 }
 
-const Topbar = ({ toggleDrawer, open = true }: TopbarProps) => {
+const Topbar = ({ toggleDrawer, open = true, isDarkTheme = false, setDarktheme }: TopbarProps) => {
     return (<AppBar position="absolute" open={open}>
         <Toolbar
             sx={{
@@ -71,8 +74,22 @@ const Topbar = ({ toggleDrawer, open = true }: TopbarProps) => {
                     <NotificationsIcon />
                 </Badge>
             </IconButton>
+            {isDarkTheme ? <IconButton
+                onClick={() => {
+                    setDarktheme(false);
+                }}
+            >
+                <LightModeIcon sx={{ color: "#fff" }} />
+            </IconButton> :
+                <IconButton
+                    onClick={() => {
+                        setDarktheme(true);
+                    }}>
+                    <DarkModeIcon sx={{ color: "#fff" }} />
+                </IconButton>}
+
         </Toolbar>
-    </AppBar>)
+    </AppBar >)
 }
 
 export default Topbar;

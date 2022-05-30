@@ -56,3 +56,65 @@ mutation EDIT_COURSE(
         }
     }
 `;
+
+export const CREATE_MULTI_SESSIONS = gql`
+    mutation CREATE_MULTI_SESSIONS(
+            $course_id: Int!
+            $days: [String]
+            $name: String
+            $price: Float
+            $special: Boolean
+            $start_date: String!
+            $end_date: String!
+            $start_time: String!
+            $end_time: String!
+        )
+        {
+            createCourseSessionByDuringDate(input:{
+                course_id: $course_id
+                days: $days
+                name: $name
+                price: $price
+                special: $special
+                start_date: $start_date
+                end_date: $end_date
+                start_time: $start_time
+                end_time: $end_time
+            }){
+                id
+            }
+        }
+`;
+
+export const CREATE_SINGLE_SESSION = gql`
+    mutation CREATE_SINGLE_SESSION(
+            $course_id: Int!
+            $name: String
+            $price: Float
+            $special: Boolean
+            $start_date: String!
+            $start_time: String!
+            $end_time: String!
+        )
+        {
+            createCourseSessionByDuringDate(input:{
+                course_id: $course_id
+                name: $name
+                price: $price
+                special: $special
+                start_date: $start_date
+                start_time: $start_time
+                end_time: $end_time
+            }){
+                id
+            }
+        }
+`;
+
+export const DELETE_SESSION = gql`
+    mutation DELETE_SESSION ($id:ID!) {  
+        deleteCourseSession(id:$id){
+            id
+        }
+    }  
+`;

@@ -5,12 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 import AppContextProvider from './components/AppContext';
 import "./assets/index.css";
-
-import {
-
-  ApolloProvider,
-
-} from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import apolloClient from "./services/apollo";
 
 createRoot.render(

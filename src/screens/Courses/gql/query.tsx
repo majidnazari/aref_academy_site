@@ -55,6 +55,10 @@ export const GET_A_COURSE = gql`
           lesson
           type
           education_level
+          teacher{
+            first_name
+            last_name
+          }
         }
     }  
 `;
@@ -102,3 +106,65 @@ export const GET_USERS = gql`
       }
     }  
 `;
+
+export const GET_COURSE_SESSIONS = gql`
+    query GET_COURSE_SESSIONS(
+      $name: String
+      $course_id: Int
+      $date_after: Date
+      $date_befor: Date
+      $start_time_after: String
+      $start_time_befor: Date
+      $end_time_after: String
+      $end_time_befor: String
+      $orderBy: [OrderByClause!]
+      $first: Int!
+      $page: Int
+    ){
+      getCourseSessions(
+        name: $name
+        course_id: $course_id
+        date_after: $date_after
+        date_befor: $date_befor
+        start_time_after: $start_time_after
+        start_time_befor: $start_time_befor
+        end_time_after: $end_time_after
+        end_time_befor: $end_time_befor
+        orderBy: $orderBy
+        first: $first
+        page: $page
+      ){
+        data{
+          id
+          user_id_creator
+          course_id
+          name
+          start_date
+          start_time
+          end_time
+          user{
+            first_name
+            last_name
+          }
+          course{
+            name
+            teacher{
+              first_name
+              last_name
+            }
+            lesson
+          }
+        }
+        paginatorInfo{
+          count
+          currentPage
+          firstItem
+          hasMorePages
+          lastItem
+          lastPage
+          perPage
+          total
+        }
+      }
+    }
+    `;

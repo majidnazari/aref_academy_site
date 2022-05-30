@@ -51,6 +51,25 @@ interface CourseData {
     deleted_at: string;
 }
 
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+        fontSize: 14,
+    },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+        backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+        border: 0,
+    },
+}));
 const CoursesScreen = () => {
     const navigate = useNavigate();
     const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
@@ -82,26 +101,6 @@ const CoursesScreen = () => {
     });
 
     const [delCourse] = useMutation(DELETE_COURSE)
-
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-        [`&.${tableCellClasses.head}`]: {
-            backgroundColor: theme.palette.common.black,
-            color: theme.palette.common.white,
-        },
-        [`&.${tableCellClasses.body}`]: {
-            fontSize: 14,
-        },
-    }));
-
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-        '&:nth-of-type(odd)': {
-            backgroundColor: theme.palette.action.hover,
-        },
-        // hide last border
-        '&:last-child td, &:last-child th': {
-            border: 0,
-        },
-    }));
 
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setCourses([]);
@@ -199,7 +198,7 @@ const CoursesScreen = () => {
                     {courses.map((element: CourseData, index: number) => (
                         <StyledTableRow key={element.id}>
                             <StyledTableCell align="left">
-                                {index + 1}
+                                {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}
                             </StyledTableCell>
                             <StyledTableCell align="left">{element.name}</StyledTableCell>
                             <StyledTableCell align="left">{element.year.name}</StyledTableCell>
