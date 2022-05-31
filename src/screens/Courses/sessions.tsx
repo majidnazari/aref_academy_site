@@ -54,18 +54,6 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
-interface CourseData {
-    education_level: string;
-    year_id: number;
-    teacher: {
-        first_name: string;
-        last_name: string;
-    };
-    name: string;
-    lesson: string;
-    type: string;
-}
-
 const CourseSessionsScreen = () => {
     const [expanded, setExpanded] = useState<string | false>('panel1');
     const [listSessionsKey, setListSessionsKey] = useState<number>(0);

@@ -23,7 +23,7 @@ import {
     useNavigate
 } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
+import Typography from '@mui/material/Typography';
 
 interface ErrorData {
     name?: string;
@@ -170,7 +170,9 @@ const CoursesEditScreen = () => {
     }
     const navigate = useNavigate();
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-        <h1>ویرایش کلاس</h1>
+        <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 3 }} >
+            ویرایش کلاس
+        </Typography>
 
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
             <Grid item xs={12} md={4} lg={4} >
@@ -323,11 +325,11 @@ const CoursesEditScreen = () => {
             <Button
                 sx={{ float: "right" }}
                 variant="contained"
-                color="secondary" 
+                color="secondary"
                 onClick={() => navigate(`/courses`)}
                 disabled={loading}
             >
-                 <ArrowBackIcon />
+                <ArrowBackIcon />
                 بازگشت
             </Button>
         </Box>

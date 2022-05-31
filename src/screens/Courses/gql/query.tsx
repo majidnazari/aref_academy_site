@@ -142,6 +142,7 @@ export const GET_COURSE_SESSIONS = gql`
           start_date
           start_time
           end_time
+          special
           user{
             first_name
             last_name
@@ -167,4 +168,20 @@ export const GET_COURSE_SESSIONS = gql`
         }
       }
     }
-    `;
+`;
+
+export const GET_A_COURSE_SESSION = gql`
+    query GET_A_COURSE_SESSION(
+        $id: ID!
+    ){
+      getCourseSession(id:$id){
+        id
+        name
+        price
+        special
+        start_date
+        start_time
+        end_time
+      }
+    }
+`;

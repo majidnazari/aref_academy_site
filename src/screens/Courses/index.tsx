@@ -27,6 +27,7 @@ import { showSuccess, showConfirm } from "../../utils/swlAlert";
 import { typesObject, lessonsObject, educationLevelsObject } from '../../constants';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import CheckIcon from '@mui/icons-material/Check';
+import Typography from '@mui/material/Typography';
 
 interface CourseData {
     id: number;
@@ -163,6 +164,9 @@ const CoursesScreen = () => {
     }
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+        <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
+            مدیریت کلاس‌ها
+        </Typography>
         <Box
             display="flex"
             justifyContent="flex-end"

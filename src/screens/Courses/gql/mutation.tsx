@@ -62,7 +62,7 @@ export const CREATE_MULTI_SESSIONS = gql`
             $course_id: Int!
             $days: [String]
             $name: String
-            $price: Float
+            $price: Int
             $special: Boolean
             $start_date: String!
             $end_date: String!
@@ -90,14 +90,41 @@ export const CREATE_SINGLE_SESSION = gql`
     mutation CREATE_SINGLE_SESSION(
             $course_id: Int!
             $name: String
-            $price: Float
+            $price: Int
             $special: Boolean
             $start_date: String!
             $start_time: String!
             $end_time: String!
         )
         {
-            createCourseSessionByDuringDate(input:{
+            createCourseSession(input:{
+                course_id: $course_id
+                name: $name
+                price: $price
+                special: $special
+                start_date: $start_date
+                start_time: $start_time
+                end_time: $end_time
+            }){
+                id
+            }
+        }
+`;
+
+export const EDIT_SINGLE_SESSION = gql`
+    mutation EDIT_SINGLE_SESSION(
+            $id: ID!
+            $course_id: Int
+            $name: String
+            $price: Int
+            $special: Boolean
+            $start_date: Date
+            $start_time: String
+            $end_time: String
+        )
+        {
+            updateCourseSession(input:{
+                id:$id
                 course_id: $course_id
                 name: $name
                 price: $price

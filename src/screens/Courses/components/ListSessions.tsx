@@ -20,7 +20,7 @@ import moment from 'moment-jalaali';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { showSuccess, showConfirm } from "../../../utils/swlAlert";
-
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
     courseId: number;
@@ -98,6 +98,7 @@ const ListSessions = ({ courseId }: IProps) => {
     });
 
     const [delSession] = useMutation(DELETE_SESSION);
+    const navigate = useNavigate();
 
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setSessions([]);
@@ -143,88 +144,90 @@ const ListSessions = ({ courseId }: IProps) => {
         display: 'flex',
         justifyContent: 'center',
     }} ><CircularProgress size={40} color="primary" /></Typography>) :
-        <TableContainer component={Paper}>
-            <Table aria-label="customized table">
-                <TableHead>
-                    <TableRow>
-                        <StyledTableCell align="left">ردیف</StyledTableCell>
-                        <StyledTableCell align="left">شروع</StyledTableCell>
-                        <StyledTableCell align="left">ساعت شروع	</StyledTableCell>
-                        <StyledTableCell align="left">ساعت پایان</StyledTableCell>
-                        <StyledTableCell align="left">فوق العاده</StyledTableCell>
-                        <StyledTableCell align="left"> نام</StyledTableCell>
-                        <StyledTableCell align="left">دبیر</StyledTableCell>
-                        <StyledTableCell align="left">کاربر ثبت کننده</StyledTableCell>
-                        <StyledTableCell align="left">شناسه</StyledTableCell>
+        <>
+            <TableContainer component={Paper}>
+                <Table aria-label="customized table">
+                    <TableHead>
+                        <TableRow>
+                            <StyledTableCell align="left">ردیف</StyledTableCell>
+                            <StyledTableCell align="left">شروع</StyledTableCell>
+                            <StyledTableCell align="left">ساعت شروع	</StyledTableCell>
+                            <StyledTableCell align="left">ساعت پایان</StyledTableCell>
+                            <StyledTableCell align="left">فوق العاده</StyledTableCell>
+                            <StyledTableCell align="left"> نام</StyledTableCell>
+                            <StyledTableCell align="left">دبیر</StyledTableCell>
+                            <StyledTableCell align="left">کاربر ثبت کننده</StyledTableCell>
+                            <StyledTableCell align="left">شناسه</StyledTableCell>
 
-                        <StyledTableCell align="left">ویرایش</StyledTableCell>
-                        <StyledTableCell align="left">حذف</StyledTableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {sessions.map((element: SessionData, index: number) => (
-                        <StyledTableRow key={element.id}>
-                            <StyledTableCell align="left">
-                                {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}
-                            </StyledTableCell>
+                            <StyledTableCell align="left">ویرایش</StyledTableCell>
+                            <StyledTableCell align="left">حذف</StyledTableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {sessions.map((element: SessionData, index: number) => (
+                            <StyledTableRow key={element.id}>
+                                <StyledTableCell align="left">
+                                    {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}
+                                </StyledTableCell>
 
-                            <StyledTableCell align="left">
-                                {moment(element.start_date).format('jYYYY/jMM/jDD')}
-                            </StyledTableCell>
-                            <StyledTableCell align="left">
-                                {moment(element.start_time, "HH:mm:ss").format('HH:mm')}
-                            </StyledTableCell>
-                            <StyledTableCell align="left">
-                                {moment(element.end_time, "HH:mm:ss").format('HH:mm')}
-                            </StyledTableCell>
-                            <StyledTableCell align="left">
-                                {element.special ? 'بله' : 'خیر'}
-                            </StyledTableCell>
-                            <StyledTableCell align="left">{element.name !== '' ? element.name : '---'}</StyledTableCell>
-                            <StyledTableCell align="left">{element.course.teacher.first_name} {element.course.teacher.last_name}</StyledTableCell>
-                            <StyledTableCell align="left">{element.user.first_name} {element.user.last_name}</StyledTableCell>
+                                <StyledTableCell align="left">
+                                    {moment(element.start_date).format('jYYYY/jMM/jDD')}
+                                </StyledTableCell>
+                                <StyledTableCell align="left">
+                                    {moment(element.start_time, "HH:mm:ss").format('HH:mm')}
+                                </StyledTableCell>
+                                <StyledTableCell align="left">
+                                    {moment(element.end_time, "HH:mm:ss").format('HH:mm')}
+                                </StyledTableCell>
+                                <StyledTableCell align="left">
+                                    {element.special ? 'بله' : 'خیر'}
+                                </StyledTableCell>
+                                <StyledTableCell align="left">{element.name !== '' ? element.name : '---'}</StyledTableCell>
+                                <StyledTableCell align="left">{element.course.teacher.first_name} {element.course.teacher.last_name}</StyledTableCell>
+                                <StyledTableCell align="left">{element.user.first_name} {element.user.last_name}</StyledTableCell>
 
-                            <StyledTableCell align="left">
-                                {element.id}
-                            </StyledTableCell>
+                                <StyledTableCell align="left">
+                                    {element.id}
+                                </StyledTableCell>
 
-                            <StyledTableCell align="left"><Button
-                                size="small"
-                                onClick={() => {
-                                    //navigate(`/courses/edit/${element.id}`);
-                                }}
-                                variant="contained"
-                                startIcon={<EditIcon />}
-                                color="success"
-                            >
-                                ویرایش
-                            </Button></StyledTableCell>
-                            <StyledTableCell align="left">
-                                <Button
+                                <StyledTableCell align="left"><Button
                                     size="small"
-                                    onClick={
-                                        () => deleteSession(element.id)
-                                    }
+                                    onClick={() => {
+                                        navigate(`/courses/${courseId}/sessions/${element.id}`);
+                                    }}
                                     variant="contained"
-                                    startIcon={<DeleteIcon />}
-                                    color="error"
+                                    startIcon={<EditIcon />}
+                                    color="success"
                                 >
-                                    حذف
-                                </Button>
-                            </StyledTableCell>
+                                    ویرایش
+                                </Button></StyledTableCell>
+                                <StyledTableCell align="left">
+                                    <Button
+                                        size="small"
+                                        onClick={
+                                            () => deleteSession(element.id)
+                                        }
+                                        variant="contained"
+                                        startIcon={<DeleteIcon />}
+                                        color="error"
+                                    >
+                                        حذف
+                                    </Button>
+                                </StyledTableCell>
 
-                        </StyledTableRow>
-                    ))}
-                </TableBody>
-            </Table>
-            <Stack spacing={5} sx={{ my: 2 }}>
-                <Pagination
-                    count={pageInfo.lastPage}
-                    page={pageInfo.currentPage}
-                    onChange={handleChange}
-                />
-            </Stack>
-        </TableContainer>
+                            </StyledTableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+                <Stack spacing={5} sx={{ my: 2 }}>
+                    <Pagination
+                        count={pageInfo.lastPage}
+                        page={pageInfo.currentPage}
+                        onChange={handleChange}
+                    />
+                </Stack>
+            </TableContainer>
+        </>
     );
 }
 

@@ -114,7 +114,7 @@ const UersCreateScreen = () => {
         return out;
     }
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-        <h1>ایجاد کاربر جدید</h1>
+        <h4>ایجاد کاربر جدید</h4>
 
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
             <Grid item xs={12} md={4} lg={4} >

@@ -13,3 +13,8 @@ export const logout = () => {
     removeUserData();
 }
 
+export const getUserData = () => {
+    const user = localStorage.getItem('user');
+    return JSON.parse(user || '{}');
+}
+

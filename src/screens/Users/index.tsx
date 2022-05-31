@@ -120,7 +120,7 @@ const UersScreen = () => {
     }
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" color="InfoText" >
+        <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 3 }} >
             مدیریت کاربران
         </Typography>
         <Box

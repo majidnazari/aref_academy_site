@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { MainListItems, SecondaryListItems } from './listItems';
 import Typography from '@mui/material/Typography';
+import { getUserData } from '../utils/user'
 
 const drawerWidth: number = 240;
 
@@ -40,7 +41,10 @@ interface SidebarProps {
     toggleDrawer: Function;
     open: boolean;
 }
+
+
 const Sidebar = ({ toggleDrawer, open = true }: SidebarProps) => {
+    const userInfo = getUserData();
     return (<Drawer variant="permanent" open={open}>
         <Toolbar
             sx={{
@@ -50,11 +54,12 @@ const Sidebar = ({ toggleDrawer, open = true }: SidebarProps) => {
                 px: [1],
             }}
         >
+
             <Typography component="h3" sx={{
-                pl: [7],
-                color: 'info.main'
+                color: 'info.main',
+                pl: [7]
             }} >
-                نام کاربری
+                {userInfo.first_name} {userInfo.last_name}
             </Typography>
 
             <IconButton onClick={() => toggleDrawer()}>

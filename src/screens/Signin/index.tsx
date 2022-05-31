@@ -19,7 +19,7 @@ import rtlPlugin from 'stylis-plugin-rtl';
 import { prefixer } from 'stylis';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
-import { signin } from '../../services/apis/auth';
+import { saveUserData } from '../../utils/user';
 import { LOGIN_MUTATION } from './gql';
 import { useMutation } from '@apollo/client';
 //import MessageDialogs from '../../components/MessageDialogs';
@@ -72,8 +72,11 @@ const SigninScreen = () => {
     const loginHandler = async () => {
         setLoading(true);
         login().then(res => {
-            authContext.login(true);
+            saveUserData(res.data.login.user);
+            console.log(res.data.login.user.groups[0].menus);
             setToken(res.data.login.access_token);
+            authContext.login(true);
+
         }).finally(() => {
             setLoading(false);
         });
@@ -83,7 +86,8 @@ const SigninScreen = () => {
         variables: {
             username: email,
             password: password
-        }
+        },
+        fetchPolicy: "no-cache"
     });
 
     return (
