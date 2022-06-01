@@ -274,7 +274,7 @@ const CoursesCreateScreen = () => {
         </Grid>
         <Box mt={2}>
             <Button
-            sx={{ float: "left" }}
+                sx={{ float: "left" }}
                 variant="contained"
                 startIcon={<AddCircleIcon />} color="primary" onClick={createCourseHandler}
                 disabled={loading}
@@ -285,11 +285,11 @@ const CoursesCreateScreen = () => {
             <Button
                 sx={{ float: "right" }}
                 variant="contained"
-                color="secondary" 
+                color="secondary"
                 onClick={() => navigate(`/courses`)}
                 disabled={loading}
             >
-                 <ArrowBackIcon />
+                <ArrowBackIcon />
                 بازگشت
             </Button>
         </Box>

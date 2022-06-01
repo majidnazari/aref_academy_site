@@ -15,6 +15,21 @@ import CoursesCreateScreen from '../screens/Courses/create';
 import CourseSessionsScreen from '../screens/Courses/sessions';
 import CourseSessionsEditScreen from '../screens/Courses/editSession';
 
+import FaultsScreen from '../screens/Faults';
+import FaultsEditScreen from '../screens/Faults/edit';
+import FaultsCreateScreen from '../screens/Faults/create';
+
+import BranchesScreen from '../screens/Branches';
+import BranchesEditScreen from '../screens/Branches/edit';
+import BranchesCreateScreen from '../screens/Branches/create';
+import BranchesClassRoomsScreen from '../screens/Branches/classRooms';
+import BranchesClassRoomEditScreen from '../screens/Branches/classRooms/edit';
+import BranchesClassRoomCreateScreen from '../screens/Branches/classRooms/create';
+
+import StudentsScreen from '../screens/Students';
+import StudentsEditScreen from '../screens/Students/edit';
+import StudentsCreateScreen from '../screens/Students/create';
+
 import SigninScreen from '../screens/Signin';
 import SignoutScreen from '../screens/Signout';
 import Main from '../Layout/main';
@@ -58,6 +73,28 @@ const MainRouter = () => {
                             <Route path=":courseId/sessions/:sessionId" element={<CourseSessionsEditScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
+                        <Route path="faults" >
+                            <Route path="" element={<FaultsScreen />} />
+                            <Route path="edit/:faultId" element={<FaultsEditScreen />} />
+                            <Route path="create" element={<FaultsCreateScreen />} />
+                            <Route path="*" element={<NoMatch />} />
+                        </Route>
+                        <Route path="branches" >
+                            <Route path="" element={<BranchesScreen />} />
+                            <Route path="edit/:branchId" element={<BranchesEditScreen />} />
+                            <Route path="create" element={<BranchesCreateScreen />} />
+                            <Route path=":branchId/class-rooms" element={<BranchesClassRoomsScreen />} />
+                            <Route path=":branchId/class-rooms/:classRoomsId" element={<BranchesClassRoomEditScreen />} />
+                            <Route path=":branchId/class-rooms/create" element={<BranchesClassRoomCreateScreen />} />
+                            <Route path="*" element={<NoMatch />} />
+                        </Route>
+                        <Route path="students" >
+                            <Route path="" element={<StudentsScreen />} />
+                            <Route path="edit/:studentId" element={<StudentsEditScreen />} />
+                            <Route path="create" element={<StudentsCreateScreen />} />
+                            <Route path="*" element={<NoMatch />} />
+                        </Route>
+
                         <Route path="/signout" element={<SignoutScreen />} />
                         <Route path="*" element={<DashboardScreen />} />
                     </Route>
