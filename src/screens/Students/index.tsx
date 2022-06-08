@@ -25,7 +25,12 @@ import {
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 import moment from 'moment-jalaali';
-
+import Typography from '@mui/material/Typography';
+import PaymentsIcon from '@mui/icons-material/Payments';
+import ClassIcon from '@mui/icons-material/Class';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import SearchIcon from '@mui/icons-material/Search';
 
 interface FaultData {
     id: number;
@@ -37,8 +42,35 @@ interface FaultData {
     created_at: string;
 }
 
+interface StudentData {
+    id: number;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    mother_phone: string;
+    father_phone: string;
+    home_phone: string;
+    major: string;
+    egucation_level: string;
+    description: string;
+    parents_job_title: string;
+}
+
+interface SearchData {
+    first_name: string;
+    last_name: string;
+    phone: string;
+    egucation_level: string;
+}
 const FaultsScreen = () => {
     const navigate = useNavigate();
+    const [search, setSearch] = useState<SearchData>({
+        first_name: "",
+        last_name: "",
+        phone: "",
+        egucation_level: ""
+    }
+    );
     const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
         count: 0,
         currentPage: 1,
@@ -149,6 +181,9 @@ const FaultsScreen = () => {
     }
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+        <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
+            مدیریت دانش‌آموزان
+        </Typography>
         <Box
             display="flex"
             justifyContent="flex-end"
@@ -158,18 +193,71 @@ const FaultsScreen = () => {
                 variant="contained"
                 startIcon={<AddCircleIcon />}
                 sx={{ mb: 4 }}
-                onClick={() => navigate('/faults/create')} >
-                افزودن تخلف جدید
+                onClick={() => navigate('/students/create')} >
+                افزودن دانش‌آموز جدید
             </Button>
         </Box>
+        <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
+            <Grid item xs={12} md={3} lg={3} >
+                <TextField
+                    fullWidth
+                    label="نام"
+                    value={search.first_name}
+                    onChange={(e: any) => setSearch({ ...search, first_name: e.target.value })}
+                    variant="filled"
+                />
+            </Grid>
+            <Grid item xs={12} md={3} lg={3} >
+                <TextField
+                    fullWidth
+                    label="نام خانوادگی"
+                    value={search.last_name}
+                    onChange={(e: any) => setSearch({ ...search, first_name: e.target.value })}
+                    variant="filled"
+                />
+            </Grid>
+            <Grid item xs={12} md={3} lg={3} >
+                <TextField
+                    fullWidth
+                    label="تلفن"
+                    value={search.phone}
+                    onChange={(e: any) => setSearch({ ...search, first_name: e.target.value })}
+                    variant="filled"
+                />
+            </Grid>
+            <Grid item xs={12} md={3} lg={3} >
+                <Button
+                    sx={{ mt: 2 }}
+                    variant="contained"
+                    startIcon={<SearchIcon />}
+                    onClick={() => { }}
+                >
+                    جستجو
+                </Button>
+            </Grid>
+        </Grid>
         <TableContainer component={Paper}>
             <Table aria-label="customized table">
                 <TableHead>
                     <TableRow>
                         <StyledTableCell align="left">ردیف</StyledTableCell>
-                        <StyledTableCell align="left">توضیحات</StyledTableCell>
-                        <StyledTableCell align="left">کاربر ثبت کننده</StyledTableCell>
-                        <StyledTableCell align="left">تاریخ ثبت</StyledTableCell>
+                        <StyledTableCell align="left">
+                            نام
+                        </StyledTableCell>
+                        <StyledTableCell align="left">
+                            نام خانوادگی
+                        </StyledTableCell>
+                        <StyledTableCell align="left">
+                            مقطع
+                        </StyledTableCell>
+                        <StyledTableCell align="left">
+                            تلفن
+                        </StyledTableCell>
+                        <StyledTableCell align="left">
+                            کاربر ثبت کننده
+                        </StyledTableCell>
+                        <StyledTableCell align="left">سوابق مالی</StyledTableCell>
+                        <StyledTableCell align="left">کلاسها</StyledTableCell>
                         <StyledTableCell align="left">ویرایش</StyledTableCell>
                         <StyledTableCell align="left">حذف</StyledTableCell>
                     </TableRow>
@@ -181,6 +269,8 @@ const FaultsScreen = () => {
                                 {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}
                             </StyledTableCell>
                             <StyledTableCell align="left">{element.description}</StyledTableCell>
+                            <StyledTableCell align="left"></StyledTableCell>
+                            <StyledTableCell align="left"></StyledTableCell>
                             <StyledTableCell align="left">{element.user.first_name} {element.user.last_name}</StyledTableCell>
                             <StyledTableCell align="left">
                                 {moment(element.created_at).format("jYYYY/jMM/jDD")}
@@ -188,14 +278,30 @@ const FaultsScreen = () => {
 
                             <StyledTableCell align="left"><Button
                                 size="small"
+                                variant="contained"
+                                startIcon={<PaymentsIcon />}
+                                color="primary"
+                            >
+                                مالی
+                            </Button></StyledTableCell>
+                            <StyledTableCell align="left"><Button
+                                size="small"
+                                variant="contained"
+                                startIcon={<ClassIcon />}
+                                color="secondary"
+                            >
+                                کلاسها
+                            </Button></StyledTableCell>
+                            <StyledTableCell align="left"><Button
+                                size="small"
                                 onClick={() => {
-                                    navigate(`/faults/edit/${element.id}`);
+                                    navigate(`/students/edit/${element.id}`);
                                 }}
                                 variant="contained"
                                 startIcon={<EditIcon />}
                                 color="success"
                             >
-                                ویرایش
+                                پروفایل
                             </Button></StyledTableCell>
                             <StyledTableCell align="left">
                                 <Button
