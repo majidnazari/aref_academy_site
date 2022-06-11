@@ -35,3 +35,11 @@ export const dayOfWeeksObject: any = {
     'پنج شنبه': 'Thursday',
     'جمعه': 'Friday',
 }
+
+export const majorObject: any = {
+    'mathematics': 'ریاضی',
+    'experimental': 'تجربی',
+    'humanities': 'انسانی',
+    'art': 'هنر',
+    'other': 'سایر'
+}

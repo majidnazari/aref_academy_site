@@ -13,7 +13,13 @@ import { Grid } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import {
     useNavigate
-} from "react-router-dom"
+} from "react-router-dom";
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import { educationLevelsObject, majorObject } from '../../constants';
+
 
 interface ErrorData {
     first_name?: string;
@@ -41,7 +47,7 @@ interface StudentData {
     parents_job_title: string;
 }
 
-const FaultsCreateScreen = () => {
+const StudentCreateScreen = () => {
     const [description, setName] = useState<string>("");
     const [studentInfo, setStudentInfo] = useState<StudentData>({
         first_name: "",
@@ -60,7 +66,7 @@ const FaultsCreateScreen = () => {
     const [createFault] = useMutation(CREATE_FAULT);
     const navigate = useNavigate();
 
-    const createFaultHandler = () => {
+    const createStudentHandler = () => {
         if (!validateForm()) return;
         setLoading(true);
         createFault({
@@ -68,7 +74,7 @@ const FaultsCreateScreen = () => {
                 description: description,
             }
         }).then(() => {
-            showSuccess('تخلف جدید با موفقیت اضافه شد.');
+            showSuccess('دانش آموز جدید با موفقیت اضافه شد.');
             setName("");
             navigate('/faults');
         }).finally(() => {
@@ -87,6 +93,14 @@ const FaultsCreateScreen = () => {
         }
         setError(result);
         return out;
+    }
+
+    const handleChangeEducationLevel = (e: SelectChangeEvent<string>) => {
+        setStudentInfo({ ...studentInfo, egucation_level: e.target.value })
+    };
+
+    const handleChangeMajor = (e: SelectChangeEvent<string>) => {
+        setStudentInfo({ ...studentInfo, major: e.target.value })
     }
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <h1>ایجاد دانش‌آموز جدید </h1>
@@ -159,26 +173,47 @@ const FaultsCreateScreen = () => {
                 />
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
-                <TextField
-                    fullWidth
-                    label="رشته"
-                    value={studentInfo.home_phone}
-                    onChange={(e: any) => setStudentInfo({ ...studentInfo, major: e.target.value })}
-                    error={error.major ? true : false}
-                    helperText={error.major ? error.major : ""}
-                    variant="filled"
-                />
+                <FormControl sx={{ width: "100%" }}>
+                    <Select
+                        defaultValue=""
+                        id="grouped-select"
+                        value={studentInfo.major}
+                        onChange={handleChangeMajor}
+                        error={error.major ? true : false}
+                        variant="filled"
+                        displayEmpty
+                    >
+                        <MenuItem value="" disabled >
+                            <em>رشته</em>
+                        </MenuItem>
+                        {Object.keys(majorObject).map((key, index) => (
+                            <MenuItem key={index} value={key}>{majorObject[key]}</MenuItem>
+                        ))
+                        }
+                    </Select>
+                    {error.major ? <FormHelperText error >{error.major}</FormHelperText> : ""}
+                </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
-                <TextField
-                    fullWidth
-                    label="مقطع"
-                    value={studentInfo.egucation_level}
-                    onChange={(e: any) => setStudentInfo({ ...studentInfo, egucation_level: e.target.value })}
-                    error={error.egucation_level ? true : false}
-                    helperText={error.egucation_level ? error.egucation_level : ""}
-                    variant="filled"
-                />
+                <FormControl sx={{ width: "100%" }}>
+                    <Select
+                        defaultValue=""
+                        value={studentInfo.egucation_level}
+                        onChange={handleChangeEducationLevel}
+                        error={error.egucation_level ? true : false}
+                        variant="filled"
+                        displayEmpty
+                    >
+                        <MenuItem value="" disabled >
+                            <em> مقطع</em>
+                        </MenuItem>
+                        {Object.keys(educationLevelsObject).map((key, index) => (
+                            <MenuItem key={index} value={key}>{educationLevelsObject[key]}</MenuItem>
+                        ))
+                        }
+                    </Select>
+                    {error.egucation_level ? <FormHelperText error >{error.egucation_level}</FormHelperText> : ""}
+                </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
                 <TextField
@@ -207,7 +242,7 @@ const FaultsCreateScreen = () => {
             <Button
                 sx={{ float: "left" }}
                 variant="contained"
-                startIcon={<AddCircleIcon />} color="primary" onClick={createFaultHandler}
+                startIcon={<AddCircleIcon />} color="primary" onClick={createStudentHandler}
                 disabled={loading}
             >
                 ایجاد دانش‌آموز جدید
@@ -227,4 +262,4 @@ const FaultsCreateScreen = () => {
     </Container >)
 }
 
-export default FaultsCreateScreen;
+export default StudentCreateScreen;

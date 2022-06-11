@@ -36,16 +36,21 @@ export const GET_FAULTS = gql`
     }  
 `;
 
-export const GET_A_FAULT = gql`
-    query GET_A_FAULT(
+export const GET_A_STUDENT = gql`
+    query GET_A_STUDENT(
         $id: ID!
     ){
-      getFault(id:$id){
+      GetStudent(id:$id){
+        egucation_level
+        father_phone
+        first_name
+        home_phone
         id
-        user{
-          first_name
-          last_name
-        }
+        last_name
+        major
+        mother_phone
+        parents_job_title
+        phone
         description
       }
     }  

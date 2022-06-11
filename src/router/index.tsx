@@ -27,8 +27,8 @@ import BranchesClassRoomEditScreen from '../screens/Branches/classRooms/edit';
 import BranchesClassRoomCreateScreen from '../screens/Branches/classRooms/create';
 
 import StudentsScreen from '../screens/Students';
-import StudentsEditScreen from '../screens/Students/edit';
-import StudentsCreateScreen from '../screens/Students/create';
+import StudentEditScreen from '../screens/Students/edit';
+import StudentCreateScreen from '../screens/Students/create';
 
 import SigninScreen from '../screens/Signin';
 import SignoutScreen from '../screens/Signout';
@@ -90,8 +90,8 @@ const MainRouter = () => {
                         </Route>
                         <Route path="students" >
                             <Route path="" element={<StudentsScreen />} />
-                            <Route path="edit/:studentId" element={<StudentsEditScreen />} />
-                            <Route path="create" element={<StudentsCreateScreen />} />
+                            <Route path="edit/:studentId" element={<StudentEditScreen />} />
+                            <Route path="create" element={<StudentCreateScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
 
