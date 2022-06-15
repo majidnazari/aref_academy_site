@@ -1,38 +1,46 @@
 import { gql } from '@apollo/client';
 
-export const GET_FAULTS = gql`
-    query GET_FAULTS(
+export const GET_STUDENTS = gql`
+    query GET_STUDENTS(
         $first: Int!
         $page: Int!
-        $description: String
+        $first_name: String
+        $last_name: String
         $orderBy: [OrderByClause!]
+        $phone: String
     ){
-      getFaults(
-          first:$first,
-          page:$page,
-          description:$description,
-          orderBy:$orderBy)
+      getStudents(
+          first: $first,
+          page: $page,
+          first_name: $first_name,
+          last_name: $last_name,
+          orderBy: $orderBy,
+          phone: $phone
+          )
         {
           data{
             id
-            user{
-              first_name
-              last_name
-            }
-            description
-            created_at
+            first_name
+            last_name
+            phone
+            mother_phone
+            father_phone
+            home_phone
+            major
+            egucation_level
+            parents_job_title
+          }
+          paginatorInfo{
+            count
+            currentPage
+            firstItem
+            hasMorePages
+            lastItem
+            lastPage
+            perPage
+            total
+          }
         }
-        paginatorInfo{
-          count
-          currentPage
-          firstItem
-          hasMorePages
-          lastItem
-          lastPage
-          perPage
-          total
-        }
-      }
     }  
 `;
 
@@ -40,7 +48,7 @@ export const GET_A_STUDENT = gql`
     query GET_A_STUDENT(
         $id: ID!
     ){
-      GetStudent(id:$id){
+      getStudent(id:$id){
         egucation_level
         father_phone
         first_name

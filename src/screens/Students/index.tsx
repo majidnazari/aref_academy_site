@@ -16,7 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import Box from '@mui/material/Box';
-import { GET_FAULTS } from './gql/query';
+import { GET_STUDENTS } from './gql/query';
 import { DELETE_FAULT } from './gql/mutation';
 import { useMutation, useQuery } from '@apollo/client';
 import PaginatorInfo from '../../interfaces/paginator-info.interface';
@@ -24,23 +24,13 @@ import {
     useNavigate
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
-import moment from 'moment-jalaali';
 import Typography from '@mui/material/Typography';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import ClassIcon from '@mui/icons-material/Class';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
-
-interface FaultData {
-    id: number;
-    description: string;
-    user: {
-        first_name: string;
-        last_name: string;
-    };
-    created_at: string;
-}
+import { educationLevelsObject, majorObject } from '../../constants';
 
 interface StudentData {
     id: number;
@@ -81,20 +71,23 @@ const FaultsScreen = () => {
         perPage: 10,
         total: 0,
     });
-    const [faults, setFaults] = useState<FaultData[] | null>(null);
+    const [students, setStudents] = useState<StudentData[] | null>(null);
 
-    const { fetchMore, refetch } = useQuery(GET_FAULTS, {
+    const { fetchMore, refetch } = useQuery(GET_STUDENTS, {
         variables: {
-            first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
-            page: 1,
+            // first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
+            // page: 1,
+            first_name: search.first_name,
+            last_name: search.last_name,
+            phone: search.phone,
             orderBy: [{
                 column: 'id',
                 order: 'DESC'
             }]
         },
         onCompleted: (data) => {
-            setPageInfo(data.getFaults.paginatorInfo);
-            setFaults(data.getFaults.data);
+            setPageInfo(data.getStudents.paginatorInfo);
+            setStudents(data.getStudents.data);
         },
         fetchPolicy: "no-cache"
     });
@@ -121,7 +114,7 @@ const FaultsScreen = () => {
     }));
 
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        setFaults([]);
+        setStudents([]);
         fetchMore({
             variables: {
                 first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
@@ -132,8 +125,8 @@ const FaultsScreen = () => {
                 }]
             },
             updateQuery: (prev, { fetchMoreResult }) => {
-                setPageInfo(fetchMoreResult.getFaults.paginatorInfo);
-                setFaults(fetchMoreResult.getFaults.data);
+                setPageInfo(fetchMoreResult.getStudents.paginatorInfo);
+                setStudents(fetchMoreResult.getStudents.data);
             }
         });
     };
@@ -152,14 +145,14 @@ const FaultsScreen = () => {
             });
         });
     };
-    if (!faults) {
+    if (!students) {
         return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Skeleton width="100%" height={100} />
             <Skeleton variant="rectangular" width="100%" height={300} />
         </Container>
             ;
     }
-    if (faults.length === 0) {
+    if (students.length === 0) {
         return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Box
                 display="flex"
@@ -212,7 +205,7 @@ const FaultsScreen = () => {
                     fullWidth
                     label="نام خانوادگی"
                     value={search.last_name}
-                    onChange={(e: any) => setSearch({ ...search, first_name: e.target.value })}
+                    onChange={(e: any) => setSearch({ ...search, last_name: e.target.value })}
                     variant="filled"
                 />
             </Grid>
@@ -221,7 +214,7 @@ const FaultsScreen = () => {
                     fullWidth
                     label="تلفن"
                     value={search.phone}
-                    onChange={(e: any) => setSearch({ ...search, first_name: e.target.value })}
+                    onChange={(e: any) => setSearch({ ...search, phone: e.target.value })}
                     variant="filled"
                 />
             </Grid>
@@ -230,7 +223,15 @@ const FaultsScreen = () => {
                     sx={{ mt: 2 }}
                     variant="contained"
                     startIcon={<SearchIcon />}
-                    onClick={() => { }}
+                    onClick={() => {
+                        refetch({
+                            // first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
+                            // page: 1,
+                            first_name: search.first_name,
+                            last_name: search.last_name,
+                            phone: search.phone,
+                          })
+                    }}
                 >
                     جستجو
                 </Button>
@@ -254,7 +255,7 @@ const FaultsScreen = () => {
                             تلفن
                         </StyledTableCell>
                         <StyledTableCell align="left">
-                            کاربر ثبت کننده
+                            رشته
                         </StyledTableCell>
                         <StyledTableCell align="left">سوابق مالی</StyledTableCell>
                         <StyledTableCell align="left">کلاسها</StyledTableCell>
@@ -263,17 +264,19 @@ const FaultsScreen = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {faults.map((element: FaultData, index: number) => (
+                    {students.map((element: StudentData, index: number) => (
                         <StyledTableRow key={element.id}>
                             <StyledTableCell align="left">
                                 {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}
                             </StyledTableCell>
-                            <StyledTableCell align="left">{element.description}</StyledTableCell>
-                            <StyledTableCell align="left"></StyledTableCell>
-                            <StyledTableCell align="left"></StyledTableCell>
-                            <StyledTableCell align="left">{element.user.first_name} {element.user.last_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.first_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.last_name}</StyledTableCell>
                             <StyledTableCell align="left">
-                                {moment(element.created_at).format("jYYYY/jMM/jDD")}
+                                {educationLevelsObject[element.egucation_level]}
+                            </StyledTableCell>
+                            <StyledTableCell align="left">{element.phone}</StyledTableCell>
+                            <StyledTableCell align="left">
+                                {element.major !== '' ? majorObject[element.major] : '-'}
                             </StyledTableCell>
 
                             <StyledTableCell align="left"><Button
