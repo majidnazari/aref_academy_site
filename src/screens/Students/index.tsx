@@ -75,8 +75,8 @@ const FaultsScreen = () => {
 
     const { fetchMore, refetch } = useQuery(GET_STUDENTS, {
         variables: {
-            // first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
-            // page: 1,
+            first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
+            page: 1,
             first_name: search.first_name,
             last_name: search.last_name,
             phone: search.phone,
@@ -224,9 +224,10 @@ const FaultsScreen = () => {
                     variant="contained"
                     startIcon={<SearchIcon />}
                     onClick={() => {
+                        console.log("refetch");
                         refetch({
-                            // first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
-                            // page: 1,
+                            first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
+                            page: 1,
                             first_name: search.first_name,
                             last_name: search.last_name,
                             phone: search.phone,

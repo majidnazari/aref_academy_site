@@ -25,6 +25,9 @@ export const GET_BRANCHE_CLASS_ROOMS = gql`
             name
             description
             created_at
+            branch{
+              name
+            }
         }
         paginatorInfo{
           count

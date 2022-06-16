@@ -17,7 +17,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import Box from '@mui/material/Box';
 import { GET_BRANCHE_CLASS_ROOMS } from './gql/query';
-import { DELETE_BRANCHE } from './gql/mutation';
+import { DELETE_CLASSROOM } from './gql/mutation';
 import { useMutation, useQuery } from '@apollo/client';
 import PaginatorInfo from '../../../interfaces/paginator-info.interface';
 import {
@@ -25,7 +25,9 @@ import {
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../../utils/swlAlert";
 import moment from 'moment-jalaali';
-
+import {
+    useParams
+} from "react-router-dom";
 
 interface BranchData {
     id: number;
@@ -35,10 +37,16 @@ interface BranchData {
         last_name: string;
     };
     created_at: string;
+    branch: {
+        name: string;
+    },
+    description: string;
 }
 
 const BranchesScreen = () => {
     const navigate = useNavigate();
+    const params = useParams<string>();
+    const branchId = params.branchId;
     const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
         count: 0,
         currentPage: 1,
@@ -67,7 +75,7 @@ const BranchesScreen = () => {
         fetchPolicy: "no-cache"
     });
 
-    const [delBranch] = useMutation(DELETE_BRANCHE)
+    const [delClassRoom] = useMutation(DELETE_CLASSROOM)
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -106,9 +114,9 @@ const BranchesScreen = () => {
         });
     };
 
-    function deleteBranch(id: number) {
+    function deleteClassRoom(id: number) {
         showConfirm(() => {
-            delBranch(
+            delClassRoom(
                 {
                     variables: {
                         id: id
@@ -138,7 +146,7 @@ const BranchesScreen = () => {
                     variant="contained"
                     startIcon={<AddCircleIcon />}
                     sx={{ mb: 4 }}
-                    onClick={() => navigate('/branches/create')} >
+                    onClick={() => navigate(`/branches/${branchId}/class-rooms/create`)} >
                     افزودن کلاس فیزیکی جدید
                 </Button>
             </Box>
@@ -161,7 +169,7 @@ const BranchesScreen = () => {
                 variant="contained"
                 startIcon={<AddCircleIcon />}
                 sx={{ mb: 4 }}
-                onClick={() => navigate('/branches/create')} >
+                onClick={() => navigate(`/branches/${branchId}/class-rooms/create`)} >
                 افزودن کلاس فیزیکی جدید
             </Button>
         </Box>
@@ -180,13 +188,15 @@ const BranchesScreen = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {branches.map((element: BranchData , index: number) => (
+                    {branches.map((element: BranchData, index: number) => (
                         <StyledTableRow key={element.id}>
                             <StyledTableCell align="left">
                                 {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}
                             </StyledTableCell>
                             <StyledTableCell align="left">{element.name}</StyledTableCell>
-                            <StyledTableCell align="left">{element.user.first_name} {element.user.last_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.branch.name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.description}</StyledTableCell>
+                            <StyledTableCell align="left">{element.user?.first_name} {element.user?.last_name}</StyledTableCell>
                             <StyledTableCell align="left">
                                 {moment(element.created_at).format("jYYYY/jMM/jDD")}
                             </StyledTableCell>
@@ -194,7 +204,7 @@ const BranchesScreen = () => {
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {
-                                    navigate(`/branches/edit/${element.id}`);
+                                    navigate(`/branches/${branchId}/class-rooms/${element.id}`);
                                 }}
                                 variant="contained"
                                 startIcon={<EditIcon />}
@@ -205,7 +215,7 @@ const BranchesScreen = () => {
                             <StyledTableCell align="left">
                                 <Button
                                     size="small"
-                                    onClick={() => deleteBranch(element.id)}
+                                    onClick={() => deleteClassRoom(element.id)}
                                     variant="contained"
                                     startIcon={<DeleteIcon />}
                                     color="error"

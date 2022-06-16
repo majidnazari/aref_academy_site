@@ -1,20 +1,24 @@
 import { gql } from '@apollo/client';
 
-export const DELETE_BRANCHE = gql`
-    mutation DELETE_BRANCHE ($id:ID!) {  
-        deleteBranch(id:$id){
+export const DELETE_CLASSROOM = gql`
+    mutation DELETE_CLASSROOM ($id:ID!) {  
+        deleteBranchClassRoom(id:$id){
             id
         }
     }  
 `;
 
-export const CREATE_BRANCHE = gql`
-    mutation CREATE_BRANCHE(
-        $name: String!
+export const CREATE_CLASSROOM = gql`
+    mutation CREATE_CLASSROOM(
+        $name: String
+        $branch_id: Int
+        $description: String
         )
         {
-            createBranch(input:{
+            createBranchClassRoom(input:{
                 name:$name,
+                branch_id:$branch_id,
+                description:$description
             }){
                 id
             }
