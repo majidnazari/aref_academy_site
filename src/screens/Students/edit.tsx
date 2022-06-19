@@ -6,7 +6,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import { CREATE_FAULT } from './gql/mutation';
+import { EDIT_STUDENT } from './gql/mutation';
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_A_STUDENT } from './gql/query';
 import { showSuccess } from "../../utils/swlAlert";
@@ -27,13 +27,7 @@ interface ErrorData {
     first_name?: string;
     last_name?: string;
     phone?: string;
-    mother_phone?: string;
-    father_phone?: string;
-    home_phone?: string;
-    major?: string;
     egucation_level?: string;
-    description?: string;
-    parents_job_title?: string;
 }
 
 interface StudentData {
@@ -50,7 +44,6 @@ interface StudentData {
 }
 
 const StudentEditScreen = () => {
-    const [description, setName] = useState<string>("");
     const [studentInfo, setStudentInfo] = useState<StudentData>({
         first_name: "",
         last_name: "",
@@ -65,7 +58,7 @@ const StudentEditScreen = () => {
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
-    const [createFault] = useMutation(CREATE_FAULT);
+    const [editStudent] = useMutation(EDIT_STUDENT);
     const { studentId } = useParams<string>();
     const navigate = useNavigate();
     useQuery(GET_A_STUDENT, {
@@ -73,28 +66,24 @@ const StudentEditScreen = () => {
             id: studentId
         },
         onCompleted: (data) => {
-            let studentInfoRead = data.GetStudent;
-            for (let key in data.GetStudent) {
+            let studentInfoRead = data.getStudent;
+            for (let key in data.getStudent) {
                 if (key === '__typename') {
                     continue;
                 }
-                studentInfoRead = { ...studentInfoRead, [key]: data.GetStudent[key] ? data.GetStudent[key] : "" };
+                studentInfoRead = { ...studentInfoRead, [key]: data.getStudent[key] ? data.getStudent[key] : "" };
             }
             setStudentInfo(studentInfoRead);
         }
     });
 
-    const createFaultHandler = () => {
+    const editStudentHandler = () => {
         if (!validateForm()) return;
         setLoading(true);
-        createFault({
-            variables: {
-                description: description,
-            }
+        editStudent({
+            variables: studentInfo
         }).then(() => {
-            showSuccess('ویرایش موفقیت انجام شد.');
-            setName("");
-            navigate('/faults');
+            showSuccess('ویرایش با موفقبت انجام شد.');
         }).finally(() => {
             setLoading(false);
         });
@@ -105,8 +94,20 @@ const StudentEditScreen = () => {
         let out = true;
         let result: ErrorData = {};
         setError({});
-        if (!description) {
-            result = { ...result, description: 'توضیحات را وارد کنید.' };
+        if (!studentInfo.first_name) {
+            result = { ...result, first_name: 'نام را وارد کنید.' };
+            out = false;
+        }
+        if (!studentInfo.last_name) {
+            result = { ...result, last_name: 'نام خانوادگی را وارد کنید.' };
+            out = false;
+        }
+        if (!studentInfo.phone) {
+            result = { ...result, phone: 'تلفن همراه را وارد کنید.' };
+            out = false;
+        }
+        if (!studentInfo.egucation_level) {
+            result = { ...result, egucation_level: 'مقطع را وارد کنید.' };
             out = false;
         }
         setError(result);
@@ -163,8 +164,6 @@ const StudentEditScreen = () => {
                     label="تلفن پدر"
                     value={studentInfo.father_phone}
                     onChange={(e: any) => setStudentInfo({ ...studentInfo, father_phone: e.target.value })}
-                    error={error.father_phone ? true : false}
-                    helperText={error.father_phone ? error.father_phone : ""}
                     variant="filled"
                 />
             </Grid>
@@ -174,8 +173,6 @@ const StudentEditScreen = () => {
                     label="تلفن مادر"
                     value={studentInfo.mother_phone}
                     onChange={(e: any) => setStudentInfo({ ...studentInfo, mother_phone: e.target.value })}
-                    error={error.mother_phone ? true : false}
-                    helperText={error.mother_phone ? error.mother_phone : ""}
                     variant="filled"
                 />
             </Grid>
@@ -185,8 +182,6 @@ const StudentEditScreen = () => {
                     label="تلفن منزل"
                     value={studentInfo.home_phone}
                     onChange={(e: any) => setStudentInfo({ ...studentInfo, home_phone: e.target.value })}
-                    error={error.home_phone ? true : false}
-                    helperText={error.home_phone ? error.home_phone : ""}
                     variant="filled"
                 />
             </Grid>
@@ -197,7 +192,6 @@ const StudentEditScreen = () => {
                         id="grouped-select"
                         value={studentInfo.major}
                         onChange={handleChangeMajor}
-                        error={error.major ? true : false}
                         variant="filled"
                         displayEmpty
                     >
@@ -209,7 +203,6 @@ const StudentEditScreen = () => {
                         ))
                         }
                     </Select>
-                    {error.major ? <FormHelperText error >{error.major}</FormHelperText> : ""}
                 </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >
@@ -239,8 +232,6 @@ const StudentEditScreen = () => {
                     label="اطلاعات شغلی والدین"
                     value={studentInfo.parents_job_title}
                     onChange={(e: any) => setStudentInfo({ ...studentInfo, parents_job_title: e.target.value })}
-                    error={error.parents_job_title ? true : false}
-                    helperText={error.parents_job_title ? error.parents_job_title : ""}
                     variant="filled"
                 />
             </Grid>
@@ -250,8 +241,6 @@ const StudentEditScreen = () => {
                     label="آدرس و توضیحات"
                     value={studentInfo.description}
                     onChange={(e: any) => setStudentInfo({ ...studentInfo, description: e.target.value })}
-                    error={error.description ? true : false}
-                    helperText={error.description ? error.description : ""}
                     variant="filled"
                 />
             </Grid>
@@ -260,7 +249,7 @@ const StudentEditScreen = () => {
             <Button
                 sx={{ float: "left" }}
                 variant="contained"
-                startIcon={<AddCircleIcon />} color="primary" onClick={createFaultHandler}
+                startIcon={<AddCircleIcon />} color="primary" onClick={editStudentHandler}
                 disabled={loading}
             >
                 ویرایش دانش‌آموز

@@ -52,6 +52,7 @@ interface SearchData {
     phone: string;
     egucation_level: string;
 }
+
 const FaultsScreen = () => {
     const navigate = useNavigate();
     const [search, setSearch] = useState<SearchData>({
@@ -73,13 +74,10 @@ const FaultsScreen = () => {
     });
     const [students, setStudents] = useState<StudentData[] | null>(null);
 
-    const { fetchMore, refetch } = useQuery(GET_STUDENTS, {
+    const { fetchMore, refetch, loading } = useQuery(GET_STUDENTS, {
         variables: {
             first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
             page: 1,
-            first_name: search.first_name,
-            last_name: search.last_name,
-            phone: search.phone,
             orderBy: [{
                 column: 'id',
                 order: 'DESC'
@@ -89,7 +87,7 @@ const FaultsScreen = () => {
             setPageInfo(data.getStudents.paginatorInfo);
             setStudents(data.getStudents.data);
         },
-        fetchPolicy: "no-cache"
+        fetchPolicy: "network-only",
     });
 
     const [delFault] = useMutation(DELETE_FAULT)
@@ -127,7 +125,7 @@ const FaultsScreen = () => {
             updateQuery: (prev, { fetchMoreResult }) => {
                 setPageInfo(fetchMoreResult.getStudents.paginatorInfo);
                 setStudents(fetchMoreResult.getStudents.data);
-            }
+            },
         });
     };
 
@@ -145,32 +143,18 @@ const FaultsScreen = () => {
             });
         });
     };
-    if (!students) {
+
+    const handleSearch = () => {
+        const refetchData: any = { ...search };
+        refetch(refetchData);
+    }
+
+    if (loading) {
         return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Skeleton width="100%" height={100} />
             <Skeleton variant="rectangular" width="100%" height={300} />
         </Container>
             ;
-    }
-    if (students.length === 0) {
-        return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-            <Box
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="flex-end"
-            >
-                <Button
-                    variant="contained"
-                    startIcon={<AddCircleIcon />}
-                    sx={{ mb: 4 }}
-                    onClick={() => navigate('/faults/create')} >
-                    افزودن تخلف جدید
-                </Button>
-            </Box>
-            <div>
-                داده ای وجود ندارد ...
-            </div>
-        </Container>
     }
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -198,6 +182,11 @@ const FaultsScreen = () => {
                     value={search.first_name}
                     onChange={(e: any) => setSearch({ ...search, first_name: e.target.value })}
                     variant="filled"
+                    onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                            handleSearch();
+                        }
+                    }}
                 />
             </Grid>
             <Grid item xs={12} md={3} lg={3} >
@@ -207,6 +196,11 @@ const FaultsScreen = () => {
                     value={search.last_name}
                     onChange={(e: any) => setSearch({ ...search, last_name: e.target.value })}
                     variant="filled"
+                    onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                            handleSearch();
+                        }
+                    }}
                 />
             </Grid>
             <Grid item xs={12} md={3} lg={3} >
@@ -216,6 +210,11 @@ const FaultsScreen = () => {
                     value={search.phone}
                     onChange={(e: any) => setSearch({ ...search, phone: e.target.value })}
                     variant="filled"
+                    onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                            handleSearch();
+                        }
+                    }}
                 />
             </Grid>
             <Grid item xs={12} md={3} lg={3} >
@@ -223,19 +222,10 @@ const FaultsScreen = () => {
                     sx={{ mt: 2 }}
                     variant="contained"
                     startIcon={<SearchIcon />}
-                    onClick={() => {
-                        console.log("refetch");
-                        refetch({
-                            first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
-                            page: 1,
-                            first_name: search.first_name,
-                            last_name: search.last_name,
-                            phone: search.phone,
-                          })
-                    }}
-                >
+                    onClick={handleSearch} >
                     جستجو
                 </Button>
+                {/* {networkStatus === NetworkStatus.refetch ? <CircularProgress size={24} /> : null} */}
             </Grid>
         </Grid>
         <TableContainer component={Paper}>
@@ -265,7 +255,7 @@ const FaultsScreen = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {students.map((element: StudentData, index: number) => (
+                    {students && students.map((element: StudentData, index: number) => (
                         <StyledTableRow key={element.id}>
                             <StyledTableCell align="left">
                                 {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}

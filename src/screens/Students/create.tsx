@@ -6,7 +6,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import { CREATE_FAULT } from './gql/mutation';
+import { CREATE_STUDENT } from './gql/mutation';
 import { useMutation } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
 import { Grid } from '@mui/material';
@@ -63,13 +63,13 @@ const StudentCreateScreen = () => {
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
-    const [createFault] = useMutation(CREATE_FAULT);
+    const [createStudent] = useMutation(CREATE_STUDENT);
     const navigate = useNavigate();
 
     const createStudentHandler = () => {
         if (!validateForm()) return;
         setLoading(true);
-        createFault({
+        createStudent({
             variables: {
                 description: description,
             }
