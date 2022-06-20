@@ -6,6 +6,7 @@ export const GET_BRANCHE_CLASS_ROOMS = gql`
       $page: Int
       $name: String
       $description: String
+      $branch_id: Int
       $orderBy: [OrderByClause!]
     ){
       getBranchClassRooms(
@@ -13,6 +14,7 @@ export const GET_BRANCHE_CLASS_ROOMS = gql`
         page:$page,
         name:$name,
         description:$description,
+        branch_id:$branch_id,
         orderBy:$orderBy
         )
         {

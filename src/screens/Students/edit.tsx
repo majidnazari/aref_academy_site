@@ -31,6 +31,7 @@ interface ErrorData {
 }
 
 interface StudentData {
+    id: number;
     first_name: string;
     last_name: string;
     phone: string;
@@ -44,7 +45,9 @@ interface StudentData {
 }
 
 const StudentEditScreen = () => {
+    const { studentId } = useParams<string>();
     const [studentInfo, setStudentInfo] = useState<StudentData>({
+        id: 0,
         first_name: "",
         last_name: "",
         phone: "",
@@ -59,7 +62,7 @@ const StudentEditScreen = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
     const [editStudent] = useMutation(EDIT_STUDENT);
-    const { studentId } = useParams<string>();
+
     const navigate = useNavigate();
     useQuery(GET_A_STUDENT, {
         variables: {
@@ -80,6 +83,7 @@ const StudentEditScreen = () => {
     const editStudentHandler = () => {
         if (!validateForm()) return;
         setLoading(true);
+        console.log({ studentInfo });
         editStudent({
             variables: studentInfo
         }).then(() => {

@@ -17,7 +17,6 @@ import {
 } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import FormHelperText from '@mui/material/FormHelperText';
-import { lessonsObject, typesObject, educationLevelsObject } from '../../constants';
 import {
     useNavigate
 } from "react-router-dom";

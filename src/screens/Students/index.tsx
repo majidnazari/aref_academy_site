@@ -53,7 +53,7 @@ interface SearchData {
     egucation_level: string;
 }
 
-const FaultsScreen = () => {
+const StudentsScreen = () => {
     const navigate = useNavigate();
     const [search, setSearch] = useState<SearchData>({
         first_name: "",
@@ -225,7 +225,6 @@ const FaultsScreen = () => {
                     onClick={handleSearch} >
                     جستجو
                 </Button>
-                {/* {networkStatus === NetworkStatus.refetch ? <CircularProgress size={24} /> : null} */}
             </Grid>
         </Grid>
         <TableContainer component={Paper}>
@@ -283,6 +282,9 @@ const FaultsScreen = () => {
                                 variant="contained"
                                 startIcon={<ClassIcon />}
                                 color="secondary"
+                                onClick={() => {
+                                    navigate(`/students/${element.id}/courses`);
+                                }}
                             >
                                 کلاسها
                             </Button></StyledTableCell>
@@ -323,4 +325,4 @@ const FaultsScreen = () => {
     </Container >)
 }
 
-export default FaultsScreen;
+export default StudentsScreen;

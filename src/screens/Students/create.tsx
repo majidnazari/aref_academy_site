@@ -48,7 +48,6 @@ interface StudentData {
 }
 
 const StudentCreateScreen = () => {
-    const [description, setName] = useState<string>("");
     const [studentInfo, setStudentInfo] = useState<StudentData>({
         first_name: "",
         last_name: "",
@@ -70,13 +69,10 @@ const StudentCreateScreen = () => {
         if (!validateForm()) return;
         setLoading(true);
         createStudent({
-            variables: {
-                description: description,
-            }
+            variables: studentInfo
         }).then(() => {
             showSuccess('دانش آموز جدید با موفقیت اضافه شد.');
-            setName("");
-            navigate('/faults');
+            navigate('/students');
         }).finally(() => {
             setLoading(false);
         });
@@ -87,8 +83,20 @@ const StudentCreateScreen = () => {
         let out = true;
         let result: ErrorData = {};
         setError({});
-        if (!description) {
-            result = { ...result, description: 'توضیحات را وارد کنید.' };
+        if (!studentInfo.first_name) {
+            result = { ...result, first_name: 'نام را وارد کنید.' };
+            out = false;
+        }
+        if (!studentInfo.last_name) {
+            result = { ...result, last_name: 'نام خانوادگی را وارد کنید.' };
+            out = false;
+        }
+        if (!studentInfo.phone) {
+            result = { ...result, phone: 'تلفن همراه را وارد کنید.' };
+            out = false;
+        }
+        if (!studentInfo.egucation_level) {
+            result = { ...result, egucation_level: 'مقطع را وارد کنید.' };
             out = false;
         }
         setError(result);

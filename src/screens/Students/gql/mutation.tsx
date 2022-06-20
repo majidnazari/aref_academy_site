@@ -11,15 +11,15 @@ export const DELETE_FAULT = gql`
 export const CREATE_STUDENT = gql`
     mutation CREATE_STUDENT(
         $description: String
-        $egucation_level: Int
+        $egucation_level: String!
         $father_phone: String
-        $first_name: String
+        $first_name: String!
         $home_phone: String
-        $last_name: String
+        $last_name: String!
         $major: String
         $mother_phone: String
         $parents_job_title: String
-        $phone: String
+        $phone: String!
         )
         {
         createStudent(input:{
@@ -44,16 +44,16 @@ export const EDIT_STUDENT = gql`
     mutation EDIT_STUDENT(
         $id:Int!,
         $description: String
-        $egucation_level: Int
+        $egucation_level: String!
         $father_phone: String
-        $first_name: String
+        $first_name: String!
         $home_phone: String
-        $last_name: String
+        $last_name: String!
         $level: String
         $major: String
         $mother_phone: String
         $parents_job_title: String
-        $phone: String
+        $phone: String!
         )
         {
         updateStudent(input:{

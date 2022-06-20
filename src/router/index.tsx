@@ -22,13 +22,14 @@ import FaultsCreateScreen from '../screens/Faults/create';
 import BranchesScreen from '../screens/Branches';
 import BranchesEditScreen from '../screens/Branches/edit';
 import BranchesCreateScreen from '../screens/Branches/create';
-import BranchesClassRoomsScreen from '../screens/Branches/classRooms';
-import BranchesClassRoomEditScreen from '../screens/Branches/classRooms/edit';
-import BranchesClassRoomCreateScreen from '../screens/Branches/classRooms/create';
+import BranchesClassRoomsScreen from '../screens/Branches/ClassRooms';
+import BranchesClassRoomEditScreen from '../screens/Branches/ClassRooms/edit';
+import BranchesClassRoomCreateScreen from '../screens/Branches/ClassRooms/create';
 
 import StudentsScreen from '../screens/Students';
 import StudentEditScreen from '../screens/Students/edit';
 import StudentCreateScreen from '../screens/Students/create';
+import StudentCourses from '../screens/Students/StudentCourses';
 
 import SigninScreen from '../screens/Signin';
 import SignoutScreen from '../screens/Signout';
@@ -92,6 +93,7 @@ const MainRouter = () => {
                             <Route path="" element={<StudentsScreen />} />
                             <Route path="edit/:studentId" element={<StudentEditScreen />} />
                             <Route path="create" element={<StudentCreateScreen />} />
+                            <Route path=":studentId/courses" element={<StudentCourses />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
 

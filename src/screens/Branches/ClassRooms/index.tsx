@@ -46,7 +46,7 @@ interface BranchData {
 const BranchesScreen = () => {
     const navigate = useNavigate();
     const params = useParams<string>();
-    const branchId = params.branchId;
+    const branchId = params.branchId ? parseInt(params.branchId) : 0;
     const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
         count: 0,
         currentPage: 1,
@@ -63,6 +63,7 @@ const BranchesScreen = () => {
         variables: {
             first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
             page: 1,
+            branch_id: branchId,
             orderBy: [{
                 column: 'id',
                 order: 'DESC'
