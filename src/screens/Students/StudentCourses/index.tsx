@@ -1,7 +1,7 @@
-import {useState} from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { GET_A_STUDENT } from "./gql/query";
+import { GET_A_STUDENT, GET_A_STUDENT_COURSES } from "./gql/query";
 import {
     CircularProgress,
     Container,
@@ -20,14 +20,9 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import AddStudentCourse from './components/AddStudentCourse';
 import PaginatorInfo from "interfaces/paginator-info.interface";
 
-
 const StudentCourses = () => {
     const { studentId } = useParams<string>();
-    const { data: studentData, loading } = useQuery(GET_A_STUDENT, {
-        variables: {
-            id: studentId
-        }
-    });
+    const [studentCourses, setStudentCourses] = useState<any[]>([]);
     const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
         count: 0,
         currentPage: 1,
@@ -38,6 +33,24 @@ const StudentCourses = () => {
         perPage: 10,
         total: 0,
     });
+
+    const { data: studentData, loading } = useQuery(GET_A_STUDENT, {
+        variables: {
+            id: studentId
+        }
+    });
+
+    const { loading: loadingStudentCourses } = useQuery(GET_A_STUDENT_COURSES, {
+        variables: {
+            student_id: studentId
+        },
+        onCompleted: (data) => {
+            setPageInfo(data.getCourseStudent.paginatorInfo);
+            setStudentCourses(data.getCourseStudent.data);
+        }
+    });
+
+
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -109,20 +122,13 @@ const StudentCourses = () => {
                 </TableBody>
             </Table>
             <Stack spacing={5} sx={{ my: 2 }}>
-                {/* <Pagination
+                <Pagination
                     count={pageInfo.lastPage}
                     page={pageInfo.currentPage}
-                    onChange={handleChange}
-                /> */}
+                // onChange={handleChange}
+                />
             </Stack>
         </TableContainer>
-        <Stack spacing={5} sx={{ my: 2 }}>
-            <Pagination
-                count={pageInfo.lastPage}
-                page={pageInfo.currentPage}
-                // onChange={handleChange}
-            />
-        </Stack>
         <AddStudentCourse />
     </Container>);
 }
