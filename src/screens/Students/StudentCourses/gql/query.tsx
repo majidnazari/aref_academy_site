@@ -14,11 +14,15 @@ export const GET_A_STUDENT = gql`
 
 export const GET_A_STUDENT_COURSES = gql`
     query GET_A_STUDENT_COURSES(
-      $first: Int
+      $first: Int!
       $page: Int
       $student_id:Int
     ) {
-      getCourseStudent(student_id:$student_id){
+      getCourseStudents(
+        first: $first
+        page: $page
+        student_id:$student_id
+        ){
         data{
           course{
             name

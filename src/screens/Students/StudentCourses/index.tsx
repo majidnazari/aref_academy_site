@@ -42,11 +42,13 @@ const StudentCourses = () => {
 
     const { loading: loadingStudentCourses } = useQuery(GET_A_STUDENT_COURSES, {
         variables: {
-            student_id: studentId
+            first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
+            page: 1,
+            student_id: studentId ? parseInt(studentId) : 0
         },
         onCompleted: (data) => {
-            setPageInfo(data.getCourseStudent.paginatorInfo);
-            setStudentCourses(data.getCourseStudent.data);
+            setPageInfo(data.getCourseStudents.paginatorInfo);
+            setStudentCourses(data.getCourseStudents.data);
         }
     });
 
@@ -129,7 +131,7 @@ const StudentCourses = () => {
                 />
             </Stack>
         </TableContainer>
-        <AddStudentCourse />
+        <AddStudentCourse studentId={studentId} />
     </Container>);
 }
 export default StudentCourses;
