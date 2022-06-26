@@ -3,8 +3,8 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { GET_COURSES } from '../gql/query';
 import { useQuery, useMutation } from "@apollo/client";
 import { CREATE_STUDENT_COURSE } from '../gql/mutation';
-import { lessonsObject, typesObject } from '../../../../constants';
 import { useState } from "react";
+import CourseName from "components/CourseName";
 interface Props {
     studentId: string | undefined;
 }
@@ -61,11 +61,7 @@ const AddStudentCourse = ({ studentId }: Props) => {
                     </MenuItem>
                     {coursesData && Object.keys(coursesData.getCourses.data).map((key, index) => (
                         <MenuItem key={index} value={key}>
-                            {lessonsObject[coursesData.getCourses.data[key].lesson]} -
-                            {coursesData.getCourses.data[key].teacher.first_name} {coursesData.getCourses.data[key].teacher.last_name} -
-                            {coursesData.getCourses.data[key].name} -
-                            {typesObject[coursesData.getCourses.data[key].type]} -
-                            مقطع {coursesData.getCourses.data[key].education_level}
+                            <CourseName course={coursesData.getCourses.data[key]} />
                         </MenuItem>
                     ))
                     }

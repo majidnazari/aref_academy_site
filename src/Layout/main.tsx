@@ -51,6 +51,7 @@ const Main = () => {
         palette: {
             mode: isDarkTheme ? 'dark' : 'light',
         },
+
     }, faIR);
     theme = responsiveFontSizes(theme);
 

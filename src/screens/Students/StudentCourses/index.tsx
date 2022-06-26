@@ -19,10 +19,15 @@ import { styled } from '@mui/material/styles';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import AddStudentCourse from './components/AddStudentCourse';
 import PaginatorInfo from "interfaces/paginator-info.interface";
+import StudentCoursesType from "interfaces/studentCourses.interface";
+import CourseName from "components/CourseName";
+import StatusIcon from "components/StatusIcon";
+import moment from 'moment-jalaali';
+
 
 const StudentCourses = () => {
     const { studentId } = useParams<string>();
-    const [studentCourses, setStudentCourses] = useState<any[]>([]);
+    const [studentCourses, setStudentCourses] = useState<StudentCoursesType[]>([]);
     const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
         count: 0,
         currentPage: 1,
@@ -105,22 +110,38 @@ const StudentCourses = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {/* {students && students.map((element: StudentData, index: number) => (
+                    {studentCourses && studentCourses.map((element: StudentCoursesType, index: number) => (
                         <StyledTableRow key={element.id}>
                             <StyledTableCell align="left">
                                 {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}
                             </StyledTableCell>
-                            <StyledTableCell align="left">{element.first_name}</StyledTableCell>
-                            <StyledTableCell align="left">{element.last_name}</StyledTableCell>
                             <StyledTableCell align="left">
-                                {educationLevelsObject[element.egucation_level]}
+                                <CourseName course={element.course} />
                             </StyledTableCell>
-                            <StyledTableCell align="left">{element.phone}</StyledTableCell>
                             <StyledTableCell align="left">
-                                {element.major !== '' ? majorObject[element.major] : '-'}
+                                <StatusIcon status={element.student_status} />
+                            </StyledTableCell>
+                            <StyledTableCell align="left">
+                                <StatusIcon status={element.manager_status} />
+
+                                {
+                                    element.manager_status === 'approved' ?
+                                        element.user_manager?.first_name + ' ' + element.user_manager?.last_name
+                                        :
+                                        null
+                                }
+                            </StyledTableCell>
+                            <StyledTableCell align="left">
+                                <StatusIcon status={element.financial_status} />
+                            </StyledTableCell>
+                            <StyledTableCell align="left">
+                                {element.user_creator?.first_name + ' ' + element.user_creator?.last_name}
+                            </StyledTableCell>
+                            <StyledTableCell align="left">
+                                {moment(element.created_at).format("jYYYY/jMM/jDD")}
                             </StyledTableCell>
                         </StyledTableRow>
-                    ))} */}
+                    ))}
                 </TableBody>
             </Table>
             <Stack spacing={5} sx={{ my: 2 }}>

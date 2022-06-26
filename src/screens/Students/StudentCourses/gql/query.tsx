@@ -24,10 +24,34 @@ export const GET_A_STUDENT_COURSES = gql`
         student_id:$student_id
         ){
         data{
+          id
+          financial_status
+          manager_status
+          status
+          student_status
+          created_at
+          user_manager{
+            first_name
+            last_name
+          }
+          user_creator{
+            first_name
+            last_name
+          }
+          user_financial{
+            first_name
+            last_name
+          }
           course{
             name
+            lesson
+            type
+            teacher{
+              first_name
+              last_name
+            }
+            education_level
           }
-          created_at
         }
         paginatorInfo{
           count
