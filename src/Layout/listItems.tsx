@@ -39,7 +39,7 @@ const Components: any = {
     ReceiptLongIcon: ReceiptLongIcon,
     NewReleasesIcon: NewReleasesIcon,
     AddBusinessIcon: AddBusinessIcon,
-    MeetingRoomIcon:MeetingRoomIcon
+    MeetingRoomIcon: MeetingRoomIcon
 };
 const loadIcon = (input: any) => {
     return React.createElement(Components[input], {});
@@ -78,8 +78,8 @@ export const MainListItems = () => {
 };
 
 export const SecondaryListItems = () => {
-    let navigate = useNavigate();
-    return (
+    // let navigate = useNavigate();
+    return (process.env.REACT_APP_DEVELEP_MOD === "0" ? null : (
         <React.Fragment>
             <ListSubheader component="div" inset>
                 منوهای تستی
@@ -127,6 +127,6 @@ export const SecondaryListItems = () => {
                 <ListItemText primary=" گزارش های مالی" />
             </ListItemButton>
 
-        </React.Fragment>
+        </React.Fragment>)
     )
 };

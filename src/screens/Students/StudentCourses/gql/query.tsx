@@ -27,7 +27,6 @@ export const GET_A_STUDENT_COURSES = gql`
           id
           financial_status
           manager_status
-          status
           student_status
           created_at
           user_manager{

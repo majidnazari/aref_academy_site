@@ -18,6 +18,7 @@ export const LOGIN_MUTATION = gql`
           created_at
           updated_at
           groups{
+            name
             menus {
                 id
                 slug

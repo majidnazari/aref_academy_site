@@ -14,6 +14,7 @@ import {
     TableBody,
     Stack,
     Pagination,
+    Button,
 } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -23,7 +24,15 @@ import StudentCoursesType from "interfaces/studentCourses.interface";
 import CourseName from "components/CourseName";
 import StatusIcon from "components/StatusIcon";
 import moment from 'moment-jalaali';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Edit from "./components/Edit";
 
+interface EditStudentCourse {
+    openDialog: boolean;
+    studentCourse: StudentCoursesType;
+    key: number,
+}
 
 const StudentCourses = () => {
     const { studentId } = useParams<string>();
@@ -38,6 +47,11 @@ const StudentCourses = () => {
         perPage: 10,
         total: 0,
     });
+    const [editStudentCourse, setEditStudentCourse] = useState<EditStudentCourse>({
+        openDialog: false,
+        studentCourse: {} as StudentCoursesType,
+        key: 0,
+    });
 
     const { data: studentData, loading } = useQuery(GET_A_STUDENT, {
         variables: {
@@ -47,7 +61,7 @@ const StudentCourses = () => {
 
     const { loading: loadingStudentCourses } = useQuery(GET_A_STUDENT_COURSES, {
         variables: {
-            first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
+            first: 200,
             page: 1,
             student_id: studentId ? parseInt(studentId) : 0
         },
@@ -56,8 +70,6 @@ const StudentCourses = () => {
             setStudentCourses(data.getCourseStudents.data);
         }
     });
-
-
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -107,6 +119,12 @@ const StudentCourses = () => {
                         <StyledTableCell align="left">
                             تاریخ
                         </StyledTableCell>
+                        <StyledTableCell align="left">
+                            ویرایش
+                        </StyledTableCell>
+                        <StyledTableCell align="left">
+                            حذف
+                        </StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -118,21 +136,30 @@ const StudentCourses = () => {
                             <StyledTableCell align="left">
                                 <CourseName course={element.course} />
                             </StyledTableCell>
-                            <StyledTableCell align="left">
+                            <StyledTableCell align="center">
                                 <StatusIcon status={element.student_status} />
                             </StyledTableCell>
-                            <StyledTableCell align="left">
+                            <StyledTableCell align="center">
                                 <StatusIcon status={element.manager_status} />
-
-                                {
-                                    element.manager_status === 'approved' ?
-                                        element.user_manager?.first_name + ' ' + element.user_manager?.last_name
-                                        :
-                                        null
-                                }
+                                <Typography component={'div'} sx={{ fontSize: 9, fontWeight: 'bold' }} >
+                                    {
+                                        element.manager_status === 'approved' ?
+                                            element.user_manager?.first_name + ' ' + element.user_manager?.last_name
+                                            :
+                                            null
+                                    }
+                                </Typography>
                             </StyledTableCell>
-                            <StyledTableCell align="left">
+                            <StyledTableCell align="center">
                                 <StatusIcon status={element.financial_status} />
+                                <Typography component={'div'} sx={{ fontSize: 9, fontWeight: 'bold' }} >
+                                    {
+                                        element.financial_status === 'approved' ?
+                                            element.user_financial?.first_name + ' ' + element.user_financial?.last_name
+                                            :
+                                            null
+                                    }
+                                </Typography>
                             </StyledTableCell>
                             <StyledTableCell align="left">
                                 {element.user_creator?.first_name + ' ' + element.user_creator?.last_name}
@@ -140,19 +167,53 @@ const StudentCourses = () => {
                             <StyledTableCell align="left">
                                 {moment(element.created_at).format("jYYYY/jMM/jDD")}
                             </StyledTableCell>
+                            <StyledTableCell align="left">
+                                <Button
+                                    size="small"
+                                    onClick={() => {
+                                        setEditStudentCourse({
+                                            openDialog: true,
+                                            studentCourse: element,
+                                            key: editStudentCourse.key + 1
+                                        })
+                                    }}
+                                    variant="contained"
+                                    startIcon={<EditIcon />}
+                                    color="success"
+                                >
+                                    ویرایش
+                                </Button>
+                            </StyledTableCell>
+                            <StyledTableCell align="left">
+                                {
+                                    element.student_status === 'ok'
+                                        &&
+                                        element.manager_status === 'pending'
+                                        &&
+                                        element.financial_status === 'pending' ?
+                                        <Button
+                                            size="small"
+                                            // onClick={() => deleteBranch(element.id)}
+                                            variant="contained"
+                                            startIcon={<DeleteIcon />}
+                                            color="error"
+                                        >
+                                            حذف
+                                        </Button>
+                                        : ''
+                                }
+                            </StyledTableCell>
                         </StyledTableRow>
                     ))}
                 </TableBody>
             </Table>
-            <Stack spacing={5} sx={{ my: 2 }}>
-                <Pagination
-                    count={pageInfo.lastPage}
-                    page={pageInfo.currentPage}
-                // onChange={handleChange}
-                />
-            </Stack>
         </TableContainer>
         <AddStudentCourse studentId={studentId} />
+        <Edit
+            openDialog={editStudentCourse.openDialog}
+            studentCourse={editStudentCourse.studentCourse}
+            key={editStudentCourse.key}
+        />
     </Container>);
 }
 export default StudentCourses;

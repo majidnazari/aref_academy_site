@@ -73,10 +73,8 @@ const SigninScreen = () => {
         setLoading(true);
         login().then(res => {
             saveUserData(res.data.login.user);
-            console.log(res.data.login.user.groups[0].menus);
             setToken(res.data.login.access_token);
             authContext.login(true);
-
         }).finally(() => {
             setLoading(false);
         });
