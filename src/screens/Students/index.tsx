@@ -25,7 +25,6 @@ import {
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 import Typography from '@mui/material/Typography';
-import PaymentsIcon from '@mui/icons-material/Payments';
 import ClassIcon from '@mui/icons-material/Class';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -247,7 +246,6 @@ const StudentsScreen = () => {
                         <StyledTableCell align="left">
                             رشته
                         </StyledTableCell>
-                        <StyledTableCell align="left">سوابق مالی</StyledTableCell>
                         <StyledTableCell align="left">کلاسها</StyledTableCell>
                         <StyledTableCell align="left">ویرایش</StyledTableCell>
                         <StyledTableCell align="left">حذف</StyledTableCell>
@@ -268,15 +266,6 @@ const StudentsScreen = () => {
                             <StyledTableCell align="left">
                                 {element.major !== '' ? majorObject[element.major] : '-'}
                             </StyledTableCell>
-
-                            <StyledTableCell align="left"><Button
-                                size="small"
-                                variant="contained"
-                                startIcon={<PaymentsIcon />}
-                                color="primary"
-                            >
-                                مالی
-                            </Button></StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 variant="contained"

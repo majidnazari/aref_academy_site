@@ -17,6 +17,10 @@ interface StudentCoursesType {
         first_name: string;
         last_name: string;
     } | null;
+    user_student_status: {
+        first_name: string;
+        last_name: string;
+    } | null;
     course: {
         name: string;
         lesson: string;

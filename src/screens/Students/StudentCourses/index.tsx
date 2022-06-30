@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_A_STUDENT, GET_A_STUDENT_COURSES } from "./gql/query";
+import { DELETE_STUDENT_COURSE } from "./gql/mutation";
 import {
     CircularProgress,
     Container,
@@ -12,8 +13,6 @@ import {
     Typography,
     TableRow,
     TableBody,
-    Stack,
-    Pagination,
     Button,
 } from "@mui/material";
 import { styled } from '@mui/material/styles';
@@ -27,11 +26,14 @@ import moment from 'moment-jalaali';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Edit from "./components/Edit";
+import { showSuccess, showConfirm } from "utils/swlAlert";
+
 
 interface EditStudentCourse {
     openDialog: boolean;
     studentCourse: StudentCoursesType;
     key: number,
+    id: number
 }
 
 const StudentCourses = () => {
@@ -51,6 +53,7 @@ const StudentCourses = () => {
         openDialog: false,
         studentCourse: {} as StudentCoursesType,
         key: 0,
+        id: 0
     });
 
     const { data: studentData, loading } = useQuery(GET_A_STUDENT, {
@@ -59,17 +62,37 @@ const StudentCourses = () => {
         }
     });
 
-    const { loading: loadingStudentCourses } = useQuery(GET_A_STUDENT_COURSES, {
+    const { refetch, loading: courseLoading } = useQuery(GET_A_STUDENT_COURSES, {
         variables: {
             first: 200,
             page: 1,
-            student_id: studentId ? parseInt(studentId) : 0
+            student_id: studentId ? parseInt(studentId) : 0,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }]
         },
         onCompleted: (data) => {
             setPageInfo(data.getCourseStudents.paginatorInfo);
             setStudentCourses(data.getCourseStudents.data);
-        }
+        },
+        fetchPolicy: "no-cache"
     });
+
+    const [deleteCourseStudent] = useMutation(DELETE_STUDENT_COURSE);
+
+    const deleteCourseStudentHandler = (id: number) => {
+        showConfirm(() => {
+            deleteCourseStudent({
+                variables: {
+                    id
+                },
+            }).then(() => {
+                refetch();
+                showSuccess('حذف با موفقیت انجام شد.');
+            });
+        })
+    }
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -96,6 +119,9 @@ const StudentCourses = () => {
                 studentData?.getStudent.first_name + ' ' + studentData?.getStudent.last_name
             }
         </Typography>
+        {
+            courseLoading ? <CircularProgress /> : null
+        }
         <TableContainer component={Paper}>
             <Table aria-label="customized table">
                 <TableHead>
@@ -138,15 +164,19 @@ const StudentCourses = () => {
                             </StyledTableCell>
                             <StyledTableCell align="center">
                                 <StatusIcon status={element.student_status} />
+                                <Typography component={'div'} sx={{ fontSize: 9, fontWeight: 'bold' }} >
+                                    {
+                                        element.user_student_status ?
+                                            element.user_student_status?.first_name + ' ' + element.user_student_status?.last_name : null
+                                    }
+                                </Typography>
                             </StyledTableCell>
                             <StyledTableCell align="center">
                                 <StatusIcon status={element.manager_status} />
                                 <Typography component={'div'} sx={{ fontSize: 9, fontWeight: 'bold' }} >
                                     {
-                                        element.manager_status === 'approved' ?
-                                            element.user_manager?.first_name + ' ' + element.user_manager?.last_name
-                                            :
-                                            null
+                                        element?.user_manager ?
+                                            element.user_manager?.first_name + ' ' + element.user_manager?.last_name : null
                                     }
                                 </Typography>
                             </StyledTableCell>
@@ -154,10 +184,8 @@ const StudentCourses = () => {
                                 <StatusIcon status={element.financial_status} />
                                 <Typography component={'div'} sx={{ fontSize: 9, fontWeight: 'bold' }} >
                                     {
-                                        element.financial_status === 'approved' ?
-                                            element.user_financial?.first_name + ' ' + element.user_financial?.last_name
-                                            :
-                                            null
+                                        element.user_financial ?
+                                            element.user_financial?.first_name + ' ' + element.user_financial?.last_name : null
                                     }
                                 </Typography>
                             </StyledTableCell>
@@ -174,7 +202,8 @@ const StudentCourses = () => {
                                         setEditStudentCourse({
                                             openDialog: true,
                                             studentCourse: element,
-                                            key: editStudentCourse.key + 1
+                                            key: editStudentCourse.key + 1,
+                                            id: element.id
                                         })
                                     }}
                                     variant="contained"
@@ -193,7 +222,7 @@ const StudentCourses = () => {
                                         element.financial_status === 'pending' ?
                                         <Button
                                             size="small"
-                                            // onClick={() => deleteBranch(element.id)}
+                                            onClick={() => deleteCourseStudentHandler(element.id)}
                                             variant="contained"
                                             startIcon={<DeleteIcon />}
                                             color="error"
@@ -208,11 +237,12 @@ const StudentCourses = () => {
                 </TableBody>
             </Table>
         </TableContainer>
-        <AddStudentCourse studentId={studentId} />
+        <AddStudentCourse studentId={studentId} refetch={refetch} />
         <Edit
             openDialog={editStudentCourse.openDialog}
             studentCourse={editStudentCourse.studentCourse}
             key={editStudentCourse.key}
+            refresh={refetch}
         />
     </Container>);
 }

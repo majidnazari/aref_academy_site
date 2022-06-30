@@ -5,11 +5,14 @@ import { useQuery, useMutation } from "@apollo/client";
 import { CREATE_STUDENT_COURSE } from '../gql/mutation';
 import { useState } from "react";
 import CourseName from "components/CourseName";
+import { showSuccess } from "utils/swlAlert";
+
 interface Props {
     studentId: string | undefined;
+    refetch: Function;
 }
 
-const AddStudentCourse = ({ studentId }: Props) => {
+const AddStudentCourse = ({ studentId, refetch }: Props) => {
     const [courseId, setCourseId] = useState<string | undefined>("");
     const { data: coursesData, loading } = useQuery(GET_COURSES, {
         variables: {
@@ -18,22 +21,24 @@ const AddStudentCourse = ({ studentId }: Props) => {
             orderBy: [{
                 column: 'id',
                 order: 'DESC'
-            }]
-        },
-        onCompleted: (data) => {
-            console.log(data);
+            }],
+            fetchPolicy: "no-cache"
         }
     });
 
     const [createStudentCourse] = useMutation(CREATE_STUDENT_COURSE);
 
     const insertStudentCourse = () => {
-        createStudentCourse({
+        const input = {
             variables: {
                 student_id: studentId ? parseInt(studentId) : 0,
                 course_id: courseId ? parseInt(courseId) : 0,
                 status: "ok"
             }
+        }
+        createStudentCourse(input).then(() => {
+            showSuccess("درس با موفقیت اضافه شد");
+            refetch();
         });
     }
 
@@ -57,10 +62,13 @@ const AddStudentCourse = ({ studentId }: Props) => {
                     displayEmpty
                 >
                     <MenuItem value="" disabled >
-                        <em>انتخاب درس</em>
+                        <em>
+                            انتخاب درس 
+                            {loading && <span> درحال بارگزاری...</span>}
+                        </em>
                     </MenuItem>
                     {coursesData && Object.keys(coursesData.getCourses.data).map((key, index) => (
-                        <MenuItem key={index} value={key}>
+                        <MenuItem key={index} value={coursesData.getCourses.data[key].id}>
                             <CourseName course={coursesData.getCourses.data[key]} />
                         </MenuItem>
                     ))

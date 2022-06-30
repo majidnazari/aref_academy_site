@@ -17,11 +17,13 @@ export const GET_A_STUDENT_COURSES = gql`
       $first: Int!
       $page: Int
       $student_id:Int
+      $orderBy: [OrderByClause!]
     ) {
       getCourseStudents(
         first: $first
         page: $page
         student_id:$student_id
+        orderBy:$orderBy
         ){
         data{
           id
@@ -38,6 +40,10 @@ export const GET_A_STUDENT_COURSES = gql`
             last_name
           }
           user_financial{
+            first_name
+            last_name
+          }
+          user_student_status{
             first_name
             last_name
           }
