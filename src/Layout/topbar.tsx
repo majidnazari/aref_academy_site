@@ -9,6 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import { showSuccess } from 'utils/swlAlert';
 
 const drawerWidth: number = 240;
 
@@ -69,7 +70,12 @@ const Topbar = ({ toggleDrawer, open = true, isDarkTheme = false, setDarktheme }
             >
                 آکادمی عارف
             </Typography>
-            <IconButton color="inherit">
+            <IconButton 
+                color="inherit"
+                onClick={() => {
+                    showSuccess('این آیتم بزودی فهرست دانش اموزان تایید  و کلاسهای تایید نشده را فراهم می‌سازد');
+                }}
+            >
                 <Badge badgeContent={4} color="secondary">
                     <NotificationsIcon />
                 </Badge>

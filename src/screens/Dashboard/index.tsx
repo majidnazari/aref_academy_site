@@ -1,39 +1,81 @@
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
+import TitleBox from 'components/TitleBox';
+import GroupIcon from '@mui/icons-material/Group';
+import { Box } from '@mui/material';
+import { useNavigate } from "react-router-dom"
+import ClassIcon from '@mui/icons-material/Class';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const DashboardScreen = () => {
-    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-        <Grid container spacing={1}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-                <Paper
+    const navigate = useNavigate();
+    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }} >
+        <Grid container spacing={2}>
+
+            <Grid item xs={12} md={4} lg={4}>
+                <Box
                     sx={{
-                        p: 2,
+                        backgroundColor: "success.main",
+                        color: "white",
+                        borderRadius: "5px",
+                        boxShadow: 3,
+                        cursor: 'pointer',
                         display: 'flex',
-                        flexDirection: 'column',
-                        height: 240,
+                        justifyContent: 'center',
+                        py: 2
+                    }}
+                    onClick={() => {
+                        navigate('users');
                     }}
                 >
-                </Paper>
+                    <TitleBox
+                        title="مدیریت کاربران"
+                        number=""
+                        icon={<AccountCircleIcon sx={{ mt: 1 }} fontSize="large" />}
+                    />
+                </Box>
             </Grid>
-            {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
-                <Paper
+
+            <Grid item xs={12} md={4} lg={4}>
+                <Box
                     sx={{
-                        p: 2,
+                        backgroundColor: "text.secondary",
+                        color: "white",
+                        borderRadius: "5px",
+                        boxShadow: 3,
+                        cursor: 'pointer',
                         display: 'flex',
-                        flexDirection: 'column',
-                        height: 240,
+                        justifyContent: 'center',
+                        py: 2
+                    }}
+                    onClick={() => {
+                        navigate('courses');
                     }}
                 >
-                </Paper>
+                    <TitleBox title="مدیریت کلاسها" number="" icon={<ClassIcon sx={{ mt: 1 }} fontSize="large" />} />
+                </Box>
             </Grid>
-            {/* Recent Orders */}
-            <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                </Paper>
+
+            <Grid item xs={12} md={4} lg={4}>
+                <Box
+                    sx={{
+                        backgroundColor: "info.main",
+                        color: "white",
+                        borderRadius: "5px",
+                        boxShadow: 3,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        py: 2
+                    }}
+                    onClick={() => {
+                        navigate('students');
+                    }}
+                >
+                    <TitleBox title="مدیریت دانش‌آموزان" number="" icon={<GroupIcon sx={{ mt: 1 }} fontSize="large" />} />
+                </Box>
             </Grid>
+
         </Grid>
     </Container>)
 }
