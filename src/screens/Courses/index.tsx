@@ -24,7 +24,7 @@ import {
     useNavigate
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
-import { typesObject, lessonsObject, educationLevelsObject } from '../../constants';
+import { typesObject, educationLevelsObject } from '../../constants';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import CheckIcon from '@mui/icons-material/Check';
 import Typography from '@mui/material/Typography';
@@ -43,7 +43,10 @@ interface CourseData {
         first_name: string;
         last_name: string;
     };
-    lesson: string;
+    lesson: {
+        id: number;
+        name: string;
+    };
     type: string;
     education_level: string;
     financial_status: string;
@@ -189,7 +192,7 @@ const CoursesScreen = () => {
                         <StyledTableCell align="left">سال</StyledTableCell>
                         <StyledTableCell align="left">دبیر</StyledTableCell>
                         <StyledTableCell align="left">کاربر ثبت کننده</StyledTableCell>
-                        <StyledTableCell align="left">رشته</StyledTableCell>
+                        <StyledTableCell align="left">درس پایه</StyledTableCell>
                         <StyledTableCell align="left">نوع</StyledTableCell>
                         <StyledTableCell align="left">مقطع</StyledTableCell>
                         <StyledTableCell align="left">تایید حسابداری</StyledTableCell>
@@ -209,7 +212,9 @@ const CoursesScreen = () => {
                             <StyledTableCell align="left">{element.teacher.first_name} {element.teacher.last_name}</StyledTableCell>
 
                             <StyledTableCell align="left">{element.user.first_name} {element.user.last_name}</StyledTableCell>
-                            <StyledTableCell align="left">{lessonsObject[element.lesson]}</StyledTableCell>
+                            <StyledTableCell align="left">
+                                {element.lesson?.name}
+                            </StyledTableCell>
                             <StyledTableCell align="left">{typesObject[element.type]}</StyledTableCell>
                             <StyledTableCell align="left">{educationLevelsObject[element.education_level]}</StyledTableCell>
                             <StyledTableCell align="center">

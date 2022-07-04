@@ -16,7 +16,8 @@ import {
 } from "react-router-dom";
 import { GET_A_COURSE } from './gql/query';
 import { useQuery } from '@apollo/client';
-import { lessonsObject, typesObject } from '../../constants';
+import CourseName from 'components/CourseName';
+
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -80,11 +81,7 @@ const CourseSessionsScreen = () => {
             {error && <div>Error :(</div>}
             {!courseData ? null :
                 (<Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
-                    {lessonsObject[courseData.getCourse.lesson]} - 
-                    {courseData.getCourse.teacher.first_name} {courseData.getCourse.teacher.last_name} -
-                    {courseData.getCourse.name} -
-                    {typesObject[courseData.getCourse.type]} -
-                    مقطع {courseData.getCourse.education_level}
+                    <CourseName course={courseData.getCourse} />
                 </Typography>)
             }
             <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>

@@ -9,7 +9,9 @@ export const GET_COURSES = gql`
         data{
           id
           name
-          lesson
+          lesson {
+            name
+          }
           type
           created_at
           updated_at
@@ -52,7 +54,10 @@ export const GET_A_COURSE = gql`
           year_id
           teacher_id
           name
-          lesson
+          lesson {
+            id
+            name
+          }
           type
           education_level
           teacher{
@@ -153,7 +158,10 @@ export const GET_COURSE_SESSIONS = gql`
               first_name
               last_name
             }
-            lesson
+            lesson{
+              id
+              name
+            }
           }
         }
         paginatorInfo{
@@ -182,6 +190,31 @@ export const GET_A_COURSE_SESSION = gql`
         start_date
         start_time
         end_time
+      }
+    }
+`;
+
+export const GET_LESSONS = gql`
+    query GET_LESSONS(
+      $first: Int!
+      $page: Int
+      $orderBy: [OrderByClause!]
+    ){
+      getLessons(first:$first,page:$page,orderBy:$orderBy){
+        data{
+          id
+          name
+        }
+        paginatorInfo{
+          count
+          currentPage
+          firstItem
+          hasMorePages
+          lastItem
+          lastPage
+          perPage
+          total
+        }
       }
     }
 `;

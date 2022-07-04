@@ -9,7 +9,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { EDIT_COURSE } from './gql/mutation';
-import { GET_A_COURSE, GET_YEARS, GET_USERS } from './gql/query';
+import { GET_A_COURSE, GET_YEARS, GET_USERS, GET_LESSONS } from './gql/query';
 import { useMutation, useQuery } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
 import { Grid } from '@mui/material';
@@ -18,7 +18,7 @@ import {
 } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import FormHelperText from '@mui/material/FormHelperText';
-import { lessonsObject, typesObject, educationLevelsObject } from '../../constants';
+import { typesObject, educationLevelsObject } from '../../constants';
 import {
     useNavigate
 } from "react-router-dom";
@@ -30,7 +30,7 @@ interface ErrorData {
     education_level?: string;
     year_id?: string;
     teacher_id?: string;
-    lesson?: string;
+    lessonId?: string;
     type?: string;
 }
 
@@ -41,7 +41,10 @@ interface CourseData {
     year_id: number;
     teacher_id: number;
     name: string;
-    lesson: string;
+    lesson: {
+        id: string;
+        name: string;
+    };
     type: string;
 }
 
@@ -50,7 +53,7 @@ const CoursesEditScreen = () => {
     const [educationLevel, setEducationLevel] = useState<string>("");
     const [yearId, setYearId] = useState<string>("");
     const [teacherId, setTeacherId] = useState<string>("");
-    const [lesson, setLesson] = useState<string>("");
+    const [lessonId, setLessonId] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
@@ -84,6 +87,18 @@ const CoursesEditScreen = () => {
         }
     });
 
+    const { data: lessons } = useQuery(GET_LESSONS, {
+        variables: {
+            first: 1000,
+            page: 1,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }]
+        }
+    });
+
+
     const handleChangeEducationLevel = (event: SelectChangeEvent<string>) => {
         setEducationLevel(event.target.value);
     };
@@ -95,7 +110,7 @@ const CoursesEditScreen = () => {
         setTeacherId(event.target.value);
     };
     const handleChangeLesson = (event: SelectChangeEvent<string>) => {
-        setLesson(event.target.value);
+        setLessonId(event.target.value);
     };
 
     const handleChangeType = (event: SelectChangeEvent<string>) => {
@@ -108,7 +123,7 @@ const CoursesEditScreen = () => {
             setName(CourseInfo.name);
             setYearId(CourseInfo.year_id.toString());
             setTeacherId(CourseInfo.teacher_id.toString());
-            setLesson(CourseInfo.lesson);
+            setLessonId(CourseInfo.lesson.id);
             setType(CourseInfo.type);
             setEducationLevel(CourseInfo.education_level);
         }
@@ -125,7 +140,7 @@ const CoursesEditScreen = () => {
                 name: name,
                 year_id: Number(yearId),
                 teacher_id: Number(teacherId),
-                lesson: lesson,
+                lesson_id: Number(lessonId),
                 type: type,
                 education_level: educationLevel
             }
@@ -157,8 +172,8 @@ const CoursesEditScreen = () => {
             result = { ...result, teacher_id: 'نام دبیر را وارد کنید.' };
             out = false;
         }
-        if (!lesson) {
-            result = { ...result, lesson: 'نام درس پایه را وارد کنید.' };
+        if (!lessonId) {
+            result = { ...result, lessonId: 'نام درس پایه را وارد کنید.' };
             out = false;
         }
         if (!type) {
@@ -215,7 +230,7 @@ const CoursesEditScreen = () => {
                     <Select
                         defaultValue=""
                         id="grouped-select"
-                        value={yearId}
+                        value={allYears ? yearId : ""}
                         onChange={handleChangeYear}
                         error={error.year_id ? true : false}
                         variant="filled"
@@ -230,7 +245,7 @@ const CoursesEditScreen = () => {
                                     value={year.id}
                                     key={year.id}>{year.name}
                                 </MenuItem>
-                            }) : <MenuItem value="" disabled >
+                            }) : <MenuItem value="1" disabled >
                                 <em>در حال بارگذاری ...</em>
                             </MenuItem>
                         }
@@ -242,7 +257,7 @@ const CoursesEditScreen = () => {
                 <FormControl sx={{ width: "100%" }}>
                     <Select
                         defaultValue=""
-                        value={teacherId}
+                        value={teachers ? teacherId : ""}
                         onChange={handleChangeTeacher}
                         error={error.teacher_id ? true : false}
                         variant="filled"
@@ -271,21 +286,27 @@ const CoursesEditScreen = () => {
                     <Select
                         defaultValue=""
                         id="grouped-select"
-                        value={lesson}
+                        value={lessons ? lessonId : ""}
                         onChange={handleChangeLesson}
-                        error={error.lesson ? true : false}
+                        error={error.lessonId ? true : false}
                         variant="filled"
                         displayEmpty
                     >
                         <MenuItem value="" disabled >
                             <em>درس پایه</em>
                         </MenuItem>
-                        {Object.keys(lessonsObject).map((key, index) => (
-                            <MenuItem key={index} value={key}>{lessonsObject[key]}</MenuItem>
-                        ))
+                        {lessons ?
+                            lessons.getLessons.data.map((lesson: any) => {
+                                return <MenuItem
+                                    value={lesson.id}
+                                    key={lesson.id}>{lesson.name}
+                                </MenuItem>
+                            }) : <MenuItem value="" disabled >
+                                <em>در حال بارگذاری ...</em>
+                            </MenuItem>
                         }
                     </Select>
-                    {error.lesson ? <FormHelperText error >{error.lesson}</FormHelperText> : ""}
+                    {error.lessonId ? <FormHelperText error >{error.lessonId}</FormHelperText> : ""}
                 </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4}  >

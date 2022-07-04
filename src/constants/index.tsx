@@ -1,12 +1,8 @@
-export const lessonsObject: any = {
-    'Mathematics': 'ریاضی',
-    'Physics': 'فیزیک',
-    'Biologie': 'زیست',
-};
-
 export const typesObject: any = {
     'public': 'عمومی',
+    'semi-private': 'نیمه خصوصی',
     'private': 'خصوصی',
+    'master' : 'مَستر'
 };
 
 export const educationLevelsObject: any = {

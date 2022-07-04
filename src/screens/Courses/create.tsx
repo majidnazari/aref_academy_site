@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import { CREATE_COURSE } from './gql/mutation';
-import { GET_YEARS, GET_USERS } from './gql/query';
+import { GET_YEARS, GET_USERS, GET_LESSONS } from './gql/query';
 import { useMutation, useQuery } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
 import { FormControl, Grid } from '@mui/material';
@@ -17,7 +17,7 @@ import {
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormHelperText from '@mui/material/FormHelperText';
-import { lessonsObject, typesObject, educationLevelsObject } from '../../constants';
+import { typesObject, educationLevelsObject } from '../../constants';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 interface ErrorData {
@@ -25,7 +25,7 @@ interface ErrorData {
     education_level?: string;
     year_id?: string;
     teacher_id?: string;
-    lesson?: string;
+    lessonId?: string;
     type?: string;
 }
 
@@ -34,7 +34,7 @@ const CoursesCreateScreen = () => {
     const [educationLevel, setEducationLevel] = useState<string>("");
     const [yearId, setYearId] = useState<string>("");
     const [teacherId, setTeacherId] = useState<string>("");
-    const [lesson, setLesson] = useState<string>("");
+    const [lessonId, setLessonId] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
@@ -62,6 +62,17 @@ const CoursesCreateScreen = () => {
         }
     });
 
+    const { data: lessons } = useQuery(GET_LESSONS, {
+        variables: {
+            first: 1000,
+            page: 1,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }]
+        }
+    });
+
     const handleChangeEducationLevel = (event: SelectChangeEvent<string>) => {
         setEducationLevel(event.target.value);
     };
@@ -72,7 +83,7 @@ const CoursesCreateScreen = () => {
         setTeacherId(event.target.value);
     };
     const handleChangeLesson = (event: SelectChangeEvent<string>) => {
-        setLesson(event.target.value);
+        setLessonId(event.target.value);
     };
     const handleChangeType = (event: SelectChangeEvent<string>) => {
         setType(event.target.value);
@@ -87,7 +98,7 @@ const CoursesCreateScreen = () => {
                 name: name,
                 year_id: Number(yearId),
                 teacher_id: Number(teacherId),
-                lesson: lesson,
+                lesson_id: Number(lessonId),
                 type: type,
                 education_level: educationLevel
             }
@@ -121,8 +132,8 @@ const CoursesCreateScreen = () => {
             result = { ...result, teacher_id: 'نام دبیر را وارد کنید.' };
             out = false;
         }
-        if (!lesson) {
-            result = { ...result, lesson: 'نام درس پایه را وارد کنید.' };
+        if (!lessonId) {
+            result = { ...result, lessonId: 'نام درس پایه را وارد کنید.' };
             out = false;
         }
         if (!type) {
@@ -232,21 +243,27 @@ const CoursesCreateScreen = () => {
                     <Select
                         defaultValue=""
                         id="grouped-select"
-                        value={lesson}
+                        value={lessonId}
                         onChange={handleChangeLesson}
-                        error={error.lesson ? true : false}
+                        error={error.lessonId ? true : false}
                         variant="filled"
                         displayEmpty
                     >
                         <MenuItem value="" disabled >
                             <em>درس پایه</em>
                         </MenuItem>
-                        {Object.keys(lessonsObject).map((key, index) => (
-                            <MenuItem key={index} value={key}>{lessonsObject[key]}</MenuItem>
-                        ))
+                        {lessons ?
+                            lessons.getLessons.data.map((lesson: any) => {
+                                return <MenuItem
+                                    value={lesson.id}
+                                    key={lesson.id}>{lesson.name}
+                                </MenuItem>
+                            }) : <MenuItem value="" disabled >
+                                <em>در حال بارگذاری ...</em>
+                            </MenuItem>
                         }
                     </Select>
-                    {error.lesson ? <FormHelperText error >{error.lesson}</FormHelperText> : ""}
+                    {error.lessonId ? <FormHelperText error >{error.lessonId}</FormHelperText> : ""}
                 </FormControl>
             </Grid>
             <Grid item xs={12} md={4} lg={4} >

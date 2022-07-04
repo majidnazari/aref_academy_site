@@ -13,7 +13,7 @@ export const CREATE_COURSE = gql`
         $year_id: Int!
         $teacher_id: Int!
         $name: String!
-        $lesson: String!
+        $lesson_id: Int!
         $type: String!
         $education_level: String!
         )
@@ -22,7 +22,7 @@ export const CREATE_COURSE = gql`
                 year_id: $year_id
                 teacher_id: $teacher_id
                 name: $name
-                lesson: $lesson
+                lesson_id: $lesson_id
                 type: $type
                 education_level: $education_level
             }){
@@ -38,7 +38,7 @@ mutation EDIT_COURSE(
     $year_id: Int
     $teacher_id: Int
     $name: String
-    $lesson: String
+    $lesson_id: Int
     $type: String
     $education_level: String
     )
@@ -48,7 +48,7 @@ mutation EDIT_COURSE(
             year_id: $year_id
             teacher_id: $teacher_id
             name: $name
-            lesson: $lesson
+            lesson_id: $lesson_id
             type: $type
             education_level: $education_level
         }){
