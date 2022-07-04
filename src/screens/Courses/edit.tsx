@@ -9,19 +9,15 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { EDIT_COURSE } from './gql/mutation';
-import { GET_A_COURSE, GET_YEARS, GET_USERS, GET_LESSONS } from './gql/query';
+import { GET_A_COURSE, GET_YEARS, GET_USERS, GET_LESSONS, GET_BRANCHES } from './gql/query';
 import { useMutation, useQuery } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
 import { Grid } from '@mui/material';
-import {
-    useParams
-} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import FormHelperText from '@mui/material/FormHelperText';
 import { typesObject, educationLevelsObject } from '../../constants';
-import {
-    useNavigate
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Typography from '@mui/material/Typography';
 
@@ -32,6 +28,7 @@ interface ErrorData {
     teacher_id?: string;
     lessonId?: string;
     type?: string;
+    branchId?: string;
 }
 
 interface CourseData {
@@ -46,6 +43,10 @@ interface CourseData {
         name: string;
     };
     type: string;
+    branch: {
+        id: string;
+        name: string;
+    }
 }
 
 const CoursesEditScreen = () => {
@@ -55,6 +56,7 @@ const CoursesEditScreen = () => {
     const [teacherId, setTeacherId] = useState<string>("");
     const [lessonId, setLessonId] = useState<string>("");
     const [type, setType] = useState<string>("");
+    const [branchId, setBranchId] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
     const [editCourse] = useMutation(EDIT_COURSE);
@@ -98,6 +100,17 @@ const CoursesEditScreen = () => {
         }
     });
 
+    const { data: branches } = useQuery(GET_BRANCHES, {
+        variables: {
+            first: 1000,
+            page: 1,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }]
+        }
+    });
+
 
     const handleChangeEducationLevel = (event: SelectChangeEvent<string>) => {
         setEducationLevel(event.target.value);
@@ -117,6 +130,10 @@ const CoursesEditScreen = () => {
         setType(event.target.value);
     };
 
+    const handleChangeBranch = (event: SelectChangeEvent<string>) => {
+        setBranchId(event.target.value);
+    }
+
     useEffect(() => {
         if (courseData) {
             const CourseInfo: CourseData = courseData.getCourse;
@@ -126,6 +143,7 @@ const CoursesEditScreen = () => {
             setLessonId(CourseInfo.lesson.id);
             setType(CourseInfo.type);
             setEducationLevel(CourseInfo.education_level);
+            setBranchId(CourseInfo.branch?.id);
         }
 
     }, [courseData]);
@@ -142,7 +160,8 @@ const CoursesEditScreen = () => {
                 teacher_id: Number(teacherId),
                 lesson_id: Number(lessonId),
                 type: type,
-                education_level: educationLevel
+                education_level: educationLevel,
+                branch_id: Number(branchId)
             }
         }).then(() => {
             showSuccess('ویرایش با موفقیت انجام شد');
@@ -178,6 +197,10 @@ const CoursesEditScreen = () => {
         }
         if (!type) {
             result = { ...result, type: 'نوع را وارد کنید.' };
+            out = false;
+        }
+        if (!branchId) {
+            result = { ...result, branchId: 'شعبه را وارد کنید.' };
             out = false;
         }
         setError(result);
@@ -329,6 +352,30 @@ const CoursesEditScreen = () => {
                         }
                     </Select>
                     {error.type ? <FormHelperText error >{error.type}</FormHelperText> : ""}
+                </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4} lg={4}  >
+                <FormControl sx={{ width: "100%" }}>
+                    <Select
+                        defaultValue=""
+                        value={branches ? (branchId || "") : ''}
+                        onChange={handleChangeBranch}
+                        error={error.type ? true : false}
+                        variant="filled"
+                        displayEmpty
+                    >
+                        <MenuItem value="" disabled >
+                            <em>شعبه</em>
+                        </MenuItem>
+                        {
+                            branches && branches.getBranches.data.map((branch: any) => {
+                                return <MenuItem key={branch.id} value={branch.id}>{branch.name}
+                                </MenuItem>;
+                            })
+
+                        }
+                    </Select>
+                    {error.branchId ? <FormHelperText error >{error.branchId}</FormHelperText> : ""}
                 </FormControl>
             </Grid>
         </Grid>

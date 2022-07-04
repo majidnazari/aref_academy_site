@@ -53,6 +53,9 @@ interface CourseData {
     created_at: string;
     updated_at: string;
     deleted_at: string;
+    branch: {
+        name: string;
+    }
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -195,6 +198,7 @@ const CoursesScreen = () => {
                         <StyledTableCell align="left">درس پایه</StyledTableCell>
                         <StyledTableCell align="left">نوع</StyledTableCell>
                         <StyledTableCell align="left">مقطع</StyledTableCell>
+                        <StyledTableCell align="left">شعبه</StyledTableCell>
                         <StyledTableCell align="left">تایید حسابداری</StyledTableCell>
                         <StyledTableCell align="left">جلسات</StyledTableCell>
                         <StyledTableCell align="left">ویرایش</StyledTableCell>
@@ -217,6 +221,8 @@ const CoursesScreen = () => {
                             </StyledTableCell>
                             <StyledTableCell align="left">{typesObject[element.type]}</StyledTableCell>
                             <StyledTableCell align="left">{educationLevelsObject[element.education_level]}</StyledTableCell>
+                            <StyledTableCell align="left">{element.branch?.name}</StyledTableCell>
+
                             <StyledTableCell align="center">
                                 {element.financial_status === 'approved' ?
                                     (<CheckIcon color="success" />) : (<ReportProblemIcon color="disabled" />)

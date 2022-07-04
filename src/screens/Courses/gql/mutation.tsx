@@ -41,6 +41,7 @@ mutation EDIT_COURSE(
     $lesson_id: Int
     $type: String
     $education_level: String
+    $branch_id:Int!
     )
     {
         updateCourse(input:{
@@ -51,6 +52,7 @@ mutation EDIT_COURSE(
             lesson_id: $lesson_id
             type: $type
             education_level: $education_level
+            branch_id:$branch_id
         }){
             id
         }
@@ -60,6 +62,7 @@ mutation EDIT_COURSE(
 export const CREATE_MULTI_SESSIONS = gql`
     mutation CREATE_MULTI_SESSIONS(
             $course_id: Int!
+            $branch_class_room_id: Int!
             $days: [String]
             $name: String
             $price: Int
@@ -72,6 +75,7 @@ export const CREATE_MULTI_SESSIONS = gql`
         {
             createCourseSessionByDuringDate(input:{
                 course_id: $course_id
+                branch_class_room_id: $branch_class_room_id
                 days: $days
                 name: $name
                 price: $price
@@ -89,6 +93,7 @@ export const CREATE_MULTI_SESSIONS = gql`
 export const CREATE_SINGLE_SESSION = gql`
     mutation CREATE_SINGLE_SESSION(
             $course_id: Int!
+            $branch_class_room_id: Int!
             $name: String
             $price: Int
             $special: Boolean
@@ -99,6 +104,7 @@ export const CREATE_SINGLE_SESSION = gql`
         {
             createCourseSession(input:{
                 course_id: $course_id
+                branch_class_room_id: $branch_class_room_id
                 name: $name
                 price: $price
                 special: $special
@@ -115,6 +121,7 @@ export const EDIT_SINGLE_SESSION = gql`
     mutation EDIT_SINGLE_SESSION(
             $id: ID!
             $course_id: Int
+            $branch_class_room_id: Int
             $name: String
             $price: Int
             $special: Boolean
@@ -126,6 +133,7 @@ export const EDIT_SINGLE_SESSION = gql`
             updateCourseSession(input:{
                 id:$id
                 course_id: $course_id
+                branch_class_room_id: $branch_class_room_id
                 name: $name
                 price: $price
                 special: $special

@@ -14,6 +14,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 import {
     useNavigate
 } from "react-router-dom"
@@ -39,7 +40,8 @@ const Components: any = {
     ReceiptLongIcon: ReceiptLongIcon,
     NewReleasesIcon: NewReleasesIcon,
     AddBusinessIcon: AddBusinessIcon,
-    MeetingRoomIcon: MeetingRoomIcon
+    MeetingRoomIcon: MeetingRoomIcon,
+    MenuBookIcon: MenuBookIcon
 };
 const loadIcon = (input: any) => {
     return React.createElement(Components[input], {});
@@ -78,21 +80,12 @@ export const MainListItems = () => {
 };
 
 export const SecondaryListItems = () => {
-    let navigate = useNavigate();
+    //let navigate = useNavigate();
     return (process.env.REACT_APP_DEVELEP_MOD === "0" ? null : (
         <React.Fragment>
             <ListSubheader component="div" inset>
                 منوهای تستی
             </ListSubheader>
-
-            <ListItemButton
-                onClick={() => navigate('/lessons')}
-            >
-                <ListItemIcon>
-                    <BarChartIcon />
-                </ListItemIcon>
-                <ListItemText primary="تعریف دروس" />
-            </ListItemButton>
 
             <ListItemButton>
                 <ListItemIcon>

@@ -45,8 +45,14 @@ interface SessionData {
             last_name: string;
         };
         lesson: string;
-
     };
+    classRoom: {
+        id: number;
+        name: string;
+        branch: {
+            name: string;
+        }
+    }
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -156,6 +162,7 @@ const ListSessions = ({ courseId }: IProps) => {
                             <StyledTableCell align="left">فوق العاده</StyledTableCell>
                             <StyledTableCell align="left"> نام</StyledTableCell>
                             <StyledTableCell align="left">دبیر</StyledTableCell>
+                            <StyledTableCell align="left">محل برگزاری</StyledTableCell>
                             <StyledTableCell align="left">کاربر ثبت کننده</StyledTableCell>
                             <StyledTableCell align="left">شناسه</StyledTableCell>
 
@@ -184,6 +191,7 @@ const ListSessions = ({ courseId }: IProps) => {
                                 </StyledTableCell>
                                 <StyledTableCell align="left">{element.name !== '' ? element.name : '---'}</StyledTableCell>
                                 <StyledTableCell align="left">{element.course.teacher.first_name} {element.course.teacher.last_name}</StyledTableCell>
+                                <StyledTableCell align="left">{element.classRoom?.branch?.name} - {element.classRoom?.name} </StyledTableCell>
                                 <StyledTableCell align="left">{element.user.first_name} {element.user.last_name}</StyledTableCell>
 
                                 <StyledTableCell align="left">

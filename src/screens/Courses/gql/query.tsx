@@ -29,6 +29,9 @@ export const GET_COURSES = gql`
           }
           education_level
           financial_status
+          branch{
+            name
+          }
         }
         paginatorInfo{
           count
@@ -63,6 +66,10 @@ export const GET_A_COURSE = gql`
           teacher{
             first_name
             last_name
+          }
+          branch{
+            id
+            name
           }
         }
     }  
@@ -163,6 +170,13 @@ export const GET_COURSE_SESSIONS = gql`
               name
             }
           }
+          classRoom{
+            id
+            name
+            branch{
+              name
+            }
+          }
         }
         paginatorInfo{
           count
@@ -190,6 +204,10 @@ export const GET_A_COURSE_SESSION = gql`
         start_date
         start_time
         end_time
+        classRoom{
+          id
+          name
+        }
       }
     }
 `;
@@ -217,4 +235,47 @@ export const GET_LESSONS = gql`
         }
       }
     }
+`;
+
+export const GET_BRANCH_CLASSROOMS = gql`
+  query GET_BRANCH_CLASSROOMS(
+    $first: Int!
+    $page: Int
+    $orderBy: [OrderByClause!]
+  ){
+    getBranchClassRooms(first:$first,page:$page,orderBy:$orderBy){
+      data{
+        id
+        name
+        branch{
+          name
+        }
+      }
+      paginatorInfo{
+        count
+        currentPage
+        firstItem
+        hasMorePages
+        lastItem
+        lastPage
+        perPage
+        total
+      }
+    }
+  }
+`;
+
+export const GET_BRANCHES = gql`
+  query GET_BRANCHES(
+    $first: Int!
+    $page: Int!
+    $orderBy: [OrderByClause!]
+  ){
+    getBranches(first:$first,page:$page,orderBy:$orderBy){
+      data{
+        id
+        name
+      }
+    }
+  }
 `;

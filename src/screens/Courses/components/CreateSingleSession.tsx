@@ -14,7 +14,8 @@ import { Button } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
 import moment from 'moment';
 import { CREATE_SINGLE_SESSION } from '../gql/mutation';
-import { useMutation } from '@apollo/client';
+import { GET_BRANCH_CLASSROOMS } from '../gql/query';
+import { useMutation, useQuery } from '@apollo/client';
 import FormHelperText from '@mui/material/FormHelperText';
 import { showSuccess } from "../../../utils/swlAlert";
 import { trim } from "stylis";
@@ -29,6 +30,7 @@ interface ErrorData {
     endDate?: string;
     startTime?: string;
     endTime?: string;
+    branch_classroom_id?:string;
 }
 
 const CreateSingleSession = ({ courseId, callBack }: IProps) => {
@@ -37,15 +39,31 @@ const CreateSingleSession = ({ courseId, callBack }: IProps) => {
     const [endTime, setEndtTime] = useState<Date | null>(null);
     const [price, setPrice] = useState<string>("0");
     const [name, setName] = useState<string>("");
+    const [branchClassRoomId, setBranchClassRoomId] = useState<string>("");
     const [special, setSpecial] = useState<string>("0");
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
 
     const [insertSingleSession] = useMutation(CREATE_SINGLE_SESSION);
 
+    const { data: branchClassroomsData } = useQuery(GET_BRANCH_CLASSROOMS, {
+        variables: {
+            first: 1000,
+            page: 1,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }]
+        }
+    });
+
     const handleChangeSpecial = (event: SelectChangeEvent<string>) => {
         setSpecial(event.target.value);
     };
+
+    const handleChangeBranchClassRoomId = (event: SelectChangeEvent<string>) => {
+        setBranchClassRoomId(event.target.value);
+    }
 
     const insertSession = () => {
         if (!validation()) return;
@@ -56,6 +74,7 @@ const CreateSingleSession = ({ courseId, callBack }: IProps) => {
             start_time: moment(startTime).format("HH:mm"),
             end_time: moment(endTime).format("HH:mm"),
             price: Number(price.replace(/,/g, '')),
+            branch_class_room_id: Number(branchClassRoomId),
             special: special === '1',
             name: trim(name) !== "" ? trim(name) : null,
         };
@@ -90,6 +109,10 @@ const CreateSingleSession = ({ courseId, callBack }: IProps) => {
         }
         if (!endTime) {
             result = { ...result, endTime: "لطفا ساعت پایان را انتخاب کنید" };
+            out = false;
+        }
+        if (!branchClassRoomId) {
+            result = { ...result, branch_classroom_id: "محل برگزاری جلسات را انتخاب کنید" };
             out = false;
         }
         setError(result);
@@ -165,7 +188,28 @@ const CreateSingleSession = ({ courseId, callBack }: IProps) => {
                     }}
                 />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} xl={2}  >
+            <Grid item xs={12} sm={6} md={4} xl={3}  >
+                <FormControl sx={{ width: "100%" }}>
+                    <InputLabel id="special-label">محل برگزاری</InputLabel>
+                    <Select
+                        labelId="special-label"
+                        value={branchClassRoomId}
+                        onChange={handleChangeBranchClassRoomId}
+                        input={<OutlinedInput label="محل برگزاری" />}
+                    >
+                        {
+                            branchClassroomsData
+                            && branchClassroomsData.getBranchClassRooms.data.map((item: any) => (
+                                <MenuItem key={item.id} value={item.id}>
+                                    {item.branch.name + ' - ' + item.name}
+                                </MenuItem>
+                            ))
+                        }
+                    </Select>
+                    {error.branch_classroom_id ? <FormHelperText error >{error.branch_classroom_id}</FormHelperText> : ""}
+                </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} xl={1}  >
                 <FormControl sx={{ width: "100%" }}>
                     <InputLabel id="special-label">فوق العاده</InputLabel>
                     <Select

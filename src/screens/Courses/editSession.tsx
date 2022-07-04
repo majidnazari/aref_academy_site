@@ -8,7 +8,7 @@ import Paper from '@mui/material/Paper';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { EDIT_SINGLE_SESSION } from './gql/mutation';
-import { GET_A_COURSE_SESSION } from './gql/query';
+import { GET_A_COURSE_SESSION, GET_BRANCH_CLASSROOMS } from './gql/query';
 import { useMutation, useQuery } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
 import { Grid } from '@mui/material';
@@ -37,6 +37,7 @@ interface ErrorData {
     endDate?: string;
     startTime?: string;
     endTime?: string;
+    branch_classroom_id?: string;
 }
 
 const CourseSessionsEditScreen = () => {
@@ -45,6 +46,7 @@ const CourseSessionsEditScreen = () => {
     const [endTime, setEndtTime] = useState<Date | null>(null);
     const [price, setPrice] = useState<string>("0");
     const [name, setName] = useState<string>("");
+    const [branchClassRoomId, setBranchClassRoomId] = useState<string>("");
     const [special, setSpecial] = useState<string>("0");
     const [error, setError] = useState<ErrorData>({});
     const [loading, setLoading] = useState<boolean>(false);
@@ -52,26 +54,43 @@ const CourseSessionsEditScreen = () => {
     const params = useParams<string>();
     const { courseId, sessionId } = params;
 
-    const { loading: loadingReadData, error: errorReadData, data: sessionData } = useQuery(GET_A_COURSE_SESSION, {
+    const { loading: loadingReadData, error: errorReadData } = useQuery(GET_A_COURSE_SESSION, {
         variables: {
             id: sessionId
         },
         onCompleted: (data) => {
-            const { start_date, start_time, end_time, name, price, special } = data.getCourseSession;
+            const { start_date, start_time, end_time, name, price, special, classRoom } = data.getCourseSession;
+            console.log(data.getCourseSession);
             setStartDate(start_date);
             setStartTime(new Date(start_date + ' ' + start_time));
             setEndtTime(new Date(start_date + ' ' + end_time));
             setName(name);
             setPrice(price.toLocaleString());
+            setBranchClassRoomId(classRoom.id);
             setSpecial(special ? "1" : "0");
         },
         fetchPolicy: "no-cache"
+    });
+
+    const { data: branchClassroomsData } = useQuery(GET_BRANCH_CLASSROOMS, {
+        variables: {
+            first: 1000,
+            page: 1,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }]
+        }
     });
 
     const [editSingleSession] = useMutation(EDIT_SINGLE_SESSION);
 
     const handleChangeSpecial = (event: SelectChangeEvent) => {
         setSpecial(event.target.value);
+    }
+
+    const handleChangeBranchClassRoomId = (event: SelectChangeEvent<string>) => {
+        setBranchClassRoomId(event.target.value);
     }
 
     const editSessionHandler = () => {
@@ -84,6 +103,7 @@ const CourseSessionsEditScreen = () => {
             start_time: moment(startTime).format("HH:mm"),
             end_time: moment(endTime).format("HH:mm"),
             price: Number(price.replace(/,/g, '')),
+            branch_class_room_id: Number(branchClassRoomId),
             special: special === '1',
             name: trim(name)
         };
@@ -111,6 +131,10 @@ const CourseSessionsEditScreen = () => {
         }
         if (!endTime) {
             result = { ...result, endTime: "لطفا ساعت پایان را انتخاب کنید" };
+            out = false;
+        }
+        if (!branchClassRoomId) {
+            result = { ...result, branch_classroom_id: "محل برگزاری جلسات را انتخاب کنید" };
             out = false;
         }
         setError(result);
@@ -192,7 +216,31 @@ const CourseSessionsEditScreen = () => {
                     }}
                 />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} xl={2}  >
+            <Grid item xs={12} sm={6} md={4} xl={3}  >
+                <FormControl sx={{ width: "100%" }}>
+                    <InputLabel id="special-label">محل برگزاری</InputLabel>
+                    <Select
+                        labelId="special-label"
+                        value={branchClassRoomId || ""}
+                        onChange={handleChangeBranchClassRoomId}
+                        input={<OutlinedInput label="محل برگزاری" />}
+                    >
+                        <MenuItem value="" disabled>
+                            <em>محل برگزاری</em>
+                        </MenuItem>
+                        {
+                            branchClassroomsData
+                            && branchClassroomsData.getBranchClassRooms.data.map((item: any) => (
+                                <MenuItem key={item.id} value={item.id}>
+                                    {item.branch.name + ' - ' + item.name}
+                                </MenuItem>
+                            ))
+                        }
+                    </Select>
+                    {error.branch_classroom_id ? <FormHelperText error >{error.branch_classroom_id}</FormHelperText> : ""}
+                </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} xl={1}  >
                 <FormControl sx={{ width: "100%" }}>
                     <InputLabel id="special-label">فوق العاده</InputLabel>
                     <Select
