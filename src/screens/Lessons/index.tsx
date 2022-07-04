@@ -24,8 +24,6 @@ import {
     useNavigate
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
 
 
 interface LessonData {
