@@ -33,6 +33,12 @@ import StudentCourses from '../screens/Students/StudentCourses';
 
 import SigninScreen from '../screens/Signin';
 import SignoutScreen from '../screens/Signout';
+
+import LessonsScreen from '../screens/Lessons';
+import LessonsEditScreen from '../screens/Lessons/edit';
+import LessonsCreateScreen from '../screens/Lessons/create';
+
+
 import Main from '../Layout/main';
 import NoMatch from '../Layout/404';
 import {
@@ -94,6 +100,13 @@ const MainRouter = () => {
                             <Route path="edit/:studentId" element={<StudentEditScreen />} />
                             <Route path="create" element={<StudentCreateScreen />} />
                             <Route path=":studentId/courses" element={<StudentCourses />} />
+                            <Route path="*" element={<NoMatch />} />
+                        </Route>
+
+                        <Route path="lessons" >
+                            <Route path="" element={<LessonsScreen />} />
+                            <Route path="edit/:lessonId" element={<LessonsEditScreen />} />
+                            <Route path="create" element={<LessonsCreateScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
 

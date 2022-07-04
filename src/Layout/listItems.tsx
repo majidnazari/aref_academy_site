@@ -78,18 +78,20 @@ export const MainListItems = () => {
 };
 
 export const SecondaryListItems = () => {
-    // let navigate = useNavigate();
+    let navigate = useNavigate();
     return (process.env.REACT_APP_DEVELEP_MOD === "0" ? null : (
         <React.Fragment>
             <ListSubheader component="div" inset>
                 منوهای تستی
             </ListSubheader>
 
-            <ListItemButton>
+            <ListItemButton
+                onClick={() => navigate('/lessons')}
+            >
                 <ListItemIcon>
                     <BarChartIcon />
                 </ListItemIcon>
-                <ListItemText primary="برنامه کلاسی" />
+                <ListItemText primary="تعریف دروس" />
             </ListItemButton>
 
             <ListItemButton>
