@@ -20,9 +20,7 @@ import { GET_LESSONS } from './gql/query';
 import { DELETE_LESSON } from './gql/mutation';
 import { useMutation, useQuery } from '@apollo/client';
 import PaginatorInfo from '../../interfaces/paginator-info.interface';
-import {
-    useNavigate
-} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 
 
