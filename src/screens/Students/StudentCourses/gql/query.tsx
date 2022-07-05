@@ -49,7 +49,9 @@ export const GET_A_STUDENT_COURSES = gql`
           }
           course{
             name
-            lesson
+            lesson{
+              name
+            }
             type
             teacher{
               first_name
@@ -81,7 +83,10 @@ export const GET_COURSES = gql`
         data{
           id
           name
-          lesson
+          lesson{
+            id
+            name
+          }
           type
           teacher{
             first_name
