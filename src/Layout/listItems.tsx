@@ -7,7 +7,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
+import LogoutIcon from '@mui/icons-material/Logout';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ClassIcon from '@mui/icons-material/Class';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
@@ -34,7 +34,6 @@ const Components: any = {
     ShoppingCartIcon: ShoppingCartIcon,
     PeopleIcon: PeopleIcon,
     BarChartIcon: BarChartIcon,
-    LayersIcon: LayersIcon,
     AssignmentIcon: AssignmentIcon,
     ClassIcon: ClassIcon,
     ReceiptLongIcon: ReceiptLongIcon,
@@ -72,7 +71,7 @@ export const MainListItems = () => {
         <GenerateMenuItems />
         <ListItemButton onClick={() => navigate('/signout')}>
             <ListItemIcon>
-                <LayersIcon />
+                <LogoutIcon />
             </ListItemIcon>
             <ListItemText primary="خروج" />
         </ListItemButton>
