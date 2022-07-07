@@ -4,8 +4,9 @@ import {
     HttpLink,
     ApolloLink,
     concat,
+    DefaultOptions,
 } from "@apollo/client";
-import { getToken , removeToken } from "../utils/auth";
+import { getToken, removeToken } from "../utils/auth";
 import { onError } from '@apollo/client/link/error';
 import { showError } from "../utils/swlAlert";
 
@@ -29,7 +30,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 const logoutLink = onError((networkError) => {
     console.log(networkError);
     if (networkError.response?.errors) {
-        if(networkError.response.errors[0].message === "Unauthenticated.") {
+        if (networkError.response.errors[0].message === "Unauthenticated.") {
             removeToken();
             window.location.href = "/login";
         }
@@ -38,10 +39,20 @@ const logoutLink = onError((networkError) => {
 })
 
 const mid = concat(authMiddleware, logoutLink);
-
+const defaultOptions: DefaultOptions = {
+    watchQuery: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'ignore',
+    },
+    query: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
+    },
+}
 const apolloClient = new ApolloClient({
     link: concat(mid, httpLink),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
+    defaultOptions: defaultOptions,
 });
 
 export default apolloClient;
