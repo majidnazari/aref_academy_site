@@ -16,6 +16,7 @@ export const CREATE_COURSE = gql`
         $lesson_id: Int!
         $type: String!
         $education_level: String!
+        $branch_id:Int!
         )
         {
             createCourse(input:{
@@ -25,6 +26,7 @@ export const CREATE_COURSE = gql`
                 lesson_id: $lesson_id
                 type: $type
                 education_level: $education_level
+                branch_id:$branch_id
             }){
                 id
             }

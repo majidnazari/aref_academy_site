@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import { CREATE_COURSE } from './gql/mutation';
-import { GET_YEARS, GET_USERS, GET_LESSONS } from './gql/query';
+import { GET_YEARS, GET_USERS, GET_LESSONS, GET_BRANCHES } from './gql/query';
 import { useMutation, useQuery } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
 import { FormControl, Grid } from '@mui/material';
@@ -27,6 +27,7 @@ interface ErrorData {
     teacher_id?: string;
     lessonId?: string;
     type?: string;
+    branchId?:string;
 }
 
 const CoursesCreateScreen = () => {
@@ -35,6 +36,7 @@ const CoursesCreateScreen = () => {
     const [yearId, setYearId] = useState<string>("");
     const [teacherId, setTeacherId] = useState<string>("");
     const [lessonId, setLessonId] = useState<string>("");
+    const [branchId, setBranchId] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
@@ -73,6 +75,17 @@ const CoursesCreateScreen = () => {
         }
     });
 
+    const { data: branches } = useQuery(GET_BRANCHES, {
+        variables: {
+            first: 1000,
+            page: 1,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }]
+        }
+    });
+
     const handleChangeEducationLevel = (event: SelectChangeEvent<string>) => {
         setEducationLevel(event.target.value);
     };
@@ -89,6 +102,10 @@ const CoursesCreateScreen = () => {
         setType(event.target.value);
     };
 
+    const handleChangeBranch = (event: SelectChangeEvent<string>) => {
+        setBranchId(event.target.value);
+    }
+
     const createCourseHandler = () => {
         if (!validateForm()) return;
         setLoading(true);
@@ -100,7 +117,8 @@ const CoursesCreateScreen = () => {
                 teacher_id: Number(teacherId),
                 lesson_id: Number(lessonId),
                 type: type,
-                education_level: educationLevel
+                education_level: educationLevel,
+                branch_id: Number(branchId)
             }
         }).then(() => {
             showSuccess(' درس جدید با موفقیت اضافه شد.');
@@ -286,6 +304,30 @@ const CoursesCreateScreen = () => {
                         }
                     </Select>
                     {error.type ? <FormHelperText error >{error.type}</FormHelperText> : ""}
+                </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4} lg={4}  >
+                <FormControl sx={{ width: "100%" }}>
+                    <Select
+                        defaultValue=""
+                        value={branches ? (branchId || "") : ''}
+                        onChange={handleChangeBranch}
+                        error={error.type ? true : false}
+                        variant="filled"
+                        displayEmpty
+                    >
+                        <MenuItem value="" disabled >
+                            <em>شعبه</em>
+                        </MenuItem>
+                        {
+                            branches && branches.getBranches.data.map((branch: any) => {
+                                return <MenuItem key={branch.id} value={branch.id}>{branch.name}
+                                </MenuItem>;
+                            })
+
+                        }
+                    </Select>
+                    {error.branchId ? <FormHelperText error >{error.branchId}</FormHelperText> : ""}
                 </FormControl>
             </Grid>
         </Grid>
