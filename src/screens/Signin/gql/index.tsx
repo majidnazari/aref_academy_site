@@ -17,7 +17,7 @@ export const LOGIN_MUTATION = gql`
           last_name
           created_at
           updated_at
-          groups{
+          group{
             name
             menus {
                 id

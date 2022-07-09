@@ -11,7 +11,7 @@ export const GET_USERS = gql`
           first_name
           last_name
           email
-          groups{
+          group{
             persian_name
           }
         }
@@ -62,7 +62,7 @@ export const GET_A_USER = gql`
         first_name
         last_name
         email
-        groups{
+        group{
           id
         }
       }

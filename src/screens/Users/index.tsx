@@ -30,9 +30,9 @@ interface UserData {
     email: string;
     first_name: string;
     last_name: string;
-    groups: [{
+    group: {
         persian_name: string;
-    }];
+    };
 }
 
 const UersScreen = () => {
@@ -158,7 +158,7 @@ const UersScreen = () => {
                             <StyledTableCell align="left">{element.first_name}</StyledTableCell>
                             <StyledTableCell align="left">{element.last_name}</StyledTableCell>
                             <StyledTableCell align="left">{element.email}</StyledTableCell>
-                            <StyledTableCell align="left">{element.groups[0].persian_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.group.persian_name}</StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {

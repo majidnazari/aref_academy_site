@@ -40,10 +40,10 @@ interface UserData {
     email: string;
     first_name: string;
     last_name: string;
-    groups: [{
+    group: {
         id: number;
         persian_name: string;
-    }];
+    };
 }
 
 const UersEditScreen = () => {
@@ -77,7 +77,7 @@ const UersEditScreen = () => {
             setEmail(userInfo.email);
             setFirstName(userInfo.first_name);
             setLastName(userInfo.last_name);
-            setGroupId(userInfo.groups[0].id.toString());
+            setGroupId(userInfo.group.id.toString());
         }
         if (grp) {
             setGroups(grp.getGroups.data);

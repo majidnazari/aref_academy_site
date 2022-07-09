@@ -52,7 +52,7 @@ export const EDIT_USER = gql `
             email,
             created_at,
             updated_at,
-            groups{
+            group{
             id,
             user_id_creator,
             name,

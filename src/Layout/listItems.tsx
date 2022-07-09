@@ -49,7 +49,7 @@ const loadIcon = (input: any) => {
 const GenerateMenuItems = () => {
     const navigate = useNavigate();
     const userData = getUserData();
-    const menus = userData.groups ? userData.groups[0].menus : [];
+    const menus = userData.group ? userData.group.menus : [];
     return menus?.map((menu: MenuItem) => {
         return (
             <ListItemButton
