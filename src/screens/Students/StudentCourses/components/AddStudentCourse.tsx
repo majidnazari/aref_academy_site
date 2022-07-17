@@ -16,7 +16,7 @@ const AddStudentCourse = ({ studentId, refetch }: Props) => {
     const [courseId, setCourseId] = useState<string | undefined>("");
     const { data: coursesData, loading } = useQuery(GET_COURSES, {
         variables: {
-            first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
+            first: 1000,
             page: 1,
             orderBy: [{
                 column: 'id',
@@ -63,7 +63,7 @@ const AddStudentCourse = ({ studentId, refetch }: Props) => {
                 >
                     <MenuItem value="" disabled >
                         <em>
-                            انتخاب درس 
+                            انتخاب درس
                             {loading && <span> درحال بارگزاری...</span>}
                         </em>
                     </MenuItem>

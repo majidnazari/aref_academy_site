@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -16,6 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import { GET_STUDENTS } from './gql/query';
 import { DELETE_FAULT } from './gql/mutation';
 import { useMutation, useQuery } from '@apollo/client';
@@ -72,6 +73,7 @@ const StudentsScreen = () => {
         total: 0,
     });
     const [students, setStudents] = useState<StudentData[] | null>(null);
+    const [refetchLoading, setRefetchLoading] = useState<boolean>(false);
 
     const { fetchMore, refetch, loading } = useQuery(GET_STUDENTS, {
         variables: {
@@ -144,8 +146,11 @@ const StudentsScreen = () => {
     };
 
     const handleSearch = () => {
+        setRefetchLoading(true);
         const refetchData: any = { ...search };
-        refetch(refetchData);
+        refetch(refetchData).then(() => {
+            setRefetchLoading(false);
+        });
     }
 
     if (loading) {
@@ -223,6 +228,7 @@ const StudentsScreen = () => {
                     startIcon={<SearchIcon />}
                     onClick={handleSearch} >
                     جستجو
+                    {refetchLoading && <CircularProgress size={15} style={{ marginRight: 10, color: "#fff" }} />}
                 </Button>
             </Grid>
         </Grid>

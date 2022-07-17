@@ -44,12 +44,13 @@ const BranchesClassRoomCreateScreen = () => {
         createClassRoom({
             variables: {
                 name: name,
-                active: false
+                branch_id: +branchId,
+                description: description
             }
         }).then(() => {
             showSuccess('کلاس فیزیکی جدید با موفقیت اضافه شد.');
             setName("");
-            navigate('/years');
+            //navigate('/class-rooms');
         }).finally(() => {
             setLoading(false);
         });
@@ -64,8 +65,8 @@ const BranchesClassRoomCreateScreen = () => {
             result = { ...result, name: 'نام را وارد کنید.' };
             out = false;
         }
-        else if (isNaN(parseInt(name)) || parseInt(name) <= 0) {
-            result = { ...result, name: 'سال را صحیح وارد کنید.' };
+        if (!branchId) {
+            result = { ...result, branchId: 'نام را وارد کنید.' };
             out = false;
         }
         setError(result);
