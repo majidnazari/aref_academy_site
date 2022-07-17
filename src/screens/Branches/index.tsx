@@ -59,7 +59,8 @@ const BranchesScreen = () => {
             orderBy: [{
                 column: 'id',
                 order: 'DESC'
-            }]
+            }],
+            fetchPolicy: "no-cache"
         },
         onCompleted: (data) => {
             setPageInfo(data.getBranches.paginatorInfo);
