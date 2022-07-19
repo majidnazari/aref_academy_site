@@ -16,9 +16,12 @@ import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import {
+    Link,
     useNavigate
 } from "react-router-dom"
 import { getUserData } from '../utils/user';
+import { } from '@mui/material/colors';
+
 
 
 interface MenuItem {
@@ -51,16 +54,36 @@ const GenerateMenuItems = () => {
     const userData = getUserData();
     const menus = userData.group ? userData.group.menus : [];
     return menus?.map((menu: MenuItem) => {
+        // return (
+        //     <ListItemButton
+        //         key={menu.id}
+        //         onClick={() => navigate(menu.href)}
+        //     >
+        //         <ListItemIcon>
+        //             {loadIcon(menu.icon)}
+        //         </ListItemIcon>
+        //         <ListItemText primary={menu.name} />
+        //     </ListItemButton>
+        // )
         return (
-            <ListItemButton
+            <Link
                 key={menu.id}
-                onClick={() => navigate(menu.href)}
+                to={menu.href}
+                style={{
+                    textDecoration: 'none',
+                    display: 'flex',
+                    paddingRight: 15,
+                    marginTop: 12,
+                    marginBottom: 12,
+                }}
+                color="primary"
+                rel="noopener noreferrer"
             >
                 <ListItemIcon>
                     {loadIcon(menu.icon)}
                 </ListItemIcon>
                 <ListItemText primary={menu.name} />
-            </ListItemButton>
+            </Link>
         )
     })
 }
@@ -82,16 +105,25 @@ export const SecondaryListItems = () => {
     //let navigate = useNavigate();
     return (process.env.REACT_APP_DEVELEP_MOD === "0" ? null : (
         <React.Fragment>
-            <ListSubheader component="div" inset>
+            <ListSubheader component="div" inset >
                 منوهای تستی
             </ListSubheader>
 
-            <ListItemButton>
+            <Link
+                to='/students'
+                style={{
+                    textDecoration: 'none',
+                    display: 'flex',
+                    paddingRight: 15,
+                }}
+                color="primary"
+                rel="noopener noreferrer"
+            >
                 <ListItemIcon>
                     <BarChartIcon />
                 </ListItemIcon>
                 <ListItemText primary="ثبت تماس مراجعان" />
-            </ListItemButton>
+            </Link>
 
             <ListItemButton>
                 <ListItemIcon>
@@ -121,6 +153,6 @@ export const SecondaryListItems = () => {
                 <ListItemText primary=" گزارش های مالی" />
             </ListItemButton>
 
-        </React.Fragment>)
+        </React.Fragment >)
     )
 };
