@@ -102,7 +102,6 @@ export const MainListItems = () => {
 };
 
 export const SecondaryListItems = () => {
-    //let navigate = useNavigate();
     return (process.env.REACT_APP_DEVELEP_MOD === "0" ? null : (
         <React.Fragment>
             <ListSubheader component="div" inset >
@@ -110,7 +109,7 @@ export const SecondaryListItems = () => {
             </ListSubheader>
 
             <Link
-                to='/students'
+                to='/reports/courses'
                 style={{
                     textDecoration: 'none',
                     display: 'flex',
@@ -122,7 +121,7 @@ export const SecondaryListItems = () => {
                 <ListItemIcon>
                     <BarChartIcon />
                 </ListItemIcon>
-                <ListItemText primary="ثبت تماس مراجعان" />
+                <ListItemText primary="گزارش کلاسها" />
             </Link>
 
             <ListItemButton>
