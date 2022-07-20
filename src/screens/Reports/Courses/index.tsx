@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -13,14 +13,14 @@ import Stack from '@mui/material/Stack';
 import Skeleton from '@mui/material/Skeleton';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import ClassIcon from '@mui/icons-material/Class';
 import EditIcon from '@mui/icons-material/Edit';
+import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
-// import { GET_COURSES } from './gql/query';
-// import { DELETE_COURSE } from './gql/mutation';
-// import { useMutation, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import PaginatorInfo from 'interfaces/paginator-info.interface';
 import {
+    NavLink,
     useNavigate
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "utils/swlAlert";
@@ -29,33 +29,38 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import CheckIcon from '@mui/icons-material/Check';
 import Typography from '@mui/material/Typography';
 
-interface CourseData {
-    id: number;
-    name: string;
-    user: {
-        first_name: string;
-        last_name: string;
-    };
-    year: {
-        name: string;
-    };
-    teacher: {
-        first_name: string;
-        last_name: string;
-    };
-    lesson: {
+import { GET_COURSES, GET_COURSES_STUDENTS } from './gql/query';
+import { getCourseName } from 'components/CourseName';
+import { Autocomplete, CircularProgress, TextField } from '@mui/material';
+
+
+interface ReportData {
+    student: {
         id: number;
-        name: string;
-    };
-    type: string;
-    education_level: string;
-    financial_status: string;
-    created_at: string;
-    updated_at: string;
-    deleted_at: string;
-    branch: {
-        name: string;
+        first_name: string;
+        last_name: string;
+        phone: string;
     }
+    student_status: string;
+    user_creator: {
+        first_name: string;
+        last_name: string;
+    }
+    manager_status: string;
+    user_manager: {
+        first_name: string;
+        last_name: string;
+    }
+    financial_status: string;
+    user_financial: {
+        first_name: string;
+        last_name: string;
+    }
+    created_at: string;
+}
+
+interface SearchData {
+    course_id: number;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -89,101 +94,136 @@ const CoursesScreen = () => {
         perPage: 10,
         total: 0,
     });
-    const [courses, setCourses] = useState<CourseData[] | null>(null);
+    const [courseOptions, setCourseOptions] = useState<any[]>([
+        { label: '', id: "" },
+    ]);
 
-    // const { fetchMore, refetch } = useQuery(GET_COURSES, {
-    //     variables: {
-    //         first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
-    //         page: 1,
-    //         orderBy: [{
-    //             column: 'id',
-    //             order: 'DESC'
-    //         }]
-    //     },
-    //     onCompleted: (data) => {
-    //         setPageInfo(data.getCourses.paginatorInfo);
-    //         setCourses(data.getCourses.data);
-    //     },
-    //     fetchPolicy: "no-cache"
-    // });
+    const [refetchLoading, setRefetchLoading] = useState<boolean>(false);
+    const [search, setSearch] = useState<SearchData>({
+        course_id: 0,
+    }
+    );
+    const [report, setReport] = useState<ReportData[]>([]);
 
-    // const [delCourse] = useMutation(DELETE_COURSE)
 
-    // const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    //     setCourses([]);
-    //     fetchMore({
-    //         variables: {
-    //             first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
-    //             page: value,
-    //             orderBy: [{
-    //                 column: 'id',
-    //                 order: 'DESC'
-    //             }]
-    //         },
-    //         updateQuery: (prev, { fetchMoreResult }) => {
-    //             setPageInfo(fetchMoreResult.getCourses.paginatorInfo);
-    //             setCourses(fetchMoreResult.getCourses.data);
-    //         }
-    //     });
-    // };
+    const { data: coursesData } = useQuery(GET_COURSES, {
+        variables: {
+            first: 1000,
+            page: 1,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }],
+            fetchPolicy: "no-cache",
+        }
+    });
 
-    // function deleteCourse(id: number) {
-    //     showConfirm(() => {
-    //         delCourse(
-    //             {
-    //                 variables: {
-    //                     id: id
-    //                 }
-    //             }
-    //         ).then(() => {
-    //             //refetch();
-    //             showSuccess('حذف با موفقیت انجام شد.');
-    //         });
-    //     });
-    // };
-    if (!courses) {
+    const { data: reportData, fetchMore, refetch, loading } = useQuery(GET_COURSES_STUDENTS, {
+        variables: {
+            first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
+            page: 1,
+            course_id: 0,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }]
+        },
+        fetchPolicy: "no-cache"
+    });
+
+    const handleSearch = (): void => {
+        setRefetchLoading(true);
+        let refetchData: SearchData = { ...search };
+        refetch(refetchData as any).then((res) => {
+            setReport(res.data.getCourseStudents.data);
+            setPageInfo(res.data.getCourseStudents.paginatorInfo);
+            setRefetchLoading(false);
+        }).catch((err) => {
+            setRefetchLoading(false);
+        });
+    }
+
+    const handleChange = (event: React.ChangeEvent<unknown>, value: number): void => {
+        fetchMore({
+            variables: {
+                first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
+                page: value,
+                orderBy: [{
+                    column: 'id',
+                    order: 'DESC'
+                }]
+            },
+            updateQuery: (prev, { fetchMoreResult }) => {
+                setReport(fetchMoreResult.getCourseStudents.data);
+                setPageInfo(fetchMoreResult.getCourseStudents.paginatorInfo);
+            },
+        });
+    };
+
+    useEffect(() => {
+        if (coursesData?.getCourses?.data) {
+            const tmp = [
+                { label: '', id: 0 },
+            ];
+            setCourseOptions(tmp);
+            for (const i in coursesData.getCourses.data) {
+                const course = coursesData.getCourses.data[i];
+                tmp.push({
+                    id: +course.id,
+                    label: getCourseName(course)
+                })
+            }
+        }
+    }
+        , [coursesData]);
+
+    useEffect(() => {
+        //console.log("useEffect", reportData?.getC.paginatorInfo);
+        if (reportData?.getCourseStudents.paginatorInfo) {
+            //setPageInfo(reportData?.getCourseStudents.paginatorInfo);
+        }
+    }
+        , [reportData])
+
+    if (!courseOptions) {
         return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Skeleton width="100%" height={100} />
             <Skeleton variant="rectangular" width="100%" height={300} />
-        </Container>
-            ;
-    }
-    if (courses.length === 0) {
-        return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-            <Box
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="flex-end"
-            >
-                <Button
-                    variant="contained"
-                    startIcon={<AddCircleIcon />}
-                    sx={{ mb: 4 }}
-                    onClick={() => navigate('/courses/create')} >
-                    افزودن کلاس جدید
-                </Button>
-            </Box>
-            <div>
-                داده ای وجود ندارد ...
-            </div>
-        </Container>
+        </Container>;
     }
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
-            مدیریت کلاس‌ها
+            گزارش کلاس‌ها
         </Typography>
         <Box
-            display="flex"
-            justifyContent="flex-end"
-            alignItems="flex-end"
+            sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                padding: 2,
+            }}
+            component={Paper}
         >
+            {courseOptions.length ? <Autocomplete
+                onChange={(event: any, newValue: any) => {
+                    setSearch({ ...search, course_id: newValue?.id });
+                }}
+                disablePortal
+                id="combo-box-demo"
+                options={courseOptions}
+                sx={{ width: 500 }}
+                renderInput={(params) => <TextField {...params} label="انتخاب کلاس" />}
+            /> : null}
             <Button
                 variant="contained"
-                startIcon={<AddCircleIcon />}
-                sx={{ mb: 4 }}
-                onClick={() => navigate('/courses/create')} >
-                افزودن کلاس جدید
+                color="primary"
+                onClick={handleSearch}
+                sx={{ mx: 2 }}
+                startIcon={<SearchIcon />}
+                disabled={refetchLoading}
+            >
+                جستجو
+                {refetchLoading && <CircularProgress size={15} style={{ marginRight: 10, color: "#fff" }} />}
             </Button>
         </Box>
         <TableContainer component={Paper}>
@@ -191,74 +231,50 @@ const CoursesScreen = () => {
                 <TableHead>
                     <TableRow>
                         <StyledTableCell align="left">ردیف</StyledTableCell>
-                        <StyledTableCell align="left"> کد</StyledTableCell>
-                        <StyledTableCell align="left">سال</StyledTableCell>
-                        <StyledTableCell align="left">دبیر</StyledTableCell>
-                        <StyledTableCell align="left">کاربر ثبت کننده</StyledTableCell>
-                        <StyledTableCell align="left">درس پایه</StyledTableCell>
-                        <StyledTableCell align="left">نوع</StyledTableCell>
-                        <StyledTableCell align="left">مقطع</StyledTableCell>
-                        <StyledTableCell align="left">شعبه</StyledTableCell>
+                        <StyledTableCell align="left"> نام و نام خانوادگی</StyledTableCell>
+                        <StyledTableCell align="left">تلفن</StyledTableCell>
+                        <StyledTableCell align="left">وضعیت</StyledTableCell>
+                        <StyledTableCell align="left">تایید مدیر</StyledTableCell>
                         <StyledTableCell align="left">تایید حسابداری</StyledTableCell>
-                        <StyledTableCell align="left">جلسات</StyledTableCell>
-                        <StyledTableCell align="left">ویرایش</StyledTableCell>
-                        <StyledTableCell align="left">حذف</StyledTableCell>
+                        <StyledTableCell align="left">ثبت کننده</StyledTableCell>
+                        <StyledTableCell align="left">تاریخ درج</StyledTableCell>
+                        <StyledTableCell align="left">  کلاسهای دانش آموز
+                        </StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {courses.map((element: CourseData, index: number) => (
-                        <StyledTableRow key={element.id}>
+                    {report.length > 0 && report.map((element: ReportData, index: number) => (
+                        <StyledTableRow key={index}>
                             <StyledTableCell align="left">
                                 {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}
                             </StyledTableCell>
-                            <StyledTableCell align="left">{element.name}</StyledTableCell>
-                            <StyledTableCell align="left">{element.year.name}</StyledTableCell>
-                            <StyledTableCell align="left">{element.teacher.first_name} {element.teacher.last_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.student.first_name} {element.student.last_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.student.phone}</StyledTableCell>
+                            <StyledTableCell align="left">{element.student_status}</StyledTableCell>
 
-                            <StyledTableCell align="left">{element.user.first_name} {element.user.last_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.manager_status} </StyledTableCell>
                             <StyledTableCell align="left">
-                                {element.lesson?.name}
+                                {element.financial_status}
                             </StyledTableCell>
-                            <StyledTableCell align="left">{typesObject[element.type]}</StyledTableCell>
-                            <StyledTableCell align="left">{educationLevelsObject[element.education_level]}</StyledTableCell>
-                            <StyledTableCell align="left">{element.branch?.name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.user_creator.first_name} {element.user_creator.last_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.created_at}</StyledTableCell>
 
-                            <StyledTableCell align="center">
-                                {element.financial_status === 'approved' ?
-                                    (<CheckIcon color="success" />) : (<ReportProblemIcon color="disabled" />)
-                                }
-                            </StyledTableCell>
-                            <StyledTableCell align="left"><Button
-                                size="small"
-                                onClick={() => {
-                                    navigate(`/courses/${element.id}/sessions`);
-                                }}
-                                variant="contained"
-                                // startIcon={<EditIcon />}
-                                color="primary"
-                            >
-                                جلسات
-                            </Button></StyledTableCell>
-                            <StyledTableCell align="left"><Button
-                                size="small"
-                                onClick={() => {
-                                    navigate(`/courses/edit/${element.id}`);
-                                }}
-                                variant="contained"
-                                startIcon={<EditIcon />}
-                                color="success"
-                            >
-                                ویرایش
-                            </Button></StyledTableCell>
                             <StyledTableCell align="left">
+
                                 <Button
                                     size="small"
-                                    // onClick={() => deleteCourse(element.id)}
+                                    // onClick={() => navigate(`/students/${element.student.id}/courses`)}
                                     variant="contained"
-                                    startIcon={<DeleteIcon />}
-                                    color="error"
+                                    startIcon={<ClassIcon />}
+                                    color="primary"
                                 >
-                                    حذف
+                                    <NavLink
+                                        style={{ textDecoration: 'none',color:'#fff' }}
+                                        to={`/students/${element.student.id}/courses`}
+                                        target="_blank"
+                                        >
+                                        کلاسهای دانش آموز
+                                    </NavLink>
                                 </Button>
                             </StyledTableCell>
 
@@ -270,7 +286,7 @@ const CoursesScreen = () => {
                 <Pagination
                     count={pageInfo.lastPage}
                     page={pageInfo.currentPage}
-                    // onChange={handleChange}
+                    onChange={handleChange}
                 />
             </Stack>
         </TableContainer>

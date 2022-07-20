@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -21,9 +21,7 @@ import { GET_STUDENTS } from './gql/query';
 import { DELETE_FAULT } from './gql/mutation';
 import { useMutation, useQuery } from '@apollo/client';
 import PaginatorInfo from '../../interfaces/paginator-info.interface';
-import {
-    useNavigate
-} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 import Typography from '@mui/material/Typography';
 import ClassIcon from '@mui/icons-material/Class';
@@ -47,10 +45,10 @@ interface StudentData {
 }
 
 interface SearchData {
-    first_name: string;
-    last_name: string;
-    phone: string;
-    egucation_level: string;
+    first_name?: string;
+    last_name?: string;
+    phone?: string;
+    egucation_level?: string;
 }
 
 const StudentsScreen = () => {
@@ -112,7 +110,7 @@ const StudentsScreen = () => {
         },
     }));
 
-    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    const handleChange = (event: React.ChangeEvent<unknown>, value: number) : void => {
         setStudents([]);
         fetchMore({
             variables: {
@@ -130,7 +128,7 @@ const StudentsScreen = () => {
         });
     };
 
-    function deleteFlault(id: number) {
+    function deleteFlault(id: number) :void {
         showConfirm(() => {
             delFault(
                 {
@@ -145,10 +143,10 @@ const StudentsScreen = () => {
         });
     };
 
-    const handleSearch = () => {
+    const handleSearch = (): void => {
         setRefetchLoading(true);
-        const refetchData: any = { ...search };
-        refetch(refetchData).then(() => {
+        const refetchData: SearchData = { ...search };
+        refetch(refetchData as any).then(() => {
             setRefetchLoading(false);
         });
     }

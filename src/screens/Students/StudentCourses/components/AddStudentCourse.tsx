@@ -66,8 +66,6 @@ const AddStudentCourse = ({ studentId, refetch }: Props) => {
             }
 
         }
-
-
     }
         , [coursesData]);
 
