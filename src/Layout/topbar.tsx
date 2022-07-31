@@ -1,4 +1,3 @@
-import { useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,7 +8,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import { showSuccess } from 'utils/swlAlert';
+import { useQuery } from '@apollo/client';
+import { GET_COURSES_STUDENTS } from './gql/query';
+import { generateQueryOptions } from "utils/utils";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth: number = 240;
 
@@ -43,6 +45,15 @@ interface TopbarProps {
 }
 
 const Topbar = ({ toggleDrawer, open = true, isDarkTheme = false, setDarktheme }: TopbarProps) => {
+    const navigate = useNavigate();
+    const { data } = useQuery(GET_COURSES_STUDENTS, {
+        variables: {
+            first: 100000,
+            page: 1,
+            ...generateQueryOptions(),
+        }
+    });
+
     return (<AppBar position="absolute" open={open}>
         <Toolbar
             sx={{
@@ -70,13 +81,15 @@ const Topbar = ({ toggleDrawer, open = true, isDarkTheme = false, setDarktheme }
             >
                 آکادمی عارف
             </Typography>
-            <IconButton 
+            <IconButton
                 color="inherit"
                 onClick={() => {
-                    showSuccess('این آیتم بزودی فهرست دانش اموزان تایید  و کلاسهای تایید نشده را فراهم می‌سازد');
+                    navigate('/alarms/student-courses');
                 }}
             >
-                <Badge badgeContent={4} color="secondary">
+                <Badge badgeContent={
+                    data?.getCourseStudents?.paginatorInfo.total || 0
+                } color="secondary">
                     <NotificationsIcon />
                 </Badge>
             </IconButton>

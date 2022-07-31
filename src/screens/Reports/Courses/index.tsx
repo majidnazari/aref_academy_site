@@ -32,6 +32,8 @@ import Typography from '@mui/material/Typography';
 import { GET_COURSES, GET_COURSES_STUDENTS } from './gql/query';
 import { getCourseName } from 'components/CourseName';
 import { Autocomplete, CircularProgress, TextField } from '@mui/material';
+import moment from 'moment-jalaali';
+import StatusIcon from 'components/StatusIcon';
 
 
 interface ReportData {
@@ -56,6 +58,10 @@ interface ReportData {
         first_name: string;
         last_name: string;
     }
+    user_student_status: {
+        first_name: string;
+        last_name: string;
+    } | null;
     created_at: string;
 }
 
@@ -248,16 +254,39 @@ const CoursesScreen = () => {
                             <StyledTableCell align="left">
                                 {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}
                             </StyledTableCell>
-                            <StyledTableCell align="left">{element.student.first_name} {element.student.last_name}</StyledTableCell>
-                            <StyledTableCell align="left">{element.student.phone}</StyledTableCell>
-                            <StyledTableCell align="left">{element.student_status}</StyledTableCell>
-
-                            <StyledTableCell align="left">{element.manager_status} </StyledTableCell>
+                            <StyledTableCell align="left">{element?.student?.first_name} {element?.student?.last_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element?.student?.phone}</StyledTableCell>
                             <StyledTableCell align="left">
-                                {element.financial_status}
+                                <StatusIcon status={element?.student_status} />
+                                <Typography component={'div'} sx={{ fontSize: 9, fontWeight: 'bold' }} >
+                                    {
+                                        element.user_student_status ?
+                                            element.user_student_status?.first_name + ' ' + element.user_student_status?.last_name : null
+                                    }
+                                </Typography></StyledTableCell>
+
+                            <StyledTableCell align="left">
+                                <StatusIcon status={element.manager_status} />
+                                <Typography component={'div'} sx={{ fontSize: 9, fontWeight: 'bold' }} >
+                                    {
+                                        element?.user_manager ?
+                                            element.user_manager?.first_name + ' ' + element.user_manager?.last_name : null
+                                    }
+                                </Typography>
+                            </StyledTableCell>
+                            <StyledTableCell align="left">
+                                <StatusIcon status={element.financial_status} />
+                                <Typography component={'div'} sx={{ fontSize: 9, fontWeight: 'bold' }} >
+                                    {
+                                        element.user_financial ?
+                                            element.user_financial?.first_name + ' ' + element.user_financial?.last_name : null
+                                    }
+                                </Typography>
                             </StyledTableCell>
                             <StyledTableCell align="left">{element.user_creator.first_name} {element.user_creator.last_name}</StyledTableCell>
-                            <StyledTableCell align="left">{element.created_at}</StyledTableCell>
+                            <StyledTableCell align="left">
+                                {moment(element.created_at).format("jYYYY/jMM/jDD")}
+                            </StyledTableCell>
 
                             <StyledTableCell align="left">
 
@@ -269,10 +298,10 @@ const CoursesScreen = () => {
                                     color="primary"
                                 >
                                     <NavLink
-                                        style={{ textDecoration: 'none',color:'#fff' }}
-                                        to={`/students/${element.student.id}/courses`}
+                                        style={{ textDecoration: 'none', color: '#fff' }}
+                                        to={`/students/${element?.student?.id}/courses`}
                                         target="_blank"
-                                        >
+                                    >
                                         کلاسهای دانش آموز
                                     </NavLink>
                                 </Button>

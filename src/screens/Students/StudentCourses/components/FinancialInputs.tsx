@@ -85,6 +85,9 @@ const FinancialInputs = ({ setFormData, studentCourse }: EditProps) => {
                         <MenuItem value="pending">
                             در انتظار تایید
                         </MenuItem>
+                        <MenuItem value="semi_approved">
+                            عدم پرداخت کامل 
+                        </MenuItem>
                         <MenuItem value="approved">
                             تایید شده
                         </MenuItem>

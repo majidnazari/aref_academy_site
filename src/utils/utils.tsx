@@ -1,3 +1,5 @@
+import { getUserData } from 'utils/user';
+
 export const generateErrorTextMessage = (body: any): string => {
     if (typeof body === 'string') {
         return body;
@@ -33,3 +35,21 @@ export function divide(a: number, b: number): number {
     // a round division result.
     return Math.round(a / b);
   }
+
+  export const generateQueryOptions = () => {
+    const userGroup = (getUserData())?.group?.name || '';
+    switch (userGroup) {
+        case 'admin':
+            return {
+                manager_financial_not_equal: 'approved'
+            };
+        case 'manager':
+            return {
+                manager_financial_not_equal: 'approved',
+            };
+        case 'financial':
+            return { financial_status_not_equal: 'approved' };
+        default:
+            return {};
+    }
+}

@@ -1,8 +1,8 @@
 import { getUserData } from 'utils/user';
-import AdminInputs from './AdminInputs';
-import ManagerInputs from './ManagerInputs';
-import FinancialInputs from './FinancialInputs';
-import AcceptorInputs from './AcceptorInputs';
+import AdminInputs from 'screens/Students/StudentCourses/components/AdminInputs';
+import ManagerInputs from 'screens/Students/StudentCourses/components/ManagerInputs';
+import FinancialInputs from 'screens/Students/StudentCourses/components/FinancialInputs';
+import AcceptorInputs from 'screens/Students/StudentCourses/components/AcceptorInputs';
 
 interface EditProps {
     setFormData: Function;

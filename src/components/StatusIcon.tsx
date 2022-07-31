@@ -3,6 +3,7 @@ import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import PlaylistRemoveIcon from '@mui/icons-material/PlaylistRemove';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
 interface PropType {
     status: string;
@@ -11,13 +12,15 @@ interface PropType {
 const StatusIcon = ({ status }: PropType) => {
     switch (status) {
         case 'pending':
-            return <PendingActionsIcon color='warning' />;
+            return <PendingActionsIcon color='error' />;
+        case 'semi_approved':
+            return <HourglassBottomIcon color='warning' />;
         case 'approved':
             return <ThumbUpAltIcon color='success' />;
         case 'ok':
             return <CheckBoxIcon color='success' />;
         case 'refused':
-            return <PlaylistRemoveIcon color='warning' />;
+            return <PlaylistRemoveIcon color='error' />;
         case 'fired':
             return <DoNotDisturbOnIcon color='error' />;
         default:

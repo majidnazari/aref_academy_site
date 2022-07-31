@@ -1,5 +1,11 @@
 interface StudentCoursesType {
     id: number;
+    student?: {
+        id: number;
+        first_name: string;
+        last_name: string;
+        phone: string
+    };
     financial_status: string;
     manager_status: string;
     status: string;

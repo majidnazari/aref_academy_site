@@ -40,6 +40,7 @@ import LessonsCreateScreen from '../screens/Lessons/create';
 
 import ReportsCoursesScreen from '../screens/Reports/Courses';
 
+import StudentCoursesAlarmsScreen from '../screens/Alarms/StudentCoursesAlarms';
 
 import Main from '../Layout/main';
 import NoMatch from '../Layout/404';
@@ -113,6 +114,10 @@ const MainRouter = () => {
                         </Route>
                         <Route path="reports" >
                             <Route path="courses" element={<ReportsCoursesScreen />} />
+                            <Route path="*" element={<NoMatch />} />
+                        </Route>
+                        <Route path="alarms" >
+                            <Route path="student-courses" element={<StudentCoursesAlarmsScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
 

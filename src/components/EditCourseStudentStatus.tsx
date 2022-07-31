@@ -10,7 +10,7 @@ import StudentCoursesType from "interfaces/studentCourses.interface";
 import CourseName from 'components/CourseName';
 import GetEditBox from './GetEditBox';
 import { useMutation } from '@apollo/client';
-import { UPDATE_STUDENT_COURSE } from '../gql/mutation';
+import { UPDATE_STUDENT_COURSE } from '../screens/Students/StudentCourses/gql/mutation';
 import { showSuccess } from 'utils/swlAlert';
 
 const Transition = forwardRef(function Transition(
