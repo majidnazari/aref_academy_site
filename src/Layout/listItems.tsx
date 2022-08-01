@@ -20,7 +20,9 @@ import {
     useNavigate
 } from "react-router-dom"
 import { getUserData } from '../utils/user';
-import { } from '@mui/material/colors';
+import { useTheme } from '@material-ui/core/styles';
+
+
 
 
 
@@ -50,7 +52,7 @@ const loadIcon = (input: any) => {
 }
 
 const GenerateMenuItems = () => {
-    const navigate = useNavigate();
+    const theme = useTheme();
     const userData = getUserData();
     const menus = userData.group ? userData.group.menus : [];
     return menus?.map((menu: MenuItem) => {
@@ -75,9 +77,10 @@ const GenerateMenuItems = () => {
                     paddingRight: 15,
                     marginTop: 12,
                     marginBottom: 12,
+                    color: theme.palette.text.primary,
                 }}
-                color="primary"
-                rel="noopener noreferrer"
+            // color="primary"
+            // rel="noopener noreferrer"
             >
                 <ListItemIcon>
                     {loadIcon(menu.icon)}
