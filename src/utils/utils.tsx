@@ -45,7 +45,7 @@ export function divide(a: number, b: number): number {
             };
         case 'manager':
             return {
-                manager_financial_not_equal: 'approved',
+                manager_status_not_equal: 'approved',
             };
         case 'financial':
             return { financial_status_not_equal: 'approved' };

@@ -41,7 +41,7 @@ const FinancialInputs = ({ setFormData, studentCourse }: EditProps) => {
 
     useEffect(() => {
         setFormData(mystudentCourse);
-    }, [mystudentCourse, setFormData]);
+    }, [mystudentCourse]);
 
     return (
         <Grid container spacing={1} >

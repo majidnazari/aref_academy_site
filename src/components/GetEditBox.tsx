@@ -14,8 +14,7 @@ interface StudentCourseFormData {
     manager_status: string;
 }
 const GetEditBox = ({ setFormData, studentCourse }: EditProps) => {
-    const userGroup = (getUserData()).group.name;
-    switch (userGroup) {
+    switch ((getUserData()).group.name) {
         case 'admin':
             return <AdminInputs setFormData={setFormData} studentCourse={studentCourse} />;
         case 'manager':

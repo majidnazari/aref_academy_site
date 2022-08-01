@@ -62,8 +62,7 @@ const Edit = ({ openDialog, studentCourse, refresh }: Props) => {
             showSuccess('ویرایش با موفقیت انجام شد');
             setOpen(false);
             refresh();
-        }
-        );
+        });
     }
 
     const formDataController = (data: StudentCourseFormData) => {

@@ -218,7 +218,6 @@ const StudentCoursesAlarms = () => {
                 />
             </Stack>
         </TableContainer>
-        {/* <AddStudentCourse studentId={studentId} refetch={refetch} /> */}
         <Edit
             openDialog={editStudentCourse.openDialog}
             studentCourse={editStudentCourse.studentCourse}
