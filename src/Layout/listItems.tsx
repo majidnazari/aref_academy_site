@@ -99,19 +99,18 @@ export const SecondaryListItems = () => {
             </ListSubheader>
 
             <Link
-                to='/reports/courses'
+                to='/absence-presences'
                 style={{
                     textDecoration: 'none',
                     display: 'flex',
                     paddingRight: 15,
+                    color: 'inherit'
                 }}
-                color="primary"
-                rel="noopener noreferrer"
             >
                 <ListItemIcon>
                     <BarChartIcon />
                 </ListItemIcon>
-                <ListItemText primary="گزارش کلاسها" />
+                <ListItemText primary="حضور و غیاب" />
             </Link>
 
             <ListItemButton>

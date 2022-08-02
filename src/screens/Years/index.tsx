@@ -26,6 +26,7 @@ import {
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
+import { Typography } from '@mui/material';
 
 
 interface YearData {
@@ -140,6 +141,9 @@ const YearsScreen = () => {
     }
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+        <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
+            مدیریت سال تحصیلی
+        </Typography>
         <Box
             display="flex"
             justifyContent="flex-end"

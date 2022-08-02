@@ -42,6 +42,8 @@ import ReportsCoursesScreen from '../screens/Reports/Courses';
 
 import StudentCoursesAlarmsScreen from '../screens/Alarms/StudentCoursesAlarms';
 
+import ListTodayCourses from 'screens/AbsencePresences/ListTodayCourses';
+
 import Main from '../Layout/main';
 import NoMatch from '../Layout/404';
 import {
@@ -63,18 +65,21 @@ const MainRouter = () => {
                 isLogged ?
                     <Route element={<Main />}>
                         <Route index element={<DashboardScreen />} />
+
                         <Route path="users" >
                             <Route path="" element={<UsersScreen />} />
                             <Route path="edit/:userId" element={<UsersEditScreen />} />
                             <Route path="create" element={<UsersCreateScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
+
                         <Route path="years" >
                             <Route path="" element={<YearsScreen />} />
                             <Route path="edit/:yearId" element={<YearsEditScreen />} />
                             <Route path="create" element={<YearsCreateScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
+
                         <Route path="courses" >
                             <Route path="" element={<CoursesScreen />} />
                             <Route path="edit/:courseId" element={<CoursesEditScreen />} />
@@ -83,12 +88,14 @@ const MainRouter = () => {
                             <Route path=":courseId/sessions/:sessionId" element={<CourseSessionsEditScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
+
                         <Route path="faults" >
                             <Route path="" element={<FaultsScreen />} />
                             <Route path="edit/:faultId" element={<FaultsEditScreen />} />
                             <Route path="create" element={<FaultsCreateScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
+
                         <Route path="branches" >
                             <Route path="" element={<BranchesScreen />} />
                             <Route path="edit/:branchId" element={<BranchesEditScreen />} />
@@ -98,6 +105,7 @@ const MainRouter = () => {
                             <Route path=":branchId/class-rooms/create" element={<BranchesClassRoomCreateScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
+
                         <Route path="students" >
                             <Route path="" element={<StudentsScreen />} />
                             <Route path="edit/:studentId" element={<StudentEditScreen />} />
@@ -112,12 +120,19 @@ const MainRouter = () => {
                             <Route path="create" element={<LessonsCreateScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
+
                         <Route path="reports" >
                             <Route path="courses" element={<ReportsCoursesScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
+
                         <Route path="alarms" >
                             <Route path="student-courses" element={<StudentCoursesAlarmsScreen />} />
+                            <Route path="*" element={<NoMatch />} />
+                        </Route>
+
+                        <Route path="absence-presences" >
+                            <Route path="" element={<ListTodayCourses />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
 

@@ -25,6 +25,7 @@ import {
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 import moment from 'moment-jalaali';
+import { Typography } from '@mui/material';
 
 
 interface FaultData {
@@ -129,6 +130,9 @@ const FaultsScreen = () => {
     }
     if (faults.length === 0) {
         return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
+                مدیریت تخلف‌ها
+            </Typography>
             <Box
                 display="flex"
                 justifyContent="flex-end"
@@ -149,6 +153,9 @@ const FaultsScreen = () => {
     }
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+        <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
+            مدیریت تخلف‌ها
+        </Typography>
         <Box
             display="flex"
             justifyContent="flex-end"
