@@ -26,3 +26,10 @@
 .swal2-styled{
   font-family: "VazirFarsiNumbers";
 }
+
+.activeMenuLight {
+  background-color: #ececec;
+}
+.activeMenuDark {
+  background-color: #202020;
+}

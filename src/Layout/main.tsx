@@ -37,6 +37,7 @@ const Main = () => {
     const setDarkthemeForAll = (isDarkTheme: boolean) => {
         setIsDarkTheme(isDarkTheme);
         setDarktheme(isDarkTheme ? 'true' : 'false');
+        theme.palette.mode = isDarkTheme ? 'dark' : 'light';
     }
 
     let theme = createTheme({

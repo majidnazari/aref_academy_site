@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -20,11 +20,7 @@ import {
     useNavigate
 } from "react-router-dom"
 import { getUserData } from '../utils/user';
-import { useTheme } from '@material-ui/core/styles';
-
-
-
-
+import { getDarktheme } from '../utils/utils';
 
 interface MenuItem {
     href: string;
@@ -52,21 +48,10 @@ const loadIcon = (input: any) => {
 }
 
 const GenerateMenuItems = () => {
-    const theme = useTheme();
     const userData = getUserData();
     const menus = userData.group ? userData.group.menus : [];
+    const [activeMenu, setActiveMenu] = useState<string>("");
     return menus?.map((menu: MenuItem) => {
-        // return (
-        //     <ListItemButton
-        //         key={menu.id}
-        //         onClick={() => navigate(menu.href)}
-        //     >
-        //         <ListItemIcon>
-        //             {loadIcon(menu.icon)}
-        //         </ListItemIcon>
-        //         <ListItemText primary={menu.name} />
-        //     </ListItemButton>
-        // )
         return (
             <Link
                 key={menu.id}
@@ -75,12 +60,14 @@ const GenerateMenuItems = () => {
                     textDecoration: 'none',
                     display: 'flex',
                     paddingRight: 15,
-                    marginTop: 12,
-                    marginBottom: 12,
-                    color: theme.palette.text.primary,
+                    paddingTop: 8,
+                    paddingBottom: 8,
+                    color: 'inherit',
                 }}
-            // color="primary"
-            // rel="noopener noreferrer"
+                onClick={() => {
+                    setActiveMenu(menu.id);
+                }}
+                className={activeMenu === menu.id ? getDarktheme() ? "activeMenuDark" : "activeMenuLight" : ""}
             >
                 <ListItemIcon>
                     {loadIcon(menu.icon)}
