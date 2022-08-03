@@ -10,6 +10,7 @@ interface Lesson {
 }
 
 interface Course {
+    id: number
     name: string;
     teacher: Teacher;
     lesson: Lesson;

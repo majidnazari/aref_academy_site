@@ -1,14 +1,16 @@
-import { Box, Container, Grid, Typography } from "@mui/material";
+import { Box, Container, Grid, Skeleton, Typography } from "@mui/material";
 import { useQuery } from "@apollo/client";
 import { GET_COURSE_SESSIONS } from "./gql/query";
 import { useEffect, useState } from "react";
 import { CourseSessionType } from './dto/CourseSessionType';
 import GroupIcon from '@mui/icons-material/Group';
 import CourseName from "components/CourseName";
+import { useNavigate } from "react-router-dom";
 
 const ListTodayCourses = () => {
+    const navigate = useNavigate();
     const [courseSessions, setCourseSessions] = useState<CourseSessionType[]>([]);
-    const { data: fetchedCourseSessions, loading, error } = useQuery(GET_COURSE_SESSIONS, {
+    const { data: fetchedCourseSessions, loading } = useQuery(GET_COURSE_SESSIONS, {
         variables: {
             first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
             page: 1,
@@ -32,6 +34,14 @@ const ListTodayCourses = () => {
             setCourseSessions(fetchedCourseSessions.getCourseSessions.data);
         }
     }, [fetchedCourseSessions]);
+    if (loading) {
+        return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            <Skeleton width="100%" height={100} />
+            <Skeleton width="100%" height={100} />
+            <Skeleton width="100%" height={100} />
+        </Container>
+            ;
+    }
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
@@ -54,7 +64,7 @@ const ListTodayCourses = () => {
                                     py: 2
                                 }}
                                 onClick={() => {
-                                    //navigate('students');
+                                    navigate(`/absence-presences/list-students/${item.course.id}/${item.id}`);
                                 }}
                             >
                                 <GroupIcon sx={{ mx: 1 }} fontSize="small" />

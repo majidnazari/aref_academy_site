@@ -40,16 +40,14 @@ import LessonsCreateScreen from '../screens/Lessons/create';
 
 import ReportsCoursesScreen from '../screens/Reports/Courses';
 
-import StudentCoursesAlarmsScreen from '../screens/Alarms/StudentCoursesAlarms';
+import StudentCoursesAlarmsScreen from '../screens/Alarms/studentCoursesAlarms';
 
-import ListTodayCourses from 'screens/AbsencePresences/ListTodayCourses';
+import ListTodayCourses from 'screens/AbsencePresences/listTodayCourses';
+import ListStudentsScreen from 'screens/AbsencePresences/listStudentsScreen';
 
 import Main from '../Layout/main';
 import NoMatch from '../Layout/404';
-import {
-    Routes,
-    Route,
-} from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { AuthContext } from '../components/AppContext';
 
 const MainRouter = () => {
@@ -133,6 +131,7 @@ const MainRouter = () => {
 
                         <Route path="absence-presences" >
                             <Route path="" element={<ListTodayCourses />} />
+                            <Route path="list-students/:courseId/:courseSessionId" element={<ListStudentsScreen />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
 
