@@ -51,7 +51,7 @@ const ListTodayCourses = () => {
             {
                 courseSessions.map(item => {
                     return (
-                        <Grid item xs={12} md={4} lg={4}>
+                        <Grid item xs={12} md={4} lg={4} key={item.id} >
                             <Box
                                 sx={{
                                     backgroundColor: "info.main",
