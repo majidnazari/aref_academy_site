@@ -2,7 +2,7 @@ export const typesObject: any = {
     'public': 'عمومی',
     'semi-private': 'نیمه خصوصی',
     'private': 'خصوصی',
-    'master' : 'مَستر'
+    'master': 'مَستر'
 };
 
 export const educationLevelsObject: any = {
@@ -38,4 +38,20 @@ export const majorObject: any = {
     'humanities': 'انسانی',
     'art': 'هنر',
     'other': 'سایر'
+}
+
+export enum attendanceStatus {
+    online_to_present = 'online_to_present',
+    free_for_one = 'free_for_one',
+    free_for_two = 'free_for_two',
+    guest = 'guest',
+    normal = 'normal'
+}
+
+export const attendanceStatusObject: any = {
+    normal: 'عادی',
+    online_to_present: 'جابجایی از آنلاین به حضوری',
+    free_for_one: 'جلسه اول رایگان',
+    free_for_two: 'جلسه دوم رایگان',
+    guest: 'مهمان',
 }

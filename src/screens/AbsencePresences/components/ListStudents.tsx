@@ -6,6 +6,8 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
 import { useState } from "react";
 import FormControl from '@mui/material/FormControl';
+import { attendanceStatusObject } from 'constants/index';
+import StatusIcon from "components/StatusIcon";
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -43,8 +45,8 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
             page: 1
         },
         onCompleted: (data) => {
-            setStudentList(data.getCourseStudentsWithAbsencePresence.data);
-            //setBranches(data.getBranches.data);
+            const tmp = data.getCourseStudentsWithAbsencePresence.data.filter((item: any) => item.cs_student_status === 'ok');
+            setStudentList(tmp);
         },
     });
     return (
@@ -58,11 +60,10 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                         <TableRow>
                             <StyledTableCell align="left">ردیف</StyledTableCell>
                             <StyledTableCell align="left"> نام</StyledTableCell>
-                            <StyledTableCell align="left"> حضور و غیاب </StyledTableCell>
+                            <StyledTableCell align="center"> حضور و غیاب </StyledTableCell>
                             <StyledTableCell align="left">برچسب</StyledTableCell>
-                            <StyledTableCell align="left">وضعیت</StyledTableCell>
-                            <StyledTableCell align="left">تایید مدیر</StyledTableCell>
-                            <StyledTableCell align="left">تایید حسابداری</StyledTableCell>
+                            <StyledTableCell align="left">مدیر</StyledTableCell>
+                            <StyledTableCell align="left">حسابداری</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -73,46 +74,86 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                                 </StyledTableCell>
 
                                 <StyledTableCell align="left">{element.student.first_name} {element.student.last_name}</StyledTableCell>
+                                <StyledTableCell align="left"
 
+                                >
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: "space-between"
+                                        }}
+                                    >
+                                        <Button
+                                            variant="outlined"
+                                            color="success"
+                                            onClick={() => {
+                                                //
+                                            }}
+                                            sx={{
+                                                boxShadow: 3
+                                            }}
+                                        >حاضر</Button>
+
+                                        <Button
+                                            variant="outlined"
+                                            color="inherit"
+                                            sx={{
+                                                boxShadow: 3
+                                            }}
+                                            onClick={() => {
+                                                //
+                                            }}
+                                        >تاخیر زیر ۱۵ دقیقه</Button>
+
+                                        <Button
+                                            variant="outlined"
+                                            color="warning"
+                                            sx={{
+                                                boxShadow: 3
+                                            }}
+                                            onClick={() => {
+                                                //
+                                            }}
+                                        >تاخیر بالای ۱۵ دقیقه</Button>
+
+                                        <Button
+                                            variant="outlined"
+                                            color="error"
+                                            sx={{
+                                                boxShadow: 3
+                                            }}
+                                            onClick={() => {
+                                                //
+                                            }}
+                                        >غایب</Button>
+                                    </Box>
+                                </StyledTableCell>
                                 <StyledTableCell align="left">
                                     <FormControl sx={{ width: "100%" }}>
                                         <Select
                                             defaultValue=""
                                             id="grouped-select"
-                                            // value={allYears ? yearId : ""}
+                                            value={element.ap_attendance_status}
                                             // onChange={handleChangeYear}
-                                            // error={error.year_id ? true : false}
                                             variant="filled"
                                             displayEmpty
                                         >
-                                            <MenuItem value="" disabled >
-                                                <em>حاضر / غایب </em>
-                                            </MenuItem>
-                                            {/* {allYears ?
-                                                allYears.getYears.data.map((year: any) => {
-                                                    return <MenuItem
-                                                        value={year.id}
-                                                        key={year.id}>{year.name}
-                                                    </MenuItem>
-                                                }) : <MenuItem value="1" disabled >
-                                                    <em>در حال بارگذاری ...</em>
-                                                </MenuItem>
-                                            } */}
+                                            {
+                                                Object.keys(attendanceStatusObject).map((key: any) => (
+                                                    <MenuItem value={key} key={key} >
+                                                        {attendanceStatusObject[key]}
+                                                    </MenuItem>))
+                                            }
                                         </Select>
-                                        {/* {error.year_id ? <FormHelperText error >{error.year_id}</FormHelperText> : ""} */}
                                     </FormControl>
                                 </StyledTableCell>
+
+
                                 <StyledTableCell align="left">
-                                    {element.ap_attendance_status}
+                                    <StatusIcon status={element.cs_manager_status} />
                                 </StyledTableCell>
                                 <StyledTableCell align="left">
-                                    {element.cs_student_status}
-                                </StyledTableCell>
-                                <StyledTableCell align="left">
-                                    {element.cs_manager_status}
-                                </StyledTableCell>
-                                <StyledTableCell align="left">
-                                    {element.cs_financial_status}
+                                    <StatusIcon status={element.cs_financial_status} />
                                 </StyledTableCell>
                             </StyledTableRow>
                         ))}
