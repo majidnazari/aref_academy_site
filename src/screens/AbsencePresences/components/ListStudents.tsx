@@ -1,14 +1,16 @@
 import { GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE } from "../gql/query";
 import { useQuery } from "@apollo/client";
-import { Box, Button, MenuItem, Paper, Select, Table, TableBody, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { CircularProgress, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import Container from '@mui/material/Container';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
 import { useState } from "react";
 import FormControl from '@mui/material/FormControl';
-import { attendanceStatusObject } from 'constants/index';
 import StatusIcon from "components/StatusIcon";
-
+import AbsencepresenceBtns from './AbsencepresenceBtns';
+import AbsencepresenceSelect from "./AbsencepresenceSelect";
+import { UPDATE_ABSENCE_PERESENCE } from '../gql/mutaion';
+import { useMutation } from '@apollo/client';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -37,7 +39,7 @@ interface PropType {
 }
 const ListStudents = ({ course_id, course_session_id }: PropType) => {
     const [studentList, setStudentList] = useState<any[]>([]);
-    const { loading, data: studentsListData } = useQuery(GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE, {
+    const { loading } = useQuery(GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE, {
         variables: {
             course_id: course_id,
             course_session_id: course_session_id,
@@ -49,11 +51,13 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
             setStudentList(tmp);
         },
     });
+
     return (
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
                 فهرست دانش‌آموزان
             </Typography>
+            {loading && <CircularProgress sx={{ m: 2 }} />}
             <TableContainer component={Paper}>
                 <Table aria-label="customized table">
                     <TableHead>
@@ -77,78 +81,17 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                                 <StyledTableCell align="left"
 
                                 >
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: "space-between"
-                                        }}
-                                    >
-                                        <Button
-                                            variant="outlined"
-                                            color="success"
-                                            onClick={() => {
-                                                //
-                                            }}
-                                            sx={{
-                                                boxShadow: 3
-                                            }}
-                                        >حاضر</Button>
-
-                                        <Button
-                                            variant="outlined"
-                                            color="inherit"
-                                            sx={{
-                                                boxShadow: 3
-                                            }}
-                                            onClick={() => {
-                                                //
-                                            }}
-                                        >تاخیر زیر ۱۵ دقیقه</Button>
-
-                                        <Button
-                                            variant="outlined"
-                                            color="warning"
-                                            sx={{
-                                                boxShadow: 3
-                                            }}
-                                            onClick={() => {
-                                                //
-                                            }}
-                                        >تاخیر بالای ۱۵ دقیقه</Button>
-
-                                        <Button
-                                            variant="outlined"
-                                            color="error"
-                                            sx={{
-                                                boxShadow: 3
-                                            }}
-                                            onClick={() => {
-                                                //
-                                            }}
-                                        >غایب</Button>
-                                    </Box>
+                                    <AbsencepresenceBtns
+                                        id={element.id}
+                                        ap_status={element.ap_status}
+                                    />
                                 </StyledTableCell>
                                 <StyledTableCell align="left">
-                                    <FormControl sx={{ width: "100%" }}>
-                                        <Select
-                                            defaultValue=""
-                                            id="grouped-select"
-                                            value={element.ap_attendance_status}
-                                            // onChange={handleChangeYear}
-                                            variant="filled"
-                                            displayEmpty
-                                        >
-                                            {
-                                                Object.keys(attendanceStatusObject).map((key: any) => (
-                                                    <MenuItem value={key} key={key} >
-                                                        {attendanceStatusObject[key]}
-                                                    </MenuItem>))
-                                            }
-                                        </Select>
-                                    </FormControl>
+                                    <AbsencepresenceSelect
+                                        id={element.id}
+                                        ap_attendance_status={element.ap_attendance_status}
+                                    />
                                 </StyledTableCell>
-
-
                                 <StyledTableCell align="left">
                                     <StatusIcon status={element.cs_manager_status} />
                                 </StyledTableCell>

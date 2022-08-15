@@ -55,3 +55,10 @@ export const attendanceStatusObject: any = {
     free_for_two: 'جلسه دوم رایگان',
     guest: 'مهمان',
 }
+
+export const absenceMainStatusObject: any = {
+    'present':'حاضر',
+    'dellay15':'تاخیر زیر ۱۵ دقیقه',
+    'dellay30':'تاخیر بالای ۱۵ دقیقه',
+    'absent':'غایب',
+}
