@@ -15,6 +15,7 @@ import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import CoPresentIcon from '@mui/icons-material/CoPresent';
 import {
     Link,
     useNavigate
@@ -41,7 +42,8 @@ const Components: any = {
     NewReleasesIcon: NewReleasesIcon,
     AddBusinessIcon: AddBusinessIcon,
     MeetingRoomIcon: MeetingRoomIcon,
-    MenuBookIcon: MenuBookIcon
+    MenuBookIcon: MenuBookIcon,
+    CoPresentIcon: CoPresentIcon
 };
 const loadIcon = (input: any) => {
     return React.createElement(Components[input], {});
@@ -98,7 +100,7 @@ export const SecondaryListItems = () => {
                 منوهای تستی
             </ListSubheader>
 
-            <Link
+            {/* <Link
                 to='/absence-presences'
                 style={{
                     textDecoration: 'none',
@@ -108,10 +110,10 @@ export const SecondaryListItems = () => {
                 }}
             >
                 <ListItemIcon>
-                    <BarChartIcon />
+                    <CoPresentIcon />
                 </ListItemIcon>
                 <ListItemText primary="حضور و غیاب" />
-            </Link>
+            </Link> */}
 
             <ListItemButton>
                 <ListItemIcon>

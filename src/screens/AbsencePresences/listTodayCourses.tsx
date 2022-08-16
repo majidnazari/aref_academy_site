@@ -6,6 +6,7 @@ import { CourseSessionType } from './dto/CourseSessionType';
 import GroupIcon from '@mui/icons-material/Group';
 import CourseName from "components/CourseName";
 import { useNavigate } from "react-router-dom";
+import moment from 'moment';
 
 const ListTodayCourses = () => {
     const navigate = useNavigate();
@@ -14,8 +15,8 @@ const ListTodayCourses = () => {
         variables: {
             first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
             page: 1,
-            date_after: "2022-05-01",
-            date_befor: "2022-06-30",
+            date_after: moment().format("YYYY-MM-DD"),
+            date_befor: moment().format("YYYY-MM-DD"),
             orderBy: [
                 {
                     column: 'start_date',

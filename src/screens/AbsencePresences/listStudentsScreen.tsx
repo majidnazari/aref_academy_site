@@ -2,12 +2,11 @@ import { Container, Typography } from "@mui/material";
 import { useParams } from "react-router-dom"
 import ListStudents from "./components/ListStudents";
 import { CREATE_ABSENCE_PERESENCE_LIST } from "./gql/mutaion";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useEffect } from "react";
 
 const ListStudentsScreen = () => {
     const { courseId, courseSessionId } = useParams<string>();
-
     const [createAbsencePresenceList] = useMutation(CREATE_ABSENCE_PERESENCE_LIST);
 
     const createAbsencePresenceListHandler = (inputCourseId: string, inputCourseSessionId: string): void => {

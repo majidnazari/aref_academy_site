@@ -25,8 +25,9 @@ const AbsencepresenceBtns = ({ ap_status, id }: AbsencepresenceBtnsType) => {
         }}
     >
         {
-            Object.keys(absenceMainStatusObject).map((key: string) => {
+            Object.keys(absenceMainStatusObject).map((key: string, index: number) => {
                 return <Button
+                    key={index}
                     variant={myApStatus === key ? "contained" : "outlined"}
                     startIcon={myApStatus === key ? <TaskAltIcon fontSize="small" /> : null}
                     color={colorsObject.get(key)}

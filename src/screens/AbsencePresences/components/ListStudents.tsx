@@ -1,16 +1,16 @@
 import { GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE } from "../gql/query";
 import { useQuery } from "@apollo/client";
-import { CircularProgress, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { CircularProgress, Paper, Table, TableBody, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import Container from '@mui/material/Container';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
 import { useState } from "react";
-import FormControl from '@mui/material/FormControl';
 import StatusIcon from "components/StatusIcon";
 import AbsencepresenceBtns from './AbsencepresenceBtns';
 import AbsencepresenceSelect from "./AbsencepresenceSelect";
-import { UPDATE_ABSENCE_PERESENCE } from '../gql/mutaion';
-import { useMutation } from '@apollo/client';
+import { GET_A_COURSE } from "../gql/query";
+import CourseName from "components/CourseName";
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -39,6 +39,16 @@ interface PropType {
 }
 const ListStudents = ({ course_id, course_session_id }: PropType) => {
     const [studentList, setStudentList] = useState<any[]>([]);
+    const [course, setCourse] = useState<any>();
+    const { loading: courseLoading } = useQuery(GET_A_COURSE, {
+        variables: {
+            id: course_id
+        },
+        onCompleted: (data) => {
+            setCourse(data.getCourse);
+        }
+    });
+
     const { loading } = useQuery(GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE, {
         variables: {
             course_id: course_id,
@@ -51,11 +61,13 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
             setStudentList(tmp);
         },
     });
-
+    
     return (
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
-                فهرست دانش‌آموزان
+                {
+                    courseLoading ? <CircularProgress size={10} /> : <CourseName course={course} />
+                }
             </Typography>
             {loading && <CircularProgress sx={{ m: 2 }} />}
             <TableContainer component={Paper}>
@@ -77,7 +89,7 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                                     {index + 1}
                                 </StyledTableCell>
 
-                                <StyledTableCell align="left">{element.student.first_name} {element.student.last_name}</StyledTableCell>
+                                <StyledTableCell align="left">{element?.student?.first_name} {element?.student?.last_name}</StyledTableCell>
                                 <StyledTableCell align="left"
 
                                 >

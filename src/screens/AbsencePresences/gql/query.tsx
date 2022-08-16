@@ -113,3 +113,31 @@ export const GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE = gql`
       }
     }
 `;
+
+export const GET_A_COURSE = gql`
+    query GET_A_COURSE(
+        $id: ID!
+    ){
+      getCourse(id:$id) {
+          id
+          user_id_creator
+          year_id
+          teacher_id
+          name
+          lesson {
+            id
+            name
+          }
+          type
+          education_level
+          teacher{
+            first_name
+            last_name
+          }
+          branch{
+            id
+            name
+          }
+        }
+    }  
+`;
