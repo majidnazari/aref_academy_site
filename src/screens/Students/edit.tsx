@@ -21,7 +21,7 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import { educationLevelsObject, majorObject } from '../../constants';
 import { useParams } from 'react-router-dom';
-
+import StudentData from './dto/student-data';
 
 interface ErrorData {
     first_name?: string;
@@ -30,19 +30,7 @@ interface ErrorData {
     egucation_level?: string;
 }
 
-interface StudentData {
-    id: number;
-    first_name: string;
-    last_name: string;
-    phone: string;
-    mother_phone: string;
-    father_phone: string;
-    home_phone: string;
-    major: string;
-    egucation_level: string;
-    description: string;
-    parents_job_title: string;
-}
+
 
 const StudentEditScreen = () => {
     const { studentId } = useParams<string>();
@@ -56,7 +44,6 @@ const StudentEditScreen = () => {
         home_phone: "",
         major: "",
         egucation_level: "",
-        description: "",
         parents_job_title: ""
     });
     const [loading, setLoading] = useState<boolean>(false);
@@ -236,15 +223,6 @@ const StudentEditScreen = () => {
                     label="اطلاعات شغلی والدین"
                     value={studentInfo.parents_job_title}
                     onChange={(e: any) => setStudentInfo({ ...studentInfo, parents_job_title: e.target.value })}
-                    variant="filled"
-                />
-            </Grid>
-            <Grid item xs={12} md={12} lg={12} >
-                <TextField
-                    fullWidth
-                    label="آدرس و توضیحات"
-                    value={studentInfo.description}
-                    onChange={(e: any) => setStudentInfo({ ...studentInfo, description: e.target.value })}
                     variant="filled"
                 />
             </Grid>

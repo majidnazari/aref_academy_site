@@ -19,7 +19,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import { educationLevelsObject, majorObject } from '../../constants';
-
+import StudentData from './dto/student-data';
 
 interface ErrorData {
     first_name?: string;
@@ -34,19 +34,6 @@ interface ErrorData {
     parents_job_title?: string;
 }
 
-interface StudentData {
-    first_name: string;
-    last_name: string;
-    phone: string;
-    mother_phone: string;
-    father_phone: string;
-    home_phone: string;
-    major: string;
-    egucation_level: string;
-    description: string;
-    parents_job_title: string;
-}
-
 const StudentCreateScreen = () => {
     const [studentInfo, setStudentInfo] = useState<StudentData>({
         first_name: "",
@@ -57,7 +44,6 @@ const StudentCreateScreen = () => {
         home_phone: "",
         major: "",
         egucation_level: "",
-        description: "",
         parents_job_title: ""
     });
     const [loading, setLoading] = useState<boolean>(false);
@@ -231,17 +217,6 @@ const StudentCreateScreen = () => {
                     onChange={(e: any) => setStudentInfo({ ...studentInfo, parents_job_title: e.target.value })}
                     error={error.parents_job_title ? true : false}
                     helperText={error.parents_job_title ? error.parents_job_title : ""}
-                    variant="filled"
-                />
-            </Grid>
-            <Grid item xs={12} md={12} lg={12} >
-                <TextField
-                    fullWidth
-                    label="آدرس و توضیحات"
-                    value={studentInfo.description}
-                    onChange={(e: any) => setStudentInfo({ ...studentInfo, description: e.target.value })}
-                    error={error.description ? true : false}
-                    helperText={error.description ? error.description : ""}
                     variant="filled"
                 />
             </Grid>
