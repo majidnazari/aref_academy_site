@@ -96,9 +96,7 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                                 <StyledTableCell align="left">
                                     {element?.student?.first_name.trim()} {element?.student?.last_name.trim()}
                                 </StyledTableCell>
-                                <StyledTableCell align="left"
-
-                                >
+                                <StyledTableCell align="left"                             >
                                     <AbsencepresenceBtns
                                         id={element.id}
                                         ap_status={element.ap_status}
