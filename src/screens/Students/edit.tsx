@@ -28,6 +28,7 @@ interface ErrorData {
     last_name?: string;
     phone?: string;
     egucation_level?: string;
+    nationality_code?:string;
 }
 
 
@@ -35,7 +36,7 @@ interface ErrorData {
 const StudentEditScreen = () => {
     const { studentId } = useParams<string>();
     const [studentInfo, setStudentInfo] = useState<StudentData>({
-        id: 0,
+        id: "0",
         first_name: "",
         last_name: "",
         phone: "",
@@ -44,7 +45,8 @@ const StudentEditScreen = () => {
         home_phone: "",
         major: "",
         egucation_level: "",
-        parents_job_title: ""
+        parents_job_title: "",
+        nationality_code: ""
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
@@ -93,6 +95,10 @@ const StudentEditScreen = () => {
             result = { ...result, last_name: 'نام خانوادگی را وارد کنید.' };
             out = false;
         }
+        if (!studentInfo.nationality_code) {
+            result = { ...result, nationality_code: 'کدملی را وارد کنید.' };
+            out = false;
+        }
         if (!studentInfo.phone) {
             result = { ...result, phone: 'تلفن همراه را وارد کنید.' };
             out = false;
@@ -135,6 +141,17 @@ const StudentEditScreen = () => {
                     onChange={(e: any) => setStudentInfo({ ...studentInfo, last_name: e.target.value })}
                     error={error.last_name ? true : false}
                     helperText={error.last_name ? error.last_name : ""}
+                    variant="filled"
+                />
+            </Grid>
+            <Grid item xs={12} md={4} lg={4} >
+                <TextField
+                    fullWidth
+                    label="کدملی"
+                    value={studentInfo.nationality_code}
+                    onChange={(e: any) => setStudentInfo({ ...studentInfo, nationality_code: e.target.value })}
+                    error={error.nationality_code ? true : false}
+                    helperText={error.nationality_code ? error.nationality_code : ""}
                     variant="filled"
                 />
             </Grid>

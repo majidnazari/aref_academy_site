@@ -42,6 +42,7 @@ interface StudentData {
     egucation_level: string;
     description: string;
     parents_job_title: string;
+    nationality_code: string;
 }
 
 interface SearchData {
@@ -110,7 +111,7 @@ const StudentsScreen = () => {
         },
     }));
 
-    const handleChange = (event: React.ChangeEvent<unknown>, value: number) : void => {
+    const handleChange = (event: React.ChangeEvent<unknown>, value: number): void => {
         setStudents([]);
         fetchMore({
             variables: {
@@ -128,7 +129,7 @@ const StudentsScreen = () => {
         });
     };
 
-    function deleteFlault(id: number) :void {
+    function deleteFlault(id: number): void {
         showConfirm(() => {
             delFault(
                 {
@@ -250,6 +251,9 @@ const StudentsScreen = () => {
                         <StyledTableCell align="left">
                             رشته
                         </StyledTableCell>
+                        <StyledTableCell align="left">
+                            کدملی
+                        </StyledTableCell>
                         <StyledTableCell align="left">کلاسها</StyledTableCell>
                         <StyledTableCell align="left">ویرایش</StyledTableCell>
                         <StyledTableCell align="left">حذف</StyledTableCell>
@@ -270,6 +274,7 @@ const StudentsScreen = () => {
                             <StyledTableCell align="left">
                                 {element.major !== '' ? majorObject[element.major] : '-'}
                             </StyledTableCell>
+                            <StyledTableCell align="left">{element.nationality_code}</StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 variant="contained"

@@ -20,6 +20,7 @@ export const CREATE_STUDENT = gql`
         $mother_phone: String
         $parents_job_title: String
         $phone: String!
+        $nationality_code: String!
         )
         {
         createStudent(input:{
@@ -32,7 +33,8 @@ export const CREATE_STUDENT = gql`
                 major:$major,
                 mother_phone:$mother_phone,
                 parents_job_title:$parents_job_title,
-                phone:$phone
+                phone:$phone,
+                nationality_code:$nationality_code
             }){
                 id
             }
@@ -42,7 +44,7 @@ export const CREATE_STUDENT = gql`
 
 export const EDIT_STUDENT = gql`
     mutation EDIT_STUDENT(
-        $id:Int!,
+        $id:ID!,
         $description: String
         $egucation_level: String!
         $father_phone: String
@@ -54,6 +56,7 @@ export const EDIT_STUDENT = gql`
         $mother_phone: String
         $parents_job_title: String
         $phone: String!
+        $nationality_code: String!
         )
         {
         updateStudent(input:{
@@ -68,7 +71,8 @@ export const EDIT_STUDENT = gql`
             major:$major,
             mother_phone:$mother_phone,
             parents_job_title:$parents_job_title,
-            phone:$phone
+            phone:$phone,
+            nationality_code:$nationality_code
         }){
             id
         }

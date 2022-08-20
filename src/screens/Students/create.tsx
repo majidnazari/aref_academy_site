@@ -44,7 +44,8 @@ const StudentCreateScreen = () => {
         home_phone: "",
         major: "",
         egucation_level: "",
-        parents_job_title: ""
+        parents_job_title: "",
+        nationality_code: ""
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});

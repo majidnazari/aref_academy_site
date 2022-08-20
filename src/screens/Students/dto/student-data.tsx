@@ -1,5 +1,5 @@
 class StudentData {
-    id?: number;
+    id?: string;
     first_name!: string;
     last_name!: string;
     phone!: string;
@@ -10,6 +10,7 @@ class StudentData {
     egucation_level!: string;
     description?: string;
     parents_job_title!: string;
+    nationality_code!: string;
 }
 
 export default StudentData;

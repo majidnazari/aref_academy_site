@@ -8,6 +8,7 @@ export const GET_STUDENTS = gql`
         $last_name: String
         $orderBy: [OrderByClause!]
         $phone: String
+        $nationality_code: String
     ){
       getStudents(
           first: $first,
@@ -16,6 +17,7 @@ export const GET_STUDENTS = gql`
           last_name: $last_name,
           orderBy: $orderBy,
           phone: $phone
+          nationality_code:$nationality_code
           )
         {
           data{
@@ -29,6 +31,7 @@ export const GET_STUDENTS = gql`
             major
             egucation_level
             parents_job_title
+            nationality_code
           }
           paginatorInfo{
             count
