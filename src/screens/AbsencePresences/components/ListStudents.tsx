@@ -57,11 +57,15 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
             page: 1
         },
         onCompleted: (data) => {
-            const tmp = data.getCourseStudentsWithAbsencePresence.data.filter((item: any) => item.cs_student_status === 'ok');
+            const tmp = data.getCourseStudentsWithAbsencePresence.data.filter((item: any) => item.cs_student_status === 'ok' && item.student);
+            tmp.sort(function (a: any, b: any) {
+                return a?.student?.last_name.trim().localeCompare(b?.student?.last_name.trim());
+            })
+
             setStudentList(tmp);
         },
     });
-    
+
     return (
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
@@ -89,7 +93,9 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                                     {index + 1}
                                 </StyledTableCell>
 
-                                <StyledTableCell align="left">{element?.student?.first_name} {element?.student?.last_name}</StyledTableCell>
+                                <StyledTableCell align="left">
+                                    {element?.student?.first_name.trim()} {element?.student?.last_name.trim()}
+                                </StyledTableCell>
                                 <StyledTableCell align="left"
 
                                 >
