@@ -22,13 +22,14 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { educationLevelsObject, majorObject } from '../../constants';
 import { useParams } from 'react-router-dom';
 import StudentData from './dto/student-data';
+import { vmsNationalCode } from 'utils/utils';
 
 interface ErrorData {
     first_name?: string;
     last_name?: string;
     phone?: string;
     egucation_level?: string;
-    nationality_code?:string;
+    nationality_code?: string;
 }
 
 
@@ -94,8 +95,8 @@ const StudentEditScreen = () => {
             result = { ...result, last_name: 'نام خانوادگی را وارد کنید.' };
             out = false;
         }
-        if (!studentInfo.nationality_code) {
-            result = { ...result, nationality_code: 'کدملی را وارد کنید.' };
+        if (!vmsNationalCode(studentInfo.nationality_code)) {
+            result = { ...result, nationality_code: 'کدملی را صحیح وارد کنید.' };
             out = false;
         }
         if (!studentInfo.phone) {
