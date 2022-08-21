@@ -32,6 +32,7 @@ interface ErrorData {
     egucation_level?: string;
     description?: string;
     parents_job_title?: string;
+    nationality_code?: string;
 }
 
 const StudentCreateScreen = () => {
@@ -78,6 +79,10 @@ const StudentCreateScreen = () => {
             result = { ...result, last_name: 'نام خانوادگی را وارد کنید.' };
             out = false;
         }
+        if (!studentInfo.nationality_code) {
+            result = { ...result, nationality_code: 'کدملی را وارد کنید.' };
+            out = false;
+        }
         if (!studentInfo.phone) {
             result = { ...result, phone: 'تلفن همراه را وارد کنید.' };
             out = false;
@@ -120,6 +125,17 @@ const StudentCreateScreen = () => {
                     onChange={(e: any) => setStudentInfo({ ...studentInfo, last_name: e.target.value })}
                     error={error.last_name ? true : false}
                     helperText={error.last_name ? error.last_name : ""}
+                    variant="filled"
+                />
+            </Grid>
+            <Grid item xs={12} md={4} lg={4} >
+                <TextField
+                    fullWidth
+                    label="کدملی"
+                    value={studentInfo.nationality_code}
+                    onChange={(e: any) => setStudentInfo({ ...studentInfo, nationality_code: e.target.value })}
+                    error={error.nationality_code ? true : false}
+                    helperText={error.nationality_code ? error.nationality_code : ""}
                     variant="filled"
                 />
             </Grid>

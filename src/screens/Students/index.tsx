@@ -50,6 +50,7 @@ interface SearchData {
     last_name?: string;
     phone?: string;
     egucation_level?: string;
+    nationality_code?: string;
 }
 
 const StudentsScreen = () => {
@@ -58,7 +59,8 @@ const StudentsScreen = () => {
         first_name: "",
         last_name: "",
         phone: "",
-        egucation_level: ""
+        egucation_level: "",
+        nationality_code: ""
     }
     );
     const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
@@ -177,60 +179,76 @@ const StudentsScreen = () => {
                 افزودن دانش‌آموز جدید
             </Button>
         </Box>
-        <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
-            <Grid item xs={12} md={3} lg={3} >
-                <TextField
-                    fullWidth
-                    label="نام"
-                    value={search.first_name}
-                    onChange={(e: any) => setSearch({ ...search, first_name: e.target.value })}
-                    variant="filled"
-                    onKeyPress={(e) => {
-                        if (e.key === "Enter") {
-                            handleSearch();
-                        }
-                    }}
-                />
+        <Box sx={{ mb: 1 , marginLeft:2 }} >
+            <Grid container component={Paper} sx={{ p: 1 }} spacing={2} >
+                <Grid item xs={12} md={3} lg={3} >
+                    <TextField
+                        fullWidth
+                        label="نام"
+                        value={search.first_name}
+                        onChange={(e: any) => setSearch({ ...search, first_name: e.target.value })}
+                        variant="filled"
+                        onKeyPress={(e) => {
+                            if (e.key === "Enter") {
+                                handleSearch();
+                            }
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} md={3} lg={3} >
+                    <TextField
+                        fullWidth
+                        label="نام خانوادگی"
+                        value={search.last_name}
+                        onChange={(e: any) => setSearch({ ...search, last_name: e.target.value })}
+                        variant="filled"
+                        onKeyPress={(e) => {
+                            if (e.key === "Enter") {
+                                handleSearch();
+                            }
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} md={3} lg={3} >
+                    <TextField
+                        fullWidth
+                        label="تلفن"
+                        value={search.phone}
+                        onChange={(e: any) => setSearch({ ...search, phone: e.target.value })}
+                        variant="filled"
+                        onKeyPress={(e) => {
+                            if (e.key === "Enter") {
+                                handleSearch();
+                            }
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} md={3} lg={3} >
+                    <TextField
+                        fullWidth
+                        label="کدملی"
+                        value={search.nationality_code}
+                        onChange={(e: any) => setSearch({ ...search, nationality_code: e.target.value })}
+                        variant="filled"
+                        onKeyPress={(e) => {
+                            if (e.key === "Enter") {
+                                handleSearch();
+                            }
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} md={3} lg={3} >
+                    <Button
+                        sx={{ mt: 2 }}
+                        variant="contained"
+                        startIcon={<SearchIcon />}
+                        onClick={handleSearch} >
+                        جستجو
+                        {refetchLoading && <CircularProgress size={15} style={{ marginRight: 10, color: "#fff" }} />}
+                    </Button>
+                </Grid>
             </Grid>
-            <Grid item xs={12} md={3} lg={3} >
-                <TextField
-                    fullWidth
-                    label="نام خانوادگی"
-                    value={search.last_name}
-                    onChange={(e: any) => setSearch({ ...search, last_name: e.target.value })}
-                    variant="filled"
-                    onKeyPress={(e) => {
-                        if (e.key === "Enter") {
-                            handleSearch();
-                        }
-                    }}
-                />
-            </Grid>
-            <Grid item xs={12} md={3} lg={3} >
-                <TextField
-                    fullWidth
-                    label="تلفن"
-                    value={search.phone}
-                    onChange={(e: any) => setSearch({ ...search, phone: e.target.value })}
-                    variant="filled"
-                    onKeyPress={(e) => {
-                        if (e.key === "Enter") {
-                            handleSearch();
-                        }
-                    }}
-                />
-            </Grid>
-            <Grid item xs={12} md={3} lg={3} >
-                <Button
-                    sx={{ mt: 2 }}
-                    variant="contained"
-                    startIcon={<SearchIcon />}
-                    onClick={handleSearch} >
-                    جستجو
-                    {refetchLoading && <CircularProgress size={15} style={{ marginRight: 10, color: "#fff" }} />}
-                </Button>
-            </Grid>
-        </Grid>
+        </Box>
         <TableContainer component={Paper}>
             <Table aria-label="customized table">
                 <TableHead>

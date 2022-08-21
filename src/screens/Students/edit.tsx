@@ -72,7 +72,6 @@ const StudentEditScreen = () => {
     const editStudentHandler = () => {
         if (!validateForm()) return;
         setLoading(true);
-        console.log({ studentInfo });
         editStudent({
             variables: studentInfo
         }).then(() => {
