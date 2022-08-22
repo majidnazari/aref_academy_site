@@ -21,7 +21,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { showSuccess, showConfirm } from "../../../utils/swlAlert";
 import { useNavigate } from "react-router-dom";
-import PeopleIcon from '@mui/icons-material/People';
 
 interface IProps {
     courseId: number;
