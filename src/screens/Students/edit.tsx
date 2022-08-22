@@ -12,9 +12,7 @@ import { GET_A_STUDENT } from './gql/query';
 import { showSuccess } from "../../utils/swlAlert";
 import { Grid } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import {
-    useNavigate
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -31,8 +29,6 @@ interface ErrorData {
     egucation_level?: string;
     nationality_code?: string;
 }
-
-
 
 const StudentEditScreen = () => {
     const { studentId } = useParams<string>();

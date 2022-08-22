@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import AbsencepresenceBtnsType from '../dto/AbsencepresenceBtnsType';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import { useState } from "react";
@@ -29,17 +29,18 @@ const AbsencepresenceBtns = ({ ap_status, id }: AbsencepresenceBtnsType) => {
                     }}
                 >
                     {myApStatus === key ?
-                        <Typography 
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                            }}
-                        >
-                            {absenceMainStatusObject[key] ?
-                                <><TaskAltIcon fontSize="small" color={colorsObject.get(key)} />
-                                    {absenceMainStatusObject[key]}</>
-                                : "ثبت نشده"}
-                        </Typography>
+                        (key !== 'noAction' ?
+                            <Button
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                }}
+                                variant="contained"
+                                color={colorsObject.get(key)}
+                                startIcon={<TaskAltIcon />}
+                            >
+                                {absenceMainStatusObject[key]}
+                            </Button> : "ثبت نشده")
                         : null}
                 </Box>
 
