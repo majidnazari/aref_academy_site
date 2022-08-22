@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { GET_COURSE_SESSIONS } from '../gql/query';
-import { DELETE_SESSION } from '../gql/mutation';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -12,14 +11,11 @@ import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
-import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PaginatorInfo from '../../../interfaces/paginator-info.interface';
+import PaginatorInfo from 'interfaces/paginator-info.interface';
 import moment from 'moment-jalaali';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import { showSuccess, showConfirm } from "../../../utils/swlAlert";
 import { useNavigate } from "react-router-dom";
 import PeopleIcon from '@mui/icons-material/People';
 
@@ -87,7 +83,7 @@ const ListSessions = ({ courseId }: IProps) => {
         perPage: 10,
         total: 0,
     });
-    const { loading, error, fetchMore, refetch } = useQuery(GET_COURSE_SESSIONS, {
+    const { loading, error, fetchMore } = useQuery(GET_COURSE_SESSIONS, {
         variables: {
             first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
             page: 1,
@@ -104,7 +100,6 @@ const ListSessions = ({ courseId }: IProps) => {
         fetchPolicy: "no-cache"
     });
 
-    const [delSession] = useMutation(DELETE_SESSION);
     const navigate = useNavigate();
 
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -123,21 +118,6 @@ const ListSessions = ({ courseId }: IProps) => {
                 setPageInfo(fetchMoreResult.getCourseSessions.paginatorInfo);
                 setSessions(fetchMoreResult.getCourseSessions.data);
             }
-        });
-    };
-
-    function deleteSession(id: number) {
-        showConfirm(() => {
-            delSession(
-                {
-                    variables: {
-                        id: id
-                    }
-                }
-            ).then(() => {
-                refetch();
-                showSuccess('حذف با موفقیت انجام شد.');
-            });
         });
     };
 
@@ -166,8 +146,6 @@ const ListSessions = ({ courseId }: IProps) => {
                             <StyledTableCell align="left">محل برگزاری</StyledTableCell>
                             <StyledTableCell align="left">شناسه</StyledTableCell>
                             <StyledTableCell align="left">گزارش</StyledTableCell>
-                            <StyledTableCell align="left">ویرایش</StyledTableCell>
-                            <StyledTableCell align="left">حذف</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -203,34 +181,10 @@ const ListSessions = ({ courseId }: IProps) => {
                                     }}
                                     variant="contained"
                                     color="primary"
+                                    startIcon={<PeopleIcon />}
                                 >
-                                     حضور و غیاب
+                                    حضور و غیاب
                                 </Button></StyledTableCell>
-                                <StyledTableCell align="left"><Button
-                                    size="small"
-                                    onClick={() => {
-                                        navigate(`/courses/${courseId}/sessions/${element.id}`);
-                                    }}
-                                    variant="contained"
-                                    startIcon={<EditIcon />}
-                                    color="success"
-                                >
-                                    ویرایش
-                                </Button></StyledTableCell>
-                                <StyledTableCell align="left">
-                                    <Button
-                                        size="small"
-                                        onClick={
-                                            () => deleteSession(element.id)
-                                        }
-                                        variant="contained"
-                                        startIcon={<DeleteIcon />}
-                                        color="error"
-                                    >
-                                        حذف
-                                    </Button>
-                                </StyledTableCell>
-
                             </StyledTableRow>
                         ))}
                     </TableBody>

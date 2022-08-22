@@ -22,6 +22,9 @@ import {
 } from "react-router-dom"
 import { getUserData } from '../utils/user';
 import { getDarktheme } from '../utils/utils';
+import { Collapse, List } from '@mui/material';
+import { ExpandLess, ExpandMore, StarBorder } from '@mui/icons-material';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
 
 interface MenuItem {
     href: string;
@@ -94,14 +97,38 @@ export const MainListItems = () => {
 };
 
 export const SecondaryListItems = () => {
+    const [open, setOpen] = React.useState(true);
+
+    const handleClick = () => {
+        setOpen(!open);
+    };
+
     return (process.env.REACT_APP_DEVELEP_MOD === "0" ? null : (
         <React.Fragment>
+            <ListItemButton onClick={handleClick}>
+                <ListItemIcon>
+                    <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Inbox" />
+                {open ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    <ListItemButton sx={{ pl: 4 }}>
+                        <ListItemIcon>
+                            <StarBorder />
+                        </ListItemIcon>
+                        <ListItemText primary="Starred" />
+                    </ListItemButton>
+                </List>
+            </Collapse>
+
             <ListSubheader component="div" inset >
                 منوهای تستی
             </ListSubheader>
 
-            {/* <Link
-                to='/absence-presences'
+            <Link
+                to='/reports/absence-presences'
                 style={{
                     textDecoration: 'none',
                     display: 'flex',
@@ -112,8 +139,8 @@ export const SecondaryListItems = () => {
                 <ListItemIcon>
                     <CoPresentIcon />
                 </ListItemIcon>
-                <ListItemText primary="حضور و غیاب" />
-            </Link> */}
+                <ListItemText primary="گزارش حضور و غیاب" />
+            </Link>
 
             <ListItemButton>
                 <ListItemIcon>
@@ -142,7 +169,6 @@ export const SecondaryListItems = () => {
                 </ListItemIcon>
                 <ListItemText primary=" گزارش های مالی" />
             </ListItemButton>
-
         </React.Fragment >)
     )
 };

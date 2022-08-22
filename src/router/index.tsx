@@ -39,6 +39,9 @@ import LessonsEditScreen from '../screens/Lessons/edit';
 import LessonsCreateScreen from '../screens/Lessons/create';
 
 import ReportsCoursesScreen from '../screens/Reports/Courses';
+import ReportsAbsencePresencesScreen from '../screens/Reports/AbsencePresences';
+import ReportsCourseSessionsScreen from '../screens/Reports/AbsencePresences/sessions';
+import ReportsAbsencePresenceListstudents from '../screens/Reports/AbsencePresences/listStudentsScreen';
 
 import StudentCoursesAlarmsScreen from '../screens/Alarms/studentCoursesAlarms';
 
@@ -121,6 +124,9 @@ const MainRouter = () => {
 
                         <Route path="reports" >
                             <Route path="courses" element={<ReportsCoursesScreen />} />
+                            <Route path="absence-presences" element={<ReportsAbsencePresencesScreen />} />
+                            <Route path="absence-presences/:courseId/sessions" element={<ReportsCourseSessionsScreen />} />
+                            <Route path="absence-presences/details/:courseId/:courseSessionId" element={<ReportsAbsencePresenceListstudents />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
 
