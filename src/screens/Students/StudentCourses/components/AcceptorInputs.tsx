@@ -1,4 +1,4 @@
-import { FormControl, FormHelperText, Grid, MenuItem } from '@mui/material';
+import { FormControl, Grid, MenuItem } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import { useEffect, useState } from 'react';
@@ -57,12 +57,9 @@ const ManagerInputs = ({ setFormData, studentCourse }: EditProps) => {
                         <MenuItem value="ok">
                             فعال
                         </MenuItem>
-                        <MenuItem value="refused">انصراف</MenuItem>
-                        <MenuItem value="fired">اخراج</MenuItem>
+                        <MenuItem value="fired_pending">درخواست اخراج</MenuItem>
+                        <MenuItem value="refused_pending">درخواست انصراف</MenuItem>
                     </Select>
-                    <FormHelperText error >
-                        با تغییر وضعیت دانش آموز تایید مدیر و تایید حسابداری به حالت تعلیق در می‌آید و نیاز به تایید مجدد این دو بخش خواهد بود
-                    </FormHelperText>
                 </FormControl>
             </Grid>
         </Grid>

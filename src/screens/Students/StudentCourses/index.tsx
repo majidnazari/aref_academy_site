@@ -140,9 +140,6 @@ const StudentCourses = () => {
                             تایید حسابداری
                         </StyledTableCell>
                         <StyledTableCell align="left">
-                            کاربر ثبت کننده
-                        </StyledTableCell>
-                        <StyledTableCell align="left">
                             تاریخ
                         </StyledTableCell>
                         <StyledTableCell align="left">
@@ -188,9 +185,6 @@ const StudentCourses = () => {
                                             element.user_financial?.first_name + ' ' + element.user_financial?.last_name : null
                                     }
                                 </Typography>
-                            </StyledTableCell>
-                            <StyledTableCell align="left">
-                                {element.user_creator?.first_name + ' ' + element.user_creator?.last_name}
                             </StyledTableCell>
                             <StyledTableCell align="left">
                                 {moment(element.created_at).format("jYYYY/jMM/jDD")}

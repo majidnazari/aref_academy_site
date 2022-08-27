@@ -1,4 +1,4 @@
-import { FormControl, Grid, MenuItem } from '@mui/material';
+import { FormControl, FormHelperText, Grid, MenuItem } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import { useEffect, useState } from 'react';
@@ -30,7 +30,8 @@ const ManagerInputs = ({ setFormData, studentCourse }: EditProps) => {
     const handleChangeStudentStatus = (event: SelectChangeEvent<string>) => {
         setMystudentCourse({
             ...mystudentCourse,
-            student_status: event.target.value
+            student_status: event.target.value,
+            financial_status: 'pending'
         });
         setFormData({
             ...studentCourse,
@@ -65,7 +66,12 @@ const ManagerInputs = ({ setFormData, studentCourse }: EditProps) => {
                         </MenuItem>
                         <MenuItem value="refused">انصراف</MenuItem>
                         <MenuItem value="fired">اخراج</MenuItem>
+                        <MenuItem value="fired_pending">درخواست اخراج</MenuItem>
+                        <MenuItem value="refused_pending">درخواست انصراف</MenuItem>
                     </Select>
+                    <FormHelperText error >
+                        با تغییر وضعیت دانش آموز تایید حسابداری به حالت تعلیق در می‌آید و نیاز به تایید مجدد این بخش خواهد بود
+                    </FormHelperText>
                 </FormControl>
             </Grid>
             <Grid item xs={12} sm={6} md={6} >

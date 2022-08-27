@@ -41,14 +41,16 @@ export const generateQueryOptions = () => {
     switch (userGroup) {
         case 'admin':
             return {
-                manager_financial_not_equal: 'approved'
+                financial_status: 'pending'
             };
         case 'manager':
             return {
                 manager_status_not_equal: 'approved',
             };
         case 'financial':
-            return { financial_status_not_equal: 'approved' };
+            return { 
+                financial_status: 'pending' 
+            };
         default:
             return {};
     }
