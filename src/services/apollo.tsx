@@ -29,7 +29,9 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 
 const logoutLink = onError((networkError) => {
     if (networkError.response?.errors) {
-        if (networkError.response.errors[0].message === "Unauthenticated.") {
+        if (networkError.response.errors[0].message === "Unauthenticated."
+            ||
+            networkError.response.errors[0].message === "unauthorized access") {
             removeToken();
             window.location.href = "/login";
         }
