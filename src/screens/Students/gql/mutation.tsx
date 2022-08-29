@@ -10,7 +10,6 @@ export const DELETE_FAULT = gql`
 
 export const CREATE_STUDENT = gql`
     mutation CREATE_STUDENT(
-        $description: String
         $egucation_level: String!
         $father_phone: String
         $first_name: String!
@@ -24,7 +23,6 @@ export const CREATE_STUDENT = gql`
         )
         {
         createStudent(input:{
-                description:$description,
                 egucation_level:$egucation_level,
                 father_phone:$father_phone,
                 first_name:$first_name,

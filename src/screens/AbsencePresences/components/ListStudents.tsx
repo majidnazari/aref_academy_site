@@ -1,6 +1,12 @@
 import { GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE } from "../gql/query";
 import { useQuery } from "@apollo/client";
-import { CircularProgress, Paper, Table, TableBody, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import {
+    CircularProgress,
+    Paper, Table,
+    TableBody, TableContainer, TableHead, TableRow, TextField, Typography
+} from "@mui/material";
+
+import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import Container from '@mui/material/Container';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
@@ -39,7 +45,9 @@ interface PropType {
 }
 const ListStudents = ({ course_id, course_session_id }: PropType) => {
     const [studentList, setStudentList] = useState<any[]>([]);
+    const [originalStudentList, setOriginalStudentList] = useState<any[]>([]);
     const [course, setCourse] = useState<any>();
+    const [searchName, setSearchName] = useState<string>();
     const { loading: courseLoading } = useQuery(GET_A_COURSE, {
         variables: {
             id: course_id
@@ -61,10 +69,23 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
             tmp.sort(function (a: any, b: any) {
                 return a?.student?.last_name.trim().localeCompare(b?.student?.last_name.trim());
             })
-
             setStudentList(tmp);
+            setOriginalStudentList(tmp);
         },
     });
+
+    const handleSearch = (inputText: string) => {
+        setSearchName(inputText)
+        let searchTmp = [...originalStudentList];
+        searchTmp = searchTmp.filter((item: any) => {
+            const name = item.student.first_name + ' ' + item.student.last_name;
+            if (name.indexOf(inputText) > -1) {
+                return item;
+            }
+            return null;
+        })
+        setStudentList(searchTmp);
+    }
 
     return (
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -74,6 +95,17 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                 }
             </Typography>
             {loading && <CircularProgress sx={{ m: 2 }} />}
+            <Grid container component={Paper} sx={{ p: 1, my: 1 }} spacing={2} >
+                <Grid md={4} >
+                    <TextField
+                        fullWidth
+                        label="جستجوی نام"
+                        value={searchName}
+                        onChange={(e: any) => handleSearch(e.target.value)}
+                        variant="filled"
+                    />
+                </Grid>
+            </Grid>
             <TableContainer component={Paper}>
                 <Table aria-label="customized table">
                     <TableHead>
