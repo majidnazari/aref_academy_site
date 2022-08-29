@@ -21,7 +21,7 @@ import { GET_STUDENTS } from './gql/query';
 import { DELETE_FAULT } from './gql/mutation';
 import { useMutation, useQuery } from '@apollo/client';
 import PaginatorInfo from '../../interfaces/paginator-info.interface';
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 import Typography from '@mui/material/Typography';
 import ClassIcon from '@mui/icons-material/Class';
@@ -179,7 +179,7 @@ const StudentsScreen = () => {
                 افزودن دانش‌آموز جدید
             </Button>
         </Box>
-        <Box sx={{ mb: 1 , marginLeft:2 }} >
+        <Box sx={{ mb: 1, marginLeft: 2 }} >
             <Grid container component={Paper} sx={{ p: 1 }} spacing={2} >
                 <Grid item xs={12} md={3} lg={3} >
                     <TextField
@@ -293,28 +293,32 @@ const StudentsScreen = () => {
                                 {element.major !== '' ? majorObject[element.major] : '-'}
                             </StyledTableCell>
                             <StyledTableCell align="left">{element.nationality_code}</StyledTableCell>
-                            <StyledTableCell align="left"><Button
-                                size="small"
-                                variant="contained"
-                                startIcon={<ClassIcon />}
-                                color="secondary"
-                                onClick={() => {
-                                    navigate(`/students/${element.id}/courses`);
-                                }}
-                            >
-                                کلاسها
-                            </Button></StyledTableCell>
-                            <StyledTableCell align="left"><Button
-                                size="small"
-                                onClick={() => {
-                                    navigate(`/students/edit/${element.id}`);
-                                }}
-                                variant="contained"
-                                startIcon={<EditIcon />}
-                                color="success"
-                            >
-                                پروفایل
-                            </Button></StyledTableCell>
+                            <StyledTableCell align="left">
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    startIcon={<ClassIcon />}
+                                    color="secondary"
+                                    component={Link}
+                                    to={`/students/${element.id}/courses`}
+                                    target="_blank"
+                                >
+                                    کلاسها
+                                </Button>
+                            </StyledTableCell>
+                            <StyledTableCell align="left">
+                                <Button
+                                    size="small"
+                                    onClick={() => {
+                                        navigate(`/students/edit/${element.id}`);
+                                    }}
+                                    variant="contained"
+                                    startIcon={<EditIcon />}
+                                    color="success"
+                                >
+                                    پروفایل
+                                </Button>
+                            </StyledTableCell>
                             <StyledTableCell align="left">
                                 <Button
                                     size="small"
