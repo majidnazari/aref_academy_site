@@ -360,7 +360,7 @@ const CoursesEditScreen = () => {
                         defaultValue=""
                         value={branches ? (branchId || "") : ''}
                         onChange={handleChangeBranch}
-                        error={error.type ? true : false}
+                        error={error.branchId ? true : false}
                         variant="filled"
                         displayEmpty
                     >

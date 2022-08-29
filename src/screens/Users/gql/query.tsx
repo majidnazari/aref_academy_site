@@ -68,3 +68,18 @@ export const GET_A_USER = gql`
       }
     }  
 `;
+
+export const GET_BRANCHES = gql`
+  query GET_BRANCHES(
+    $first: Int!
+    $page: Int!
+    $orderBy: [OrderByClause!]
+  ){
+    getBranches(first:$first,page:$page,orderBy:$orderBy){
+      data{
+        id
+        name
+      }
+    }
+  }
+`;

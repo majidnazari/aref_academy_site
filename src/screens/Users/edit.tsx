@@ -10,7 +10,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { EDIT_USER } from './gql/mutation';
-import { GET_GROUPS, GET_A_USER } from './gql/query';
+import { GET_GROUPS, GET_A_USER, GET_BRANCHES } from './gql/query';
 import { useMutation, useQuery } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
 import { Grid } from '@mui/material';
@@ -33,6 +33,7 @@ interface ErrorData {
     last_name?: string;
     password?: string;
     group_id?: string;
+    branchId?: string;
 }
 
 interface UserData {
@@ -53,6 +54,7 @@ const UersEditScreen = () => {
     const [group_id, setGroupId] = useState<string>("");
     const [groups, setGroups] = useState<GroupData[]>([]);
     const [error, setError] = useState<ErrorData>({});
+    const [branchId, setBranchId] = useState<string>("");
     const navigate = useNavigate();
     const [editUser] = useMutation(EDIT_USER);
     const params = useParams<string>();
@@ -68,6 +70,17 @@ const UersEditScreen = () => {
         variables: {
             first: 100,
             page: 1,
+        }
+    });
+
+    const { data: branches } = useQuery(GET_BRANCHES, {
+        variables: {
+            first: 1000,
+            page: 1,
+            orderBy: [{
+                column: 'id',
+                order: 'DESC'
+            }]
         }
     });
 
@@ -88,6 +101,10 @@ const UersEditScreen = () => {
         setGroupId(event.target.value);
     };
 
+    const handleChangeBranch = (event: SelectChangeEvent<string>) => {
+        setBranchId(event.target.value);
+    }
+
     const editUserHandler = () => {
         if (!validateForm()) return;
         editUser({
@@ -97,6 +114,7 @@ const UersEditScreen = () => {
                 first_name: first_name,
                 last_name: last_name,
                 group_id: parseInt(group_id, 10),
+                branch_id: +branchId
             }
         }).then(() => {
             showSuccess('کاربر با موفقیت ویرایش شد.');
@@ -129,6 +147,10 @@ const UersEditScreen = () => {
             result = { ...result, group_id: 'گروه کاربری را انتخاب کنید.' };
             out = false;
         }
+        if (!branchId) {
+            result = { ...result, branchId: 'شعبه را وارد کنید.' };
+            out = false;
+        }
         setError(result);
         return out;
     }
@@ -136,7 +158,7 @@ const UersEditScreen = () => {
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <h4>ویرایش حساب کاربری</h4>
-    
+
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
             <Grid item xs={12} md={4} lg={4} >
                 <TextField
@@ -201,6 +223,30 @@ const UersEditScreen = () => {
                     {error.group_id ? <FormHelperText error >{error.group_id}</FormHelperText> : ""}
                 </FormControl>
             </Grid>
+            <Grid item xs={12} md={4} lg={4}  >
+                <FormControl sx={{ width: "100%" }}>
+                    <Select
+                        defaultValue=""
+                        value={branches ? (branchId || "") : ''}
+                        onChange={handleChangeBranch}
+                        error={error.branchId ? true : false}
+                        variant="filled"
+                        displayEmpty
+                    >
+                        <MenuItem value="" disabled >
+                            <em>شعبه</em>
+                        </MenuItem>
+                        {
+                            branches && branches.getBranches.data.map((branch: any) => {
+                                return <MenuItem key={branch.id} value={branch.id}>{branch.name}
+                                </MenuItem>;
+                            })
+
+                        }
+                    </Select>
+                    {error.branchId ? <FormHelperText error >{error.branchId}</FormHelperText> : ""}
+                </FormControl>
+            </Grid>
         </Grid>
         <Box mt={2}>
             <Button variant="contained"
@@ -210,10 +256,10 @@ const UersEditScreen = () => {
             <Button
                 sx={{ float: "right" }}
                 variant="contained"
-                color="secondary" 
+                color="secondary"
                 onClick={() => navigate(`/users`)}
             >
-                 <ArrowBackIcon />
+                <ArrowBackIcon />
                 بازگشت
             </Button>
         </Box>

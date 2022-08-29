@@ -33,7 +33,19 @@ const logoutLink = onError((networkError) => {
             removeToken();
             window.location.href = "/login";
         }
-        showError(networkError.response.errors[0].message);
+        let message = networkError.response.errors[0].message;
+        if (networkError.response.errors[0].extensions.validation) {
+            message = '';
+            const tmpValidation: any = networkError.response.errors[0].extensions.validation;
+            Object.keys(tmpValidation).map((key: string) => {
+                return message += tmpValidation[key][0];
+            });
+        }
+        return showError(message);
+    }
+    const errMsg: any = networkError?.graphQLErrors;
+    if (errMsg && errMsg[0].message) {
+        return showError(errMsg[0].message);
     }
 })
 

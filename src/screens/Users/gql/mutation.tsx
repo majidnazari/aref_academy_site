@@ -10,11 +10,12 @@ export const DELETE_USER = gql`
 
 export const CREATE_USER = gql`
     mutation CreateUser(
-        $email:String!,
-        $password:String!,
-        $first_name:String!,
-        $last_name:String!,
+        $email:String!
+        $password:String!
+        $first_name:String!
+        $last_name:String!
         $group_id:Int!
+        $branch_id:Int!
         )
         {
             createUser(input:{
@@ -23,6 +24,7 @@ export const CREATE_USER = gql`
                 first_name:$first_name,
                 last_name:$last_name,
                 group_id:$group_id
+                branch_id:$branch_id
             }){
                 id
             }
@@ -32,11 +34,12 @@ export const CREATE_USER = gql`
 
 export const EDIT_USER = gql `
     mutation EDIT_USER(
-        $id:ID!,
-        $email:String,
-        $first_name:String,
-        $last_name:String,
+        $id:ID!
+        $email:String
+        $first_name:String
+        $last_name:String
         $group_id:Int
+        $branch_id:Int!
         )
         {
         updateUser(input:{
@@ -44,7 +47,8 @@ export const EDIT_USER = gql `
             email:$email,
             first_name:$first_name,
             last_name:$last_name,
-            group_id:$group_id
+            group_id:$group_id,
+            branch_id:$branch_id
         }){
             id,
             first_name,
