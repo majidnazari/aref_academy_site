@@ -33,6 +33,9 @@ interface UserData {
     group: {
         persian_name: string;
     };
+    branch: {
+        name: string;
+    }
 }
 
 const UersScreen = () => {
@@ -145,6 +148,7 @@ const UersScreen = () => {
                         <StyledTableCell align="left">نام خانوادگی</StyledTableCell>
                         <StyledTableCell align="left">نام کاربری</StyledTableCell>
                         <StyledTableCell align="left">گروه کاربری</StyledTableCell>
+                        <StyledTableCell align="left">شعبه</StyledTableCell>
                         <StyledTableCell align="left">ویرایش</StyledTableCell>
                         <StyledTableCell align="left">حذف</StyledTableCell>
                     </TableRow>
@@ -159,6 +163,7 @@ const UersScreen = () => {
                             <StyledTableCell align="left">{element.last_name}</StyledTableCell>
                             <StyledTableCell align="left">{element.email}</StyledTableCell>
                             <StyledTableCell align="left">{element.group.persian_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element?.branch?.name || '--'}</StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {

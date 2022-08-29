@@ -45,6 +45,7 @@ interface UserData {
         id: number;
         persian_name: string;
     };
+    branch_id: string;
 }
 
 const UersEditScreen = () => {
@@ -91,6 +92,7 @@ const UersEditScreen = () => {
             setFirstName(userInfo.first_name);
             setLastName(userInfo.last_name);
             setGroupId(userInfo.group.id.toString());
+            setBranchId(userInfo.branch_id)
         }
         if (grp) {
             setGroups(grp.getGroups.data);

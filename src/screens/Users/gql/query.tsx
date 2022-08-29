@@ -14,6 +14,9 @@ export const GET_USERS = gql`
           group{
             persian_name
           }
+          branch{
+            name
+          }
         }
         paginatorInfo{
           count
@@ -65,6 +68,7 @@ export const GET_A_USER = gql`
         group{
           id
         }
+        branch_id
       }
     }  
 `;
