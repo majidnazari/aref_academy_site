@@ -62,7 +62,6 @@ export const GET_A_STUDENT = gql`
         mother_phone
         parents_job_title
         phone
-        description
         nationality_code
       }
     }  
