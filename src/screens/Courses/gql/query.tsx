@@ -32,6 +32,7 @@ export const GET_COURSES = gql`
           branch{
             name
           }
+          gender
         }
         paginatorInfo{
           count
@@ -71,6 +72,7 @@ export const GET_A_COURSE = gql`
             id
             name
           }
+          gender
         }
     }  
 `;

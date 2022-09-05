@@ -17,6 +17,7 @@ export const CREATE_COURSE = gql`
         $type: String!
         $education_level: String!
         $branch_id:Int!
+        $gender:String!
         )
         {
             createCourse(input:{
@@ -27,6 +28,7 @@ export const CREATE_COURSE = gql`
                 type: $type
                 education_level: $education_level
                 branch_id:$branch_id
+                gender:$gender
             }){
                 id
             }
@@ -44,6 +46,7 @@ mutation EDIT_COURSE(
     $type: String
     $education_level: String
     $branch_id:Int!
+    $gender:String
     )
     {
         updateCourse(input:{
@@ -55,6 +58,7 @@ mutation EDIT_COURSE(
             type: $type
             education_level: $education_level
             branch_id:$branch_id
+            gender:$gender
         }){
             id
         }
