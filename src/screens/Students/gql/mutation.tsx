@@ -43,7 +43,6 @@ export const CREATE_STUDENT = gql`
 export const EDIT_STUDENT = gql`
     mutation EDIT_STUDENT(
         $id:ID!,
-        $description: String
         $egucation_level: String!
         $father_phone: String
         $first_name: String!
@@ -59,7 +58,6 @@ export const EDIT_STUDENT = gql`
         {
         updateStudent(input:{
             id:$id,
-            description:$description,
             egucation_level:$egucation_level,
             father_phone:$father_phone,
             first_name:$first_name,

@@ -25,6 +25,14 @@ export const LOGIN_MUTATION = gql`
                 name
                 icon
                 href
+                parent_id
+                subMenus{
+                  id
+                  slug
+                  name
+                  icon
+                  href
+                }
             }
           }
         }
