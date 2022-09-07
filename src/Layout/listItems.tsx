@@ -16,6 +16,7 @@ import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CoPresentIcon from "@mui/icons-material/CoPresent";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 import { Link, useNavigate } from "react-router-dom";
 import { getUserData } from "../utils/user";
 import { getDarktheme } from "../utils/utils";
@@ -46,6 +47,7 @@ const Components: any = {
   MeetingRoomIcon: MeetingRoomIcon,
   MenuBookIcon: MenuBookIcon,
   CoPresentIcon: CoPresentIcon,
+  AddBoxIcon: AddBoxIcon,
 };
 const loadIcon = (input: any) => {
   return React.createElement(Components[input], {});
