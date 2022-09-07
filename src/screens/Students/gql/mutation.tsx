@@ -20,6 +20,7 @@ export const CREATE_STUDENT = gql`
         $parents_job_title: String
         $phone: String!
         $nationality_code: String!
+        $concours_year:String
         )
         {
         createStudent(input:{
@@ -33,6 +34,7 @@ export const CREATE_STUDENT = gql`
                 parents_job_title:$parents_job_title,
                 phone:$phone,
                 nationality_code:$nationality_code
+                concours_year:$concours_year
             }){
                 id
             }
@@ -54,6 +56,7 @@ export const EDIT_STUDENT = gql`
         $parents_job_title: String
         $phone: String!
         $nationality_code: String!
+        $concours_year:String
         )
         {
         updateStudent(input:{
@@ -69,6 +72,7 @@ export const EDIT_STUDENT = gql`
             parents_job_title:$parents_job_title,
             phone:$phone,
             nationality_code:$nationality_code
+            concours_year:$concours_year
         }){
             id
         }

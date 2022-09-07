@@ -44,6 +44,7 @@ const StudentEditScreen = () => {
     egucation_level: "",
     parents_job_title: "",
     nationality_code: "",
+    concours_year: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorData>({});
@@ -268,6 +269,17 @@ const StudentEditScreen = () => {
                 ...studentInfo,
                 parents_job_title: e.target.value,
               })
+            }
+            variant="filled"
+          />
+        </Grid>
+        <Grid item xs={12} md={4} lg={4}>
+          <TextField
+            fullWidth
+            label="سال کنکور"
+            value={studentInfo.concours_year}
+            onChange={(e: any) =>
+              setStudentInfo({ ...studentInfo, concours_year: e.target.value })
             }
             variant="filled"
           />

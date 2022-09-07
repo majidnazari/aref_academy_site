@@ -11,6 +11,7 @@ class StudentData {
     description?: string;
     parents_job_title!: string;
     nationality_code!: string;
+    concours_year?:string;
 }
 
 export default StudentData;
