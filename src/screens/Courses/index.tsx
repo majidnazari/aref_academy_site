@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "@mui/material/Container";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -16,7 +16,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import Box from "@mui/material/Box";
-import { GET_COURSES } from "./gql/query";
+import { GET_COURSES, GET_LESSONS } from "./gql/query";
 import { DELETE_COURSE } from "./gql/mutation";
 import { useMutation, useQuery } from "@apollo/client";
 import PaginatorInfo from "../../interfaces/paginator-info.interface";
@@ -26,6 +26,17 @@ import { typesObject, educationLevelsObject } from "../../constants";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import CheckIcon from "@mui/icons-material/Check";
 import Typography from "@mui/material/Typography";
+import { TextField } from "@material-ui/core";
+import {
+  Autocomplete,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 interface CourseData {
   id: number;
@@ -55,6 +66,21 @@ interface CourseData {
     name: string;
   };
   gender: string;
+}
+
+class SearchData {
+  name?: string | undefined;
+  lesson_id?: number | undefined;
+  gender?: string | undefined;
+}
+
+class GetCourseVariabls {
+  first?: number;
+  page?: number;
+  orderBy?: { column: string; order: string }[];
+  name?: string | undefined;
+  lesson_id?: number | undefined;
+  gender?: string | undefined;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -89,8 +115,19 @@ const CoursesScreen = () => {
     total: 0,
   });
   const [courses, setCourses] = useState<CourseData[] | null>(null);
+  const [refetchLoading, setRefetchLoading] = useState<boolean>(false);
+  const [search, setSearch] = useState<SearchData>({
+    name: undefined,
+    lesson_id: undefined,
+    gender: undefined,
+  });
+  const [skip, setSkip] = useState<Boolean>(true);
+  const [lessonName, setLessonName] = useState<string>("");
+  const [loadingLesson, setLoadingLesson] = useState<boolean>(false);
 
-  const { fetchMore, refetch } = useQuery(GET_COURSES, {
+  const [lessonOptions, setLessonOptions] = useState<any[]>([]);
+
+  const { fetchMore, refetch } = useQuery<any, GetCourseVariabls>(GET_COURSES, {
     variables: {
       first: process.env.REACT_APP_USERS_PER_PAGE
         ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
@@ -102,12 +139,30 @@ const CoursesScreen = () => {
           order: "DESC",
         },
       ],
+      name: undefined,
+      lesson_id: undefined,
+      gender: undefined,
     },
     onCompleted: (data) => {
       setPageInfo(data.getCourses.paginatorInfo);
       setCourses(data.getCourses.data);
     },
-    fetchPolicy: "no-cache",
+    fetchPolicy: "network-only",
+  });
+
+  const { refetch: refetchLessons } = useQuery(GET_LESSONS, {
+    variables: {
+      first: 1,
+      page: 1,
+      name: "",
+      fetchPolicy: "network-only",
+    },
+    onCompleted: (data) => {
+      if (!skip) {
+        console.log(data.getLessons.data);
+        setLessonOptions(data.getLessons.data);
+      }
+    },
   });
 
   const [delCourse] = useMutation(DELETE_COURSE);
@@ -126,6 +181,9 @@ const CoursesScreen = () => {
             order: "DESC",
           },
         ],
+        name: search.name,
+        lesson_id: search?.lesson_id ? +search.lesson_id : undefined,
+        gender: search.gender,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         setPageInfo(fetchMoreResult.getCourses.paginatorInfo);
@@ -146,6 +204,42 @@ const CoursesScreen = () => {
       });
     });
   }
+
+  const searchMaper = (input: SearchData): Partial<GetCourseVariabls> => {
+    return {
+      name: input.name,
+      lesson_id: input?.lesson_id ? +input.lesson_id : undefined,
+      gender: input?.gender && input?.gender !== "" ? input?.gender : undefined,
+    };
+  };
+
+  const handleSearch = (): void => {
+    setRefetchLoading(true);
+    const refetchData: SearchData = { ...search };
+    refetch(searchMaper(refetchData)).then(() => {
+      setRefetchLoading(false);
+    });
+  };
+
+  const handleChangeGender = (event: SelectChangeEvent<string>) => {
+    setSearch({
+      ...search,
+      gender: event.target.value,
+    });
+  };
+
+  useEffect(() => {
+    // console.log("useEffect skip:", skip);
+    setLoadingLesson(true);
+    refetchLessons({
+      first: 1000,
+      page: 1,
+      name: lessonName,
+    }).then(() => {
+      setLoadingLesson(false);
+    });
+  }, [lessonName]);
+
   if (!courses) {
     return (
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -154,33 +248,24 @@ const CoursesScreen = () => {
       </Container>
     );
   }
-  if (courses.length === 0) {
-    return (
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-        <Box display="flex" justifyContent="flex-end" alignItems="flex-end">
-          <Button
-            variant="contained"
-            startIcon={<AddCircleIcon />}
-            sx={{ mb: 4 }}
-            onClick={() => navigate("/courses/create")}
-          >
-            افزودن کلاس جدید
-          </Button>
-        </Box>
-        <div>داده ای وجود ندارد ...</div>
-      </Container>
-    );
-  }
+  // 
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      <Typography
-        component={"div"}
-        sx={{ fontSize: 18, fontWeight: "bold", my: 2 }}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
       >
-        مدیریت کلاس‌ها
-      </Typography>
-      <Box display="flex" justifyContent="flex-end" alignItems="flex-end">
+        <Typography
+          component={"div"}
+          sx={{ fontSize: 18, fontWeight: "bold", my: 2 }}
+        >
+          مدیریت کلاس‌ها
+        </Typography>
+
         <Button
           variant="contained"
           startIcon={<AddCircleIcon />}
@@ -188,6 +273,111 @@ const CoursesScreen = () => {
           onClick={() => navigate("/courses/create")}
         >
           افزودن کلاس جدید
+        </Button>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          mb: 1,
+        }}
+      >
+        <FormControl
+          sx={{
+            width: "30%",
+            mr: 1,
+          }}
+        >
+          <TextField
+            fullWidth
+            label="کد درس"
+            value={search.name}
+            onChange={(e: any) =>
+              setSearch({ ...search, name: e.target.value })
+            }
+            variant="filled"
+          />
+        </FormControl>
+
+        <FormControl
+          sx={{
+            mr: 1,
+          }}
+        >
+          <Autocomplete
+            id="lesson-names"
+            options={lessonOptions}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="درسها"
+                variant="filled"
+                onChange={(e) => {
+                  if (e.target.value.trim().length >= 1) {
+                    setSkip(false);
+                    setLessonName(e.target.value.trim());
+                  }
+                }}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <React.Fragment>
+                      {loadingLesson ? (
+                        <CircularProgress color="inherit" size={20} />
+                      ) : null}
+                      {params.InputProps.endAdornment}
+                    </React.Fragment>
+                  ),
+                }}
+              />
+            )}
+            getOptionLabel={(option) => option.name}
+            style={{ width: 270 }}
+            value={search?.lesson_id}
+            onChange={(_event, newTeam) => {
+              setSearch({
+                ...search,
+                lesson_id: newTeam?.id ? +newTeam.id : undefined,
+              });
+            }}
+          />
+        </FormControl>
+        <FormControl
+          sx={{
+            width: "20%",
+            mr: 1,
+          }}
+        >
+          <InputLabel id="gender-select-id">دخترانه/پسرانه</InputLabel>
+          <Select
+            labelId="gender-select-id"
+            id="genderId"
+            label="دخترانه/پسرانه"
+            value={search.gender || ""}
+            onChange={handleChangeGender}
+            variant="filled"
+          >
+            <MenuItem value={""}>همه</MenuItem>
+            <MenuItem value="male">پسرانه</MenuItem>
+            <MenuItem value="female">دخترانه</MenuItem>
+          </Select>
+        </FormControl>
+        <Button
+          variant="contained"
+          startIcon={<SearchIcon />}
+          onClick={handleSearch}
+          sx={{
+            mr: 1,
+            p: 2,
+          }}
+        >
+          جستجو
+          {refetchLoading && (
+            <CircularProgress
+              size={15}
+              style={{ marginRight: 10, color: "#fff" }}
+            />
+          )}
         </Button>
       </Box>
       <TableContainer component={Paper}>
