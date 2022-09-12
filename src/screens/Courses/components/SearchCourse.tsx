@@ -33,7 +33,6 @@ const SearchCourse = ({ callBack, loading }: SearchCourseProp) => {
     lesson_id: undefined,
     gender: undefined,
   });
-  // const [refetchLoading, setRefetchLoading] = useState<boolean>(false);
   const [skip, setSkip] = useState<Boolean>(true);
   const [lessonName, setLessonName] = useState<string>("");
   const [loadingLesson, setLoadingLesson] = useState<boolean>(false);
@@ -61,7 +60,6 @@ const SearchCourse = ({ callBack, loading }: SearchCourseProp) => {
   };
 
   useEffect(() => {
-    // console.log("useEffect skip:", skip);
     setLoadingLesson(true);
     refetchLessons({
       first: 1000,
