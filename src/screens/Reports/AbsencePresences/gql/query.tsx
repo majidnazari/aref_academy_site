@@ -143,48 +143,60 @@ export const GET_A_COURSE = gql`
 `;
 
 export const GET_COURSES = gql`
-    query GET_COURSES(
-        $first: Int!
-        $page: Int!
-    ){
-      getCourses(first:$first,page:$page){
-        data{
-          id
+  query GET_COURSES(
+    $first: Int!
+    $page: Int!
+    $orderBy: [OrderByClause!]
+    $name: String
+    $lesson_id: Int
+    $gender:String
+  ) {
+    getCourses(
+      first: $first
+      page: $page
+      orderBy: $orderBy
+      name: $name
+      lesson_id: $lesson_id
+      gender:$gender
+    ) {
+      data {
+        id
+        name
+        lesson {
           name
-          lesson {
-            name
-          }
-          type
-          created_at
-          updated_at
-          deleted_at
-          user{
-            first_name
-            last_name
-          }
-          year{
-            name
-          }
-          teacher{
-            first_name
-            last_name
-          }
-          education_level
-          financial_status
-          branch{
-            name
-          }
         }
-        paginatorInfo{
-          count
-          currentPage
-          firstItem
-          hasMorePages
-          lastItem
-          lastPage
-          perPage
-          total
+        type
+        created_at
+        updated_at
+        deleted_at
+        user {
+          first_name
+          last_name
         }
+        year {
+          name
+        }
+        teacher {
+          first_name
+          last_name
+        }
+        education_level
+        financial_status
+        branch {
+          name
+        }
+        gender
       }
-    }  
+      paginatorInfo {
+        count
+        currentPage
+        firstItem
+        hasMorePages
+        lastItem
+        lastPage
+        perPage
+        total
+      }
+    }
+  }
 `;

@@ -12,7 +12,7 @@ import {
   Button,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { GET_LESSONS } from "../gql/query";
+import { GET_LESSONS } from "screens/Courses/gql/query";
 import { SelectChangeEvent } from "@mui/material/Select";
 import SearchIcon from "@mui/icons-material/Search";
 

@@ -26,7 +26,7 @@ import { typesObject, educationLevelsObject } from "../../constants";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import CheckIcon from "@mui/icons-material/Check";
 import Typography from "@mui/material/Typography";
-import SearchCourse from "./components/SearchCourse";
+import SearchCourse from "../../components/SearchCourse";
 
 interface CourseData {
   id: number;
