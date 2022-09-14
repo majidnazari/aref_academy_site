@@ -189,7 +189,6 @@ const EnhancedTableToolbar = () => {
 export default function StudentCoursesAlarms() {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("created_at");
-  const [dense, setDense] = useState(false);
   const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
     count: 0,
     currentPage: 1,
@@ -290,8 +289,7 @@ export default function StudentCoursesAlarms() {
           order: order,
         },
       ],
-    })
-      
+    });
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -306,7 +304,7 @@ export default function StudentCoursesAlarms() {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
+            size="medium"
           >
             <EnhancedTableHead
               order={order}
@@ -405,15 +403,6 @@ export default function StudentCoursesAlarms() {
                   );
                 })
               }
-              {/* {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )} */}
             </TableBody>
           </Table>
         </TableContainer>
