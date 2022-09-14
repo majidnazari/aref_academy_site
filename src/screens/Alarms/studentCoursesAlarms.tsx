@@ -5,7 +5,7 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
+import moment from "moment-jalaali";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Toolbar from "@mui/material/Toolbar";
@@ -13,8 +13,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
+import Edit from "components/EditCourseStudentStatus";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useQuery } from "@apollo/client";
@@ -25,6 +24,12 @@ import StudentCoursesType from "interfaces/studentCourses.interface";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import PaginatorInfo from "interfaces/paginator-info.interface";
+import CourseName from "components/CourseName";
+import StatusIcon from "components/StatusIcon";
+import { Button } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import { showError } from "utils/swlAlert";
+
 interface Data {
   student: string;
   course: string;
@@ -33,99 +38,72 @@ interface Data {
   financial_status: string;
   user_creator: string;
   created_at: string;
-  //   edit?: string;
+  edit?: string;
 }
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
+interface EditStudentCourse {
+  openDialog: boolean;
+  studentCourse: StudentCoursesType;
+  key: number;
+  id: number;
 }
 
 type Order = "asc" | "desc";
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-function stableSort<T>(
-  array: readonly T[],
-  comparator: (a: T, b: T) => number
-) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
 interface HeadCell {
   disablePadding: boolean;
   id: keyof Data;
   label: string;
-  numeric: boolean;
+  sortable: boolean;
 }
 
 const headCells: readonly HeadCell[] = [
   {
     id: "student",
-    numeric: false,
+    sortable: false,
     disablePadding: true,
     label: "دانش آموز",
   },
   {
     id: "course",
-    numeric: true,
+    sortable: false,
     disablePadding: false,
     label: "درس",
   },
   {
     id: "student_status",
-    numeric: true,
+    sortable: true,
     disablePadding: false,
     label: "وضعیت دانش آموز",
   },
   {
     id: "manager_status",
-    numeric: true,
+    sortable: true,
     disablePadding: false,
     label: "تایید مدیر",
   },
   {
     id: "financial_status",
-    numeric: true,
+    sortable: true,
     disablePadding: false,
     label: "تایید مالی",
   },
   {
     id: "user_creator",
-    numeric: true,
+    sortable: false,
     disablePadding: false,
     label: "ثبت کننده",
   },
   {
     id: "created_at",
-    numeric: true,
+    sortable: true,
     disablePadding: false,
     label: "تاریخ ایجاد",
+  },
+  {
+    id: "edit",
+    sortable: false,
+    disablePadding: false,
+    label: "ویرایش",
   },
 ];
 
@@ -157,18 +135,24 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
+            {headCell.sortable ? (
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : "asc"}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === "desc"
+                      ? "sorted descending"
+                      : "sorted ascending"}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            ) : (
+              headCell.label
+            )}
           </TableCell>
         ))}
       </TableRow>
@@ -190,7 +174,7 @@ const EnhancedTableToolbar = () => {
         id="tableTitle"
         component="div"
       >
-        Nutrition
+        نوتیفیکیشن ها
       </Typography>
 
       <Tooltip title="Filter list">
@@ -203,9 +187,8 @@ const EnhancedTableToolbar = () => {
 };
 
 export default function StudentCoursesAlarms() {
-  const [order, setOrder] = useState<Order>("desc");
-  const [orderBy, setOrderBy] = useState<keyof Data>("created_at");
-  const [page, setPage] = useState(0);
+  const [order, setOrder] = useState<Order>("asc");
+  const [orderBy, setOrderBy] = useState<string>("created_at");
   const [dense, setDense] = useState(false);
   const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
     count: 0,
@@ -217,9 +200,11 @@ export default function StudentCoursesAlarms() {
     perPage: 10,
     total: 0,
   });
-  const [courseStudents, setCourseStudents] = useState<Data[]>([]);
+  const [courseStudents, setCourseStudents] = useState<StudentCoursesType[]>(
+    []
+  );
 
-  const { fetchMore, loading, refetch } = useQuery(GET_COURSES_STUDENTS, {
+  const { fetchMore, refetch, error } = useQuery(GET_COURSES_STUDENTS, {
     variables: {
       first: process.env.REACT_APP_USERS_PER_PAGE
         ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
@@ -228,18 +213,26 @@ export default function StudentCoursesAlarms() {
       ...generateQueryOptions(),
       orderBy: [
         {
-          column: orderBy,
-          order: order.toUpperCase(),
+          column: "created_at",
+          order: "DESC",
         },
       ],
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      console.log("onCompleted");
-      setCourseStudents(courseStudentMaper(data.getCourseStudents.data));
+      setCourseStudents(data.getCourseStudents.data);
       setPageInfo(data.getCourseStudents.paginatorInfo);
     },
   });
+
+  const [editStudentCourse, setEditStudentCourse] = useState<EditStudentCourse>(
+    {
+      openDialog: false,
+      studentCourse: {} as StudentCoursesType,
+      key: 0,
+      id: 0,
+    }
+  );
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -248,68 +241,43 @@ export default function StudentCoursesAlarms() {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
+    reloadData(property, isAsc ? "DESC" : "ASC");
   };
 
   const handleChangePage = (
     event: React.ChangeEvent<unknown>,
     value: number
   ): void => {
+    const variables = {
+      first: process.env.REACT_APP_USERS_PER_PAGE
+        ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
+        : 10,
+      page: value,
+      orderBy: [
+        {
+          column: orderBy,
+          order: order.toUpperCase(),
+        },
+      ],
+    };
     fetchMore({
-      variables: {
-        first: process.env.REACT_APP_USERS_PER_PAGE
-          ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
-          : 10,
-        page: value,
-        orderBy: [
-          {
-            column: "id",
-            order: "DESC",
-          },
-        ],
-      },
+      variables,
       updateQuery: (prev, { fetchMoreResult }) => {
-        setCourseStudents(
-          courseStudentMaper(fetchMoreResult.getCourseStudents.data)
-        );
+        setCourseStudents(fetchMoreResult.getCourseStudents.data);
         setPageInfo(fetchMoreResult.getCourseStudents.paginatorInfo);
       },
+    }).catch((e) => {
+      showError(e);
     });
-  };
-
-  //   const handleChangeRowsPerPage = (
-  //     event: React.ChangeEvent<HTMLInputElement>
-  //   ) => {
-  //     setRowsPerPage(parseInt(event.target.value, 10));
-  //     setPage(0);
-  //   };
-
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
-  };
-
-  const courseStudentMaper = (input: StudentCoursesType[]): Data[] => {
-    // let mapedArray: Data[] = [];
-    const mapedArray: Data[] = input.map((element) => {
-      const tmp: Data = {
-        student:
-          element?.student?.first_name + " " + element?.student?.last_name,
-        course: element.course.name,
-        student_status: element.student_status,
-        manager_status: element.manager_status,
-        financial_status: element.financial_status,
-        user_creator:
-          element.user_creator?.first_name +
-          " " +
-          element.user_creator?.last_name,
-        created_at: element.created_at,
-      };
-      return tmp;
-    });
-    return mapedArray;
   };
 
   useEffect(() => {
-    console.log("useEffect");
+    if (error) {
+      console.log({ error });
+    }
+  }, [error]);
+
+  const reloadData = (field: string, order: string) => {
     refetch({
       first: process.env.REACT_APP_USERS_PER_PAGE
         ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
@@ -318,14 +286,13 @@ export default function StudentCoursesAlarms() {
       ...generateQueryOptions(),
       orderBy: [
         {
-          column: orderBy,
-          order: order.toUpperCase(),
+          column: field,
+          order: order,
         },
       ],
-    }).then(() => {
-      console.log("test231312");
-    });
-  }, [order, orderBy]);
+    })
+      
+  };
 
   // Avoid a layout jump when reaching the last page with empty rows.
   //   const emptyRows =
@@ -355,22 +322,85 @@ export default function StudentCoursesAlarms() {
                 courseStudents.map((element, index) => {
                   return (
                     <TableRow hover tabIndex={-1} key={index}>
-                      <TableCell padding="checkbox">{index + 1}</TableCell>
+                      <TableCell padding="checkbox">
+                        {pageInfo.perPage * (pageInfo.currentPage - 1) +
+                          index +
+                          1}
+                      </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {element.student}
-                      </TableCell>
-                      <TableCell align="left">{element.course}</TableCell>
-                      <TableCell align="left">
-                        {element.student_status}
+                        {element?.student?.first_name +
+                          " " +
+                          element?.student?.last_name}
                       </TableCell>
                       <TableCell align="left">
-                        {element.manager_status}
+                        <CourseName course={element.course} />
                       </TableCell>
                       <TableCell align="left">
-                        {element.financial_status}
+                        <StatusIcon status={element.student_status} />
+                        <Typography
+                          component={"div"}
+                          sx={{ fontSize: 9, fontWeight: "bold" }}
+                        >
+                          {element.user_student_status
+                            ? element.user_student_status?.first_name +
+                              " " +
+                              element.user_student_status?.last_name
+                            : null}
+                        </Typography>
                       </TableCell>
-                      <TableCell align="left">{element.user_creator}</TableCell>
-                      <TableCell align="left">{element.created_at}</TableCell>
+                      <TableCell align="left">
+                        <StatusIcon status={element.manager_status} />
+                        <Typography
+                          component={"div"}
+                          sx={{ fontSize: 9, fontWeight: "bold" }}
+                        >
+                          {element?.user_manager
+                            ? element.user_manager?.first_name +
+                              " " +
+                              element.user_manager?.last_name
+                            : null}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="left">
+                        <StatusIcon status={element.financial_status} />
+                        <Typography
+                          component={"div"}
+                          sx={{ fontSize: 9, fontWeight: "bold" }}
+                        >
+                          {element.user_financial
+                            ? element.user_financial?.first_name +
+                              " " +
+                              element.user_financial?.last_name
+                            : null}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="left">
+                        {" "}
+                        {element.user_creator?.first_name +
+                          " " +
+                          element.user_creator?.last_name}
+                      </TableCell>
+                      <TableCell align="left">
+                        {moment(element.created_at).format("jYYYY/jMM/jDD")}
+                      </TableCell>
+                      <TableCell align="left">
+                        <Button
+                          size="small"
+                          onClick={() => {
+                            setEditStudentCourse({
+                              openDialog: true,
+                              studentCourse: element,
+                              key: editStudentCourse.key + 1,
+                              id: element.id,
+                            });
+                          }}
+                          variant="contained"
+                          startIcon={<EditIcon />}
+                          color="success"
+                        >
+                          ویرایش
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   );
                 })
@@ -394,19 +424,12 @@ export default function StudentCoursesAlarms() {
             onChange={handleChangePage}
           />
         </Stack>
-        {/* <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        /> */}
       </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
+      <Edit
+        openDialog={editStudentCourse.openDialog}
+        studentCourse={editStudentCourse.studentCourse}
+        key={editStudentCourse.key}
+        refresh={refetch}
       />
     </Box>
   );
