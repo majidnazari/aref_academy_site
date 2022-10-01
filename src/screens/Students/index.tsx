@@ -29,6 +29,7 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import { educationLevelsObject, majorObject } from "../../constants";
+import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
 
 interface StudentData {
   id: number;
@@ -289,6 +290,7 @@ const StudentsScreen = () => {
               <StyledTableCell align="left">تلفن</StyledTableCell>
               <StyledTableCell align="left">رشته</StyledTableCell>
               <StyledTableCell align="left">کدملی</StyledTableCell>
+              <StyledTableCell align="left">کامنت</StyledTableCell>
               <StyledTableCell align="left">کلاسها</StyledTableCell>
               <StyledTableCell align="left">ویرایش</StyledTableCell>
               <StyledTableCell align="left">حذف</StyledTableCell>
@@ -318,6 +320,18 @@ const StudentsScreen = () => {
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {element.nationality_code}
+                  </StyledTableCell>
+                  <StyledTableCell align="left">
+                    <Button
+                      size="small"
+                      variant="contained"
+                      startIcon={<SpeakerNotesIcon />}
+                      color="info"
+                      component={Link}
+                      to={`/students/${element.id}/warnings`}
+                    >
+                      درج کامنت
+                    </Button>
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     <Button
