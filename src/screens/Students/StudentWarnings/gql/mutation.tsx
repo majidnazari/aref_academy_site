@@ -1,40 +1,21 @@
 import { gql } from '@apollo/client';
 
-export const CREATE_STUDENT_COURSE = gql`
-    mutation CREATE_STUDENT_COURSE(
-        $course_id: Int!
-        $financial_status: String
-        $manager_status: String
+export const CREATE_STUDENT_WARNING = gql`
+    mutation CREATE_STUDENT_WARNING(
+        $comment: String!
         $student_id: Int!
-        $student_status: String
-        $user_id_financial: Int
-        $user_id_manager: Int
-        $user_id_student_status: Int
+        $course_id: Int
         )
         {
-            createCourseStudent(input:{
-                course_id:$course_id
-                financial_status: $financial_status
-                manager_status: $manager_status
+            createStudentWarning(input:{
+                comment:$comment
                 student_id: $student_id
-                student_status: $student_status
-                user_id_financial: $user_id_financial
-                user_id_manager: $user_id_manager
-                user_id_student_status: $user_id_student_status
+                course_id:$course_id
             }){
                 id
             }
         }
     
-`;
-
-export const DELETE_STUDENT_COURSE = gql`
-    mutation DELETE_STUDENT_COURSE($id: ID!) {
-        deleteCourseStudent(id:$id){
-            id
-        }
-    }
-
 `;
 
 export const UPDATE_STUDENT_COURSE = gql`
