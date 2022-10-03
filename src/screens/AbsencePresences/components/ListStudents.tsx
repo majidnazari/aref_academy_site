@@ -1,6 +1,8 @@
 import { GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE } from "../gql/query";
 import { useQuery } from "@apollo/client";
 import {
+  Box,
+  Button,
   CircularProgress,
   Paper,
   Table,
@@ -11,7 +13,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import Container from "@mui/material/Container";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -22,6 +23,7 @@ import AbsencepresenceBtns from "./AbsencepresenceBtns";
 import AbsencepresenceSelect from "./AbsencepresenceSelect";
 import { GET_A_COURSE } from "../gql/query";
 import CourseName from "components/CourseName";
+import Fingerprint from "@mui/icons-material/Fingerprint";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -80,6 +82,7 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
       setStudentList(tmp);
       setOriginalStudentList(tmp);
     },
+    fetchPolicy: "no-cache",
   });
 
   const handleSearch = (inputText: string) => {
@@ -153,8 +156,33 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                 <StyledTableCell align="left">{index + 1}</StyledTableCell>
 
                 <StyledTableCell align="left">
-                  {element?.student?.first_name.trim()}{" "}
-                  {element?.student?.last_name.trim()}
+                  <Box>
+                    {element?.student?.first_name.trim()}{" "}
+                    {element?.student?.last_name.trim()}
+                  </Box>
+                  <Box
+                    sx={{
+                      fontSize: 10,
+                    }}
+                  >
+                    {element.student_warning_comment ? (
+                      <>
+                        {element.student_warning_comment}
+                        <Button
+                          size="small"
+                          sx={{
+                            p: 0,
+                            ml: 1,
+                          }}
+                          color="warning"
+                          variant="contained"
+                          endIcon={<Fingerprint />}
+                        >
+                          تایید
+                        </Button>
+                      </>
+                    ) : null}
+                  </Box>
                 </StyledTableCell>
                 <StyledTableCell align="left">
                   <AbsencepresenceBtns
