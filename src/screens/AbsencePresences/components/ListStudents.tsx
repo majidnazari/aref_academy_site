@@ -1,5 +1,5 @@
 import { GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE } from "../gql/query";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Button,
@@ -22,6 +22,7 @@ import StatusIcon from "components/StatusIcon";
 import AbsencepresenceBtns from "./AbsencepresenceBtns";
 import AbsencepresenceSelect from "./AbsencepresenceSelect";
 import { GET_A_COURSE } from "../gql/query";
+import { UPDATE_STUDENT_WARNING_HISTORY } from "../gql/mutaion";
 import CourseName from "components/CourseName";
 import Fingerprint from "@mui/icons-material/Fingerprint";
 
@@ -85,6 +86,10 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
     fetchPolicy: "no-cache",
   });
 
+  const [updateStudentWarning, { loading: updateLoading }] = useMutation(
+    UPDATE_STUDENT_WARNING_HISTORY
+  );
+
   const handleSearch = (inputText: string) => {
     setSearchName(inputText);
     let searchTmp = [...originalStudentList];
@@ -96,6 +101,15 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
       return null;
     });
     setStudentList(searchTmp);
+  };
+
+  const handleUpdate = (studentId: number): void => {
+    updateStudentWarning({
+      variables: {
+        student_id: studentId,
+        response: "done",
+      },
+    });
   };
 
   const updateOriginalList = (
@@ -176,7 +190,17 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                           }}
                           color="warning"
                           variant="contained"
-                          endIcon={<Fingerprint />}
+                          endIcon={
+                            updateLoading ? (
+                              <CircularProgress size={10} color="inherit" />
+                            ) : (
+                              <Fingerprint />
+                            )
+                          }
+                          onClick={() => {
+                            handleUpdate(+element?.student.id);
+                          }}
+                          disabled={updateLoading}
                         >
                           تایید
                         </Button>
