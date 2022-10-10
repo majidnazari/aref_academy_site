@@ -96,6 +96,7 @@ export const GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE = gql`
           cs_user_id_student_status
           student_warning_comment
           student_warning_id
+          student_warning_course_id
           student{
             first_name
             last_name

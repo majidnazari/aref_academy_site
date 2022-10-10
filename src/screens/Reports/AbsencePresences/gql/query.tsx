@@ -200,3 +200,50 @@ export const GET_COURSES = gql`
     }
   }
 `;
+
+export const GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE_LIST = gql`
+query GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE_LIST(
+  $course_id: Int!
+  $first: Int!
+  $page: Int
+){
+  getCourseStudentsWithAbsencePresenceList(
+    course_id: $course_id
+    first: $first
+    page: $page
+  ){
+    data{
+      id
+      ap_attendance_status
+      ap_course_session_id
+      ap_created_at
+      ap_id
+      ap_status
+      ap_student_id
+      ap_teacher_id
+      ap_user_id_creator
+      course_id
+      cs_course_id
+      cs_created_at
+      cs_financial_status
+      cs_manager_status
+      cs_student_status
+      cs_user_id_creator
+      cs_user_id_financial
+      cs_user_id_manager
+      cs_user_id_student_status
+      
+    }
+    paginatorInfo{
+      count
+      currentPage
+      firstItem
+      hasMorePages
+      lastItem
+      lastPage
+      perPage
+      total
+    }
+  }
+}
+`;

@@ -22,6 +22,8 @@ import { StudentWarningHistory } from "./dto/student-warning-history.dto";
 import CourseName from "components/CourseName";
 import moment from "moment-jalaali";
 import AddWarning from "./components/AddWarning";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import FeedbackIcon from "@mui/icons-material/Feedback";
 
 const StudentWarnings = () => {
   const { studentId } = useParams<string>();
@@ -87,7 +89,9 @@ const StudentWarnings = () => {
         ],
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        setStudentWarningHistories(fetchMoreResult.getStudentWarningHistories.data);
+        setStudentWarningHistories(
+          fetchMoreResult.getStudentWarningHistories.data
+        );
         setPageInfo(fetchMoreResult.getCourseStudents.paginatorInfo);
       },
     });
@@ -156,7 +160,11 @@ const StudentWarnings = () => {
                       {element.comment}
                     </StyledTableCell>
                     <StyledTableCell align="left">
-                      {element.response}
+                      {element.response === "done" ? (
+                        <CheckBoxIcon color="success" />
+                      ) : (
+                        <FeedbackIcon color="disabled" />
+                      )}
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {element.course ? (

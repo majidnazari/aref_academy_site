@@ -179,7 +179,7 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                       fontSize: 10,
                     }}
                   >
-                    {element.student_warning_comment ? (
+                    {element.student_warning_comment  ? (
                       <>
                         {element.student_warning_comment}
                         <Button
