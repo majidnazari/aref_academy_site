@@ -64,27 +64,30 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
     },
   });
 
-  const { loading } = useQuery(GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE, {
-    variables: {
-      course_id: course_id,
-      course_session_id: course_session_id,
-      first: 1000,
-      page: 1,
-    },
-    onCompleted: (data) => {
-      const tmp = data.getCourseStudentsWithAbsencePresence.data.filter(
-        (item: any) => item.cs_student_status === "ok" && item.student
-      );
-      tmp.sort(function (a: any, b: any) {
-        return a?.student?.last_name
-          .trim()
-          .localeCompare(b?.student?.last_name.trim());
-      });
-      setStudentList(tmp);
-      setOriginalStudentList(tmp);
-    },
-    fetchPolicy: "no-cache",
-  });
+  const { loading, refetch } = useQuery(
+    GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE,
+    {
+      variables: {
+        course_id: course_id,
+        course_session_id: course_session_id,
+        first: 1000,
+        page: 1,
+      },
+      onCompleted: (data) => {
+        const tmp = data.getCourseStudentsWithAbsencePresence.data.filter(
+          (item: any) => item.cs_student_status === "ok" && item.student
+        );
+        tmp.sort(function (a: any, b: any) {
+          return a?.student?.last_name
+            .trim()
+            .localeCompare(b?.student?.last_name.trim());
+        });
+        setStudentList(tmp);
+        setOriginalStudentList(tmp);
+      },
+      fetchPolicy: "no-cache",
+    }
+  );
 
   const [updateStudentWarning, { loading: updateLoading }] = useMutation(
     UPDATE_STUDENT_WARNING_HISTORY
@@ -109,6 +112,8 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
         student_id: studentId,
         response: "done",
       },
+    }).then(() => {
+      refetch();
     });
   };
 
@@ -179,7 +184,7 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                       fontSize: 10,
                     }}
                   >
-                    {element.student_warning_comment  ? (
+                    {element.student_warning_comment ? (
                       <>
                         {element.student_warning_comment}
                         <Button

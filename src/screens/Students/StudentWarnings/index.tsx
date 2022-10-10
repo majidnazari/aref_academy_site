@@ -47,29 +47,30 @@ const StudentWarnings = () => {
     },
   });
 
-  const { fetchMore, loading: courseLoading } = useQuery(
-    GET_A_STUDENT_WARNING_HISTORIES,
-    {
-      variables: {
-        first: process.env.REACT_APP_USERS_PER_PAGE
-          ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
-          : 10,
-        page: 1,
-        student_id: studentId ? parseInt(studentId) : 0,
-        orderBy: [
-          {
-            column: "id",
-            order: "DESC",
-          },
-        ],
-      },
-      onCompleted: (data) => {
-        setPageInfo(data.getStudentWarningHistories.paginatorInfo);
-        setStudentWarningHistories(data.getStudentWarningHistories.data);
-      },
-      fetchPolicy: "no-cache",
-    }
-  );
+  const {
+    fetchMore,
+    loading: courseLoading,
+    refetch,
+  } = useQuery(GET_A_STUDENT_WARNING_HISTORIES, {
+    variables: {
+      first: process.env.REACT_APP_USERS_PER_PAGE
+        ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
+        : 10,
+      page: 1,
+      student_id: studentId ? parseInt(studentId) : 0,
+      orderBy: [
+        {
+          column: "id",
+          order: "DESC",
+        },
+      ],
+    },
+    onCompleted: (data) => {
+      setPageInfo(data.getStudentWarningHistories.paginatorInfo);
+      setStudentWarningHistories(data.getStudentWarningHistories.data);
+    },
+    fetchPolicy: "no-cache",
+  });
 
   const handleChange = (
     event: React.ChangeEvent<unknown>,
@@ -131,7 +132,7 @@ const StudentWarnings = () => {
         )}
       </Typography>
       {courseLoading ? <CircularProgress /> : null}
-      <AddWarning studentId={studentId ? +studentId : 0} />
+      <AddWarning studentId={studentId ? +studentId : 0} reloadList={refetch} />
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
           <TableHead>

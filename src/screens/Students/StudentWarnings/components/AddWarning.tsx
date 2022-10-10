@@ -20,6 +20,7 @@ import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 
 class AddWarningProps {
   studentId!: number;
+  reloadList!: Function;
 }
 
 const comments = [
@@ -29,7 +30,7 @@ const comments = [
   "دانش آموز باید شهریه را واریز کند",
   "قسط دانش آموز معوق شده",
 ];
-const AddWarning = ({ studentId }: AddWarningProps) => {
+const AddWarning = ({ studentId, reloadList }: AddWarningProps) => {
   const [addWarningInput, setAddWarningInput] = useState<AddWarningInput>({
     comment: "",
     course_id: "",
@@ -55,7 +56,9 @@ const AddWarning = ({ studentId }: AddWarningProps) => {
     },
   });
 
-  const [createStudentWarning] = useMutation(CREATE_STUDENT_WARNING);
+  const [createStudentWarning, { loading: insertLoading }] = useMutation(
+    CREATE_STUDENT_WARNING
+  );
 
   const handleChangeComment = (e: SelectChangeEvent<string>) => {
     setAddWarningInput({ ...addWarningInput, comment: e.target.value });
@@ -85,15 +88,17 @@ const AddWarning = ({ studentId }: AddWarningProps) => {
     tmpInput.course_id =
       tmpInput.course_id === "" ? undefined : +tmpInput.course_id;
 
-    createStudentWarning({ variables: tmpInput });
+    createStudentWarning({ variables: tmpInput }).then(() => {
+      reloadList();
+    });
   };
 
   return (
-    <Grid container component={Paper} sx={{m:1, p: 1, my: 1 }} spacing={2}>
-      <Grid  md={12}>
+    <Grid container component={Paper} sx={{ m: 1, p: 1, my: 1 }} spacing={2}>
+      <Grid md={12}>
         <Typography>ثبت کامنت جدید</Typography>
       </Grid>
-      <Grid  md={5}>
+      <Grid md={5}>
         <FormControl sx={{ width: "100%" }}>
           <Select
             defaultValue=""
@@ -119,7 +124,7 @@ const AddWarning = ({ studentId }: AddWarningProps) => {
           )}
         </FormControl>
       </Grid>
-      <Grid  md={5}>
+      <Grid md={5}>
         <FormControl sx={{ width: "100%" }}>
           {courseOptions.length ? (
             <Autocomplete
@@ -140,7 +145,7 @@ const AddWarning = ({ studentId }: AddWarningProps) => {
           ) : null}
         </FormControl>
       </Grid>
-      <Grid  md={2}>
+      <Grid md={2}>
         <Button
           sx={{
             p: 2,
@@ -150,6 +155,7 @@ const AddWarning = ({ studentId }: AddWarningProps) => {
           color="info"
           size="medium"
           onClick={saveComment}
+          disabled={insertLoading}
         >
           ثبت کامنت
         </Button>
