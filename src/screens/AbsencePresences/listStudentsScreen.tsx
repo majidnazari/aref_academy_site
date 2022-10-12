@@ -48,7 +48,9 @@ const ListStudentsScreen = () => {
       <AddStudentQuikly
         reloadList={() => {
           setListKey(listKey + 1);
+          console.log(listKey + 1);
         }}
+        courseId={+(courseId as string)}
       />
     </Container>
   );

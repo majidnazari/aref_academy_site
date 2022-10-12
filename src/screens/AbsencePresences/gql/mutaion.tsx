@@ -50,3 +50,31 @@ export const UPDATE_STUDENT_WARNING_HISTORY = gql`
     }
   }
 `;
+
+export const CREATE_STUDENT_COURSE = gql`
+  mutation CREATE_STUDENT_COURSE($course_id: Int!, $student_id: Int!) {
+    createCourseStudent(
+      input: { course_id: $course_id, student_id: $student_id }
+    ) {
+      id
+    }
+  }
+`;
+
+export const CREATE_STUDENT = gql`
+  mutation CREATE_STUDENT(
+    $first_name: String!
+    $last_name: String!
+    $phone: String!
+  ) {
+    createStudent(
+      input: {
+        first_name: $first_name
+        last_name: $last_name
+        phone: $phone
+      }
+    ) {
+      id
+    }
+  }
+`;
