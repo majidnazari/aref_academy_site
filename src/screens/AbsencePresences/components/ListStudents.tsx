@@ -84,7 +84,6 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
         });
         setStudentList(tmp);
         setOriginalStudentList(tmp);
-        console.log("GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE");
       },
       fetchPolicy: "no-cache",
     }

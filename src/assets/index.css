@@ -23,7 +23,7 @@
   color: white;
 }
 
-.swal2-styled{
+.swal2-styled {
   font-family: "VazirFarsiNumbers";
 }
 
@@ -32,4 +32,8 @@
 }
 .activeMenuDark {
   background-color: #202020;
+}
+
+.hsRotate90 {
+  transform: rotate(80deg);
 }
