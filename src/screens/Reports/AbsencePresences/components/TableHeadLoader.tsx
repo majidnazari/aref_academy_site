@@ -26,7 +26,7 @@ const TableHeadLoader = ({ sessions }: { sessions: Session[] }) => {
             <Box
               component="div"
               className="hsRotate90"
-              sx={{ fontSize: "10px" }}
+              sx={{ fontSize: "10px", py: 2 }}
             >
               {moment(item.start_date).format("jYYYY/jMM/jDD")}
             </Box>
