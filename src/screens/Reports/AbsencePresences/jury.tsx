@@ -8,6 +8,7 @@ import {
   Table,
   TableBody,
   Container,
+  Typography,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE_LIST } from "./gql/query";
@@ -18,6 +19,7 @@ import TableCulomnLoader from "./components/TableCulomnLoader";
 import { useState } from "react";
 import { JuryDto } from "./dto/Jury.dto";
 import TableGuild from "./components/TableGuild";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -44,22 +46,36 @@ const JuryScreen = () => {
   const courseId: number = Number(params.courseId);
   const [list, setList] = useState<JuryDto[]>([]);
 
-  useQuery(GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE_LIST, {
-    variables: {
-      course_id: courseId,
-    },
-    onCompleted: (data) => {
-      setList(data.getCourseStudentsWithAbsencePresenceList);
-    },
-    fetchPolicy: "no-cache",
-  });
+  const { loading: loadingList } = useQuery(
+    GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE_LIST,
+    {
+      variables: {
+        course_id: courseId,
+      },
+      onCompleted: (data) => {
+        setList(data.getCourseStudentsWithAbsencePresenceList);
+      },
+      fetchPolicy: "no-cache",
+    }
+  );
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer component={Paper} sx={{ maxHeight: 600 }}>
           <TableGuild />
-          <Table stickyHeader aria-label="sticky dens table" size="small" padding="normal">
+          {loadingList ? (
+            <CircularProgress sx={{ p: 1 }} color="primary" />
+          ) : null}
+          {!list.length && !loadingList ? (
+            <Typography sx={{ p: 1 }}>داده ای موجود نیست</Typography>
+          ) : null}
+          <Table
+            stickyHeader
+            aria-label="sticky dens table"
+            size="small"
+            padding="normal"
+          >
             <TableHead>
               <TableRow>
                 {list && list[0] ? (
