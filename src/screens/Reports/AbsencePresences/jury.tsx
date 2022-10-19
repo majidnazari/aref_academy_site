@@ -20,6 +20,7 @@ import { useState } from "react";
 import { JuryDto } from "./dto/Jury.dto";
 import TableGuild from "./components/TableGuild";
 import CircularProgress from "@mui/material/CircularProgress";
+import Summary from "./components/Summary";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -85,10 +86,13 @@ const JuryScreen = () => {
             </TableHead>
             <TableBody>
               {list.map((element: JuryDto, index: number) => (
-                <StyledTableRow key={element.id}>
+                <StyledTableRow key={index}>
                   <StyledTableCell align="left">{index + 1}</StyledTableCell>
                   <StyledTableCell align="left">
                     {element.student?.first_name} {element.student?.last_name}
+                  </StyledTableCell>
+                  <StyledTableCell align="left">
+                    <Summary sessions={element.sessions} />
                   </StyledTableCell>
                   <TableCulomnLoader sessions={element.sessions} />
                 </StyledTableRow>

@@ -19,10 +19,11 @@ const TableHeadLoader = ({ sessions }: { sessions: Session[] }) => {
     <>
       <StyledTableCell align="left">ردیف</StyledTableCell>
       <StyledTableCell align="left">دانش آموز</StyledTableCell>
+      <StyledTableCell sx={{ fontSize: "10px" }} align="left">خلاصه</StyledTableCell>
 
-      {sessions.map((item: Session) => {
+      {sessions.map((item: Session , index:number) => {
         return (
-          <StyledTableCell key={item.session_id} align="left">
+          <StyledTableCell key={index} align="left">
             <Box
               component="div"
               // className="hsRotate90"

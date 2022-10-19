@@ -23,15 +23,15 @@ const TableGuild = () => {
         <Box sx={{ fontSize: "11px" }}>غایب</Box>
       </Box>
       <Box sx={{ mx: 1 }}>
-        <HorizontalRuleRoundedIcon color="disabled" />
+        <HorizontalRuleRoundedIcon color="disabled" fontSize="small" />
         <Box sx={{ fontSize: "11px" }}>درج نشده</Box>
       </Box>
       <Box sx={{ mx: 1 }}>
-        <WatchLaterTwoToneIcon color="warning" />
+        <WatchLaterTwoToneIcon color="warning" fontSize="small"/>
         <Box sx={{ fontSize: "11px" }}> تاخیر</Box>
       </Box>
       <Box sx={{ mx: 1 }}>
-        <RemoveCircleOutlineRoundedIcon color="disabled" />
+        <RemoveCircleOutlineRoundedIcon color="disabled" fontSize="small" />
         <Box sx={{ fontSize: "11px" }}> ثبت نام نشده</Box>
       </Box>
     </Box>

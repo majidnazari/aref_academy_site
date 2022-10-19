@@ -28,6 +28,7 @@ const ListStudentsScreen = () => {
     if (courseId && courseSessionId) {
       createAbsencePresenceListHandler(courseId, courseSessionId);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId, courseSessionId]);
 
   return (
