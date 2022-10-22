@@ -7,6 +7,12 @@ import HorizontalRuleRoundedIcon from "@mui/icons-material/HorizontalRuleRounded
 import RemoveCircleOutlineRoundedIcon from "@mui/icons-material/RemoveCircleOutlineRounded";
 import WatchLaterTwoToneIcon from "@mui/icons-material/WatchLaterTwoTone";
 
+const cellStyle = {
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
+  textAlign: "center",
+};
 const Summary = ({ sessions }: { sessions: Session[] }) => {
   const [data, setData] = useState({
     absent: 0,
@@ -62,7 +68,7 @@ const Summary = ({ sessions }: { sessions: Session[] }) => {
   };
   useEffect(() => {
     setData(calculateData());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessions]);
   return (
     <Box
@@ -72,43 +78,31 @@ const Summary = ({ sessions }: { sessions: Session[] }) => {
         alignItems: "center",
       }}
     >
-      <Box
-        sx={{
-          textAlign: "center",
-        }}
-      >
+      <Box sx={cellStyle}>
         <CheckCircleRoundedIcon color="success" fontSize="small" />
         {data.present}
       </Box>
       <Box
-        sx={{
-          textAlign: "center",
-        }}
+        sx={cellStyle}
       >
         <WatchLaterTwoToneIcon color="warning" fontSize="small" />
         {data.delay}
       </Box>
       <Box
-        sx={{
-          textAlign: "center",
-        }}
+        sx={cellStyle}
       >
         <DoNotDisturbOnRoundedIcon color="error" fontSize="small" />
         {data.absent}
       </Box>
       <Box
-        sx={{
-          textAlign: "center",
-        }}
+        sx={cellStyle}
       >
         <HorizontalRuleRoundedIcon color="disabled" fontSize="small" />
         {data.noAction}
       </Box>
 
       <Box
-        sx={{
-          textAlign: "center",
-        }}
+        sx={cellStyle}
       >
         <RemoveCircleOutlineRoundedIcon color="disabled" fontSize="small" />
         {data.notRegisterd}
