@@ -44,6 +44,7 @@ import ReportsAbsencePresencesScreen from "../screens/Reports/AbsencePresences";
 import ReportsCourseSessionsScreen from "../screens/Reports/AbsencePresences/sessions";
 import ReportsAbsencePresenceListstudents from "../screens/Reports/AbsencePresences/listStudentsScreen";
 import ReporstJuryScreen from "../screens/Reports/AbsencePresences/jury";
+import ReporstFinancialScreen from "../screens/Reports/Financial";
 
 import StudentCoursesAlarmsScreen from "../screens/Alarms/studentCoursesAlarms";
 
@@ -157,6 +158,9 @@ const MainRouter = () => {
               path="absence-presences/jury/:courseId"
               element={<ReporstJuryScreen />}
             />
+
+            <Route path="financial" element={<ReporstFinancialScreen />} />
+            
             <Route path="*" element={<NoMatch />} />
           </Route>
 
