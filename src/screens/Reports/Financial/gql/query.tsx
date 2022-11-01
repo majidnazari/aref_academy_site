@@ -101,15 +101,13 @@ export const GET_STUDENTS = gql`
   query GET_STUDENTS(
     $first: Int!
     $page: Int!
-    $first_name: String
-    $last_name: String
+    $full_name: String
     $orderBy: [OrderByClause!]
   ) {
     getStudents(
       first: $first
       page: $page
-      first_name: $first_name
-      last_name: $last_name
+      full_name: $full_name
       orderBy: $orderBy
     ) {
       data {

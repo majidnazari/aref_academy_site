@@ -159,6 +159,7 @@ const FinancialReport = () => {
     []
   );
   const [searchData, setSearchData] = useState<SearchProps>({});
+  const [searchLoading, setSearchLoading] = useState<boolean>(false);
 
   const { fetchMore, refetch, error } = useQuery(GET_COURSES_STUDENTS, {
     variables: {
@@ -173,7 +174,7 @@ const FinancialReport = () => {
         },
       ],
     },
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "network-only",
     onCompleted: (data) => {
       setCourseStudents(data.getCourseStudents.data);
       setPageInfo(data.getCourseStudents.paginatorInfo);
@@ -224,7 +225,24 @@ const FinancialReport = () => {
     }
   }, [error]);
 
+  useEffect(() => {
+    refetch({
+      first: process.env.REACT_APP_USERS_PER_PAGE
+        ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
+        : 10,
+      ...searchData,
+      page: 1,
+      orderBy: [
+        {
+          column: "created_at",
+          order: "DESC",
+        },
+      ],
+    });
+  }, [searchData]);
+
   const reloadData = (field: string, order: string) => {
+    setSearchLoading(true);
     refetch({
       first: process.env.REACT_APP_USERS_PER_PAGE
         ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
@@ -237,11 +255,15 @@ const FinancialReport = () => {
           order: order,
         },
       ],
+    }).then(() => {
+      //setSearchLoading(false);
     });
   };
   return (
     <Paper sx={{ width: "100%", mb: 2 }}>
-      <SearchFinancial callBack={setSearchData} />
+      <SearchFinancial
+        callBack={setSearchData}
+      />
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}

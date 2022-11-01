@@ -92,7 +92,7 @@ const SearchFinancial = ({ callBack }: { callBack: Function }) => {
   }, [coursesData]);
 
   return (
-    <Grid container sx={{p:1}} spacing={2}>
+    <Grid container sx={{ p: 1 }} spacing={2}>
       <Grid item xs={12} md={3}>
         <FormControl
           sx={{
@@ -272,11 +272,18 @@ const SearchFinancial = ({ callBack }: { callBack: Function }) => {
       </Grid>
       <Grid item xs={12} md={12}>
         <Button
-         variant="contained"
-         color="info"
-         size="large"
+          variant="contained"
+          color="info"
+          size="large"
+          onClick={() => {
+            const tmp: any = { ...search };
+            for (const i in tmp) {
+              if (tmp[i] === "") tmp[i] = undefined;
+            }
+            callBack(tmp);
+          }}
         >
-            جستجو
+          جستجو
         </Button>
       </Grid>
     </Grid>
