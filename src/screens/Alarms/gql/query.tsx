@@ -61,11 +61,7 @@ export const GET_COURSES_STUDENTS = gql`
                 }
                 education_level
               }
-              total_dellay15
-              total_dellay30
-              total_dellay45
-              total_dellay60
-              total_present
+              sum_total_present
           }
 
           paginatorInfo{

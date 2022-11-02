@@ -2,6 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { Tabs, Tab } from "@mui/material";
 import FinancialReport from "./components/FinancialReport";
+import NoPayment from "./components/NoPayment";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -57,7 +58,7 @@ export default function StudentCoursesAlarms() {
         <FinancialReport />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
+        <NoPayment />
       </TabPanel>
     </Box>
   );

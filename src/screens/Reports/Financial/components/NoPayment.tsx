@@ -22,9 +22,9 @@ import { useState, useEffect } from "react";
 import { showError } from "utils/swlAlert";
 import { GET_COURSES_STUDENTS } from "../gql/query";
 import { visuallyHidden } from "@mui/utils";
-import SearchFinancial from "./SearchFinancial";
 import { SearchProps } from "../dto/search-dto";
 import CircularProgress from "@mui/material/CircularProgress";
+import SearchNoPay from "./SearchNoPay";
 
 interface Data {
   student: string;
@@ -149,8 +149,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     </TableHead>
   );
 }
-
-const FinancialReport = () => {
+const defaultSearchdata = {
+  course_id: undefined,
+  total_present: 3,
+};
+const NoPayment = () => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("created_at");
   const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
@@ -166,7 +169,11 @@ const FinancialReport = () => {
   const [courseStudents, setCourseStudents] = useState<StudentCoursesType[]>(
     []
   );
-  const [searchData, setSearchData] = useState<SearchProps>({});
+  const [searchData, setSearchData] = useState<{
+    course_id: number | undefined;
+    total_present: number;
+    financial_status: string;
+  }>();
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
 
   const { fetchMore, refetch, error } = useQuery(GET_COURSES_STUDENTS, {
@@ -175,6 +182,8 @@ const FinancialReport = () => {
         ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
         : 10,
       page: 1,
+      total_present: 3,
+      financial_status: "pending",
       orderBy: [
         {
           column: "created_at",
@@ -182,6 +191,7 @@ const FinancialReport = () => {
         },
       ],
     },
+
     fetchPolicy: "network-only",
     onCompleted: (data) => {
       setCourseStudents(data.getCourseStudents.data);
@@ -269,7 +279,7 @@ const FinancialReport = () => {
   };
   return (
     <Paper sx={{ width: "100%", mb: 2 }}>
-      <SearchFinancial callBack={setSearchData} />
+      <SearchNoPay callBack={setSearchData} />
       {searchLoading ? (
         <CircularProgress />
       ) : (
@@ -378,4 +388,4 @@ const FinancialReport = () => {
   );
 };
 
-export default FinancialReport;
+export default NoPayment;
