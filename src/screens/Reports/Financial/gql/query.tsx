@@ -60,6 +60,14 @@ export const GET_COURSES_STUDENTS = gql`
           }
           education_level
         }
+        total_absent
+        total_dellay15
+        total_dellay30
+        total_dellay45
+        total_dellay60
+        total_noAction
+        total_not_registered
+        total_present
       }
 
       paginatorInfo {

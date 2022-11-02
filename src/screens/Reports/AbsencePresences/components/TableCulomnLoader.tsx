@@ -49,9 +49,9 @@ const LoadAbsentPresentIcons = ({ status }: { status: SessionsStatusType }) => {
 const TableCulomnLoader = ({ sessions }: { sessions: Session[] }) => {
   return (
     <>
-      {sessions.map((item: Session,index:number) => {
+      {sessions.map((item: Session, index: number) => {
         return (
-          <TableCell key={index} align="left" >
+          <TableCell key={index} align="left">
             <LoadAbsentPresentIcons status={item.status} />
           </TableCell>
         );

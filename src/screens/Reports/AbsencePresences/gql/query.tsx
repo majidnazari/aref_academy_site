@@ -207,6 +207,7 @@ export const GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE_LIST = gql`
         status
         start_date
       }
+      student_status
       student {
         id
         first_name

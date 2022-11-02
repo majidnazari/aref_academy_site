@@ -86,7 +86,16 @@ const JuryScreen = () => {
             </TableHead>
             <TableBody>
               {list.map((element: JuryDto, index: number) => (
-                <StyledTableRow key={index}>
+                <StyledTableRow
+                  sx={{
+                    opacity:
+                      element.student_status === "refused" ||
+                      element.student_status === "fired"
+                        ? 0.1
+                        : 1,
+                  }}
+                  key={index}
+                >
                   <StyledTableCell align="left">{index + 1}</StyledTableCell>
                   <StyledTableCell align="left">
                     {element.student?.first_name} {element.student?.last_name}

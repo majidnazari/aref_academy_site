@@ -29,10 +29,12 @@ import StatusIcon from "components/StatusIcon";
 import { Button } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { showError } from "utils/swlAlert";
+import SumPresents from "components/SumPresents";
 
 interface Data {
   student: string;
   course: string;
+  total_present: string;
   student_status: string;
   manager_status: string;
   financial_status: string;
@@ -68,6 +70,12 @@ const headCells: readonly HeadCell[] = [
     sortable: false,
     disablePadding: false,
     label: "درس",
+  },
+  {
+    id: "total_present",
+    sortable: false,
+    disablePadding: false,
+    label: "تعداد حضور",
   },
   {
     id: "student_status",
@@ -333,6 +341,9 @@ export default function StudentCoursesAlarms() {
                       <TableCell align="left">
                         <CourseName course={element.course} />
                       </TableCell>
+                      <TableCell align="left">
+                          <SumPresents element={element} />
+                        </TableCell>
                       <TableCell align="left">
                         <StatusIcon status={element.student_status} />
                         <Typography

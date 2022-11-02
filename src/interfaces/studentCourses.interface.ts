@@ -37,5 +37,12 @@ interface StudentCoursesType {
         }
         education_level: string;
     }
+    total_dellay15?:number;
+    total_dellay30?:number;
+    total_dellay45?:number;
+    total_dellay60?:number;
+    total_noAction?:number;
+    total_not_registered?:number;
+    total_present?:number;
 }
 export default StudentCoursesType;

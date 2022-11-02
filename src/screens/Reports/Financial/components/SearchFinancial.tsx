@@ -46,7 +46,7 @@ const SearchFinancial = ({ callBack }: { callBack: Function }) => {
     variables: {
       first: 1,
       page: 1,
-      first_name: "",
+      full_name: "",
       fetchPolicy: "network-only",
     },
     onCompleted: (data) => {
@@ -71,7 +71,7 @@ const SearchFinancial = ({ callBack }: { callBack: Function }) => {
     refetchLessons({
       first: 1000,
       page: 1,
-      first_name: lessonName,
+      full_name: lessonName,
     }).then(() => {
       setLoadingLesson(false);
     });
