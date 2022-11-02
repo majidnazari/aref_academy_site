@@ -4,7 +4,6 @@ import {
   FormControl,
   Grid,
   TextField,
-  CircularProgress,
   InputLabel,
   MenuItem,
   Select,
@@ -12,7 +11,7 @@ import {
 } from "@mui/material";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { GET_COURSES, GET_STUDENTS } from "../gql/query";
+import { GET_COURSES } from "../gql/query";
 import { getCourseName } from "components/CourseName";
 import { SelectChangeEvent } from "@mui/material/Select";
 

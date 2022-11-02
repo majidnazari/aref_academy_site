@@ -75,6 +75,7 @@ const SearchFinancial = ({ callBack }: { callBack: Function }) => {
     }).then(() => {
       setLoadingLesson(false);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lessonName]);
 
   useEffect(() => {

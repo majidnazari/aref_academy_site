@@ -22,7 +22,6 @@ import { useState, useEffect } from "react";
 import { showError } from "utils/swlAlert";
 import { GET_COURSES_STUDENTS } from "../gql/query";
 import { visuallyHidden } from "@mui/utils";
-import { SearchProps } from "../dto/search-dto";
 import CircularProgress from "@mui/material/CircularProgress";
 import SearchNoPay from "./SearchNoPay";
 
@@ -149,10 +148,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     </TableHead>
   );
 }
-const defaultSearchdata = {
-  course_id: undefined,
-  total_present: 3,
-};
+
 const NoPayment = () => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("created_at");
@@ -257,6 +253,7 @@ const NoPayment = () => {
         },
       ],
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchData]);
 
   const reloadData = (field: string, order: string) => {
