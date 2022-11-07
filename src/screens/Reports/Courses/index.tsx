@@ -19,11 +19,17 @@ import { useQuery } from "@apollo/client";
 import PaginatorInfo from "interfaces/paginator-info.interface";
 import { NavLink } from "react-router-dom";
 import Typography from "@mui/material/Typography";
-import { GET_COURSES, GET_COURSES_STUDENTS } from "./gql/query";
+import {
+  GET_COURSES,
+  GET_COURSES_STUDENTS,
+  GET_COURSES_TOTAL_REPORT,
+} from "./gql/query";
 import { getCourseName } from "components/CourseName";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import moment from "moment-jalaali";
 import StatusIcon from "components/StatusIcon";
+import { TotalReportDto } from "./dto/TotalReport.dto";
+import CoursePieChart from "./components/CoursePieChart";
 
 interface ReportData {
   student: {
@@ -97,6 +103,7 @@ const CoursesScreen = () => {
     course_id: 0,
   });
   const [report, setReport] = useState<ReportData[]>([]);
+  const [totalReport, setTotalReport] = useState<TotalReportDto[]>([]);
 
   const { data: coursesData } = useQuery(GET_COURSES, {
     variables: {
@@ -110,6 +117,13 @@ const CoursesScreen = () => {
       ],
       fetchPolicy: "no-cache",
     },
+  });
+
+  const { refetch: refetchTotalReport } = useQuery(GET_COURSES_TOTAL_REPORT, {
+    variables: {
+      course_id: -2,
+    },
+    fetchPolicy: "no-cache",
   });
 
   const {
@@ -145,6 +159,10 @@ const CoursesScreen = () => {
       .catch((err) => {
         setRefetchLoading(false);
       });
+
+    refetchTotalReport(refetchData).then((res) => {
+      setTotalReport(res.data.getCourseTotalReport);
+    });
   };
 
   const handleChange = (
@@ -185,12 +203,12 @@ const CoursesScreen = () => {
     }
   }, [coursesData]);
 
-  useEffect(() => {
-    //console.log("useEffect", reportData?.getC.paginatorInfo);
-    if (reportData?.getCourseStudents.paginatorInfo) {
-      //setPageInfo(reportData?.getCourseStudents.paginatorInfo);
-    }
-  }, [reportData]);
+  // useEffect(() => {
+  //   //console.log("useEffect", reportData?.getC.paginatorInfo);
+  //   if (reportData?.getCourseStudents.paginatorInfo) {
+  //     //setPageInfo(reportData?.getCourseStudents.paginatorInfo);
+  //   }
+  // }, [reportData]);
 
   if (!courseOptions) {
     return (
@@ -248,6 +266,28 @@ const CoursesScreen = () => {
           )}
         </Button>
       </Box>
+
+      {totalReport.length ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            my: 2,
+          }}
+          component={Paper}
+        >
+          <div></div>
+          <CoursePieChart
+            series={[
+              totalReport[0].total_approved,
+              totalReport[0].total_noMoney,
+              totalReport[0].total_pending,
+              totalReport[0].total_fired + totalReport[0].total_refused,
+            ]}
+          />
+        </Box>
+      ) : null}
+
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
           <TableHead>
