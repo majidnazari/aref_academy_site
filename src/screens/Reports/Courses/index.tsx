@@ -25,7 +25,7 @@ import {
   GET_COURSES_TOTAL_REPORT,
 } from "./gql/query";
 import { getCourseName } from "components/CourseName";
-import { Autocomplete, CircularProgress, TextField } from "@mui/material";
+import { Autocomplete, CircularProgress, Grid, TextField } from "@mui/material";
 import moment from "moment-jalaali";
 import StatusIcon from "components/StatusIcon";
 import { TotalReportDto } from "./dto/TotalReport.dto";
@@ -268,24 +268,117 @@ const CoursesScreen = () => {
       </Box>
 
       {totalReport.length ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            my: 2,
-          }}
-          component={Paper}
-        >
-          <div></div>
-          <CoursePieChart
-            series={[
-              totalReport[0].total_approved,
-              totalReport[0].total_noMoney,
-              totalReport[0].total_pending,
-              totalReport[0].total_fired + totalReport[0].total_refused,
-            ]}
-          />
-        </Box>
+        <Grid container component={Paper} sx={{ my: 2 }}>
+          <Grid item xs={12} sm={6} md={6}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                sx={{
+                  p: 1,
+                }}
+              >
+                نام دبیر: {totalReport[0].teacher_name}
+              </Typography>
+              <Typography
+                sx={{
+                  p: 1,
+                }}
+              >
+                تعداد کل دانش آموزان: {totalReport[0].total_students}
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                sx={{
+                  p: 1,
+                }}
+              >
+                تاریخ جلسه نخست:{" "}
+                {totalReport[0].start_session !== ""
+                  ? moment(totalReport[0].start_session).format("jYYYY/jMM/jDD")
+                  : "--"}
+              </Typography>
+              <Typography
+                sx={{
+                  p: 1,
+                }}
+              >
+                تاریخ جلسه پایانی:{" "}
+                {totalReport[0].end_session !== ""
+                  ? moment(totalReport[0].end_session).format("jYYYY/jMM/jDD")
+                  : "--"}
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                sx={{
+                  p: 1,
+                }}
+              >
+                تعداد کل جلسات: {totalReport[0].total_session || "--"}
+              </Typography>
+              <Typography
+                sx={{
+                  p: 1,
+                }}
+              >
+                تعداد جلسات برگزار شده:{" "}
+                {totalReport[0].total_done_session || "--"}
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                sx={{
+                  p: 1,
+                }}
+              >
+                میانگین غیبت در جلسه:{" "}
+                {totalReport[0].avg_absent?.toFixed(2) || "--"}
+              </Typography>
+
+              <Typography
+                sx={{
+                  p: 1,
+                }}
+              >
+                میانگین تاخیر درهر جلسه :{" "}
+                {totalReport[0].avg_dellay?.toFixed(2) || "--"}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={2} md={2}></Grid>
+          <Grid item xs={12} sm={4} md={4}>
+            <CoursePieChart
+              width="100%"
+              series={[
+                totalReport[0].total_approved,
+                totalReport[0].total_noMoney,
+                totalReport[0].total_pending,
+                totalReport[0].total_fired + totalReport[0].total_refused,
+              ]}
+            />
+          </Grid>
+        </Grid>
       ) : null}
 
       <TableContainer component={Paper}>

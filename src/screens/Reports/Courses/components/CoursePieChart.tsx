@@ -1,13 +1,25 @@
 import { ApexOptions } from "apexcharts";
+import { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
-const CoursePieChart = ({ series }: { series: number[] }) => {
-  const chartData: ApexOptions = {
+const CoursePieChart = ({
+  series,
+  width = 500,
+}: {
+  series: number[];
+  width?: string | number | undefined;
+}) => {
+  const [chartData, setChartData] = useState<ApexOptions>({
     chart: {
       width: 380,
       type: "pie",
     },
-    labels: [" ثبت نام قطعی", " عدم تایید مالی", " بلاتکلیف", " انصراف و اخراج"],
+    labels: [
+      " ثبت نام قطعی",
+      " عدم تایید مالی",
+      " بلاتکلیف",
+      " انصراف و اخراج",
+    ],
     legend: {
       fontFamily: "inherit",
       labels: {
@@ -27,13 +39,24 @@ const CoursePieChart = ({ series }: { series: number[] }) => {
         },
       },
     ],
-  };
+  });
+  useEffect(() => {
+    setChartData({
+      ...chartData,
+      labels: [
+        ` ثبت نام قطعی ${series[0]}`,
+        ` عدم تایید مالی ${series[1]}`,
+        ` بلاتکلیف ${series[2]}`,
+        ` انصراف و اخراج ${series[3]}`,
+      ],
+    });
+  }, [series]);
   return (
     <ReactApexChart
       options={chartData}
       series={series}
       type="pie"
-      width={500}
+      width={width}
     />
   );
 };
