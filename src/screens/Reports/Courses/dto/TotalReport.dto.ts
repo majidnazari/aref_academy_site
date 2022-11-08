@@ -9,6 +9,7 @@ export class TotalReportDto {
   total_done_session?: any;
   total_fired!: number;
   total_noMoney!: number;
+  total_noMoney_semi_pending!: number;
   total_pending!: number;
   total_refused!: number;
   total_session?: any;

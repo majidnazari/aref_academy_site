@@ -90,11 +90,11 @@ export const GET_COURSES_TOTAL_REPORT = gql`
       total_done_session
       total_fired
       total_noMoney
+      total_noMoney_semi_pending
       total_pending
       total_refused
       total_session
       total_students
-      
     }
   }
 `;

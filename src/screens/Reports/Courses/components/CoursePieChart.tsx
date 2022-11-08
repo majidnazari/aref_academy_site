@@ -45,9 +45,10 @@ const CoursePieChart = ({
       ...chartData,
       labels: [
         ` ثبت نام قطعی ${series[0]}`,
-        ` عدم تایید مالی ${series[1]}`,
-        ` بلاتکلیف ${series[2]}`,
+        ` عدم پرداخت کامل ${series[1]}`,
+        ` پرداخت نشده ${series[2]}`,
         ` انصراف و اخراج ${series[3]}`,
+        ` بلاتکلیف ${series[4]}`,
       ],
     });
   }, [series]);

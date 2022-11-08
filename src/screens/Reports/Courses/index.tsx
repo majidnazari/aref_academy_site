@@ -366,15 +366,16 @@ const CoursesScreen = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={2} md={2}></Grid>
-          <Grid item xs={12} sm={4} md={4}>
+          <Grid item xs={12} sm={1} md={1}></Grid>
+          <Grid item xs={12} sm={5} md={5}>
             <CoursePieChart
               width="100%"
               series={[
                 totalReport[0].total_approved,
+                totalReport[0].total_noMoney_semi_pending,
                 totalReport[0].total_noMoney,
-                totalReport[0].total_pending,
                 totalReport[0].total_fired + totalReport[0].total_refused,
+                totalReport[0].total_pending,
               ]}
             />
           </Grid>
