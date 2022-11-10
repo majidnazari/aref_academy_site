@@ -60,7 +60,6 @@ const CourseSessionsEditScreen = () => {
         },
         onCompleted: (data) => {
             const { start_date, start_time, end_time, name, price, special, classRoom } = data.getCourseSession;
-            console.log(data.getCourseSession);
             setStartDate(start_date);
             setStartTime(new Date(start_date + ' ' + start_time));
             setEndtTime(new Date(start_date + ' ' + end_time));

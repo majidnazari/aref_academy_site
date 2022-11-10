@@ -9,6 +9,8 @@ export const GET_COURSES_STUDENTS = gql`
     $manager_status: String
     $student_status: String
     $total_present: Int
+    $to_date: String
+    $from_date: String
     $orderBy: [OrderByClause!]
   ) {
     getCourseStudents(
@@ -20,6 +22,8 @@ export const GET_COURSES_STUDENTS = gql`
       manager_status: $manager_status
       student_status: $student_status
       total_present: $total_present
+      from_date: $from_date
+      to_date: $to_date
       orderBy: $orderBy
     ) {
       data {
@@ -50,6 +54,7 @@ export const GET_COURSES_STUDENTS = gql`
           last_name
         }
         created_at
+        updated_at
         course {
           name
           lesson {

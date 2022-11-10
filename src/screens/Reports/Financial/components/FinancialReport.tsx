@@ -35,6 +35,7 @@ interface Data {
   financial_status: string;
   user_creator: string;
   created_at: string;
+  updated_at:string;
   edit?: string;
 }
 
@@ -61,7 +62,7 @@ const headCells: readonly HeadCell[] = [
   },
   {
     id: "sum_total_present",
-    sortable: false,
+    sortable: true,
     disablePadding: false,
     label: "تعداد حضور",
   },
@@ -94,6 +95,12 @@ const headCells: readonly HeadCell[] = [
     sortable: true,
     disablePadding: false,
     label: "تاریخ ایجاد",
+  },
+  {
+    id: "updated_at",
+    sortable: true,
+    disablePadding: false,
+    label: "آخرین ویرایش",
   },
 ];
 
@@ -234,6 +241,14 @@ const FinancialReport = () => {
   }, [error]);
 
   useEffect(() => {
+    //const tmpSearch = { ...searchData };
+    // if (tmpSearch.from_date) {
+    //   tmpSearch.from_date = new Date(tmpSearch.from_date);
+    // }
+    // if (tmpSearch.to_date) {
+    //   tmpSearch.to_date = new Date(tmpSearch.to_date);
+    // }
+    //console.log(tmpSearch);
     refetch({
       first: process.env.REACT_APP_USERS_PER_PAGE
         ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
@@ -357,6 +372,9 @@ const FinancialReport = () => {
                         </TableCell>
                         <TableCell align="left">
                           {moment(element.created_at).format("jYYYY/jMM/jDD")}
+                        </TableCell>
+                        <TableCell align="left">
+                          {moment(element.updated_at).format("jYYYY/jMM/jDD")}
                         </TableCell>
                       </TableRow>
                     );

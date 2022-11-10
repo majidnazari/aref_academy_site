@@ -11,4 +11,6 @@ export class SearchProps {
         | "forbidden"
         | "fired_pending"
         | "refused_pending";
+    from_date?: string | Date;
+    to_date?: string | Date;
 }

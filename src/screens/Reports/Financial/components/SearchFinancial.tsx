@@ -16,6 +16,9 @@ import { GET_COURSES, GET_STUDENTS } from "../gql/query";
 import { SearchProps } from "../dto/search-dto";
 import { getCourseName } from "components/CourseName";
 import { SelectChangeEvent } from "@mui/material/Select";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import AdapterJalali from "@date-io/date-fns-jalali";
 
 const SearchFinancial = ({ callBack }: { callBack: Function }) => {
   const [search, setSearch] = useState<SearchProps>({});
@@ -75,7 +78,7 @@ const SearchFinancial = ({ callBack }: { callBack: Function }) => {
     }).then(() => {
       setLoadingLesson(false);
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lessonName]);
 
   useEffect(() => {
@@ -271,7 +274,49 @@ const SearchFinancial = ({ callBack }: { callBack: Function }) => {
           </Select>
         </FormControl>
       </Grid>
-      <Grid item xs={12} md={12}>
+      <Grid item xs={12} sm={6} md={3} xl={3}>
+        <LocalizationProvider dateAdapter={AdapterJalali}>
+          <DatePicker
+            label="از تاریخ"
+            value={search.from_date || null}
+            onChange={(newValue) => {
+              if (newValue) {
+                setSearch({
+                  ...search,
+                  from_date: newValue as string,
+                });
+              }
+            }}
+            renderInput={(params) => (
+              <TextField {...params} style={{ width: "100%" }} />
+            )}
+            mask="____/__/__"
+          />
+        </LocalizationProvider>
+      </Grid>
+
+      <Grid item xs={12} sm={6} md={3} xl={3}>
+        <LocalizationProvider dateAdapter={AdapterJalali}>
+          <DatePicker
+            label="تا تاریخ"
+            value={search.to_date || null}
+            onChange={(newValue) => {
+              if (newValue) {
+                setSearch({
+                  ...search,
+                  to_date: newValue as string,
+                });
+              }
+            }}
+            renderInput={(params) => (
+              <TextField {...params} style={{ width: "100%" }} />
+            )}
+            mask="____/__/__"
+          />
+        </LocalizationProvider>
+      </Grid>
+
+      <Grid item xs={12} md={4}>
         <Button
           variant="contained"
           color="info"
