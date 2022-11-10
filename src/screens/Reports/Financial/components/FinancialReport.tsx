@@ -35,7 +35,7 @@ interface Data {
   financial_status: string;
   user_creator: string;
   created_at: string;
-  updated_at:string;
+  updated_at: string;
   edit?: string;
 }
 
@@ -281,112 +281,112 @@ const FinancialReport = () => {
     <Paper sx={{ width: "100%", mb: 2 }}>
       <SearchFinancial callBack={setSearchData} />
       {searchLoading ? (
-        <Box sx={{display:"flex", justifyContent:"center"}} ><CircularProgress /></Box>
-      ) : (
-        <>
-          <TableContainer>
-            <Table
-              sx={{ minWidth: 750 }}
-              aria-labelledby="tableTitle"
-              size="medium"
-            >
-              <EnhancedTableHead
-                order={order}
-                orderBy={orderBy}
-                onRequestSort={handleRequestSort}
-                rowCount={courseStudents.length}
-              />
-              <TableBody>
-                {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <CircularProgress />
+        </Box>
+      ) : null}
+
+      <TableContainer>
+        <Table
+          sx={{ minWidth: 750 }}
+          aria-labelledby="tableTitle"
+          size="medium"
+        >
+          <EnhancedTableHead
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+            rowCount={courseStudents.length}
+          />
+          <TableBody>
+            {/* if you don't need to support IE11, you can replace the `stableSort` call with:
         rows.slice().sort(getComparator(order, orderBy)) */}
-                {
-                  //stableSort(courseStudents, getComparator(order, orderBy))
-                  courseStudents.map((element, index) => {
-                    return (
-                      <TableRow hover tabIndex={-1} key={index}>
-                        <TableCell padding="checkbox">
-                          {pageInfo.perPage * (pageInfo.currentPage - 1) +
-                            index +
-                            1}
-                        </TableCell>
-                        <TableCell component="th" scope="row" padding="none">
-                          {element?.student?.first_name +
+            {
+              //stableSort(courseStudents, getComparator(order, orderBy))
+              courseStudents.map((element, index) => {
+                return (
+                  <TableRow hover tabIndex={-1} key={index}>
+                    <TableCell padding="checkbox">
+                      {pageInfo.perPage * (pageInfo.currentPage - 1) +
+                        index +
+                        1}
+                    </TableCell>
+                    <TableCell component="th" scope="row" padding="none">
+                      {element?.student?.first_name +
+                        " " +
+                        element?.student?.last_name}
+                    </TableCell>
+                    <TableCell align="left">
+                      <CourseName course={element.course} />
+                    </TableCell>
+                    <TableCell align="left">
+                      {element.sum_total_present}
+                    </TableCell>
+                    <TableCell align="left">
+                      <StatusIcon status={element.student_status} />
+                      <Typography
+                        component={"div"}
+                        sx={{ fontSize: 9, fontWeight: "bold" }}
+                      >
+                        {element.user_student_status
+                          ? element.user_student_status?.first_name +
                             " " +
-                            element?.student?.last_name}
-                        </TableCell>
-                        <TableCell align="left">
-                          <CourseName course={element.course} />
-                        </TableCell>
-                        <TableCell align="left">
-                          {element.sum_total_present}
-                        </TableCell>
-                        <TableCell align="left">
-                          <StatusIcon status={element.student_status} />
-                          <Typography
-                            component={"div"}
-                            sx={{ fontSize: 9, fontWeight: "bold" }}
-                          >
-                            {element.user_student_status
-                              ? element.user_student_status?.first_name +
-                                " " +
-                                element.user_student_status?.last_name
-                              : null}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="left">
-                          <StatusIcon status={element.manager_status} />
-                          <Typography
-                            component={"div"}
-                            sx={{ fontSize: 9, fontWeight: "bold" }}
-                          >
-                            {element?.user_manager
-                              ? element.user_manager?.first_name +
-                                " " +
-                                element.user_manager?.last_name
-                              : null}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="left">
-                          <StatusIcon status={element.financial_status} />
-                          <Typography
-                            component={"div"}
-                            sx={{ fontSize: 9, fontWeight: "bold" }}
-                          >
-                            {element.user_financial
-                              ? element.user_financial?.first_name +
-                                " " +
-                                element.user_financial?.last_name
-                              : null}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="left">
-                          {" "}
-                          {element.user_creator?.first_name +
+                            element.user_student_status?.last_name
+                          : null}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="left">
+                      <StatusIcon status={element.manager_status} />
+                      <Typography
+                        component={"div"}
+                        sx={{ fontSize: 9, fontWeight: "bold" }}
+                      >
+                        {element?.user_manager
+                          ? element.user_manager?.first_name +
                             " " +
-                            element.user_creator?.last_name}
-                        </TableCell>
-                        <TableCell align="left">
-                          {moment(element.created_at).format("jYYYY/jMM/jDD")}
-                        </TableCell>
-                        <TableCell align="left">
-                          {moment(element.updated_at).format("jYYYY/jMM/jDD")}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                }
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Stack spacing={5} sx={{ my: 2 }}>
-            <Pagination
-              count={pageInfo.lastPage}
-              page={pageInfo.currentPage}
-              onChange={handleChangePage}
-            />
-          </Stack>
-        </>
-      )}
+                            element.user_manager?.last_name
+                          : null}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="left">
+                      <StatusIcon status={element.financial_status} />
+                      <Typography
+                        component={"div"}
+                        sx={{ fontSize: 9, fontWeight: "bold" }}
+                      >
+                        {element.user_financial
+                          ? element.user_financial?.first_name +
+                            " " +
+                            element.user_financial?.last_name
+                          : null}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="left">
+                      {" "}
+                      {element.user_creator?.first_name +
+                        " " +
+                        element.user_creator?.last_name}
+                    </TableCell>
+                    <TableCell align="left">
+                      {moment(element.created_at).format("jYYYY/jMM/jDD")}
+                    </TableCell>
+                    <TableCell align="left">
+                      {moment(element.updated_at).format("jYYYY/jMM/jDD")}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            }
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Stack spacing={5} sx={{ my: 2 }}>
+        <Pagination
+          count={pageInfo.lastPage}
+          page={pageInfo.currentPage}
+          onChange={handleChangePage}
+        />
+      </Stack>
     </Paper>
   );
 };
