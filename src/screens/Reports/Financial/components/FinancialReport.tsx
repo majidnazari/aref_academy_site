@@ -241,14 +241,7 @@ const FinancialReport = () => {
   }, [error]);
 
   useEffect(() => {
-    //const tmpSearch = { ...searchData };
-    // if (tmpSearch.from_date) {
-    //   tmpSearch.from_date = new Date(tmpSearch.from_date);
-    // }
-    // if (tmpSearch.to_date) {
-    //   tmpSearch.to_date = new Date(tmpSearch.to_date);
-    // }
-    //console.log(tmpSearch);
+    setSearchLoading(true);
     refetch({
       first: process.env.REACT_APP_USERS_PER_PAGE
         ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
@@ -261,6 +254,8 @@ const FinancialReport = () => {
           order: "ASC",
         },
       ],
+    }).then(() => {
+      setSearchLoading(false);
     });
   }, [searchData]);
 
@@ -286,7 +281,7 @@ const FinancialReport = () => {
     <Paper sx={{ width: "100%", mb: 2 }}>
       <SearchFinancial callBack={setSearchData} />
       {searchLoading ? (
-        <CircularProgress />
+        <Box sx={{display:"flex", justifyContent:"center"}} ><CircularProgress /></Box>
       ) : (
         <>
           <TableContainer>
