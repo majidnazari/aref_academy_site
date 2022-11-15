@@ -23,16 +23,9 @@ import { getDarktheme } from "../utils/utils";
 import { Collapse, List } from "@mui/material";
 import { ExpandLess, ExpandMore, StarBorder } from "@mui/icons-material";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
+import { Menu } from "utils/dto/user-data.dto";
 
-interface MenuItem {
-  href: string;
-  icon: string;
-  id: string;
-  name: string;
-  slug: string;
-  parent_id?: string;
-  subMenus: MenuItem[];
-}
+interface MenuItem extends Menu {}
 
 const Components: any = {
   DashboardIcon: DashboardIcon,
@@ -95,7 +88,7 @@ const SimpleMenuItem = ({
 };
 
 const GenerateMenuItems = () => {
-  const userData = getUserData();
+  const userData = getUserData() as any;
   const menus = userData.group
     ? userData.group.menus.filter((item: any) => +item.parent_id === 0)
     : [];

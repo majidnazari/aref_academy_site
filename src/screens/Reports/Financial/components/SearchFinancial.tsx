@@ -280,6 +280,7 @@ const SearchFinancial = ({ callBack }: { callBack: Function }) => {
             label="از تاریخ"
             value={search.from_date || null}
             onChange={(newValue) => {
+              console.log("source from_date",newValue);
               if (newValue) {
                 setSearch({
                   ...search,

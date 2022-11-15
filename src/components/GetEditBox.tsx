@@ -3,6 +3,7 @@ import AdminInputs from 'screens/Students/StudentCourses/components/AdminInputs'
 import ManagerInputs from 'screens/Students/StudentCourses/components/ManagerInputs';
 import FinancialInputs from 'screens/Students/StudentCourses/components/FinancialInputs';
 import AcceptorInputs from 'screens/Students/StudentCourses/components/AcceptorInputs';
+import { UserData } from 'utils/dto/user-data.dto';
 
 interface EditProps {
     setFormData: Function;
@@ -14,7 +15,7 @@ interface StudentCourseFormData {
     manager_status: string;
 }
 const GetEditBox = ({ setFormData, studentCourse }: EditProps) => {
-    switch ((getUserData()).group.name) {
+    switch ((getUserData() as UserData).group.name) {
         case 'admin':
             return <AdminInputs setFormData={setFormData} studentCourse={studentCourse} />;
         case 'manager':
