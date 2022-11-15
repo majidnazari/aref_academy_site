@@ -91,7 +91,7 @@ const JuryScreen = () => {
                     opacity:
                       element.student_status === "refused" ||
                       element.student_status === "fired"
-                        ? 0.1
+                        ? 0.3
                         : 1,
                   }}
                   key={index}

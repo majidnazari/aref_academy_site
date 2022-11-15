@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
 const replaceAt = function (input: string, index: number, replacement: string) {
