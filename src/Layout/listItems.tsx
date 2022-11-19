@@ -161,6 +161,21 @@ export const MainListItems = () => {
   );
 };
 
+export const MainListItems2 = () => {
+  let navigate = useNavigate();
+  return (
+    <>     
+      <ListItemButton onClick={() => navigate("/consultant-test")}>
+        <ListItemIcon>
+          <LogoutIcon />
+        </ListItemIcon>
+        <ListItemText primary="تست مشاور" />
+      </ListItemButton>
+    </>
+  );
+};
+
+
 export const SecondaryListItems = () => {
   const [open, setOpen] = React.useState(true);
 
@@ -170,6 +185,21 @@ export const SecondaryListItems = () => {
 
   return process.env.REACT_APP_DEVELEP_MOD === "0" ? null : (
     <React.Fragment>
+
+      <ListItemButton>
+        <ListItemIcon>
+          <BarChartIcon />
+        </ListItemIcon>
+        <ListItemText primary="تعریف مشاور" />
+      </ListItemButton>
+
+      <ListItemButton>
+        <ListItemIcon>
+          <BarChartIcon />
+        </ListItemIcon>
+        <ListItemText primary="۲تعریف مشاور" />
+      </ListItemButton>
+
       <ListItemButton onClick={handleClick}>
         <ListItemIcon>
           <InboxIcon />
