@@ -31,6 +31,7 @@ export const GET_A_STUDENT_COURSES = gql`
           manager_status
           student_status
           created_at
+          description
           user_manager{
             first_name
             last_name
@@ -48,6 +49,18 @@ export const GET_A_STUDENT_COURSES = gql`
             last_name
           }
           course{
+            name
+            lesson{
+              name
+            }
+            type
+            teacher{
+              first_name
+              last_name
+            }
+            education_level
+          }
+          transferred_course{
             name
             lesson{
               name

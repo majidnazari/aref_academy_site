@@ -12,6 +12,7 @@ interface StudentCoursesType {
     student_status: string;
     created_at: string;
     updated_at?: string;
+    description: string;
     user_manager: {
         first_name: string;
         last_name: string;
@@ -39,5 +40,15 @@ interface StudentCoursesType {
         education_level: string;
     }
     sum_total_present?: number;
+    transferred_course: {
+        name: string;
+        lesson: string;
+        type: string;
+        teacher: {
+            first_name: string;
+            last_name: string;
+        }
+        education_level: string;
+    }
 }
 export default StudentCoursesType;
