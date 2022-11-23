@@ -29,6 +29,7 @@ const ManagerInputs = ({ setFormData, studentCourse }: EditProps) => {
       student_status: studentCourse.student_status,
       financial_status: studentCourse.financial_status,
       manager_status: studentCourse.manager_status,
+      description: studentCourse.description,
     }
   );
 
@@ -126,21 +127,24 @@ const ManagerInputs = ({ setFormData, studentCourse }: EditProps) => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={9} md={9}>
-            <TextField
-              fullWidth
-              label="توضیحات"
-              value={mystudentCourse.description}
-              onChange={(e: any) =>
-                setMystudentCourse({
-                  ...mystudentCourse,
-                  description: e.target.value,
-                })
-              }
-              variant="outlined"
-            />
-          </Grid>
         </>
+      ) : null}
+      {mystudentCourse.student_status === "refused" ||
+      mystudentCourse.description ? (
+        <Grid item xs={12} sm={9} md={9}>
+          <TextField
+            fullWidth
+            label="توضیحات"
+            value={mystudentCourse.description}
+            onChange={(e: any) =>
+              setMystudentCourse({
+                ...mystudentCourse,
+                description: e.target.value,
+              })
+            }
+            variant="outlined"
+          />
+        </Grid>
       ) : null}
 
       {refusedStatus === "transfer" ? (
