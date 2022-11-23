@@ -54,7 +54,7 @@ export const GET_COURSES_STUDENTS = gql`
           last_name
         }
         created_at
-        updated_at
+        financial_status_updated_at
         course {
           name
           lesson {

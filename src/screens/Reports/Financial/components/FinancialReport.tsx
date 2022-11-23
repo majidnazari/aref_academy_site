@@ -35,7 +35,7 @@ interface Data {
   financial_status: string;
   user_creator: string;
   created_at: string;
-  updated_at: string;
+  financial_status_updated_at: string;
   edit?: string;
 }
 
@@ -97,7 +97,7 @@ const headCells: readonly HeadCell[] = [
     label: "تاریخ ایجاد",
   },
   {
-    id: "updated_at",
+    id: "financial_status_updated_at",
     sortable: true,
     disablePadding: false,
     label: "آخرین ویرایش",
@@ -184,7 +184,7 @@ const FinancialReport = () => {
       page: 1,
       orderBy: [
         {
-          column: "created_at",
+          column: "financial_status_updated_at",
           order: "DESC",
         },
       ],
@@ -250,8 +250,8 @@ const FinancialReport = () => {
       page: 1,
       orderBy: [
         {
-          column: "created_at",
-          order: "ASC",
+          column: "financial_status_updated_at",
+          order: "DESC",
         },
       ],
     }).then(() => {
@@ -371,7 +371,7 @@ const FinancialReport = () => {
                       {moment(element.created_at).format("jYYYY/jMM/jDD")}
                     </TableCell>
                     <TableCell align="left">
-                      {moment(element.updated_at).format("jYYYY/jMM/jDD")}
+                      {moment(element.financial_status_updated_at).format("jYYYY/jMM/jDD")}
                     </TableCell>
                   </TableRow>
                 );

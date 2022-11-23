@@ -11,7 +11,7 @@ interface StudentCoursesType {
     status: string;
     student_status: string;
     created_at: string;
-    updated_at?: string;
+    financial_status_updated_at?: string;
     description: string;
     user_manager: {
         first_name: string;
