@@ -60,6 +60,19 @@ export const GET_COURSES_STUDENTS = gql`
           last_name
         }
         created_at
+        description
+        transferred_course {
+          name
+          lesson {
+            name
+          }
+          type
+          teacher {
+            first_name
+            last_name
+          }
+          education_level
+        }
       }
 
       paginatorInfo {
@@ -79,7 +92,6 @@ export const GET_COURSES_STUDENTS = gql`
 export const GET_COURSES_TOTAL_REPORT = gql`
   query GET_COURSES_TOTAL_REPORT($course_id: Int) {
     getCourseTotalReport(course_id: $course_id) {
-      
       avg_absent
       avg_dellay
       end_session

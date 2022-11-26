@@ -24,12 +24,12 @@ import {
   GET_COURSES_STUDENTS,
   GET_COURSES_TOTAL_REPORT,
 } from "./gql/query";
-import { getCourseName } from "components/CourseName";
-import { Autocomplete, CircularProgress, Grid, TextField } from "@mui/material";
+import CourseName, { getCourseName } from "components/CourseName";
+import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import moment from "moment-jalaali";
 import StatusIcon from "components/StatusIcon";
 import { TotalReportDto } from "./dto/TotalReport.dto";
-import CoursePieChart from "./components/CoursePieChart";
+import TotalReportSummary from "./components/TotalReportSummary";
 
 interface ReportData {
   student: {
@@ -58,6 +58,17 @@ interface ReportData {
     last_name: string;
   } | null;
   created_at: string;
+  description: string;
+  transferred_course: {
+    name: string;
+    lesson: string;
+    type: string;
+    teacher: {
+      first_name: string;
+      last_name: string;
+    };
+    education_level: string;
+  };
 }
 
 interface SearchData {
@@ -126,11 +137,7 @@ const CoursesScreen = () => {
     fetchPolicy: "no-cache",
   });
 
-  const {
-    data: reportData,
-    fetchMore,
-    refetch,
-  } = useQuery(GET_COURSES_STUDENTS, {
+  const { fetchMore, refetch } = useQuery(GET_COURSES_STUDENTS, {
     variables: {
       first: process.env.REACT_APP_USERS_PER_PAGE
         ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
@@ -203,13 +210,6 @@ const CoursesScreen = () => {
     }
   }, [coursesData]);
 
-  // useEffect(() => {
-  //   //console.log("useEffect", reportData?.getC.paginatorInfo);
-  //   if (reportData?.getCourseStudents.paginatorInfo) {
-  //     //setPageInfo(reportData?.getCourseStudents.paginatorInfo);
-  //   }
-  // }, [reportData]);
-
   if (!courseOptions) {
     return (
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -268,118 +268,7 @@ const CoursesScreen = () => {
       </Box>
 
       {totalReport.length ? (
-        <Grid container component={Paper} sx={{ my: 2 }}>
-          <Grid item xs={12} sm={6} md={6}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Typography
-                sx={{
-                  p: 1,
-                }}
-              >
-                نام دبیر: {totalReport[0].teacher_name}
-              </Typography>
-              <Typography
-                sx={{
-                  p: 1,
-                }}
-              >
-                تعداد کل دانش آموزان: {totalReport[0].total_students}
-              </Typography>
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Typography
-                sx={{
-                  p: 1,
-                }}
-              >
-                تاریخ جلسه نخست:{" "}
-                {totalReport[0].start_session !== ""
-                  ? moment(totalReport[0].start_session).format("jYYYY/jMM/jDD")
-                  : "--"}
-              </Typography>
-              <Typography
-                sx={{
-                  p: 1,
-                }}
-              >
-                تاریخ جلسه پایانی:{" "}
-                {totalReport[0].end_session !== ""
-                  ? moment(totalReport[0].end_session).format("jYYYY/jMM/jDD")
-                  : "--"}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Typography
-                sx={{
-                  p: 1,
-                }}
-              >
-                تعداد کل جلسات: {totalReport[0].total_session || "--"}
-              </Typography>
-              <Typography
-                sx={{
-                  p: 1,
-                }}
-              >
-                تعداد جلسات برگزار شده:{" "}
-                {totalReport[0].total_done_session || "--"}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Typography
-                sx={{
-                  p: 1,
-                }}
-              >
-                میانگین غیبت در جلسه:{" "}
-                {totalReport[0].avg_absent?.toFixed(2) || "--"}
-              </Typography>
-
-              <Typography
-                sx={{
-                  p: 1,
-                }}
-              >
-                میانگین تاخیر درهر جلسه :{" "}
-                {totalReport[0].avg_dellay?.toFixed(2) || "--"}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={1} md={1}></Grid>
-          <Grid item xs={12} sm={5} md={5}>
-            <CoursePieChart
-              width="100%"
-              series={[
-                totalReport[0].total_approved,
-                totalReport[0].total_noMoney_semi_pending,
-                totalReport[0].total_noMoney,
-                totalReport[0].total_fired + totalReport[0].total_refused,
-                totalReport[0].total_pending,
-              ]}
-            />
-          </Grid>
-        </Grid>
+        <TotalReportSummary totalReport={totalReport} />
       ) : null}
 
       <TableContainer component={Paper}>
@@ -409,6 +298,18 @@ const CoursesScreen = () => {
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {element?.student?.first_name} {element?.student?.last_name}
+                    <Box sx={{ fontSize: 10, pt: 1 }}>
+                      {element.description !== ""
+                        ? "توضیحات:" + element.description
+                        : null}
+
+                      {element.transferred_course ? (
+                        <div>
+                          {" جابجایی:"}
+                          <CourseName course={element.transferred_course} />
+                        </div>
+                      ) : null}
+                    </Box>
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {element?.student?.phone}
