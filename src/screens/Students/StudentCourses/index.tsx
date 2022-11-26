@@ -166,7 +166,7 @@ const StudentCourses = () => {
 
                         {element.transferred_course ? " جابجایی:" : null}
                         {element.transferred_course ? (
-                          <CourseName course={element.course} />
+                          <CourseName course={element.transferred_course} />
                         ) : null}
                       </Box>
                     </StyledTableCell>
