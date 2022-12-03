@@ -37,24 +37,27 @@ export const DELETE_STUDENT_COURSE = gql`
 `;
 
 export const UPDATE_STUDENT_COURSE = gql`
-    mutation UPDATE_STUDENT_COURSE(
-        $id:ID!,
-        $financial_status:String,
-        $manager_status:String,
-        $student_status:String,
-        $transferred_to_course_id:Int,
-        $description:String,
-        )
-        {
-        updateCourseStudent(input:{
-            id:$id,
-            financial_status:$financial_status,
-            manager_status:$manager_status,
-            student_status:$student_status,
-            transferred_to_course_id:$transferred_to_course_id
-            description:$description
-        }){
-            id
-        }
+  mutation UPDATE_STUDENT_COURSE(
+    $id: ID!
+    $financial_status: String
+    $manager_status: String
+    $student_status: String
+    $transferred_to_course_id: Int
+    $description: String
+    $financial_refused_status: String
+  ) {
+    updateCourseStudent(
+      input: {
+        id: $id
+        financial_status: $financial_status
+        manager_status: $manager_status
+        student_status: $student_status
+        transferred_to_course_id: $transferred_to_course_id
+        description: $description
+        financial_refused_status: $financial_refused_status
+      }
+    ) {
+      id
     }
+  }
 `;

@@ -50,5 +50,6 @@ interface StudentCoursesType {
         }
         education_level: string;
     }
+    financial_refused_status: string | null;
 }
 export default StudentCoursesType;

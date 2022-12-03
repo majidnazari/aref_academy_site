@@ -70,6 +70,9 @@ const Edit = ({ openDialog, studentCourse, refresh }: Props) => {
       variables.transferred_to_course_id = null;
 
     if (!variables.description) variables.description = null;
+    if (variables?.financial_refused_status === "0") {
+      variables.financial_refused_status = null;
+    }
 
     const input = {
       variables,

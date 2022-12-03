@@ -14,4 +14,7 @@ export class TotalReportDto {
   total_refused!: number;
   total_session?: any;
   total_students!: number;
+  total_transferred!: number;
+  total_just_noMoney!: number;
+  total_just_withMoney!: number;
 }

@@ -73,6 +73,7 @@ export const GET_COURSES_STUDENTS = gql`
           }
           education_level
         }
+        financial_refused_status
       }
 
       paginatorInfo {
@@ -107,6 +108,9 @@ export const GET_COURSES_TOTAL_REPORT = gql`
       total_refused
       total_session
       total_students
+      total_just_withMoney
+      total_just_noMoney
+      total_transferred
     }
   }
 `;

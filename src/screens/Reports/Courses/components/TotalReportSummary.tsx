@@ -105,6 +105,43 @@ const TotalReportSummary = ({
             {totalReport[0].avg_dellay?.toFixed(2) || "--"}
           </Typography>
         </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            بازگشت وجه پس از انصراف:{" "}
+            {totalReport[0].total_just_withMoney || "--"}
+          </Typography>
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            عدم بازگشت وجه پس از انصراف:{" "}
+            {totalReport[0].total_just_noMoney || "--"}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            تعداد جابجایی : {totalReport[0].total_transferred || "--"}
+          </Typography>
+        </Box>
       </Grid>
       <Grid item xs={12} sm={1} md={1}></Grid>
       <Grid item xs={12} sm={5} md={5}>

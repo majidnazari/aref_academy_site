@@ -30,6 +30,7 @@ import moment from "moment-jalaali";
 import StatusIcon from "components/StatusIcon";
 import { TotalReportDto } from "./dto/TotalReport.dto";
 import TotalReportSummary from "./components/TotalReportSummary";
+import FinancialRefusedStatus from "components/FinancialRefusedStatus";
 
 interface ReportData {
   student: {
@@ -69,6 +70,7 @@ interface ReportData {
     };
     education_level: string;
   };
+  financial_refused_status: string | null;
 }
 
 interface SearchData {
@@ -284,6 +286,7 @@ const CoursesScreen = () => {
               <StyledTableCell align="left">وضعیت</StyledTableCell>
               <StyledTableCell align="left">تایید مدیر</StyledTableCell>
               <StyledTableCell align="left">تایید حسابداری</StyledTableCell>
+              <StyledTableCell align="left">پس از انصراف</StyledTableCell>
               <StyledTableCell align="left">ثبت کننده</StyledTableCell>
               <StyledTableCell align="left">تاریخ درج</StyledTableCell>
               <StyledTableCell align="left"> کلاسهای دانش آموز</StyledTableCell>
@@ -355,6 +358,13 @@ const CoursesScreen = () => {
                     </Typography>
                   </StyledTableCell>
                   <StyledTableCell align="left">
+                    <FinancialRefusedStatus
+                      financial_refused_status={
+                        element.financial_refused_status
+                      }
+                    />
+                  </StyledTableCell>
+                  <StyledTableCell align="left">
                     {element.user_creator.first_name}{" "}
                     {element.user_creator.last_name}
                   </StyledTableCell>
@@ -371,7 +381,10 @@ const CoursesScreen = () => {
                       color="primary"
                     >
                       <NavLink
-                        style={{ textDecoration: "none", color: "#fff" }}
+                        style={{
+                          textDecoration: "none",
+                          color: "inherit",
+                        }}
                         to={`/students/${element?.student?.id}/courses`}
                         target="_blank"
                       >

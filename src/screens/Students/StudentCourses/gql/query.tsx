@@ -72,6 +72,7 @@ export const GET_A_STUDENT_COURSES = gql`
             }
             education_level
           }
+          financial_refused_status
         }
         paginatorInfo{
           count

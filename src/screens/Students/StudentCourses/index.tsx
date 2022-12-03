@@ -28,6 +28,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Edit from "components/EditCourseStudentStatus";
 import { showSuccess, showConfirm } from "utils/swlAlert";
+import FinancialRefusedStatus from "components/FinancialRefusedStatus";
 
 interface EditStudentCourse {
   openDialog: boolean;
@@ -142,6 +143,7 @@ const StudentCourses = () => {
               <StyledTableCell align="left">وضعیت دانش آموز</StyledTableCell>
               <StyledTableCell align="left">تایید مدیر</StyledTableCell>
               <StyledTableCell align="left">تایید حسابداری</StyledTableCell>
+              <StyledTableCell align="left">پس از انصراف</StyledTableCell>
               <StyledTableCell align="left">تاریخ</StyledTableCell>
               <StyledTableCell align="left">ویرایش</StyledTableCell>
               <StyledTableCell align="left">حذف</StyledTableCell>
@@ -208,6 +210,10 @@ const StudentCourses = () => {
                             element.user_financial?.last_name
                           : null}
                       </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
+                      {/* {element.financial_refused_status} */}
+                      <FinancialRefusedStatus financial_refused_status={element.financial_refused_status} />
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {moment(element.created_at).format("jYYYY/jMM/jDD")}
