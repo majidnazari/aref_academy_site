@@ -16,5 +16,6 @@ export class TotalReportDto {
   total_students!: number;
   total_transferred!: number;
   total_just_noMoney!: number;
-  total_just_withMoney!: number;
+  total_just_not_returned!: number;
+  total_just_returned!: number;
 }

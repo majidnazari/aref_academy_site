@@ -117,7 +117,7 @@ const TotalReportSummary = ({
             }}
           >
             بازگشت وجه پس از انصراف:{" "}
-            {totalReport[0].total_just_withMoney || "--"}
+            {totalReport[0].total_just_returned || "--"}
           </Typography>
           <Typography
             sx={{
@@ -125,7 +125,7 @@ const TotalReportSummary = ({
             }}
           >
             عدم بازگشت وجه پس از انصراف:{" "}
-            {totalReport[0].total_just_noMoney || "--"}
+            {totalReport[0].total_just_not_returned || "--"}
           </Typography>
         </Box>
         <Box
@@ -134,6 +134,14 @@ const TotalReportSummary = ({
             justifyContent: "space-between",
           }}
         >
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            پرداختی نداشته است - پس از انصراف:{" "}
+            {totalReport[0].total_just_noMoney || "--"}
+          </Typography>
           <Typography
             sx={{
               p: 1,

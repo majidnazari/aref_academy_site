@@ -115,8 +115,9 @@ const FinancialInputs = ({ setFormData, studentCourse }: EditProps) => {
               <MenuItem value="0" disabled selected>
                 <em>نامشخص</em>
               </MenuItem>
-              <MenuItem value="noMoney">عدم برگشت وجه</MenuItem>
-              <MenuItem value="withMoney">برگشت وجه</MenuItem>
+              <MenuItem value="noMoney">پرداختی نداشته است</MenuItem>
+              <MenuItem value="returned">برگشتی داشته است</MenuItem>
+              <MenuItem value="not_returned">عدم برگشت وجه</MenuItem>
             </Select>
           </FormControl>
         </Grid>

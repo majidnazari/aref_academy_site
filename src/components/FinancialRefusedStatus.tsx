@@ -6,10 +6,13 @@ const FinancialRefusedStatus = ({
   let out = "--";
   switch (financial_refused_status) {
     case "noMoney":
-      out = "عدم برگشت وجه";
+      out = "پرداختی نداشته است";
       break;
-    case "withMoney":
-      out = "برگشت وجه";
+    case "not_returned":
+      out = "برگشتی داشته است";
+      break;
+    case "returned":
+      out = "عدم برگشت وجه";
       break;
     default:
       break;

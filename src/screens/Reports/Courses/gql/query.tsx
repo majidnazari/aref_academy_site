@@ -108,7 +108,8 @@ export const GET_COURSES_TOTAL_REPORT = gql`
       total_refused
       total_session
       total_students
-      total_just_withMoney
+      total_just_returned
+      total_just_not_returned
       total_just_noMoney
       total_transferred
     }
