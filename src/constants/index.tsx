@@ -63,7 +63,7 @@ export const absenceMainStatusObject: any = {
     'absent':'غایب',
 }
 
-export const  testLevel:any={
+export const  ConstantTestLevel:any={
     A:'A',
     B:'B',
     C:'C',

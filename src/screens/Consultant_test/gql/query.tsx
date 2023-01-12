@@ -83,6 +83,11 @@ export const GET_COSULTANT_TESTS = gql`
     paginatorInfo{
       count
       currentPage
+      firstItem
+      hasMorePages
+      lastItem
+      lastPage
+      perPage
       total
     }
    
@@ -92,9 +97,9 @@ export const GET_COSULTANT_TESTS = gql`
 
 export const  GET_A_COSULTANT_TEST= gql`
 query GET_A_TEST(
-  $id:ID!
+  $_id:ID!
 ){
-  test(_id:$id){
+  test(_id:$_id){
     _id
     code
     lessonId

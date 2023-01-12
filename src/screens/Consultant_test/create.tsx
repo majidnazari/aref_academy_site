@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
-import TextField from '@mui/material/TextField';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import { CREATE_FAULT } from './gql/mutation';
+// import { CREATE_FAULT } from './gql/mutation';
 import { CREATE_CONSULTANT_TEST } from './gql/mutation';
-import { testLevel } from "../../constants";
+import { ConstantTestLevel } from "../../constants";
 
 import { useMutation } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
+import {
+    Box,
+    Paper,
+    FormControl,
+    TextField,
+    Autocomplete,
+    CircularProgress,
+    InputLabel,
+    Select,
+    MenuItem,
+    Button,
+} from "@mui/material";
 
 
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Grid } from "@mui/material";
-
-
-import CircularProgress from '@mui/material/CircularProgress';
 import {
     useNavigate
 } from "react-router-dom"
@@ -29,7 +31,7 @@ import {
 interface ErrorData {
     code?: string;
     lessonId?: string;
-    level?: TestLevel;
+    level?: string;
     subject?: string;    
   }
   export enum TestLevel{
@@ -42,13 +44,13 @@ interface ErrorData {
   const ConsultantTestCreateScreen = () => {
     const [code, setCode] = useState<string>("");
     const [lessonId, setLessonId] = useState<string>("");
-    const [level, setLevel] = useState<TestLevel>(TestLevel.A);    
+    const [level, setLevel] = useState<string>("");    
     const [subject, setSubject] = useState<string>("");   
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorData>({});
     const [createConsultantTest] = useMutation(CREATE_CONSULTANT_TEST);
     const navigate = useNavigate();
-  
+    
 
     const createConsultantTestHandler = () => {
         if (!validateForm()) return;
@@ -64,7 +66,7 @@ interface ErrorData {
             showSuccess('تست جدید با موفقیت اضافه شد.');
             setCode("");
             setLessonId("");
-            setLevel(TestLevel.D);
+            setLevel("");
             setSubject("");
             navigate('/consultant-test');
         }).finally(() => {
@@ -73,11 +75,11 @@ interface ErrorData {
 
     }
 
-    const handleChangeLevel = (e: SelectChangeEvent<string>) => {
-        //setLevel({ ...studentInfo, egucation_level: e.target.value });
-      };
+    // const handleChangeLevel = (e: SelectChangeEvent<string>) => {
+    //     //setLevel({ ...studentInfo, egucation_level: e.target.value });
+    //   };
 
-    const validateForm = () => {
+    const validateForm = () => { 
         let out = true;
         let result: ErrorData = {};
         setError({});
@@ -90,7 +92,7 @@ interface ErrorData {
             out = false;
         }
         if (!level) {
-            result = { ...result, level: TestLevel.B };
+            result = { ...result, level: ' سطح را وارد کنید. ' };
             out = false;
         }
         if (!subject) {
@@ -104,7 +106,7 @@ interface ErrorData {
         <h1>ایجادتست جدید </h1>
 
         <Grid container component={Paper} sx={{ p: 2 }} spacing={2} >
-            <Grid item xs={12} md={4} lg={4} >
+            <Grid item xs={12} md={3} lg={3} >
                 <TextField
                     fullWidth
                     label=" کد تست "
@@ -115,7 +117,7 @@ interface ErrorData {
                     variant="filled"
                 />
             </Grid>
-            <Grid item xs={12} md={4} lg={4} >
+            <Grid item xs={12} md={3} lg={3} >
                 <TextField
                     fullWidth
                     label=" کد درس "
@@ -126,33 +128,28 @@ interface ErrorData {
                     variant="filled"
                 />
             </Grid>
-            <Grid item xs={12} md={4} lg={4}>
-                <FormControl sx={{ width: "100%" }}>
+            <Grid item xs={12} md={3} lg={3}>
+            <FormControl sx={{ width: "100%" }}>
+                    <InputLabel id="levelId"> سطح </InputLabel>
                     <Select
-                    defaultValue="C"
-                    value="انتخاب سطح"
-                    onChange={(e: any) => setLevel(e.target.value)}
-                    error={error.level ? true : false}
-                    variant="filled"
-                    displayEmpty
+                        labelId="level-id"
+                        id="levelId"
+                        //label=" cbcvbcvbcسطح"
+                        // value={search.gender || ""}
+                        error={error.level ? true : false}
+                        value={level}
+                        onChange={(e: any) => setLevel(e.target.value)}
+                        variant="filled"
                     >
-                    <MenuItem value="" disabled>
-                        <em> سطح</em>
-                    </MenuItem>
-                    {Object.keys(testLevel).map((key, index) => (
-                        <MenuItem key={index} value={key}>
-                        {testLevel[key]}
-                        </MenuItem>
-                    ))}
+                        <MenuItem value="A" selected>A</MenuItem>
+                        <MenuItem value="B">B</MenuItem>
+                        <MenuItem value="C">C</MenuItem>
+                        <MenuItem value="D">D</MenuItem>
                     </Select>
-                    {error.level ? (
-                    <FormHelperText error>{error.level}</FormHelperText>
-                    ) : (
-                    ""
-                    )}
+                    {error.level ? <FormHelperText error >{error.level}</FormHelperText> : ""}
                 </FormControl>
         </Grid>
-            <Grid item xs={12} md={4} lg={4} >
+            <Grid item xs={12} md={3} lg={3} >
                 <TextField
                     fullWidth
                     label=" عنوان"
@@ -178,7 +175,7 @@ interface ErrorData {
                 sx={{ float: "right" }}
                 variant="contained"
                 color="secondary"
-                onClick={() => navigate(`/consultant_tests`)}
+                onClick={() => navigate(`/consultant-test`)}
                 disabled={loading}
             >
                 <ArrowBackIcon />
