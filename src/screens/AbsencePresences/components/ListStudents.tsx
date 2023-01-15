@@ -1,6 +1,8 @@
 import { GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE } from "../gql/query";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
+  Box,
+  Button,
   CircularProgress,
   Paper,
   Table,
@@ -11,7 +13,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import Container from "@mui/material/Container";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -21,7 +22,9 @@ import StatusIcon from "components/StatusIcon";
 import AbsencepresenceBtns from "./AbsencepresenceBtns";
 import AbsencepresenceSelect from "./AbsencepresenceSelect";
 import { GET_A_COURSE } from "../gql/query";
+import { UPDATE_STUDENT_WARNING_HISTORY } from "../gql/mutaion";
 import CourseName from "components/CourseName";
+import Fingerprint from "@mui/icons-material/Fingerprint";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -61,26 +64,34 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
     },
   });
 
-  const { loading } = useQuery(GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE, {
-    variables: {
-      course_id: course_id,
-      course_session_id: course_session_id,
-      first: 1000,
-      page: 1,
-    },
-    onCompleted: (data) => {
-      const tmp = data.getCourseStudentsWithAbsencePresence.data.filter(
-        (item: any) => item.cs_student_status === "ok" && item.student
-      );
-      tmp.sort(function (a: any, b: any) {
-        return a?.student?.last_name
-          .trim()
-          .localeCompare(b?.student?.last_name.trim());
-      });
-      setStudentList(tmp);
-      setOriginalStudentList(tmp);
-    },
-  });
+  const { loading, refetch } = useQuery(
+    GET_COURSE_STUDENT_WITH_ABSENT_PRESENCE,
+    {
+      variables: {
+        course_id: course_id,
+        course_session_id: course_session_id,
+        first: 1000,
+        page: 1,
+      },
+      onCompleted: (data) => {
+        const tmp = data.getCourseStudentsWithAbsencePresence.data.filter(
+          (item: any) => item.cs_student_status === "ok" && item.student
+        );
+        tmp.sort(function (a: any, b: any) {
+          return a?.student?.last_name
+            .trim()
+            .localeCompare(b?.student?.last_name.trim());
+        });
+        setStudentList(tmp);
+        setOriginalStudentList(tmp);
+      },
+      fetchPolicy: "no-cache",
+    }
+  );
+
+  const [updateStudentWarning, { loading: updateLoading }] = useMutation(
+    UPDATE_STUDENT_WARNING_HISTORY
+  );
 
   const handleSearch = (inputText: string) => {
     setSearchName(inputText);
@@ -93,6 +104,17 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
       return null;
     });
     setStudentList(searchTmp);
+  };
+
+  const handleUpdate = (studentId: number): void => {
+    updateStudentWarning({
+      variables: {
+        student_id: studentId,
+        response: "done",
+      },
+    }).then(() => {
+      refetch();
+    });
   };
 
   const updateOriginalList = (
@@ -153,8 +175,43 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                 <StyledTableCell align="left">{index + 1}</StyledTableCell>
 
                 <StyledTableCell align="left">
-                  {element?.student?.first_name.trim()}{" "}
-                  {element?.student?.last_name.trim()}
+                  <Box>
+                    {element?.student?.first_name.trim()}{" "}
+                    {element?.student?.last_name.trim()}
+                  </Box>
+                  <Box
+                    sx={{
+                      fontSize: 10,
+                    }}
+                  >
+                    {element.student_warning_comment ? (
+                      <>
+                        {element.student_warning_comment}
+                        <Button
+                          size="small"
+                          sx={{
+                            p: 0,
+                            ml: 1,
+                          }}
+                          color="warning"
+                          variant="contained"
+                          endIcon={
+                            updateLoading ? (
+                              <CircularProgress size={10} color="inherit" />
+                            ) : (
+                              <Fingerprint />
+                            )
+                          }
+                          onClick={() => {
+                            handleUpdate(+element?.student.id);
+                          }}
+                          disabled={updateLoading}
+                        >
+                          تایید
+                        </Button>
+                      </>
+                    ) : null}
+                  </Box>
                 </StyledTableCell>
                 <StyledTableCell align="left">
                   <AbsencepresenceBtns

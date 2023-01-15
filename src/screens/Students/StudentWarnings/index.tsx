@@ -22,6 +22,8 @@ import { StudentWarningHistory } from "./dto/student-warning-history.dto";
 import CourseName from "components/CourseName";
 import moment from "moment-jalaali";
 import AddWarning from "./components/AddWarning";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import FeedbackIcon from "@mui/icons-material/Feedback";
 
 const StudentWarnings = () => {
   const { studentId } = useParams<string>();
@@ -45,29 +47,30 @@ const StudentWarnings = () => {
     },
   });
 
-  const { fetchMore, loading: courseLoading } = useQuery(
-    GET_A_STUDENT_WARNING_HISTORIES,
-    {
-      variables: {
-        first: process.env.REACT_APP_USERS_PER_PAGE
-          ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
-          : 10,
-        page: 1,
-        student_id: studentId ? parseInt(studentId) : 0,
-        orderBy: [
-          {
-            column: "id",
-            order: "DESC",
-          },
-        ],
-      },
-      onCompleted: (data) => {
-        setPageInfo(data.getStudentWarningHistories.paginatorInfo);
-        setStudentWarningHistories(data.getStudentWarningHistories.data);
-      },
-      fetchPolicy: "no-cache",
-    }
-  );
+  const {
+    fetchMore,
+    loading: courseLoading,
+    refetch,
+  } = useQuery(GET_A_STUDENT_WARNING_HISTORIES, {
+    variables: {
+      first: process.env.REACT_APP_USERS_PER_PAGE
+        ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
+        : 10,
+      page: 1,
+      student_id: studentId ? parseInt(studentId) : 0,
+      orderBy: [
+        {
+          column: "id",
+          order: "DESC",
+        },
+      ],
+    },
+    onCompleted: (data) => {
+      setPageInfo(data.getStudentWarningHistories.paginatorInfo);
+      setStudentWarningHistories(data.getStudentWarningHistories.data);
+    },
+    fetchPolicy: "no-cache",
+  });
 
   const handleChange = (
     event: React.ChangeEvent<unknown>,
@@ -87,7 +90,9 @@ const StudentWarnings = () => {
         ],
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        setStudentWarningHistories(fetchMoreResult.getStudentWarningHistories.data);
+        setStudentWarningHistories(
+          fetchMoreResult.getStudentWarningHistories.data
+        );
         setPageInfo(fetchMoreResult.getCourseStudents.paginatorInfo);
       },
     });
@@ -127,7 +132,7 @@ const StudentWarnings = () => {
         )}
       </Typography>
       {courseLoading ? <CircularProgress /> : null}
-      <AddWarning studentId={studentId ? +studentId : 0} />
+      <AddWarning studentId={studentId ? +studentId : 0} reloadList={refetch} />
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
           <TableHead>
@@ -156,7 +161,11 @@ const StudentWarnings = () => {
                       {element.comment}
                     </StyledTableCell>
                     <StyledTableCell align="left">
-                      {element.response}
+                      {element.response === "done" ? (
+                        <CheckBoxIcon color="success" />
+                      ) : (
+                        <FeedbackIcon color="disabled" />
+                      )}
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {element.course ? (

@@ -19,11 +19,18 @@ import { useQuery } from "@apollo/client";
 import PaginatorInfo from "interfaces/paginator-info.interface";
 import { NavLink } from "react-router-dom";
 import Typography from "@mui/material/Typography";
-import { GET_COURSES, GET_COURSES_STUDENTS } from "./gql/query";
-import { getCourseName } from "components/CourseName";
+import {
+  GET_COURSES,
+  GET_COURSES_STUDENTS,
+  GET_COURSES_TOTAL_REPORT,
+} from "./gql/query";
+import CourseName, { getCourseName } from "components/CourseName";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import moment from "moment-jalaali";
 import StatusIcon from "components/StatusIcon";
+import { TotalReportDto } from "./dto/TotalReport.dto";
+import TotalReportSummary from "./components/TotalReportSummary";
+import FinancialRefusedStatus from "components/FinancialRefusedStatus";
 
 interface ReportData {
   student: {
@@ -52,6 +59,18 @@ interface ReportData {
     last_name: string;
   } | null;
   created_at: string;
+  description: string;
+  transferred_course: {
+    name: string;
+    lesson: string;
+    type: string;
+    teacher: {
+      first_name: string;
+      last_name: string;
+    };
+    education_level: string;
+  };
+  financial_refused_status: string | null;
 }
 
 interface SearchData {
@@ -97,6 +116,7 @@ const CoursesScreen = () => {
     course_id: 0,
   });
   const [report, setReport] = useState<ReportData[]>([]);
+  const [totalReport, setTotalReport] = useState<TotalReportDto[]>([]);
 
   const { data: coursesData } = useQuery(GET_COURSES, {
     variables: {
@@ -112,11 +132,14 @@ const CoursesScreen = () => {
     },
   });
 
-  const {
-    data: reportData,
-    fetchMore,
-    refetch,
-  } = useQuery(GET_COURSES_STUDENTS, {
+  const { refetch: refetchTotalReport } = useQuery(GET_COURSES_TOTAL_REPORT, {
+    variables: {
+      course_id: -2,
+    },
+    fetchPolicy: "no-cache",
+  });
+
+  const { fetchMore, refetch } = useQuery(GET_COURSES_STUDENTS, {
     variables: {
       first: process.env.REACT_APP_USERS_PER_PAGE
         ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
@@ -145,6 +168,10 @@ const CoursesScreen = () => {
       .catch((err) => {
         setRefetchLoading(false);
       });
+
+    refetchTotalReport(refetchData).then((res) => {
+      setTotalReport(res.data.getCourseTotalReport);
+    });
   };
 
   const handleChange = (
@@ -184,13 +211,6 @@ const CoursesScreen = () => {
       }
     }
   }, [coursesData]);
-
-  useEffect(() => {
-    //console.log("useEffect", reportData?.getC.paginatorInfo);
-    if (reportData?.getCourseStudents.paginatorInfo) {
-      //setPageInfo(reportData?.getCourseStudents.paginatorInfo);
-    }
-  }, [reportData]);
 
   if (!courseOptions) {
     return (
@@ -248,6 +268,11 @@ const CoursesScreen = () => {
           )}
         </Button>
       </Box>
+
+      {totalReport.length ? (
+        <TotalReportSummary totalReport={totalReport} />
+      ) : null}
+
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
           <TableHead>
@@ -261,6 +286,7 @@ const CoursesScreen = () => {
               <StyledTableCell align="left">وضعیت</StyledTableCell>
               <StyledTableCell align="left">تایید مدیر</StyledTableCell>
               <StyledTableCell align="left">تایید حسابداری</StyledTableCell>
+              <StyledTableCell align="left">پس از انصراف</StyledTableCell>
               <StyledTableCell align="left">ثبت کننده</StyledTableCell>
               <StyledTableCell align="left">تاریخ درج</StyledTableCell>
               <StyledTableCell align="left"> کلاسهای دانش آموز</StyledTableCell>
@@ -275,6 +301,18 @@ const CoursesScreen = () => {
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {element?.student?.first_name} {element?.student?.last_name}
+                    <Box sx={{ fontSize: 10, pt: 1 }}>
+                      {element.description !== ""
+                        ? "توضیحات:" + element.description
+                        : null}
+
+                      {element.transferred_course ? (
+                        <div>
+                          {" جابجایی:"}
+                          <CourseName course={element.transferred_course} />
+                        </div>
+                      ) : null}
+                    </Box>
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {element?.student?.phone}
@@ -320,6 +358,13 @@ const CoursesScreen = () => {
                     </Typography>
                   </StyledTableCell>
                   <StyledTableCell align="left">
+                    <FinancialRefusedStatus
+                      financial_refused_status={
+                        element.financial_refused_status
+                      }
+                    />
+                  </StyledTableCell>
+                  <StyledTableCell align="left">
                     {element.user_creator.first_name}{" "}
                     {element.user_creator.last_name}
                   </StyledTableCell>
@@ -336,7 +381,10 @@ const CoursesScreen = () => {
                       color="primary"
                     >
                       <NavLink
-                        style={{ textDecoration: "none", color: "#fff" }}
+                        style={{
+                          textDecoration: "none",
+                          color: "inherit",
+                        }}
                         to={`/students/${element?.student?.id}/courses`}
                         target="_blank"
                       >

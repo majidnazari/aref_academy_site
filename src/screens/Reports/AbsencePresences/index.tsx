@@ -178,13 +178,13 @@ const AbsencePresencesReportScreen = () => {
       </Container>
     );
   }
-  if (courses.length === 0) {
-    return (
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-        <div>داده ای وجود ندارد ...</div>
-      </Container>
-    );
-  }
+  // if (courses.length === 0) {
+  //   return (
+  //     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+  //       <div>داده ای وجود ندارد ...</div>
+  //     </Container>
+  //   );
+  // }
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -209,6 +209,7 @@ const AbsencePresencesReportScreen = () => {
               <StyledTableCell align="left">مقطع</StyledTableCell>
               <StyledTableCell align="left">شعبه</StyledTableCell>
               <StyledTableCell align="left">تایید حسابداری</StyledTableCell>
+              <StyledTableCell align="left">ژوری</StyledTableCell>
               <StyledTableCell align="left">جلسات</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -248,6 +249,21 @@ const AbsencePresencesReportScreen = () => {
                   ) : (
                     <ReportProblemIcon color="disabled" />
                   )}
+                </StyledTableCell>
+                <StyledTableCell align="left">
+                  <Button
+                    size="small"
+                    onClick={() => {
+                      navigate(
+                        `/reports/absence-presences/jury/${element.id}`
+                      );
+                    }}
+                    variant="contained"
+                    startIcon={<FactCheckIcon />}
+                    color="secondary"
+                  >
+                    ژوری
+                  </Button>
                 </StyledTableCell>
                 <StyledTableCell align="left">
                   <Button

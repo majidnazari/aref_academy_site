@@ -61,6 +61,7 @@ export const GET_COURSES_STUDENTS = gql`
                 }
                 education_level
               }
+              sum_total_present
           }
 
           paginatorInfo{

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "@mui/material/Container";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -29,7 +29,10 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import { educationLevelsObject, majorObject } from "../../constants";
-import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
+import SpeakerNotesIcon from "@mui/icons-material/SpeakerNotes";
+import { getUserData } from "utils/user";
+import { UserData } from "utils/dto/user-data.dto";
+import ShowPhone from "./components/ShowPhone";
 
 interface StudentData {
   id: number;
@@ -75,6 +78,7 @@ const StudentsScreen = () => {
   });
   const [students, setStudents] = useState<StudentData[] | null>(null);
   const [refetchLoading, setRefetchLoading] = useState<boolean>(false);
+  const [userData, setUserData] = useState<UserData>(getUserData());
 
   const { fetchMore, refetch, loading } = useQuery(GET_STUDENTS, {
     variables: {
@@ -167,6 +171,9 @@ const StudentsScreen = () => {
       setRefetchLoading(false);
     });
   };
+  useEffect(() => {
+    setUserData(getUserData());
+  }, []);
 
   if (loading) {
     return (
@@ -290,7 +297,10 @@ const StudentsScreen = () => {
               <StyledTableCell align="left">تلفن</StyledTableCell>
               <StyledTableCell align="left">رشته</StyledTableCell>
               <StyledTableCell align="left">کدملی</StyledTableCell>
-              <StyledTableCell align="left">کامنت</StyledTableCell>
+              {userData.group.name === "financial" ||
+              userData.group.name === "admin" ? (
+                <StyledTableCell align="left">کامنت</StyledTableCell>
+              ) : null}
               <StyledTableCell align="left">کلاسها</StyledTableCell>
               <StyledTableCell align="left">ویرایش</StyledTableCell>
               <StyledTableCell align="left">حذف</StyledTableCell>
@@ -313,7 +323,7 @@ const StudentsScreen = () => {
                     {educationLevelsObject[element.egucation_level]}
                   </StyledTableCell>
                   <StyledTableCell align="left">
-                    {element.phone}
+                    <ShowPhone phone={element.phone} />
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {element.major !== "" ? majorObject[element.major] : "-"}
@@ -321,18 +331,22 @@ const StudentsScreen = () => {
                   <StyledTableCell align="left">
                     {element.nationality_code}
                   </StyledTableCell>
-                  <StyledTableCell align="left">
-                    <Button
-                      size="small"
-                      variant="contained"
-                      startIcon={<SpeakerNotesIcon />}
-                      color="info"
-                      component={Link}
-                      to={`/students/${element.id}/warnings`}
-                    >
-                      درج کامنت
-                    </Button>
-                  </StyledTableCell>
+                  {userData.group.name === "financial" ||
+                  userData.group.name === "admin" ? (
+                    <StyledTableCell align="left">
+                      <Button
+                        size="small"
+                        variant="contained"
+                        startIcon={<SpeakerNotesIcon />}
+                        color="info"
+                        component={Link}
+                        to={`/students/${element.id}/warnings`}
+                      >
+                        درج کامنت
+                      </Button>
+                    </StyledTableCell>
+                  ) : null}
+
                   <StyledTableCell align="left">
                     <Button
                       size="small"

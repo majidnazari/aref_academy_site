@@ -33,6 +33,7 @@ import { showError } from "utils/swlAlert";
 interface Data {
   student: string;
   course: string;
+  sum_total_present: string;
   student_status: string;
   manager_status: string;
   financial_status: string;
@@ -68,6 +69,12 @@ const headCells: readonly HeadCell[] = [
     sortable: false,
     disablePadding: false,
     label: "درس",
+  },
+  {
+    id: "sum_total_present",
+    sortable: false,
+    disablePadding: false,
+    label: "تعداد حضور",
   },
   {
     id: "student_status",
@@ -332,6 +339,9 @@ export default function StudentCoursesAlarms() {
                       </TableCell>
                       <TableCell align="left">
                         <CourseName course={element.course} />
+                      </TableCell>
+                      <TableCell align="left">
+                        {element.sum_total_present}
                       </TableCell>
                       <TableCell align="left">
                         <StatusIcon status={element.student_status} />

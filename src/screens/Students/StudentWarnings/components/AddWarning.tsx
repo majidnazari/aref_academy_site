@@ -3,21 +3,34 @@ import {
   Autocomplete,
   Button,
   FormControl,
-  Grid,
+  FormHelperText,
+  MenuItem,
   Paper,
+  Select,
+  SelectChangeEvent,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AddWarningInput } from "../dto/add-warning-input.dto";
 import { GET_COURSES } from "../gql/query";
 import { CREATE_STUDENT_WARNING } from "../gql/mutation";
 import { getCourseName } from "components/CourseName";
+import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 
 class AddWarningProps {
   studentId!: number;
+  reloadList!: Function;
 }
 
-const AddWarning = ({ studentId }: AddWarningProps) => {
+const comments = [
+  " دانش آموز ثبت نام نکرده",
+  "دانش آموز تسویه حساب نکرده",
+  "دانش آموز باید چک بدهد",
+  "دانش آموز باید شهریه را واریز کند",
+  "قسط دانش آموز معوق شده",
+];
+const AddWarning = ({ studentId, reloadList }: AddWarningProps) => {
   const [addWarningInput, setAddWarningInput] = useState<AddWarningInput>({
     comment: "",
     course_id: "",
@@ -27,6 +40,7 @@ const AddWarning = ({ studentId }: AddWarningProps) => {
   const [courseOptions, setCourseOptions] = useState<any[]>([
     { label: "", id: "" },
   ]);
+  const [commentError, setCommentError] = useState<string>("");
 
   const { data: coursesData } = useQuery(GET_COURSES, {
     variables: {
@@ -42,7 +56,13 @@ const AddWarning = ({ studentId }: AddWarningProps) => {
     },
   });
 
-  const [createStudentWarning] = useMutation(CREATE_STUDENT_WARNING);
+  const [createStudentWarning, { loading: insertLoading }] = useMutation(
+    CREATE_STUDENT_WARNING
+  );
+
+  const handleChangeComment = (e: SelectChangeEvent<string>) => {
+    setAddWarningInput({ ...addWarningInput, comment: e.target.value });
+  };
 
   useEffect(() => {
     if (coursesData?.getCourses?.data) {
@@ -59,30 +79,52 @@ const AddWarning = ({ studentId }: AddWarningProps) => {
   }, [coursesData]);
 
   const saveComment = () => {
+    setCommentError("");
+    if (addWarningInput.comment === "") {
+      setCommentError("لطفا کامنت را وارد کنید");
+      return;
+    }
     const tmpInput: any = { ...addWarningInput };
     tmpInput.course_id =
       tmpInput.course_id === "" ? undefined : +tmpInput.course_id;
 
-    createStudentWarning({ variables: tmpInput });
+    createStudentWarning({ variables: tmpInput }).then(() => {
+      reloadList();
+    });
   };
 
   return (
-    <Grid container component={Paper} sx={{ p: 1, my: 1 }} spacing={2}>
-      <Grid item md={5}>
-        <TextField
-          fullWidth
-          label="کامنت"
-          value={addWarningInput.comment}
-          onChange={(e: any) => {
-            setAddWarningInput({
-              ...addWarningInput,
-              comment: e.target.value,
-            });
-          }}
-          variant="outlined"
-        />
+    <Grid container component={Paper} sx={{ m: 1, p: 1, my: 1 }} spacing={2}>
+      <Grid md={12}>
+        <Typography>ثبت کامنت جدید</Typography>
       </Grid>
-      <Grid item md={5}>
+      <Grid md={5}>
+        <FormControl sx={{ width: "100%" }}>
+          <Select
+            defaultValue=""
+            value={addWarningInput.comment}
+            onChange={handleChangeComment}
+            error={commentError !== "" ? true : false}
+            variant="outlined"
+            displayEmpty
+          >
+            <MenuItem value="" disabled>
+              <em>کامنت</em>
+            </MenuItem>
+            {comments.map((item, index) => (
+              <MenuItem key={index} value={item}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+          {commentError ? (
+            <FormHelperText error>{commentError}</FormHelperText>
+          ) : (
+            ""
+          )}
+        </FormControl>
+      </Grid>
+      <Grid md={5}>
         <FormControl sx={{ width: "100%" }}>
           {courseOptions.length ? (
             <Autocomplete
@@ -103,7 +145,7 @@ const AddWarning = ({ studentId }: AddWarningProps) => {
           ) : null}
         </FormControl>
       </Grid>
-      <Grid item md={2}>
+      <Grid md={2}>
         <Button
           sx={{
             p: 2,
@@ -113,6 +155,7 @@ const AddWarning = ({ studentId }: AddWarningProps) => {
           color="info"
           size="medium"
           onClick={saveComment}
+          disabled={insertLoading}
         >
           ثبت کامنت
         </Button>
