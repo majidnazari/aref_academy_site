@@ -14,6 +14,7 @@ import {
 
 import React, { useEffect, useState } from "react";
 import { GET_COSULTANT_TESTS } from "screens/Consultant_test/gql/query";
+import { GET_LESSONS } from "screens/Consultant_test/gql/query";
 import { SelectChangeEvent } from "@mui/material/Select";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -27,6 +28,7 @@ export enum TestLevel {
 class SearchData {
   code?: number;
   lessonId?: number;
+  //lessonName?: string;
   level?: TestLevel;
   subject?: string;
 }
@@ -36,21 +38,43 @@ class SearchConsultantTestProp {
   loading!: boolean;
 }
 
-const SearchConsultantTest = (({ callBack, loading }: SearchConsultantTestProp) => {
+const SearchConsultantTest = ({ callBack, loading }: SearchConsultantTestProp) => {
   const [search, setSearch] = useState<SearchData>({
     code: undefined,
     lessonId: undefined,
+    //lessonName: undefined,
     level: undefined,
     subject: undefined,
-  })
+  });
 
   const [skip, setSkip] = useState<Boolean>(true);
   const [testcode, setTestCode] = useState<number>();
   const [testSubject, setTestSubject] = useState<string>();
   const [testLevel, setTestLevel] = useState<TestLevel>();
+  const [testLessonName, setTestlessonName] = useState<string>("");
   const [testLesson, setTestLesson] = useState<number>();
+
+  const [loadingLesson, setLoadingLesson] = useState<boolean>(false);
   const [loadingCosultantTest, setLoadingCosultantTest] = useState<boolean>(false);
   const [lessonOptions, setLessonOptions] = useState<any[]>([]);
+
+  const { refetch: refetchGetLessons } = useQuery(GET_LESSONS, {
+    variables: {
+      first: 1,
+      page: 1,
+      name: "",
+      fetchPolicy: "network-only",
+    },
+    onCompleted: (data) => {
+     // console.log("the skip is" + skip);
+      if (!skip) {
+        setLessonOptions(data.getLessons.data);
+        //console.log("the fetch get lesson is run");
+        //console.log(data.getLessons.data);
+      }
+    },
+
+  });
 
   const { refetch: refetchConsultantTest } = useQuery(GET_COSULTANT_TESTS,
     {
@@ -65,6 +89,7 @@ const SearchConsultantTest = (({ callBack, loading }: SearchConsultantTestProp) 
         subject: search?.subject ? search.subject : undefined,
         level: search?.level,
         lessonId: search?.lessonId,
+        //lessonName:search?.lessonName,
         // lessonId: 0,
         // level: TestLevel.A,
         // subject: "",
@@ -76,6 +101,8 @@ const SearchConsultantTest = (({ callBack, loading }: SearchConsultantTestProp) 
         }
       }
     });
+
+
 
   const handleChangeLevel = (event: SelectChangeEvent<TestLevel>) => {
 
@@ -94,12 +121,27 @@ const SearchConsultantTest = (({ callBack, loading }: SearchConsultantTestProp) 
       subject: testSubject,
       level: testLevel,
       lessonId: testLesson,
+
     }).then(() => {
       setLoadingCosultantTest(false);
     });
   }, [testcode, testSubject, testLevel, testLesson]);
 
 
+  useEffect(() => {
+    setLoadingLesson(true);
+    refetchGetLessons({
+      first: 10,
+      page: 1,
+      name: testLessonName,
+    }).then(() => {
+      //console.log(data);
+      setLoadingLesson(false);
+    });
+    // console.log("the initial lesson is:");
+    // console.log(testLessonName);
+
+  }, [testLessonName]);
   return (
     <Box
       sx={{
@@ -138,7 +180,8 @@ const SearchConsultantTest = (({ callBack, loading }: SearchConsultantTestProp) 
           variant="filled"
         />
       </FormControl>
-      <FormControl
+
+      {/* <FormControl
         sx={{
           width: "20%",
           mr: 1,
@@ -151,8 +194,54 @@ const SearchConsultantTest = (({ callBack, loading }: SearchConsultantTestProp) 
           onChange={(e: any) => setSearch({ ...search, lessonId: e.target.value })}
           variant="filled"
         />
-      </FormControl>
+      </FormControl> */}
 
+      <FormControl
+        sx={{
+          mr: 1,
+        }}
+      >
+        <Autocomplete
+          id="lesson-names"
+          options={lessonOptions}
+          renderInput={(params) => (
+            //console.log("render input is:"),
+            //console.log({ ...params }),
+            <TextField
+              {...params}
+              label="درسها"
+              variant="filled"
+              onChange={(e) => {
+                if (e.target.value.trim().length >= 1) {
+                  setSkip(false);
+                  setTestlessonName(e.target.value.trim());
+                  //alert("the value is:" + lessonName);
+                }
+              }}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <React.Fragment>
+                    {loadingLesson ? (
+                      <CircularProgress color="inherit" size={20} />
+                    ) : null}
+                    {params.InputProps.endAdornment}
+                  </React.Fragment>
+                ),
+              }}
+            />
+          )}
+          getOptionLabel={(option) => option.name}
+          style={{ width: 270 }}
+          value={search?.lessonId}
+          onChange={(_event, newTeam) => {
+            setSearch({
+              ...search,
+              lessonId: newTeam?.id ? +newTeam.id : undefined,
+            });
+          }}
+        />
+      </FormControl>
       <FormControl
         sx={{
           width: "20%",
@@ -266,6 +355,6 @@ const SearchConsultantTest = (({ callBack, loading }: SearchConsultantTestProp) 
   );
 
 
-});
+};
 
 export default SearchConsultantTest;

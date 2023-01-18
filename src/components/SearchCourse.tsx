@@ -59,7 +59,7 @@ const SearchCourse = ({ callBack, loading }: SearchCourseProp) => {
     });
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     setLoadingLesson(true);
     refetchLessons({
       first: 1000,

@@ -108,3 +108,25 @@ query GET_A_TEST(
   }
 }
 `;
+
+
+export const GET_LESSONS = gql`
+  query GET_LESSONS($first: Int!, $page: Int, $orderBy: [OrderByClause!] , $name:String) {
+    getLessons(first: $first, page: $page, orderBy: $orderBy , name:$name) {
+      data {
+        id
+        name
+      }
+      paginatorInfo {
+        count
+        currentPage
+        firstItem
+        hasMorePages
+        lastItem
+        lastPage
+        perPage
+        total
+      }
+    }
+  }
+`;

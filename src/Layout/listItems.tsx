@@ -158,12 +158,12 @@ export const MainListItems2 = () => {
   let navigate = useNavigate();
   return (
     <>     
-      <ListItemButton onClick={() => navigate("/consultant-test")}>
+      {/* <ListItemButton onClick={() => navigate("/consultant-test")}>
         <ListItemIcon>
           <LogoutIcon />
         </ListItemIcon>
         <ListItemText primary="تست مشاور" />
-      </ListItemButton>
+      </ListItemButton> */}
     </>
   );
 };
