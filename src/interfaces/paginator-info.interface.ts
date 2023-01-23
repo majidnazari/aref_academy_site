@@ -2,7 +2,7 @@ interface PaginatorInfo {
     count: number;
     currentPage: number;
     firstItem: number;
-    hasMorePages: Boolean;
+    hasMorePages: boolean;
     lastItem: number;
     lastPage: number;
     perPage: number;

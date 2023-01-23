@@ -62,3 +62,10 @@ export const absenceMainStatusObject: any = {
     'dellay30':'تاخیر بالای ۱۵ دقیقه',
     'absent':'غایب',
 }
+
+export const  ConstantTestLevel:any={
+    A:'A',
+    B:'B',
+    C:'C',
+    D:'D'
+}

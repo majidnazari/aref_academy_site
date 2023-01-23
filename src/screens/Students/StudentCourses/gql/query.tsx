@@ -8,6 +8,7 @@ export const GET_A_STUDENT = gql`
         first_name
         last_name
         phone
+        nationality_code
       }
     }  
 `;

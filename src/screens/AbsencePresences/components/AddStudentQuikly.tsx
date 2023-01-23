@@ -20,6 +20,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { GET_STUDENTS } from "../gql/query";
 import { CREATE_STUDENT_COURSE, CREATE_STUDENT } from "../gql/mutaion";
 import { showSuccess } from "utils/swlAlert";
+import { vmsNationalCode } from "utils/utils";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -35,6 +36,7 @@ class SearchData {
   first_name?: string | undefined;
   phone?: string | undefined;
   last_name?: string | undefined;
+  nationality_code?: string | undefined;
 }
 
 const AddStudentQuikly = ({
@@ -51,9 +53,20 @@ const AddStudentQuikly = ({
     first_name: "",
     phone: undefined,
     last_name: "",
+    nationality_code:"",
   });
   const [error, setError] = useState<SearchData>({});
   const [skip, setSkip] = useState<Boolean>(true);
+
+  useEffect(()=>{
+    setSearch({
+      first_name: "",
+      phone: undefined,
+      last_name: "",
+      nationality_code:""
+    });
+
+  },[]);
 
   const { refetch: refetchPhones } = useQuery(GET_STUDENTS, {
     variables: {
@@ -93,6 +106,7 @@ const AddStudentQuikly = ({
           first_name: "",
           phone: undefined,
           last_name: "",
+          nationality_code:""
         });
         reloadList();
       });
@@ -102,6 +116,7 @@ const AddStudentQuikly = ({
           first_name: search.first_name,
           last_name: search.last_name,
           phone: search.phone,
+          nationality_code:search.nationality_code,
         },
       }).then((res) => {
         console.log("createStudent", res);
@@ -117,11 +132,15 @@ const AddStudentQuikly = ({
       out = false;
     }
     if (!search.first_name || search.first_name === "") {
-      tmpError.first_name = "تلفن همراه را وارد کنید";
+      tmpError.first_name = "نام را وارد کنید";
       out = false;
     }
     if (!search.last_name || search.last_name === "") {
-      tmpError.last_name = "تلفن همراه را وارد کنید";
+      tmpError.last_name = " نام خانوادگی را وارد کنید";
+      out = false;
+    }
+    if (!vmsNationalCode(search.nationality_code)) {
+      tmpError.nationality_code = " کد ملی را وارد کنید";
       out = false;
     }
     setError(tmpError);
@@ -173,7 +192,7 @@ const AddStudentQuikly = ({
         <DialogTitle>افزودن دانش آموز به این کلاس</DialogTitle>
         <DialogContent>
           <Grid container spacing={1}>
-            <Grid item md={12} sm={12}>
+            <Grid item md={6} sm={12}>
               <Autocomplete
                 freeSolo
                 id="student-mobiles"
@@ -190,6 +209,7 @@ const AddStudentQuikly = ({
                           id: undefined,
                           first_name: "",
                           last_name: "",
+                          nationality_code: "",
                           phone: e.target.value.trim(),
                         });
                       }
@@ -216,6 +236,7 @@ const AddStudentQuikly = ({
                     first_name: newTeam?.first_name ? newTeam.first_name : "",
                     phone: newTeam?.phone ? newTeam.phone : "",
                     last_name: newTeam?.last_name ? newTeam.last_name : "",
+                    nationality_code: newTeam?.nationality_code ? newTeam.nationality_code : "",
                   });
                 }}
               />
@@ -225,6 +246,22 @@ const AddStudentQuikly = ({
                 ""
               )}
             </Grid>
+
+            <Grid item md={6} sm={12}>
+              <TextField
+                fullWidth
+                label="کد ملی"
+                id="nationality_code"
+                value={search.nationality_code}
+                onChange={(e: any) =>
+                  setSearch({ ...search, nationality_code: e.target.value })
+                }
+                variant="filled"
+                error={error.nationality_code ? true : false}
+                helperText={error.nationality_code ? error.nationality_code : ""}
+              />
+            </Grid>
+
             <Grid item md={6} sm={12}>
               <TextField
                 fullWidth

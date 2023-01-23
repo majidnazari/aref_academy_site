@@ -5,7 +5,7 @@ import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { MainListItems, SecondaryListItems } from './listItems';
+import { MainListItems, MainListItems2, SecondaryListItems } from './listItems';
 import Typography from '@mui/material/Typography';
 import { getUserData } from '../utils/user'
 
@@ -69,6 +69,7 @@ const Sidebar = ({ toggleDrawer, open = true }: SidebarProps) => {
         <Divider />
         <List component="nav" >
             <MainListItems />
+            <MainListItems2 />
             <Divider sx={{ my: 1 }} />
             <SecondaryListItems />
         </List>
