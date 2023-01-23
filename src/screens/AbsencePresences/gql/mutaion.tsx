@@ -66,12 +66,14 @@ export const CREATE_STUDENT = gql`
     $first_name: String!
     $last_name: String!
     $phone: String!
+    $nationality_code:String!
   ) {
     createStudent(
       input: {
         first_name: $first_name
         last_name: $last_name
         phone: $phone
+        nationality_code:$nationality_code
       }
     ) {
       id
