@@ -9,6 +9,7 @@ import { GET_A_STUDENT } from "../gql/query";
 import { useEffect, useState } from "react";
 import { getCourseName } from "components/CourseName";
 import { showSuccess } from "utils/swlAlert";
+import { vmsNationalCode } from "utils/utils";
 
 
 interface Props {
@@ -46,7 +47,7 @@ const AddStudentCourse = ({ studentId, refetch }: Props) => {
     },
     onCompleted: (studentData) => {
       if (studentData) {
-        setIsValidStudent(studentData?.getStudent.nationality_code.trim() !== "");
+        setIsValidStudent(vmsNationalCode(studentData?.getStudent.nationality_code.trim()) );
       }
     }
   });
