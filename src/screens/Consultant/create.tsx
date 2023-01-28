@@ -156,6 +156,7 @@ const CreateConsultantCreateScreen = () => {
     }
 
     const insertConsultant = () => {
+        alert("the add consultant is begin");
         if (!validateForm()) return;
         //setLoading(true);
         const daysTmp = [];
@@ -192,11 +193,13 @@ const CreateConsultantCreateScreen = () => {
         //const [insertOneConsultant2] = useMutation(addConsultant(variables));
 
         //addConsultantWithoutDefinition(variables)
+        console.log("insert consulatant function is run");
         console.log(variables);
 
         // console.log( addConsultantWithDefinition(variables));
         //console.log(insertOneConsultant({ variables }));
-        const tmp = addConsultantWithDefinition(variables);
+        const dynamicMutation = addConsultantWithDefinition(variables);
+        console.log("dynamicMutation is created:" + dynamicMutation);
         variables_tmp = {
             userId: variables.userId,
             step: Number(variables.step),
@@ -205,10 +208,10 @@ const CreateConsultantCreateScreen = () => {
             end: variables.end,
     
         };
-        console.log("the variables_tmp.userId is:");
-        console.log(variables_tmp.userId);
+        // console.log("the variables_tmp is:");
+        // console.log(variables_tmp);
         //console.log(<CreateDynamicConsultant variables={tmp} />);
-        console.log("after component");
+        console.log("end of add consultant function");
 
         //<CreateDynamicConsultant variables={tmp} > add consultant </CreateDynamicConsultant>
         // insertOneConsultant({ variables })
@@ -316,6 +319,7 @@ const CreateConsultantCreateScreen = () => {
             console.log( variables_tmp)
             
             }
+           {console.log(variables_tmp.userId)}
            {variables_tmp.userId !=="1"  ? <CreateDynamicConsultant variables={variables_tmp} > component </CreateDynamicConsultant> : ""}           
            
             <Button

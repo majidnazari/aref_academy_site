@@ -2,6 +2,7 @@ import { useMutation, gql } from "@apollo/client";
 import { addConsultantWithDefinition } from "../gql/mutation";
 import AdapterJalali from '@date-io/date-fns-jalali';
 import moment from 'moment';
+import { useEffect } from "react";
 
 export enum DayOfWeek {
     MONDAY,
@@ -32,7 +33,7 @@ interface variablesConsultant {
 
 const CreateDynamicConsultant = ({ variables }: any) => {
 
-    console.log("the inner var are:");
+    console.log("the component is begin");
     console.log(variables);
     
     const variables1: any = {
@@ -44,10 +45,16 @@ const CreateDynamicConsultant = ({ variables }: any) => {
         end1: moment(variables.endTime).format("HH:mm"),
 
     };
+
+    useEffect(()=>{
+        alert("this is run");
+
+    });
     console.log("the muattion is:");
     console.log(addConsultantWithDefinition(variables));
     const [insertOneConsultant] = useMutation(addConsultantWithDefinition(variables)); 
-
+    console.log("the mutation should run this variables:");
+    console.log(variables);
     insertOneConsultant({ variables })
         .then(() => {
 
@@ -57,6 +64,7 @@ const CreateDynamicConsultant = ({ variables }: any) => {
         .finally(() => {
             console.log("finished");
         });
+        console.log("the component is end");
     return (
         <h1>
             افزودن مشاور

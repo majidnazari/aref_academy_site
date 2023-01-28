@@ -63,6 +63,7 @@ interface TimeTable {
 
 
 export const addConsultantWithDefinition = (variables: any) => {
+  console.log("function is begin");
   // console.log("the function add consultant is running");
   // console.log(variables.dayofWeek);
   let timetables: TimeTable[] = [];
@@ -96,6 +97,7 @@ export const addConsultantWithDefinition = (variables: any) => {
   // statement +=timetables;
   statement += " ]}){_id  userId step timeTable{ dayOfWeek startEnd{ start  end  } }}} ";
   const tmp = gql` ${statement} `;
+  console.log("function is end");
   return tmp;
   //console.log(statement);
 }
