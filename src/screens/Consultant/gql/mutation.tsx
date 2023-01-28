@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { useMutation, gql } from "@apollo/client";
 import { arrayBuffer } from "node:stream/consumers";
 //const timetable=[];
 
@@ -62,12 +62,12 @@ interface TimeTable {
 }
 
 
-export const addConsultant = (variables: any) => {
+export const addConsultantWithDefinition = (variables: any) => {
   // console.log("the function add consultant is running");
   // console.log(variables.dayofWeek);
   let timetables: TimeTable[] = [];
   let timetable: TimeTable;
-  let statement = "gql`mutation ADD_CONSULTANT($userId:ID!,$step:Int!,";
+  let statement = " mutation ADD_CONSULTANT($userId:ID!,$step:Int!,";
   for (let i = 0; i < variables.dayofWeek.length; i++) {
     statement += "$dayofWeek" + (i + 1) + ":DayOfWeek!,";
     statement += "$start" + (i + 1) + ":String!,";
@@ -84,7 +84,7 @@ export const addConsultant = (variables: any) => {
         "start": "12",
         "end": "14",
       }
-    }; 
+    };
     statement += "{ dayOfWeek :$dayofWeek" + (i + 1) + " ";
     statement += "startEnd:{ start:$start" + (i + 1) + " ";
     statement += " end:$end" + (i + 1) + " }}, ";
@@ -94,9 +94,59 @@ export const addConsultant = (variables: any) => {
   //   console.log(timetables);
   // }
   // statement +=timetables;
-  statement += " ]}){_id  userId step timeTable{ dayOfWeek startEnd{ start  end  } }}}`;";
-  console.log(statement);
+  statement += " ]}){_id  userId step timeTable{ dayOfWeek startEnd{ start  end  } }}} ";
+  const tmp = gql` ${statement} `;
+  return tmp;
+  //console.log(statement);
 }
+
+
+
+
+
+// export const addConsultantWithoutDefinition = (variables: any) => {
+//   // console.log("the function add consultant is running");
+//   // console.log(variables.dayofWeek);
+//   let timetables: TimeTable[] = [];
+//   let timetable: TimeTable;
+//   let statement = "";
+//   // let statement = "mutation ADD_CONSULTANT($userId:ID!,$step:Int!,";
+//   // for (let i = 0; i < variables.dayofWeek.length; i++) {
+//   //   statement += "$dayofWeek" + (i + 1) + ":DayOfWeek!,";
+//   //   statement += "$start" + (i + 1) + ":String!,";
+//   //   statement += "$end" + (i + 1) + ":String!,";
+
+//   // }
+//   statement += `mutation{addConsultant(consultant:{userId:"${variables.userId}"  step:${variables.step}  timeTable:[`;
+//   for (let i = 0; i < variables.dayofWeek.length; i++) {
+
+//     // timetable =
+//     // {
+//     //   "dayOfWeek": variables.dayofWeek[i],
+//     //   "startEnd": {
+//     //     "start": variables.start,
+//     //     "end": variables.end,
+//     //   }
+//     // };
+//     statement += `{ dayOfWeek :  ${variables.dayofWeek[i]}`;
+//     statement += ` startEnd:{ start: "${variables.start}" `;
+//     statement += ` end: "${variables.start}" }}, `;
+//     //timetables[i] = timetable;
+//   }
+//   // if (timetables.length) {
+//   //   console.log(timetables);
+//   // }
+//   // statement +=timetables;
+//   statement += " ]}){_id }}";
+//   console.log(statement);
+
+//   const tmp = gql`
+//   statement
+//   `;
+//   const [runMutation]=useMutation(tmp);
+//   return (runMutation());
+// }
+
 export const ADD_A_COUNSULTANT = gql`
 mutation ADD_CONSULTANT(
   $userId:ID!,
@@ -145,8 +195,6 @@ mutation ADD_CONSULTANT(
   }
 }
 `;
-
-
 
 export const CREATE_CONSULTANT_TEST = gql`
     mutation CONSULTANT_TEST_CREATE($code:Int!,$lessonId:Int!,$level:TestLevel!,$subject:String!)

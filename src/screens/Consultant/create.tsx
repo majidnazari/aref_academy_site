@@ -13,7 +13,8 @@ import { DayOfWeekConsultantEnum } from '../../constants/index';
 //import { CREATE_CONSULTANT_TEST } from './gql/mutation';
 import { ConstantTestLevel } from "../../constants";
 import { ADD_A_COUNSULTANT } from "./gql/mutation";
-import { addConsultant } from "./gql/mutation";
+import { addConsultantWithDefinition } from "./gql/mutation";
+import  CreateDynamicConsultant  from "./componenets/CreateDynamicConsultant";
 
 
 
@@ -37,6 +38,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import { LocalizationProvider, MobileTimePicker } from '@mui/x-date-pickers';
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -89,6 +91,14 @@ interface ErrorData {
     endTime?: string;
     //timeTable?: TimeTable[];
 }
+let variables_tmp = {
+    userId: "1",
+    step: 10,
+    dayofWeek: "MONDAY",
+    start: "12:34",
+    end: "12:44",
+
+};
 
 const CreateConsultantCreateScreen = () => {
 
@@ -100,6 +110,7 @@ const CreateConsultantCreateScreen = () => {
     const [days, setDays] = useState<string[]>([]);
     const [startTime, setStartTime] = useState<Date | null>(null);
     const [endTime, setEndtTime] = useState<Date | null>(null);
+    
 
     const navigate = useNavigate();
 
@@ -146,7 +157,7 @@ const CreateConsultantCreateScreen = () => {
 
     const insertConsultant = () => {
         if (!validateForm()) return;
-        setLoading(true);
+        //setLoading(true);
         const daysTmp = [];
         // var o = new Object();
         // o["Company Name"] = 'Flexiple';
@@ -178,18 +189,37 @@ const CreateConsultantCreateScreen = () => {
             end: moment(endTime).format("HH:mm"),
 
         };
-        addConsultant(variables);
-        console.log(daysTmp.length);
+        //const [insertOneConsultant2] = useMutation(addConsultant(variables));
+
+        //addConsultantWithoutDefinition(variables)
         console.log(variables);
-        insertOneConsultant({ variables })
-            .then(() => {
-                setLoading(false);
-                showSuccess("مشاور جدید با موفقیت ایجاد شد");
-                //callBack();
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+
+        // console.log( addConsultantWithDefinition(variables));
+        //console.log(insertOneConsultant({ variables }));
+        const tmp = addConsultantWithDefinition(variables);
+        variables_tmp = {
+            userId: variables.userId,
+            step: Number(variables.step),
+            dayofWeek: "MONDAY",
+            start: variables.start,
+            end: variables.end,
+    
+        };
+        console.log("the variables_tmp.userId is:");
+        console.log(variables_tmp.userId);
+        //console.log(<CreateDynamicConsultant variables={tmp} />);
+        console.log("after component");
+
+        //<CreateDynamicConsultant variables={tmp} > add consultant </CreateDynamicConsultant>
+        // insertOneConsultant({ variables })
+        //     .then(() => {
+        //         setLoading(false);
+        //         showSuccess("مشاور جدید با موفقیت ایجاد شد");
+        //         //callBack();
+        //     })
+        //     .finally(() => {
+        //         setLoading(false);
+        //     });
     };
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -281,6 +311,13 @@ const CreateConsultantCreateScreen = () => {
                 ایجاد مشاور جدید
                 {loading ? <CircularProgress size={15} color="primary" /> : null}
             </Button>
+            { 
+            console.log("the var is:" )}{
+            console.log( variables_tmp)
+            
+            }
+           {variables_tmp.userId !=="1"  ? <CreateDynamicConsultant variables={variables_tmp} > component </CreateDynamicConsultant> : ""}           
+           
             <Button
                 sx={{ float: "right" }}
                 variant="contained"
@@ -291,6 +328,7 @@ const CreateConsultantCreateScreen = () => {
                 <ArrowBackIcon />
                 بازگشت
             </Button>
+            
         </Box>
     </Container >)
 
