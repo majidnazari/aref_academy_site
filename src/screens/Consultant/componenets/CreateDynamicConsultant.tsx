@@ -3,6 +3,7 @@ import { addConsultantWithDefinition } from "../gql/mutation";
 import AdapterJalali from '@date-io/date-fns-jalali';
 import moment from 'moment';
 import { useEffect } from "react";
+import { TenMpRounded } from "@mui/icons-material";
 
 export enum DayOfWeek {
     MONDAY,
@@ -35,40 +36,46 @@ interface variablesConsultant {
 const CreateDynamicConsultant = ({ variables, inactive }: any) => {
 
     console.log("the component is begin");
+    console.log("the varables in component is:");
     console.log(variables);
 
-    const variables1: any = {
+    // const variables1: any = {
+    //     userId: variables.userId,
+    //     step: Number(variables.step),
+
+    //     dayofWeek: variables.dayofWeek,
+    //     start1: moment(variables.startTime).format("HH:mm"),
+    //     end1: moment(variables.endTime).format("HH:mm"),
+
+    // };
+    const tmp:any = {
         userId: variables.userId,
-        step: Number(variables.step),
-
-        dayofWeek: variables.dayofWeek,
-        start1: moment(variables.startTime).format("HH:mm"),
-        end1: moment(variables.endTime).format("HH:mm"),
-
-    };
-    const tmp: any = {
-        "userId": variables.userId,
-        "step": variables.step,
-        "start": variables.start,
-        "end": variables.end,
+        step: variables.step,
+        start: variables.start,
+        end: variables.end,
     }
+
+   // const tmp:any=variables;
 
     useEffect(() => {
         alert("this is run");
 
     }, []);
-    console.log("the muattion is:");
-    console.log(addConsultantWithDefinition(variables));
-    const [insertOneConsultant] = useMutation(addConsultantWithDefinition(variables));
-    console.log("the mutation should run this variables:");
+   
     //console.log(variables.dayofWeek);
     for (let i = 0; i < variables.dayofWeek.length; i++) {
         let nameindex = "dayofWeek" + (i + 1);
         //console.log(nameindex);
         tmp[nameindex] = variables.dayofWeek[i];
     }
+    console.log("the muattion is:");
+    console.log(addConsultantWithDefinition(variables));
+    const [insertOneConsultant] = useMutation(addConsultantWithDefinition(variables));
+    console.log("the tmp is:");
     console.log(tmp);
-    insertOneConsultant({ variables })
+    console.log("the variables is:");
+    console.log(variables);
+    insertOneConsultant({ variables:tmp })
         .then(() => {
 
             console.log("مشاور جدید با موفقیت ایجاد شد");
@@ -76,6 +83,7 @@ const CreateDynamicConsultant = ({ variables, inactive }: any) => {
         })
         .finally(() => {
             console.log("finished");
+            inactive();
         });
     console.log("the component is end");
     return (

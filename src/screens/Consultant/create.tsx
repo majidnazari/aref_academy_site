@@ -94,7 +94,7 @@ interface ErrorData {
 let variables = {
     userId: "1",
     step: 10,
-    dayofWeek:["MONDAY","TUESDAY"] ,
+    dayofWeek:["STURDAY","SUNDAY"] ,
     start: "12:34",
     end: "12:44",
 
@@ -202,7 +202,7 @@ const CreateConsultantCreateScreen = () => {
             end: moment(endTime).format("HH:mm"),
 
         };
-        console.log("var in onchange func");
+        console.log("customer variables is:");
         console.log(variables);
         setRunComponent(true);
         //const [insertOneConsultant2] = useMutation(addConsultant(variables));
