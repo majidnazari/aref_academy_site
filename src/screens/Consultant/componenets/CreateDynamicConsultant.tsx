@@ -31,30 +31,43 @@ interface variablesConsultant {
     //timeTable?: TimeTable[];
 }
 
-const CreateDynamicConsultant = ({ variables }: any) => {
+
+const CreateDynamicConsultant = ({ variables, inactive }: any) => {
 
     console.log("the component is begin");
     console.log(variables);
-    
+
     const variables1: any = {
         userId: variables.userId,
         step: Number(variables.step),
 
-        dayofWeek: variables.dayofWeek[0],
+        dayofWeek: variables.dayofWeek,
         start1: moment(variables.startTime).format("HH:mm"),
         end1: moment(variables.endTime).format("HH:mm"),
 
     };
+    const tmp: any = {
+        "userId": variables.userId,
+        "step": variables.step,
+        "start": variables.start,
+        "end": variables.end,
+    }
 
-    useEffect(()=>{
+    useEffect(() => {
         alert("this is run");
 
-    });
+    }, []);
     console.log("the muattion is:");
     console.log(addConsultantWithDefinition(variables));
-    const [insertOneConsultant] = useMutation(addConsultantWithDefinition(variables)); 
+    const [insertOneConsultant] = useMutation(addConsultantWithDefinition(variables));
     console.log("the mutation should run this variables:");
-    console.log(variables);
+    //console.log(variables.dayofWeek);
+    for (let i = 0; i < variables.dayofWeek.length; i++) {
+        let nameindex = "dayofWeek" + (i + 1);
+        //console.log(nameindex);
+        tmp[nameindex] = variables.dayofWeek[i];
+    }
+    console.log(tmp);
     insertOneConsultant({ variables })
         .then(() => {
 
@@ -64,11 +77,9 @@ const CreateDynamicConsultant = ({ variables }: any) => {
         .finally(() => {
             console.log("finished");
         });
-        console.log("the component is end");
+    console.log("the component is end");
     return (
-        <h1>
-            افزودن مشاور
-        </h1>
+        <button onClick={() => inactive()}> غیر غعال کردن   </button>
     )
 
 }

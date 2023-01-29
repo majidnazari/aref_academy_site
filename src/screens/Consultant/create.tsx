@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -91,10 +91,10 @@ interface ErrorData {
     endTime?: string;
     //timeTable?: TimeTable[];
 }
-let variables_tmp = {
+let variables = {
     userId: "1",
     step: 10,
-    dayofWeek: "MONDAY",
+    dayofWeek:["MONDAY","TUESDAY"] ,
     start: "12:34",
     end: "12:44",
 
@@ -110,8 +110,14 @@ const CreateConsultantCreateScreen = () => {
     const [days, setDays] = useState<string[]>([]);
     const [startTime, setStartTime] = useState<Date | null>(null);
     const [endTime, setEndtTime] = useState<Date | null>(null);
+    const [runComponent,setRunComponent]=useState(true);
     
+    const inActiveComponentHandler=()=>{
+        console.log("the runComponent befire is:"  , runComponent);
+        setRunComponent(false);
+        console.log("the runComponent after  is:"  , runComponent);
 
+    }
     const navigate = useNavigate();
 
     const handleChange = (event: SelectChangeEvent<typeof days>) => {
@@ -155,8 +161,14 @@ const CreateConsultantCreateScreen = () => {
 
     }
 
+    useEffect(()=>{
+        console.log("run use effect");
+
+    },[]);
+
     const insertConsultant = () => {
-        alert("the add consultant is begin");
+        
+       // alert("the onchange button begin");
         if (!validateForm()) return;
         //setLoading(true);
         const daysTmp = [];
@@ -181,7 +193,7 @@ const CreateConsultantCreateScreen = () => {
         //     start2: moment(startTime).format("HH:mm"),
         //     end2: moment(endTime).format("HH:mm"),            
         // };
-        const variables = {
+         variables = {
             userId: userId,
             step: Number(step),
 
@@ -190,28 +202,31 @@ const CreateConsultantCreateScreen = () => {
             end: moment(endTime).format("HH:mm"),
 
         };
+        console.log("var in onchange func");
+        console.log(variables);
+        setRunComponent(true);
         //const [insertOneConsultant2] = useMutation(addConsultant(variables));
 
         //addConsultantWithoutDefinition(variables)
-        console.log("insert consulatant function is run");
-        console.log(variables);
+        //console.log("insert consulatant function is run");
+        //console.log(variables);
 
         // console.log( addConsultantWithDefinition(variables));
         //console.log(insertOneConsultant({ variables }));
-        const dynamicMutation = addConsultantWithDefinition(variables);
-        console.log("dynamicMutation is created:" + dynamicMutation);
-        variables_tmp = {
-            userId: variables.userId,
-            step: Number(variables.step),
-            dayofWeek: "MONDAY",
-            start: variables.start,
-            end: variables.end,
+        //const dynamicMutation = addConsultantWithDefinition(variables);
+        //console.log("dynamicMutation is created:" + dynamicMutation);
+        // variables_tmp = {
+        //     userId: variables.userId,
+        //     step: Number(variables.step),
+        //     dayofWeek: "MONDAY",
+        //     start: variables.start,
+        //     end: variables.end,
     
-        };
-        // console.log("the variables_tmp is:");
-        // console.log(variables_tmp);
-        //console.log(<CreateDynamicConsultant variables={tmp} />);
-        console.log("end of add consultant function");
+        // };
+        //  console.log("the variables_tmp is:");
+        //  console.log(variables_tmp);
+        // //console.log(<CreateDynamicConsultant variables={tmp} />);
+        // console.log("end of  onchange button end");
 
         //<CreateDynamicConsultant variables={tmp} > add consultant </CreateDynamicConsultant>
         // insertOneConsultant({ variables })
@@ -313,15 +328,10 @@ const CreateConsultantCreateScreen = () => {
             >
                 ایجاد مشاور جدید
                 {loading ? <CircularProgress size={15} color="primary" /> : null}
-            </Button>
-            { 
-            console.log("the var is:" )}{
-            console.log( variables_tmp)
+            </Button>            
             
-            }
-           {console.log(variables_tmp.userId)}
-           {variables_tmp.userId !=="1"  ? <CreateDynamicConsultant variables={variables_tmp} > component </CreateDynamicConsultant> : ""}           
-           
+           {runComponent  ? <CreateDynamicConsultant variables={variables} inactive={inActiveComponentHandler} > component </CreateDynamicConsultant> : ""}           
+          
             <Button
                 sx={{ float: "right" }}
                 variant="contained"

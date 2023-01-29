@@ -61,18 +61,19 @@ interface TimeTable {
   }
 }
 
-
 export const addConsultantWithDefinition = (variables: any) => {
   console.log("function is begin");
+  console.log("the lenght is");
+  console.log(variables.dayofWeek.length);
   // console.log("the function add consultant is running");
   // console.log(variables.dayofWeek);
   let timetables: TimeTable[] = [];
   let timetable: TimeTable;
-  let statement = " mutation ADD_CONSULTANT($userId:ID!,$step:Int!,";
+  let statement = " mutation ADD_CONSULTANT($userId:ID!,$step:Int!,$start:String!,$end:String!,";
   for (let i = 0; i < variables.dayofWeek.length; i++) {
     statement += "$dayofWeek" + (i + 1) + ":DayOfWeek!,";
-    statement += "$start" + (i + 1) + ":String!,";
-    statement += "$end" + (i + 1) + ":String!,";
+    // statement += "$start" + (i + 1) + ":String!,";
+    // statement += "$end" + (i + 1) + ":String!,";
 
   }
   statement += " ){addConsultant(consultant:{userId:$userId step:$step timeTable:[";
@@ -82,13 +83,13 @@ export const addConsultantWithDefinition = (variables: any) => {
     {
       "dayOfWeek": variables.dayofWeek[i],
       "startEnd": {
-        "start": "12",
-        "end": "14",
+        "start": variables.start,
+        "end": variables.end,
       }
     };
     statement += "{ dayOfWeek :$dayofWeek" + (i + 1) + " ";
-    statement += "startEnd:{ start:$start" + (i + 1) + " ";
-    statement += " end:$end" + (i + 1) + " }}, ";
+    statement += "startEnd:{ start:$start " ;// + (i + 1) + " ";
+    statement += " end:$end }}," ;//+ (i + 1) + " }}, ";
     //timetables[i] = timetable;
   }
   // if (timetables.length) {
@@ -101,10 +102,6 @@ export const addConsultantWithDefinition = (variables: any) => {
   return tmp;
   //console.log(statement);
 }
-
-
-
-
 
 // export const addConsultantWithoutDefinition = (variables: any) => {
 //   // console.log("the function add consultant is running");
