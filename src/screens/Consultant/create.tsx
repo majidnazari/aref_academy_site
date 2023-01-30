@@ -14,9 +14,7 @@ import { DayOfWeekConsultantEnum } from '../../constants/index';
 import { ConstantTestLevel } from "../../constants";
 import { ADD_A_COUNSULTANT } from "./gql/mutation";
 import { addConsultantWithDefinition } from "./gql/mutation";
-import  CreateDynamicConsultant  from "./componenets/CreateDynamicConsultant";
-
-
+import CreateDynamicConsultant from "./componenets/CreateDynamicConsultant";
 
 import { useMutation } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";
@@ -91,12 +89,12 @@ interface ErrorData {
     endTime?: string;
     //timeTable?: TimeTable[];
 }
-let variables = {
-    userId: "1",
-    step: 10,
-    dayofWeek:["STURDAY","SUNDAY"] ,
-    start: "12:34",
-    end: "12:44",
+let variables:any = {
+    // userId: "1",
+    // step: 10,
+    // dayofWeek: ["STURDAY", "SUNDAY"],
+    // start: "12:34",
+    // end: "12:44",
 
 };
 
@@ -110,13 +108,11 @@ const CreateConsultantCreateScreen = () => {
     const [days, setDays] = useState<string[]>([]);
     const [startTime, setStartTime] = useState<Date | null>(null);
     const [endTime, setEndtTime] = useState<Date | null>(null);
-    const [runComponent,setRunComponent]=useState(true);
-    
-    const inActiveComponentHandler=()=>{
-        console.log("the runComponent befire is:"  , runComponent);
-        setRunComponent(false);
-        console.log("the runComponent after  is:"  , runComponent);
+    const [runComponent, setRunComponent] = useState(false);
 
+    const inActiveComponentHandler = () => {  
+        //alert("inactive run");      
+        setRunComponent(false);        
     }
     const navigate = useNavigate();
 
@@ -129,6 +125,7 @@ const CreateConsultantCreateScreen = () => {
         );
     };
     const [insertOneConsultant] = useMutation(ADD_A_COUNSULTANT);
+    //const [insertOneConsultant] = useMutation(addConsultantWithDefinition(variables));
 
 
     const validateForm = () => {
@@ -158,42 +155,24 @@ const CreateConsultantCreateScreen = () => {
         }
         setError(result);
         return out;
-
     }
-
-    useEffect(()=>{
+    useEffect(() => {
         console.log("run use effect");
 
-    },[]);
+    }, []);
+
 
     const insertConsultant = () => {
-        
-       // alert("the onchange button begin");
+
         if (!validateForm()) return;
-        //setLoading(true);
         const daysTmp = [];
-        // var o = new Object();
-        // o["Company Name"] = 'Flexiple';
-        // o["ID"] = 123;
 
         for (let i = 0; i < days.length; i++) {
 
             daysTmp.push(dayOfWeeksCosultant[days[i]]);
-            //tmp["dayofWeek"] = 111;
             //console.log(dayOfWeeksCosultant[days[i]]);
         }
-        //console.log(dayOfWeeksCosultant);
-        // const variables = {
-        //     userId: userId,
-        //     step:Number(step),
-        //     dayofWeek1:daysTmp[0],            
-        //     start1: moment(startTime).format("HH:mm"),
-        //     end1: moment(endTime).format("HH:mm"),
-        //     dayofWeek2:daysTmp[1],            
-        //     start2: moment(startTime).format("HH:mm"),
-        //     end2: moment(endTime).format("HH:mm"),            
-        // };
-         variables = {
+        variables = {
             userId: userId,
             step: Number(step),
 
@@ -201,43 +180,28 @@ const CreateConsultantCreateScreen = () => {
             start: moment(startTime).format("HH:mm"),
             end: moment(endTime).format("HH:mm"),
 
-        };
-        console.log("customer variables is:");
-        console.log(variables);
-        setRunComponent(true);
-        //const [insertOneConsultant2] = useMutation(addConsultant(variables));
-
-        //addConsultantWithoutDefinition(variables)
-        //console.log("insert consulatant function is run");
-        //console.log(variables);
-
-        // console.log( addConsultantWithDefinition(variables));
-        //console.log(insertOneConsultant({ variables }));
-        //const dynamicMutation = addConsultantWithDefinition(variables);
-        //console.log("dynamicMutation is created:" + dynamicMutation);
-        // variables_tmp = {
-        //     userId: variables.userId,
-        //     step: Number(variables.step),
-        //     dayofWeek: "MONDAY",
-        //     start: variables.start,
-        //     end: variables.end,
-    
-        // };
-        //  console.log("the variables_tmp is:");
-        //  console.log(variables_tmp);
-        // //console.log(<CreateDynamicConsultant variables={tmp} />);
-        // console.log("end of  onchange button end");
-
-        //<CreateDynamicConsultant variables={tmp} > add consultant </CreateDynamicConsultant>
-        // insertOneConsultant({ variables })
+        };       
+        const tmp = variables; 
+       
+        for (let i = 0; i < variables.dayofWeek.length; i++) {
+            let nameindex = "dayofWeek" + (i + 1);
+            //console.log(nameindex);
+            tmp[nameindex] = variables.dayofWeek[i];
+        }      
+       
+        // insertOneConsultant({ variables:tmp })
         //     .then(() => {
-        //         setLoading(false);
-        //         showSuccess("مشاور جدید با موفقیت ایجاد شد");
+    
+        //         console.log("مشاور جدید با موفقیت ایجاد شد");
         //         //callBack();
         //     })
         //     .finally(() => {
-        //         setLoading(false);
+        //         console.log("finished");
+        //         //inactive();
         //     });
+        // console.log("the component is end"); 
+
+         setRunComponent(true); 
     };
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -328,10 +292,12 @@ const CreateConsultantCreateScreen = () => {
             >
                 ایجاد مشاور جدید
                 {loading ? <CircularProgress size={15} color="primary" /> : null}
-            </Button>            
+            </Button>
+
+            {runComponent ?   <CreateDynamicConsultant variables={variables} inactive={inActiveComponentHandler} />   : ""}
             
-           {runComponent  ? <CreateDynamicConsultant variables={variables} inactive={inActiveComponentHandler} > component </CreateDynamicConsultant> : ""}           
-          
+            
+
             <Button
                 sx={{ float: "right" }}
                 variant="contained"
@@ -342,7 +308,7 @@ const CreateConsultantCreateScreen = () => {
                 <ArrowBackIcon />
                 بازگشت
             </Button>
-            
+
         </Box>
     </Container >)
 
