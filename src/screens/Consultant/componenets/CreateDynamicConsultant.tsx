@@ -34,43 +34,48 @@ interface variablesConsultant {
     //timeTable?: TimeTable[];
 }
 const CreateDynamicConsultant = ({ variables, inactive }: any) => {
-
-    inactive();
-    const tmp:any = {
+    alert("the component is start ");
+   // inactive();
+    const tmp: any = {
         userId: variables.userId,
         step: variables.step,
         start: variables.start,
         end: variables.end,
-    }   
+    }
     // useEffect(() => {
     //     //alert("use effect run"); 
-        
+
     //     console.log("component use effect is run");
 
     // }, []);
-   
+
     for (let i = 0; i < variables.dayofWeek.length; i++) {
-        let nameindex = "dayofWeek" + (i + 1);        
+        let nameindex = "dayofWeek" + (i + 1);
         tmp[nameindex] = variables.dayofWeek[i];
-    }    
-    
+    }
+
     const [insertOneConsultant] = useMutation(addConsultantWithDefinition(variables));
-   
-    insertOneConsultant({ variables:tmp })
-        .then(() => {
-            //alert("complete run"); 
-            showSuccess('سال تحصیلی جدید با موفقیت اضافه شد.');
-            //console.log("مشاور جدید با موفقیت ایجاد شد");
-            //callBack();
-        })
-        .finally(() => {
-            //alert("finally run"); 
-            //console.log("finished");
-            inactive();
-        });
-   // console.log("the component is end");
+
+    const functionhelper = () => {alert("start");
+        insertOneConsultant({ variables: tmp })
+            .then(() => {
+               
+                showSuccess('سال تحصیلی جدید با موفقیت اضافه شد.');
+                //console.log("مشاور جدید با موفقیت ایجاد شد");
+                //callBack();
+            })
+            .finally(() => {
+                //alert("finally run"); 
+                //console.log("finished");
+                inactive();
+            });
+            
+    }
+
+
+    // console.log("the component is end");
     return (
-        <button onClick={() => inactive()}> غیر غعال کردن   </button>
+        <button onClick={() => functionhelper()}> فعال کردن </button>
     )
 
 }

@@ -158,7 +158,7 @@ const CreateConsultantCreateScreen = () => {
     }
     useEffect(() => {
         console.log("run use effect");
-
+        
     }, []);
 
 
