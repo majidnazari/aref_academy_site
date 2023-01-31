@@ -23,7 +23,7 @@ export const educationLevelsObject: any = {
 }
 
 export const dayOfWeeksObject: any = {
-    'شنبه': 'Saturday',
+    'شنبه': 'MONDAY',
     'یکشنبه': 'Sunday',
     'دوشنبه': 'Monday',
     'سه شنبه': 'Tuesday',
@@ -48,6 +48,34 @@ export enum attendanceStatus {
     normal = 'normal'
 }
 
+export const dayOfWeeksCosultant: any = {
+    // SATURDAY = 'شنبه',
+    // SUNDAY = 'یکشنبه',
+    // MONDAY = 'دوشنبه',
+    // TUESDAY = 'سه شنبه',
+    // WEDNESDAY = 'چهارشنبه',
+    // THURSDAY = 'پنج شنبه',
+    // FRIDAY = 'جمعه',
+
+    'شنبه': 'SATURDAY',
+    'یکشنبه': 'SUNDAY',
+    'دوشنبه': 'MONDAY',
+    'سه شنبه': 'TUESDAY',
+    'چهارشنبه': 'WEDNESDAY',
+    'پنج شنبه': 'THURSDAY',
+    'جمعه': 'FRIDAY',
+}
+
+export enum DayOfWeekConsultantEnum {
+    SATURDAY = 'SATURDAY',
+    SUNDAY = 'SUNDAY',
+    MONDAY = 'MONDAY',
+    TUESDAY = 'TUESDAY',
+    WEDNESDAY = 'WEDNESDAY',
+    THURSDAY = 'THURSDAY',
+    FRIDAY = 'FRIDAY',
+}
+
 export const attendanceStatusObject: any = {
     normal: 'عادی',
     online_to_present: 'جابجایی از آنلاین به حضوری',
@@ -57,15 +85,15 @@ export const attendanceStatusObject: any = {
 }
 
 export const absenceMainStatusObject: any = {
-    'present':'حاضر',
-    'dellay15':'تاخیر زیر ۱۵ دقیقه',
-    'dellay30':'تاخیر بالای ۱۵ دقیقه',
-    'absent':'غایب',
+    'present': 'حاضر',
+    'dellay15': 'تاخیر زیر ۱۵ دقیقه',
+    'dellay30': 'تاخیر بالای ۱۵ دقیقه',
+    'absent': 'غایب',
 }
 
-export const  ConstantTestLevel:any={
-    A:'A',
-    B:'B',
-    C:'C',
-    D:'D'
+export const ConstantTestLevel: any = {
+    A: 'A',
+    B: 'B',
+    C: 'C',
+    D: 'D'
 }

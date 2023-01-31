@@ -235,7 +235,7 @@ const ConsultantTestScreen = () => {
                 startIcon={<AddCircleIcon />}
                 sx={{ mb: 4 }}
                 onClick={() => navigate('/consultant-test/create')} >
-                افزودن تخلف جدید
+                افزودن تست مشاور جدید
             </Button>
         </Box>
         <SearchConsultantTest callBack={handleSearch} loading={searchLoading} />
