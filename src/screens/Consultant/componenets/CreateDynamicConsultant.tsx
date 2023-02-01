@@ -2,7 +2,7 @@ import { useMutation, gql } from "@apollo/client";
 import { addConsultantWithDefinition } from "../gql/mutation";
 import AdapterJalali from '@date-io/date-fns-jalali';
 import moment from 'moment';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { TenMpRounded } from "@mui/icons-material";
 import { showSuccess } from "../../../utils/swlAlert";
 
@@ -33,21 +33,16 @@ interface variablesConsultant {
     endTime?: string;
     //timeTable?: TimeTable[];
 }
-const CreateDynamicConsultant = ({ variables, inactive }: any) => {
-    alert("the component is start ");
-   // inactive();
+const CreateDynamicConsultant = ({ variables, inactive }: any) => {    
+
+    const [runableState, setRunableState] = useState(true);
+
     const tmp: any = {
         userId: variables.userId,
         step: variables.step,
         start: variables.start,
         end: variables.end,
     }
-    // useEffect(() => {
-    //     //alert("use effect run"); 
-
-    //     console.log("component use effect is run");
-
-    // }, []);
 
     for (let i = 0; i < variables.dayofWeek.length; i++) {
         let nameindex = "dayofWeek" + (i + 1);
@@ -56,28 +51,24 @@ const CreateDynamicConsultant = ({ variables, inactive }: any) => {
 
     const [insertOneConsultant] = useMutation(addConsultantWithDefinition(variables));
 
-    const functionhelper = () => {alert("start");
-        insertOneConsultant({ variables: tmp })
+    useEffect(() => {
+        //console.log("use effect is run and runComponent is:",runableState);
+        if(runableState){
+            insertOneConsultant({ variables: tmp })
             .then(() => {
-               
-                showSuccess('سال تحصیلی جدید با موفقیت اضافه شد.');
-                //console.log("مشاور جدید با موفقیت ایجاد شد");
-                //callBack();
-            })
-            .finally(() => {
-                //alert("finally run"); 
-                //console.log("finished");
+                showSuccess("مشاور جدید با موفقیت ایجاد شد");              
+                
+            })  
+            .finally(()=>{
                 inactive();
-            });
-            
-    }
-
-
-    // console.log("the component is end");
+                setRunableState(false);
+            })   
+        }    
+               
+    },[runableState]);
     return (
-        <button onClick={() => functionhelper()}> فعال کردن </button>
+        <></>
+        // <button onClick={() => functionhelper()}> فعال کردن </button>
     )
-
 }
-
 export default CreateDynamicConsultant;

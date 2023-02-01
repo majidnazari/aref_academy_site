@@ -42,7 +42,7 @@ export const GET_COSULTANT_TESTS = gql`
 }
 `;
 
-export const  GET_A_COSULTANT_TEST= gql`
+export const GET_A_COSULTANT_TEST = gql`
 query GET_A_TEST(
   $_id:ID!
 ){
@@ -54,6 +54,39 @@ query GET_A_TEST(
     subject    
   }
 }
+`;
+
+
+export const GET_CONSULTANTS = gql`
+    query GET_USERS(
+        $first: Int!
+        $page: Int!
+    ){
+    getUsers(first:$first,page:$page group_id:process.env.GROUP_ID){
+        data{
+          id
+          first_name
+          last_name
+          email
+          group{
+            persian_name
+          }
+          branch{
+            name
+          }
+        }
+        paginatorInfo{
+          count
+          currentPage
+          firstItem
+          hasMorePages
+          lastItem
+          lastPage
+          perPage
+          total
+        }
+      }
+    }  
 `;
 
 

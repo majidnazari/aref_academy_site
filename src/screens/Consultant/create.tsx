@@ -89,7 +89,7 @@ interface ErrorData {
     endTime?: string;
     //timeTable?: TimeTable[];
 }
-let variables:any = {
+let variables: any = {
     // userId: "1",
     // step: 10,
     // dayofWeek: ["STURDAY", "SUNDAY"],
@@ -110,9 +110,9 @@ const CreateConsultantCreateScreen = () => {
     const [endTime, setEndtTime] = useState<Date | null>(null);
     const [runComponent, setRunComponent] = useState(false);
 
-    const inActiveComponentHandler = () => {  
-        //alert("inactive run");      
-        setRunComponent(false);        
+    const inActiveComponentHandler = () => {
+
+        setRunComponent(false);
     }
     const navigate = useNavigate();
 
@@ -156,10 +156,10 @@ const CreateConsultantCreateScreen = () => {
         setError(result);
         return out;
     }
-    useEffect(() => {
-        console.log("run use effect");
-        
-    }, []);
+    // useEffect(() => {
+    //     console.log("run use effect");
+
+    // }, []);
 
 
     const insertConsultant = () => {
@@ -180,28 +180,15 @@ const CreateConsultantCreateScreen = () => {
             start: moment(startTime).format("HH:mm"),
             end: moment(endTime).format("HH:mm"),
 
-        };       
-        const tmp = variables; 
-       
+        };
+        const tmp = variables;
+
         for (let i = 0; i < variables.dayofWeek.length; i++) {
             let nameindex = "dayofWeek" + (i + 1);
             //console.log(nameindex);
             tmp[nameindex] = variables.dayofWeek[i];
-        }      
-       
-        // insertOneConsultant({ variables:tmp })
-        //     .then(() => {
-    
-        //         console.log("مشاور جدید با موفقیت ایجاد شد");
-        //         //callBack();
-        //     })
-        //     .finally(() => {
-        //         console.log("finished");
-        //         //inactive();
-        //     });
-        // console.log("the component is end"); 
-
-         setRunComponent(true); 
+        }
+        setRunComponent(true);
     };
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -294,9 +281,18 @@ const CreateConsultantCreateScreen = () => {
                 {loading ? <CircularProgress size={15} color="primary" /> : null}
             </Button>
 
-            {runComponent ?   <CreateDynamicConsultant variables={variables} inactive={inActiveComponentHandler} />   : ""}
-            
-            
+            <Button
+                sx={{ float: "left" }}
+                variant="contained"
+                startIcon={<AddCircleIcon />} color="primary"
+                disabled={loading}
+                onClick={() =>  navigate(`/consultant/edit/1`)}
+            >
+                ویرایش مشاور شماره ۱
+                {loading ? <CircularProgress size={15} color="primary" /> : null}
+            </Button>
+
+            {runComponent ? <CreateDynamicConsultant variables={variables} inactive={inActiveComponentHandler} /> : ""}
 
             <Button
                 sx={{ float: "right" }}

@@ -28,6 +28,8 @@ import moment from 'moment-jalaali';
 import { Typography } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
 import SearchConsultantTest from "../../components/SearchConsultantTest";
+//import GET_CONSULTANTS from "./gql/query";
+
 
 class SearchData {
     code?: number;
@@ -123,6 +125,7 @@ const ConsultantTestScreen = () => {
     });
 
 
+
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: theme.palette.common.black,
@@ -216,10 +219,11 @@ const ConsultantTestScreen = () => {
                 <TableHead>
                     <TableRow>
                         <StyledTableCell align="left">ردیف</StyledTableCell>
-                        <StyledTableCell align="left">کد تست</StyledTableCell>
-                        <StyledTableCell align="left"> شماره درس </StyledTableCell>
-                        <StyledTableCell align="left"> سطح </StyledTableCell>
-                        <StyledTableCell align="left"> عنوان </StyledTableCell>
+                        <StyledTableCell align="left"> نام </StyledTableCell>
+                        <StyledTableCell align="left"> نام خانوادگی  </StyledTableCell>
+                        <StyledTableCell align="left"> نام کاربری </StyledTableCell>
+                        <StyledTableCell align="left"> تعریف جلسات حضور </StyledTableCell>
+                        <StyledTableCell align="left">  تخصیص دانش آموز </StyledTableCell>
                         <StyledTableCell align="left">ویرایش</StyledTableCell>
                         <StyledTableCell align="left">حذف</StyledTableCell>
                     </TableRow>
