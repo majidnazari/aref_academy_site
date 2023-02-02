@@ -56,13 +56,12 @@ query GET_A_TEST(
 }
 `;
 
-
 export const GET_CONSULTANTS = gql`
     query GET_USERS(
         $first: Int!
         $page: Int!
     ){
-    getUsers(first:$first,page:$page group_id:process.env.GROUP_ID){
+    getUsers(first:$first,page:$page group_id: 6 ){
         data{
           id
           first_name
