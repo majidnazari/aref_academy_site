@@ -60,8 +60,11 @@ export const GET_CONSULTANTS = gql`
     query GET_USERS(
         $first: Int!
         $page: Int!
+        $first_name:String
+        $last_name:String
+        $email:String
     ){
-    getUsers(first:$first,page:$page group_id: 6 ){
+    getUsers(first:$first,page:$page group_id: 6 , first_name:$first_name , last_name:$last_name, email:$email){
         data{
           id
           first_name

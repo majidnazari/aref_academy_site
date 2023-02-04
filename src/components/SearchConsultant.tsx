@@ -20,8 +20,8 @@ import SearchIcon from "@mui/icons-material/Search";
 
 
 class SearchData {
-  firstName?: string;
-  lastName?: string;
+  first_name?: string;
+  last_name?: string;
   email?: string;  
 }
 
@@ -32,15 +32,15 @@ class SearchConsultantProp {
 
 const SearchConsultant = ({ callBack, loading }: SearchConsultantProp) => {
   const [search, setSearch] = useState<SearchData>({
-    firstName: undefined,
-    lastName: undefined,
+    first_name: undefined,
+    last_name: undefined,
     //lessonName: undefined,
     email: undefined,
   });
 
   const [skip, setSkip] = useState<Boolean>(true);
-  const [firstName, setFirstName] = useState<string>();
-  const [lastName, setLastName] = useState<string>();
+  const [first_name, setFirstName] = useState<string>();
+  const [last_name, setLastName] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [loadingConsultant, setLoadingConsultant] = useState<boolean>(false);
 
@@ -54,9 +54,9 @@ const SearchConsultant = ({ callBack, loading }: SearchConsultantProp) => {
           column: 'id',
           order: 'DESC'
         }],
-        first_name: search?.firstName ? search.firstName : undefined,
-        last_name: search?.lastName ? search.lastName : undefined,
-        email: search?.email,       
+        first_name: search?.first_name ? search.first_name : undefined,
+        last_name: search?.last_name ? search.last_name : undefined,
+        email: search?.email ? search?.email : undefined,       
         fetchPolicy: "network-only",
       },
       onCompleted: (data: any) => {
@@ -69,14 +69,14 @@ const SearchConsultant = ({ callBack, loading }: SearchConsultantProp) => {
     refetchConsultant({
       first: 1000,
       page: 1,
-      first_name: firstName,
-      last_name: lastName,
+      first_name: first_name,
+      last_name: last_name,
       email: email,      
 
     }).then(() => {
       setLoadingConsultant(false);
     });
-  }, [firstName, lastName, email]);
+  }, [first_name, last_name, email]);
  
   return (
     <Box
@@ -96,8 +96,8 @@ const SearchConsultant = ({ callBack, loading }: SearchConsultantProp) => {
         <TextField
           fullWidth
           label="نام"
-          value={search.firstName}
-          onChange={(e: any) => setSearch({ ...search, firstName: e.target.value })}
+          value={search.first_name}
+          onChange={(e: any) => setSearch({ ...search, first_name: e.target.value })}
           variant="filled"
         />
       </FormControl>
@@ -111,8 +111,8 @@ const SearchConsultant = ({ callBack, loading }: SearchConsultantProp) => {
         <TextField
           fullWidth
           label="نام خانوادگی"
-          value={search.lastName}
-          onChange={(e: any) => setSearch({ ...search, lastName: e.target.value })}
+          value={search.last_name}
+          onChange={(e: any) => setSearch({ ...search, last_name: e.target.value })}
           variant="filled"
         />
       </FormControl>

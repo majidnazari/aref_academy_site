@@ -28,7 +28,7 @@ import moment from 'moment-jalaali';
 import { Typography } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
 import SearchConsultant from "../../components/SearchConsultant";
-import {GET_CONSULTANTS} from "./gql/query";
+import { GET_CONSULTANTS } from "./gql/query";
 
 
 class SearchData {
@@ -47,14 +47,14 @@ class GetConsultantVariabls {
     first?: number;
     page?: number;
     orderBy?: { column: string; order: string }[];
-    code?: number;
+    //code?: number;
     email?: string;
     first_name?: string;
     last_name?: string;
 
 }
 
-const ConsultantTestScreen = () => {
+const ConsultantScreen = () => {
     const navigate = useNavigate();
     const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
         count: 0,
@@ -72,7 +72,7 @@ const ConsultantTestScreen = () => {
         first_name: undefined,
         last_name: undefined,
         email: undefined,
-       // subject: undefined,
+        // subject: undefined,
     })
 
     const [deleteConsultant] = useMutation(DELETE_CONSULTANT_TEST);
@@ -144,13 +144,13 @@ const ConsultantTestScreen = () => {
                     column: 'id',
                     order: 'DESC'
                 }],
-                first_name: search?.first_name ? + search.first_name : undefined,
-                last_name: search?.last_name ? +search.last_name : undefined,
-                email: search?.email ? +search.email : undefined,
+                first_name: search?.first_name ?  search.first_name : undefined,
+                last_name: search?.last_name ? search.last_name : undefined,
+                email: search?.email ? search.email : undefined,
             },
             updateQuery: (prev, { fetchMoreResult }) => {
-                setPageInfo(fetchMoreResult.tests.paginatorInfo);
-                setConsultant_state(fetchMoreResult.tests.data);
+                setPageInfo(fetchMoreResult.getUsers.paginatorInfo);
+                setConsultant_state(fetchMoreResult.getUsers.data);
             }
         });
     };
@@ -161,7 +161,7 @@ const ConsultantTestScreen = () => {
             first_name: input?.first_name ? input.first_name : undefined,
             last_name: input?.last_name ? input.last_name : undefined,
             email: input?.email ? input.email : undefined,
-           // lessonId: input?.lessonId ? Number(input.lessonId) : undefined,
+            // lessonId: input?.lessonId ? Number(input.lessonId) : undefined,
             //   gender: input?.gender && input?.gender !== "" ? input?.gender : undefined,
         };
     };
@@ -172,6 +172,7 @@ const ConsultantTestScreen = () => {
         setSearch({ ...searchData });
         const refetchData: SearchData = { ...searchData };
         refetch(searchMaper(refetchData)).then(() => {
+           
             setSearchLoading(false);
         });
     };
@@ -183,7 +184,7 @@ const ConsultantTestScreen = () => {
         </Container>
             ;
     }
-   
+
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
@@ -236,23 +237,23 @@ const ConsultantTestScreen = () => {
                                 startIcon={<EditIcon />}
                                 color="primary"
                             >
-                             جلسات حضور  
+                                جلسات حضور
                             </Button></StyledTableCell>
                             <StyledTableCell align="left">
                                 <Button
                                     size="small"
-                                    onClick={() =>{
+                                    onClick={() => {
                                         navigate(`/consultant/edit/${element._id}`);
-                                        }}
+                                    }}
                                     variant="contained"
                                     startIcon={<DeleteIcon />}
                                     color="info"
                                 >
-                                   تخصیص مشاوره 
+                                    تخصیص مشاوره
                                 </Button>
-                            </StyledTableCell> 
-                            
-                               
+                            </StyledTableCell>
+
+
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {
@@ -291,5 +292,5 @@ const ConsultantTestScreen = () => {
 
 }
 
-export default ConsultantTestScreen;
+export default ConsultantScreen;
 
