@@ -42,16 +42,18 @@ export const GET_COSULTANT_TESTS = gql`
 }
 `;
 
-export const GET_A_COSULTANT_TEST = gql`
-query GET_A_TEST(
-  $_id:ID!
-){
-  test(_id:$_id){
+export const GET_A_COSULTANT = gql`
+query GET_A_CONSULTANT($id:ID!){
+  consultant(_id:$id){
     _id
-    code
-    lessonId
-    level
-    subject    
+    timeTable{
+      dayOfWeek
+      startEnd{
+        start
+        end
+      }
+    }
+    userId
   }
 }
 `;
