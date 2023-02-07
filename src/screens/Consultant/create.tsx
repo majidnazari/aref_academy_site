@@ -14,7 +14,7 @@ import { DayOfWeekConsultantEnum } from '../../constants/index';
 import { ConstantTestLevel } from "../../constants";
 import { ADD_A_COUNSULTANT } from "./gql/mutation";
 import { addConsultantWithDefinition } from "./gql/mutation";
-import CreateDynamicConsultant from "./componenets/CreateDynamicConsultant";
+import CreateDynamicConsultant from "./components/CreateDynamicConsultant";
 
 import { useMutation } from '@apollo/client';
 import { showSuccess } from "../../utils/swlAlert";

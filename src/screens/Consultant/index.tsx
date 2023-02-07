@@ -17,18 +17,19 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import Box from '@mui/material/Box';
 //import { GET_COSULTANT_TESTS } from './gql/query';
-import { GET_COSULTANT_TESTS } from './gql/query';
-import { DELETE_CONSULTANT_TEST } from './gql/mutation';
-//import { DELETE_FAULT } from './gql/mutation';
+//import { DELETE_CONSULTANT_TEST } from './gql/mutation';
+import { DELETE_CONSULTANT } from './gql/mutation';
 import { useMutation, useQuery } from '@apollo/client';
 import PaginatorInfo from '../../interfaces/paginator-info.interface';
 import { useNavigate } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 import moment from 'moment-jalaali';
-import { Typography } from '@mui/material';
+import { AccordionDetails, AccordionSummary, Typography } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
 import SearchConsultant from "../../components/SearchConsultant";
 import { GET_CONSULTANTS } from "./gql/query";
+import SchedulerConsultant from "./components/SchedulerConsultant";
+
 
 
 class SearchData {
@@ -37,13 +38,13 @@ class SearchData {
     last_name?: string;
 }
 interface ConsultantData {
-    _id: string;
+    id: string;
     email?: string;
     first_name?: string;
     last_name?: string;
 }
 
-class GetConsultantVariabls {
+class GetConsultantUserVariabls {
     first?: number;
     page?: number;
     orderBy?: { column: string; order: string }[];
@@ -75,7 +76,7 @@ const ConsultantScreen = () => {
         // subject: undefined,
     })
 
-    const [deleteConsultant] = useMutation(DELETE_CONSULTANT_TEST);
+    const [deleteConsultant] = useMutation(DELETE_CONSULTANT);
 
     function delConsultant(id: string) {
         //console.log("id is:", id);
@@ -92,7 +93,7 @@ const ConsultantScreen = () => {
     const [consultant_state, setConsultant_state] = useState<ConsultantData[] | null>(null);
 
     ///  the firt time is loading 
-    const { fetchMore, refetch } = useQuery<any, GetConsultantVariabls>(GET_CONSULTANTS, {
+    const { fetchMore, refetch } = useQuery<any, GetConsultantUserVariabls>(GET_CONSULTANTS, {
         variables: {
             first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
             page: 1,
@@ -144,7 +145,7 @@ const ConsultantScreen = () => {
                     column: 'id',
                     order: 'DESC'
                 }],
-                first_name: search?.first_name ?  search.first_name : undefined,
+                first_name: search?.first_name ? search.first_name : undefined,
                 last_name: search?.last_name ? search.last_name : undefined,
                 email: search?.email ? search.email : undefined,
             },
@@ -156,7 +157,7 @@ const ConsultantScreen = () => {
     };
 
 
-    const searchMaper = (input: SearchData): Partial<GetConsultantVariabls> => {
+    const searchMaper = (input: SearchData): Partial<GetConsultantUserVariabls> => {
         return {
             first_name: input?.first_name ? input.first_name : undefined,
             last_name: input?.last_name ? input.last_name : undefined,
@@ -172,7 +173,7 @@ const ConsultantScreen = () => {
         setSearch({ ...searchData });
         const refetchData: SearchData = { ...searchData };
         refetch(searchMaper(refetchData)).then(() => {
-           
+
             setSearchLoading(false);
         });
     };
@@ -220,7 +221,7 @@ const ConsultantScreen = () => {
                 </TableHead>
                 <TableBody>
                     {consultant_state.map((element: ConsultantData, index: number) => (
-                        <StyledTableRow key={element._id}>
+                        <StyledTableRow key={element.id}>
                             <StyledTableCell align="left">
                                 {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}
                             </StyledTableCell>
@@ -231,7 +232,7 @@ const ConsultantScreen = () => {
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {
-                                    navigate(`/consultant/edit/${element._id}`);
+                                    navigate(`/consultant/edit/${element.id}`);
                                 }}
                                 variant="contained"
                                 startIcon={<EditIcon />}
@@ -240,10 +241,12 @@ const ConsultantScreen = () => {
                                 جلسات حضور
                             </Button></StyledTableCell>
                             <StyledTableCell align="left">
+                                
+                                {/* <SchedulerConsultant userId={element.id} > تخصیص مشاوره  </SchedulerConsultant> */}
                                 <Button
                                     size="small"
                                     onClick={() => {
-                                        navigate(`/consultant/edit/${element._id}`);
+                                        navigate(`/consultant/${element.id}/SchedulerConsultant`);
                                     }}
                                     variant="contained"
                                     startIcon={<DeleteIcon />}
@@ -257,7 +260,7 @@ const ConsultantScreen = () => {
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {
-                                    navigate(`/consultant/edit/${element._id}`);
+                                    navigate(`/consultant/edit/${element.id}`);
                                 }}
                                 variant="contained"
                                 startIcon={<EditIcon />}
@@ -268,7 +271,7 @@ const ConsultantScreen = () => {
                             <StyledTableCell align="left">
                                 <Button
                                     size="small"
-                                    onClick={() => delConsultant(element._id)}
+                                    onClick={() => delConsultant(element.id)}
                                     variant="contained"
                                     startIcon={<DeleteIcon />}
                                     color="error"

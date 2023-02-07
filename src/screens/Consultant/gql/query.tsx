@@ -1,47 +1,5 @@
 import { gql } from '@apollo/client';
 
-export const GET_COSULTANT_TESTS = gql`
-   query GET_COSULTANT_TESTS
-   (
-    $first:Int!,
-    $page:Int!, 
-    $code:Int,
-    $lessonId:Int,
-    $level:TestLevel,
-    $subject:String
-    ){
-  tests(test:{
-    first:$first 
-    page:$page
-    code:$code
-    lessonId:$lessonId
-    level:$level
-    subject:$subject
-    
-  }) 
-  {
-    data{
-       _id
-    code
-    lessonId
-    level
-    subject
-    }
-    paginatorInfo{
-      count
-      currentPage
-      firstItem
-      hasMorePages
-      lastItem
-      lastPage
-      perPage
-      total
-    }
-   
-  }
-}
-`;
-
 export const GET_A_COSULTANT = gql`
 query GET_A_CONSULTANT($id:ID!){
   consultant(_id:$id){
@@ -54,6 +12,7 @@ query GET_A_CONSULTANT($id:ID!){
       }
     }
     userId
+    step
   }
 }
 `;
