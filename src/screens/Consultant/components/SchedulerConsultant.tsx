@@ -58,6 +58,8 @@ const SchedulerConsultant = ({ userId }: any) => {
 
     const [consultant, setConsultant] = useState<ConsultantData | null>(null);
     const [step, setStep] = useState<number | null>(null);
+    const [stepUser, setStepUser] = useState<number | null>(null);
+    const [timetable, setTimetable] = useState<string[] | null>(null);
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: theme.palette.common.black,
@@ -74,9 +76,35 @@ const SchedulerConsultant = ({ userId }: any) => {
         },
         onCompleted: (data) => {
             setStep(data.consultant.step);
-            console.log("the step is:", step);
-            console.log("the data is:");
-            console.log(data.consultant);
+            console.log("the step is:" , step);
+            setStepUser(step != null ? 60 / step : 3);
+            var now = moment("08:00:00", 'HHmmss').format("HH:mm:ss")
+            console.log("the now is:", now);
+            // const startTime = '08:30:00';
+            // const durationInMinutes = '45';
+            let date = new Date();
+            console.log("date is:", date);
+            // let time = date.getTime();
+            // console.log("time is:", time);
+            //const tmp = moment(startTime,"hh:mm:ss");
+            //const tmp2 = moment([date.getFullYear(), date.getMonth(), date.getDay(), 8, 0, 0]).add(45, 'minutes').format("HH:mm:ss");
+            let mintmp = now.split(':');
+            // console.log("the mint 0 tmp is:", mintmp[0]);
+            // console.log("the mint 1 tmp is:", mintmp[1]);
+            var tabletmp = [];
+
+            for (let hour = 8; hour < 20;) {
+
+                var tmp3 = moment([date.getFullYear(), date.getMonth(), date.getDay(), mintmp[0], mintmp[1], 0]).add(step, 'minutes').format("HH:mm:ss");
+                //console.log("the tmp3 is:", tmp3);
+                mintmp = tmp3.split(':');
+                tabletmp.push(tmp3);
+                //console.log("the mintmp is :", mintmp[0]);
+                hour = parseInt(mintmp[0]);
+               // console.log("the hour is :", hour);
+            }
+            setTimetable(tabletmp);
+            console.log(tabletmp);
             setConsultant(data.consultant);
         },
         fetchPolicy: "no-cache",
@@ -109,32 +137,35 @@ const SchedulerConsultant = ({ userId }: any) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {
-                        console.log("the  consultant?.timeTable is:")}{
-                        console.log(consultant?.timeTable)
-                    }
-                    {/* <StyledTableRow >
-                        <StyledTableCell align="left">{consultant?.timeTable[0].dayOfWeek}</StyledTableCell>
-                        <StyledTableCell align="left">{consultant?.timeTable[0].startEnd[0].start}</StyledTableCell>
-                        <StyledTableCell align="left">{consultant?.timeTable[0].startEnd[0].end}</StyledTableCell>
 
-                    </StyledTableRow> */}
                     {
-                        consultant?.timeTable.map((timeTableElement: TimeTable, index: number) => (
+
+                        // consultant?.timeTable.map((timeTableElement: TimeTable, index: number) => (
+                        //     <StyledTableRow >
+
+                        //         {
+                        //             timeTableElement.startEnd.map((startEndElement: StartEnd) => (
+                        //                 <StyledTableCell align="left">
+                        //                     {
+                        //                         startEndElement.start
+                        //                     }
+                        //                 </StyledTableCell>
+
+                        //             ))
+                        //         }
+
+                        //     </StyledTableRow>
+                        // ))
+
+                        timetable?.map((elementtmp: string) => (
                             <StyledTableRow >
-
-                                {
-                                    timeTableElement.startEnd.map((startEndElement: StartEnd) => (
-                                        <StyledTableCell align="left">
-                                            {
-                                                startEndElement.start
-                                            }
-                                        </StyledTableCell>
-
-                                    ))
-                                }
-
+                                <StyledTableCell align="left">
+                                    {
+                                      elementtmp
+                                    }
+                                </StyledTableCell>
                             </StyledTableRow>
+
                         ))
                     }
 
