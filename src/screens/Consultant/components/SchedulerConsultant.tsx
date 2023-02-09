@@ -58,7 +58,6 @@ const SchedulerConsultant = ({ userId }: any) => {
 
     const [consultant, setConsultant] = useState<ConsultantData | null>(null);
     const [step, setStep] = useState<number | null>(null);
-    const [stepUser, setStepUser] = useState<number | null>(null);
     const [timetable, setTimetable] = useState<string[] | null>(null);
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -75,40 +74,61 @@ const SchedulerConsultant = ({ userId }: any) => {
             id: userId,
         },
         onCompleted: (data) => {
-            setStep(data.consultant.step);
-            console.log("the step is:" , step);
-            setStepUser(step != null ? 60 / step : 3);
-            var now = moment("08:00:00", 'HHmmss').format("HH:mm:ss")
-            console.log("the now is:", now);
-            // const startTime = '08:30:00';
-            // const durationInMinutes = '45';
-            let date = new Date();
-            console.log("date is:", date);
-            // let time = date.getTime();
-            // console.log("time is:", time);
-            //const tmp = moment(startTime,"hh:mm:ss");
-            //const tmp2 = moment([date.getFullYear(), date.getMonth(), date.getDay(), 8, 0, 0]).add(45, 'minutes').format("HH:mm:ss");
-            let mintmp = now.split(':');
-            // console.log("the mint 0 tmp is:", mintmp[0]);
-            // console.log("the mint 1 tmp is:", mintmp[1]);
-            var tabletmp = [];
-
-            for (let hour = 8; hour < 20;) {
-
-                var tmp3 = moment([date.getFullYear(), date.getMonth(), date.getDay(), mintmp[0], mintmp[1], 0]).add(step, 'minutes').format("HH:mm:ss");
-                //console.log("the tmp3 is:", tmp3);
-                mintmp = tmp3.split(':');
-                tabletmp.push(tmp3);
-                //console.log("the mintmp is :", mintmp[0]);
-                hour = parseInt(mintmp[0]);
-               // console.log("the hour is :", hour);
-            }
-            setTimetable(tabletmp);
-            console.log(tabletmp);
             setConsultant(data.consultant);
+            setStep(data.consultant.step);
+            const timeTablesTitle = getTimeTableTitle(data.consultant.step);
+            console.log(data);
+            console.log("timeTablesTitle");
+            console.log({timeTablesTitle});
+            calculateSaturday(timeTablesTitle, data.consultant.timeTable);
+
         },
         fetchPolicy: "no-cache",
     });
+
+    const getTimeTableTitle = (userStep: number) => {
+        let timeTableFrom = "";
+        let timeTableTo = "";
+        let timeTable = [];
+
+        let now = moment("08:00", 'HHmm').format("HH:mm");
+        let date = new Date();
+        timeTableFrom = moment([date.getFullYear(), date.getMonth(), date.getDay(), 8, 0, 0]).format("HH:mm");
+        let timetmp = now.split(':');
+
+        for (let hour = 8; hour < 20;) {
+
+            timeTableTo = moment([date.getFullYear(), date.getMonth(), date.getDay(), timetmp[0], timetmp[1], 0]).add(userStep, 'minutes').format("HH:mm");
+            timetmp = timeTableTo.split(':');
+            timeTable.push(timeTableFrom + " - " + timeTableTo);
+            timeTableFrom = timeTableTo;
+            hour = parseInt(timetmp[0]);
+        }
+        setTimetable(timeTable);
+        console.log(timeTable);
+        return timeTable;
+
+    }
+    const calculateSaturday = (timeTablesTitle: string[], userTimeTables: TimeTable[]) => {
+        const saturdays: any = []; 
+        console.log("userTimeTable.dayOfWeek",userTimeTables);       
+        userTimeTables?.forEach(userTimeTable => {
+
+            console.log("userTimeTable.dayOfWeek");
+            console.log(userTimeTable.dayOfWeek);
+            switch (userTimeTable.dayOfWeek) {
+                case "SUNDAY":
+                    userTimeTable.startEnd.forEach(startEndSaturday => {
+                        saturdays.push(startEndSaturday);
+                    })
+
+                    break;
+            }
+
+        });
+        console.log("the satu is:");
+        console.log(saturdays);
+    }
 
     const StyledTableRow = styled(TableRow)(({ theme }) => ({
         '&:nth-of-type(odd)': {
@@ -137,79 +157,32 @@ const SchedulerConsultant = ({ userId }: any) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-
                     {
-
-                        // consultant?.timeTable.map((timeTableElement: TimeTable, index: number) => (
-                        //     <StyledTableRow >
-
-                        //         {
-                        //             timeTableElement.startEnd.map((startEndElement: StartEnd) => (
-                        //                 <StyledTableCell align="left">
-                        //                     {
-                        //                         startEndElement.start
-                        //                     }
-                        //                 </StyledTableCell>
-
-                        //             ))
-                        //         }
-
-                        //     </StyledTableRow>
-                        // ))
-
-                        timetable?.map((elementtmp: string) => (
-                            <StyledTableRow >
+                        timetable?.map((elementtmp: string, index: number) => (
+                            <StyledTableRow key={index++}>
                                 <StyledTableCell align="left">
                                     {
-                                      elementtmp
+                                        elementtmp
                                     }
                                 </StyledTableCell>
-                            </StyledTableRow>
 
+                                {/* the saturday */}
+                                {/* <StyledTableCell align="left" style={{backgroundColor:'greenyellow', color: 'white',}}>
+                                    {
+                                       elementtmp
+                                    }
+                                </StyledTableCell> */}
+
+
+
+                            </StyledTableRow>
                         ))
                     }
-
-
-                    {/* {consultant?.map((element: ConsultantData, index: number) => (
-                        <StyledTableRow key={element._id}>
-                            <StyledTableCell align="left">3{element.userId}</StyledTableCell>
-                            <StyledTableCell align="left">{element.step} </StyledTableCell>
-                            {
-                                element.timeTable.map((timeTableelement: TimeTable) => (
-                                    <StyledTableCell align="left">{timeTableelement.dayOfWeek} </StyledTableCell>
-                                ))
-                            }
-
-
-                            <StyledTableCell align="left"><Button
-                                size="small"
-                                onClick={() => {
-                                    navigate(`/faults/edit/${element._id}`);
-                                }}
-                                variant="contained"
-                                startIcon={<EditIcon />}
-                                color="success"
-                            >
-                                ویرایش
-                            </Button></StyledTableCell>
-                            <StyledTableCell align="left">
-                                <Button
-                                    size="small"
-
-                                    variant="contained"
-                                    startIcon={<DeleteIcon />}
-                                    color="error"
-                                >
-                                    حذف
-                                </Button>
-                            </StyledTableCell>
-                        </StyledTableRow>
-                    ))} */}
                 </TableBody>
             </Table>
 
         </TableContainer>
-    </Container >)
+    </Container >);
 }
 
 export default SchedulerConsultant;
