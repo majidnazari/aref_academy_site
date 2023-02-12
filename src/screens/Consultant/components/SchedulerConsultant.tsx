@@ -69,6 +69,11 @@ const SchedulerConsultant = ({ userId }: any) => {
     const [thursdayTimeTableState, setThursdayTimeTableState] = useState<any | null>(null);
     const [fridayTimeTableState, setFridayTimeTableState] = useState<any | null>(null);
     let saturdayTimeTable: string[] = Array(144).fill("00:00-00:00");
+    let sundayTimeTable: string[] = Array(144).fill("00:00-00:00");
+    let mondayTimeTable: string[] = Array(144).fill("00:00-00:00");
+    let thuesdayTimeTable: string[] = Array(144).fill("00:00-00:00");
+    let wednesdayTimeTable: string[] = Array(144).fill("00:00-00:00");
+    let thursdayTimeTable: string[] = Array(144).fill("00:00-00:00");
     let allSaturday: string[] = [];
     const [timetable, setTimetable] = useState<string[] | null>(null);
     let tmp: any = [];
@@ -89,9 +94,10 @@ const SchedulerConsultant = ({ userId }: any) => {
         onCompleted: (data) => {
             setConsultant(data.consultant);
             setStep(data.consultant.step);
-            const allTimeOfDay = getTimeTableTitle(data.consultant.step);           
-            allSaturday = calculateSaturday(allTimeOfDay, data.consultant.timeTable);           
-            setSaturdayTimeTableState(allSaturday);
+            const allTimeOfDay = getTimeTableTitle(data.consultant.step);
+            calculateSaturday(allTimeOfDay, data.consultant.timeTable);
+            // allSaturday = calculateSaturday(allTimeOfDay, data.consultant.timeTable);           
+            //setSaturdayTimeTableState(allSaturday);
             //console.log("allSaturday is:", allSaturday);
 
         },
@@ -121,7 +127,12 @@ const SchedulerConsultant = ({ userId }: any) => {
 
     }
     const calculateSaturday = (timeTablesTitle: string[], userTimeTables: TimeTable[]) => {
-        const saturdays: any = [];    
+        const saturdays: any = [];
+        const sundays: any = [];
+        const mondays: any = [];
+        const thuesdays: any = [];
+        const wednesdays: any = [];
+        const thursdays: any = [];
         userTimeTables?.forEach(userTimeTable => {
             switch (userTimeTable.dayOfWeek) {
                 case "SATURDAY":
@@ -131,8 +142,45 @@ const SchedulerConsultant = ({ userId }: any) => {
                     })
 
                     break;
+                case "SUNDAY":
+                    //console.log("the case SUNDAY is");
+                    userTimeTable.startEnd.forEach(startEndSaturday => {
+                        sundays.push(startEndSaturday);
+                    })
+
+                    break;
+                case "MONDAY":
+                    //console.log("the case SUNDAY is");
+                    userTimeTable.startEnd.forEach(startEndSaturday => {
+                        mondays.push(startEndSaturday);
+                    })
+
+                    break; case "THUESDAY":
+                    //console.log("the case SUNDAY is");
+                    userTimeTable.startEnd.forEach(startEndSaturday => {
+                        thuesdays.push(startEndSaturday);
+                    })
+
+                    break; case "WEDNESDAY":
+                    //console.log("the case SUNDAY is");
+                    userTimeTable.startEnd.forEach(startEndSaturday => {
+                        wednesdays.push(startEndSaturday);
+                    })
+
+                    break; case "THURSDAY":
+                    //console.log("the case SUNDAY is");
+                    userTimeTable.startEnd.forEach(startEndSaturday => {
+                        thursdays.push(startEndSaturday);
+                    })
+
+                    break;
             }
-            setSaturday(saturdays);          
+            setSaturday(saturdays);
+            setSaturday(sundays);
+            setSaturday(mondays);
+            setSaturday(thuesdays);
+            setSaturday(wednesdays);
+            setSaturday(thursdays);
         });
 
 
@@ -161,16 +209,96 @@ const SchedulerConsultant = ({ userId }: any) => {
                 timetabletmp = timeTableElement.split('-');
                 timetabletmpstart = moment(timetabletmp[0].trim(), 'hh:mm');
                 timetabletmpend = moment(timetabletmp[1].trim(), 'hh:mm');
-                if ((timetabletmpstart.isBetween(starttmp, endtmp)) || (timetabletmpend.isBetween(starttmp, endtmp))) {                  
-                    saturdayTimeTable[index] = timeTableElement;                   
-                }               
+                if ((timetabletmpstart.isBetween(starttmp, endtmp)) || (timetabletmpend.isBetween(starttmp, endtmp))) {
+                    saturdayTimeTable[index] = timeTableElement;
+                }
                 index++;
             });
         })
-        return saturdayTimeTable;       
+        setSaturdayTimeTableState(saturdayTimeTable);
+        sundays.forEach((saturdayElement: any) => {
+            starttmp = moment(saturdayElement.start.trim(), 'hh:mm');
+            endtmp = moment(saturdayElement.end.trim(), 'hh:mm');
+            let index = 0;
+            timeTablesTitle?.forEach(timeTableElement => {
+                //console.log("the timeTableElement foreach is:", timeTableElement);
+                timetabletmp = timeTableElement.split('-');
+                timetabletmpstart = moment(timetabletmp[0].trim(), 'hh:mm');
+                timetabletmpend = moment(timetabletmp[1].trim(), 'hh:mm');
+                if ((timetabletmpstart.isBetween(starttmp, endtmp)) || (timetabletmpend.isBetween(starttmp, endtmp))) {
+                    sundayTimeTable[index] = timeTableElement;
+                }
+                index++;
+            });
+        })
+        setSundayTimeTableState(sundayTimeTable);
+        mondays.forEach((saturdayElement: any) => {
+            starttmp = moment(saturdayElement.start.trim(), 'hh:mm');
+            endtmp = moment(saturdayElement.end.trim(), 'hh:mm');
+            let index = 0;
+            timeTablesTitle?.forEach(timeTableElement => {
+                //console.log("the timeTableElement foreach is:", timeTableElement);
+                timetabletmp = timeTableElement.split('-');
+                timetabletmpstart = moment(timetabletmp[0].trim(), 'hh:mm');
+                timetabletmpend = moment(timetabletmp[1].trim(), 'hh:mm');
+                if ((timetabletmpstart.isBetween(starttmp, endtmp)) || (timetabletmpend.isBetween(starttmp, endtmp))) {
+                    mondayTimeTable[index] = timeTableElement;
+                }
+                index++;
+            });
+        })
+        setMondayTimeTableState(mondayTimeTable);
+        thuesdays.forEach((saturdayElement: any) => {
+            starttmp = moment(saturdayElement.start.trim(), 'hh:mm');
+            endtmp = moment(saturdayElement.end.trim(), 'hh:mm');
+            let index = 0;
+            timeTablesTitle?.forEach(timeTableElement => {
+                //console.log("the timeTableElement foreach is:", timeTableElement);
+                timetabletmp = timeTableElement.split('-');
+                timetabletmpstart = moment(timetabletmp[0].trim(), 'hh:mm');
+                timetabletmpend = moment(timetabletmp[1].trim(), 'hh:mm');
+                if ((timetabletmpstart.isBetween(starttmp, endtmp)) || (timetabletmpend.isBetween(starttmp, endtmp))) {
+                    thuesdayTimeTable[index] = timeTableElement;
+                }
+                index++;
+            });
+        })
+        setThuesdayTimeTableState(thuesdayTimeTable);
+        wednesdays.forEach((saturdayElement: any) => {
+            starttmp = moment(saturdayElement.start.trim(), 'hh:mm');
+            endtmp = moment(saturdayElement.end.trim(), 'hh:mm');
+            let index = 0;
+            timeTablesTitle?.forEach(timeTableElement => {
+                //console.log("the timeTableElement foreach is:", timeTableElement);
+                timetabletmp = timeTableElement.split('-');
+                timetabletmpstart = moment(timetabletmp[0].trim(), 'hh:mm');
+                timetabletmpend = moment(timetabletmp[1].trim(), 'hh:mm');
+                if ((timetabletmpstart.isBetween(starttmp, endtmp)) || (timetabletmpend.isBetween(starttmp, endtmp))) {
+                    wednesdayTimeTable[index] = timeTableElement;
+                }
+                index++;
+            });
+        })
+        setWednesdayTimeTableState(wednesdayTimeTable);
+        thursdays.forEach((saturdayElement: any) => {
+            starttmp = moment(saturdayElement.start.trim(), 'hh:mm');
+            endtmp = moment(saturdayElement.end.trim(), 'hh:mm');
+            let index = 0;
+            timeTablesTitle?.forEach(timeTableElement => {
+                //console.log("the timeTableElement foreach is:", timeTableElement);
+                timetabletmp = timeTableElement.split('-');
+                timetabletmpstart = moment(timetabletmp[0].trim(), 'hh:mm');
+                timetabletmpend = moment(timetabletmp[1].trim(), 'hh:mm');
+                if ((timetabletmpstart.isBetween(starttmp, endtmp)) || (timetabletmpend.isBetween(starttmp, endtmp))) {
+                    thursdayTimeTable[index] = timeTableElement;
+                }
+                index++;
+            });
+        })
+        setThursdayTimeTableState(thursdayTimeTable);
     }
     useEffect(() => {
-       
+
     }, [saturdayTimeTableState])
 
     const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -201,11 +329,11 @@ const SchedulerConsultant = ({ userId }: any) => {
                         </TableRow>
                     </TableHead>
                     <TableBody >
-                        
+
                         {
-                            saturdayTimeTableState
+                            (saturdayTimeTableState && sundayTimeTableState)
                                 ?
-                              
+
                                 timetable?.map((elementtmp: string, index: number) => (
                                     <StyledTableRow key={index++}>
                                         <StyledTableCell align="left">
@@ -213,11 +341,18 @@ const SchedulerConsultant = ({ userId }: any) => {
                                                 elementtmp
                                             }
                                         </StyledTableCell>
-                                      
+
                                         {
                                             elementtmp == saturdayTimeTableState[index]
                                                 ?
                                                 <StyledTableCell align="left" style={{ backgroundColor: 'blueviolet', color: 'black', }} />
+                                                :
+                                                <StyledTableCell align="left" />
+                                        }
+                                        {
+                                            elementtmp == sundayTimeTableState[index]
+                                                ?
+                                                <StyledTableCell align="left" style={{ backgroundColor: 'green', color: 'black', }} />
                                                 :
                                                 <StyledTableCell align="left" />
                                         }
