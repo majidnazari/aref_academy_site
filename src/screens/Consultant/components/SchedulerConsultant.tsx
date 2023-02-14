@@ -25,7 +25,8 @@ import {
 import { showSuccess, showConfirm } from "../../../utils/swlAlert";
 import moment from 'moment-jalaali';
 import { Typography } from '@mui/material';
-
+import "../../../../src/assets/index.css";
+import { intlFormat } from 'date-fns-jalali';
 
 interface ConsultantData {
     _id: string;
@@ -53,14 +54,27 @@ interface ErrorData {
 }
 
 const SchedulerConsultant = ({ userId }: any) => {
-    //userId = "63da17010eb3b6ec9e7f4ec7";
-    userId = "63d3dd302c419803bc1b6516";
+    userId = "63da17010eb3b6ec9e7f4ec7";
+    //userId = "63d3dd302c419803bc1b6516";      
 
+    let startWeek=moment().startOf("week").subtract(1,"day").format("jYYYY-jMM-jDD");
+    let startWeekMiladi=moment().startOf("week").subtract(1,"day").format("YYYY-MM-DD");
+    let endWeek=moment().endOf("week").subtract(1,"day").format("jYYYY-jMM-jDD");
+    let currentWeek=moment(new Date()).startOf("week").format("jYYYY-jMM-jDD");
+    let selectUserDateMiladi=moment(new Date()).startOf("week").format("YYYY-MM-DD");
+    let nextWeekShamsi=moment(new Date()).add(7,"days").startOf("week").format("jYYYY-jMM-jDD");
+    let nextWeekMiladi=moment(new Date()).add(7,"days").startOf("week").format("YYYY-MM-DD");
     const navigate = useNavigate();
 
     const [consultant, setConsultant] = useState<ConsultantData | null>(null);
     const [step, setStep] = useState<number | null>(null);
     const [saturday, setSaturday] = useState<StartEnd[] | null>(null);
+    const [sunday, setSunday] = useState<StartEnd[] | null>(null);
+    const [monday, setMonday] = useState<StartEnd[] | null>(null);
+    const [thuesday, setThuesday] = useState<StartEnd[] | null>(null);
+    const [wednesday, setWednesday] = useState<StartEnd[] | null>(null);
+    const [thursday, setThursday] = useState<StartEnd[] | null>(null);
+    const [friday, setFriday] = useState<StartEnd[] | null>(null);
     const [saturdayTimeTableState, setSaturdayTimeTableState] = useState<any | null>(null);
     const [sundayTimeTableState, setSundayTimeTableState] = useState<any | null>(null);
     const [mondayTimeTableState, setMondayTimeTableState] = useState<any | null>(null);
@@ -74,6 +88,7 @@ const SchedulerConsultant = ({ userId }: any) => {
     let thuesdayTimeTable: string[] = Array(144).fill("00:00-00:00");
     let wednesdayTimeTable: string[] = Array(144).fill("00:00-00:00");
     let thursdayTimeTable: string[] = Array(144).fill("00:00-00:00");
+    let fridayTimeTable: string[] = Array(144).fill("00:00-00:00");
     let allSaturday: string[] = [];
     const [timetable, setTimetable] = useState<string[] | null>(null);
     let tmp: any = [];
@@ -133,6 +148,7 @@ const SchedulerConsultant = ({ userId }: any) => {
         const thuesdays: any = [];
         const wednesdays: any = [];
         const thursdays: any = [];
+        const fridays: any = [];
         userTimeTables?.forEach(userTimeTable => {
             switch (userTimeTable.dayOfWeek) {
                 case "SATURDAY":
@@ -144,43 +160,54 @@ const SchedulerConsultant = ({ userId }: any) => {
                     break;
                 case "SUNDAY":
                     //console.log("the case SUNDAY is");
-                    userTimeTable.startEnd.forEach(startEndSaturday => {
-                        sundays.push(startEndSaturday);
+                    userTimeTable.startEnd.forEach(startEndSunday => {
+                        sundays.push(startEndSunday);
                     })
 
                     break;
                 case "MONDAY":
                     //console.log("the case SUNDAY is");
-                    userTimeTable.startEnd.forEach(startEndSaturday => {
-                        mondays.push(startEndSaturday);
+                    userTimeTable.startEnd.forEach(startEndMonday => {
+                        mondays.push(startEndMonday);
                     })
 
-                    break; case "THUESDAY":
+                    break; 
+                case "THUESDAY":
                     //console.log("the case SUNDAY is");
-                    userTimeTable.startEnd.forEach(startEndSaturday => {
-                        thuesdays.push(startEndSaturday);
+                    userTimeTable.startEnd.forEach(startEndThuesday => {
+                        thuesdays.push(startEndThuesday);
                     })
 
-                    break; case "WEDNESDAY":
+                    break;
+                case "WEDNESDAY":
                     //console.log("the case SUNDAY is");
-                    userTimeTable.startEnd.forEach(startEndSaturday => {
-                        wednesdays.push(startEndSaturday);
+                    userTimeTable.startEnd.forEach(startEndWednesday => {
+                        wednesdays.push(startEndWednesday);
                     })
 
-                    break; case "THURSDAY":
+                    break;
+                case "THURSDAY":
                     //console.log("the case SUNDAY is");
-                    userTimeTable.startEnd.forEach(startEndSaturday => {
-                        thursdays.push(startEndSaturday);
+                    userTimeTable.startEnd.forEach(startEndThursday => {
+                        thursdays.push(startEndThursday);
+                    })
+
+                    break;
+                case "FRIDAY":
+                    //console.log("the case SUNDAY is");
+                    userTimeTable.startEnd.forEach(startEndFriday => {
+                        fridays.push(startEndFriday);
                     })
 
                     break;
             }
             setSaturday(saturdays);
-            setSaturday(sundays);
-            setSaturday(mondays);
-            setSaturday(thuesdays);
-            setSaturday(wednesdays);
-            setSaturday(thursdays);
+            setSunday(sundays);
+            setMonday(mondays);
+            setThuesday(thuesdays);
+            setWednesday(wednesdays);
+            setThursday(thursdays);
+            setFriday(fridays);
         });
 
 
@@ -296,6 +323,22 @@ const SchedulerConsultant = ({ userId }: any) => {
             });
         })
         setThursdayTimeTableState(thursdayTimeTable);
+        fridays.forEach((saturdayElement: any) => {
+            starttmp = moment(saturdayElement.start.trim(), 'hh:mm');
+            endtmp = moment(saturdayElement.end.trim(), 'hh:mm');
+            let index = 0;
+            timeTablesTitle?.forEach(timeTableElement => {
+                //console.log("the timeTableElement foreach is:", timeTableElement);
+                timetabletmp = timeTableElement.split('-');
+                timetabletmpstart = moment(timetabletmp[0].trim(), 'hh:mm');
+                timetabletmpend = moment(timetabletmp[1].trim(), 'hh:mm');
+                if ((timetabletmpstart.isBetween(starttmp, endtmp)) || (timetabletmpend.isBetween(starttmp, endtmp))) {
+                    fridayTimeTable[index] = timeTableElement;
+                }
+                index++;
+            });
+        })
+        setFridayTimeTableState(fridayTimeTable);
     }
     useEffect(() => {
 
@@ -311,32 +354,45 @@ const SchedulerConsultant = ({ userId }: any) => {
     }));
     return (
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            {startWeek} - {endWeek}
             <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
-                تایم های مشاور
+                نمایش زمان های مشاوره :
+           {/* {selectUserDateShamsi}  - {nextWeekShamsi} میلادی:
+          ( {selectUserDateMiladi}  - {nextWeekMiladi}) */}
+
             </Typography>
             <TableContainer component={Paper}>
-                <Table aria-label="customized table " >
+                <Table aria-label="customized table "  >
                     <TableHead>
-                        <TableRow>
-                            <StyledTableCell align="left">ساعات حضور</StyledTableCell>
-                            <StyledTableCell align="left">شنبه</StyledTableCell>
-                            <StyledTableCell align="left"> یکشنبه </StyledTableCell>
-                            <StyledTableCell align="left"> دوشنبه  </StyledTableCell>
-                            <StyledTableCell align="left">  سه شنبه </StyledTableCell>
-                            <StyledTableCell align="left">چهارشنبه  </StyledTableCell>
-                            <StyledTableCell align="left">پنج شنبه</StyledTableCell>
-                            <StyledTableCell align="left"> جمعه </StyledTableCell>
+                        <TableRow className='timetabletitle'>
+                            <StyledTableCell align="center" className='timetabletitle' >ساعات حضور</StyledTableCell>
+                            <StyledTableCell align="center">شنبه {moment(startWeekMiladi).format("jYYYY-jMM-jDD")}</StyledTableCell>
+                            <StyledTableCell align="center"> یکشنبه {moment(startWeekMiladi).add(1,"day").format("jYYYY-jMM-jDD")}</StyledTableCell>
+                            <StyledTableCell align="center"> دوشنبه {moment(startWeekMiladi).add(2,"days").format("jYYYY-jMM-jDD")} </StyledTableCell>
+                            <StyledTableCell align="center">  سه شنبه {moment(startWeekMiladi).add(3,"days").format("jYYYY-jMM-jDD")}</StyledTableCell>
+                            <StyledTableCell align="center">چهارشنبه  {moment(startWeekMiladi).add(4,"days").format("jYYYY-jMM-jDD")}</StyledTableCell>
+                            <StyledTableCell align="center">پنج شنبه {moment(startWeekMiladi).add(5,"days").format("jYYYY-jMM-jDD")}</StyledTableCell>
+                            <StyledTableCell align="center"> جمعه {moment(startWeekMiladi).add(6,"days").format("jYYYY-jMM-jDD")}</StyledTableCell>
+
                         </TableRow>
                     </TableHead>
                     <TableBody >
 
                         {
-                            (saturdayTimeTableState && sundayTimeTableState)
+                            (
+                                saturdayTimeTableState &&
+                                sundayTimeTableState &&
+                                mondayTimeTableState &&
+                                thuesdayTimeTableState &&
+                                wednesdayTimeTableState &&
+                                thursdayTimeTableState &&
+                                fridayTimeTableState
+                            )
                                 ?
 
                                 timetable?.map((elementtmp: string, index: number) => (
                                     <StyledTableRow key={index++}>
-                                        <StyledTableCell align="left">
+                                        <StyledTableCell align="center" className='timetabletitle' >
                                             {
                                                 elementtmp
                                             }
@@ -345,18 +401,57 @@ const SchedulerConsultant = ({ userId }: any) => {
                                         {
                                             elementtmp == saturdayTimeTableState[index]
                                                 ?
-                                                <StyledTableCell align="left" style={{ backgroundColor: 'blueviolet', color: 'black', }} />
+                                                <StyledTableCell align="left" className='timetablefilltd' />
                                                 :
-                                                <StyledTableCell align="left" />
+                                                <StyledTableCell align="left" className='timetableemptytd' />
                                         }
                                         {
                                             elementtmp == sundayTimeTableState[index]
                                                 ?
-                                                <StyledTableCell align="left" style={{ backgroundColor: 'green', color: 'black', }} />
+                                                <StyledTableCell align="left" className='timetablefilltd' />
                                                 :
-                                                <StyledTableCell align="left" />
+                                                <StyledTableCell align="left" className='timetableemptytd' />
+                                        }
+                                        {
+                                            elementtmp == mondayTimeTableState[index]
+                                                ?
+                                                <StyledTableCell align="left" className='timetablefilltd' />
+                                                :
+                                                <StyledTableCell align="left" className='timetableemptytd' />
+                                        }
+                                        {
+                                            elementtmp == thuesdayTimeTableState[index]
+                                                ?
+                                                <StyledTableCell align="left" className='timetablefilltd' />
+                                                :
+                                                <StyledTableCell align="left" className='timetableemptytd' />
+                                        }
+                                        {
+                                            elementtmp == wednesdayTimeTableState[index]
+                                                ?
+                                                <StyledTableCell align="left" className='timetablefilltd' />
+                                                :
+                                                <StyledTableCell align="left" className='timetableemptytd' />
+                                        }
+                                        {
+                                            elementtmp == thursdayTimeTableState[index]
+                                                ?
+                                                <StyledTableCell align="left" className='timetablefilltd' />
+                                                :
+                                                <StyledTableCell align="left" className='timetableemptytd' />
                                         }
 
+                                        {
+                                            elementtmp == fridayTimeTableState[index]
+                                                ?
+                                                <StyledTableCell align="left" className='timetablefilltd' onClick={() => { alert(index); }} >
+                                                   
+                                                </StyledTableCell>
+                                                :
+                                                <StyledTableCell align="left" className='timetableemptytd' onClick={() => { alert(index); }} >
+                                                    
+                                                </StyledTableCell>
+                                        }
 
                                     </StyledTableRow>
                                 ))

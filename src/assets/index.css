@@ -37,3 +37,17 @@
 .hsRotate90 {
   transform: rotate(80deg);
 }
+.timetablefilltd{
+  padding: 0.1px !important; 
+  background-color: lightgreen; 
+}
+.timetableemptytd{
+  padding: 0.1px !important; 
+}
+.timetabletitle{
+  background-color: dimgrey;
+  color: #ececec !important;
+  width:150px;  
+  text-align: center;
+  padding: 0.1px !important; 
+}
