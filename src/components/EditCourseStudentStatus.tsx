@@ -58,6 +58,7 @@ const Edit = ({ openDialog, studentCourse, refresh }: Props) => {
     for (key in formData) {
       variables[key] = formData[key];
     }
+
     if (
       variables.refusedStatus &&
       variables.refusedStatus === "transfer" &&
@@ -73,7 +74,15 @@ const Edit = ({ openDialog, studentCourse, refresh }: Props) => {
     if (variables?.financial_refused_status === "0") {
       variables.financial_refused_status = null;
     }
+    if (
+      (variables?.student_status === "refused" && (variables.description === null || variables.description.trim() == ""))
 
+    ) {
+      {
+        setErrorText(" علت انصراف باید وارد شود. ");
+        return false;
+      }
+    }
     const input = {
       variables,
     };
@@ -89,14 +98,25 @@ const Edit = ({ openDialog, studentCourse, refresh }: Props) => {
       manager_status: studentCourse.manager_status,
       financial_status: studentCourse.financial_status,
       student_status: studentCourse.student_status,
+      description: studentCourse.description,
     };
     const tmpFormData: any = {};
     let key: keyof typeof data;
+
     for (key in data) {
       if (oldData[key] !== data[key]) {
         tmpFormData[key] = data[key];
       }
     }
+
+    if (
+      (!tmpFormData?.student_status) &&
+      (oldData.student_status === "refused") &&
+      ((tmpFormData?.description?.trim() === "") || (oldData?.description?.trim() === ""))
+    ) {
+      tmpFormData["student_status"] = "refused";
+    }
+    
     setFormData(tmpFormData);
   };
 

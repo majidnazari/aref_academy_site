@@ -1,21 +1,28 @@
-import { Box, Button, CircularProgress, FormControl, Paper, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, FormControl, Paper, Typography } from "@mui/material";
 // import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { GET_COURSES } from "../gql/query";
 import { useQuery, useMutation } from "@apollo/client";
 import { CREATE_STUDENT_COURSE } from "../gql/mutation";
+import { GET_A_STUDENT } from "../gql/query";
 import { useEffect, useState } from "react";
 import { getCourseName } from "components/CourseName";
 import { showSuccess } from "utils/swlAlert";
+import { vmsNationalCode } from "utils/utils";
+
 
 interface Props {
   studentId: string | undefined;
   refetch: Function;
 }
 
+
 const AddStudentCourse = ({ studentId, refetch }: Props) => {
   const [courseId, setCourseId] = useState<string | undefined>("");
+  const [isValidStudent, setIsValidStudent] = useState<boolean>(false);
+
+
   const [courseOptions, setCourseOptions] = useState<any[]>([
     { label: "", id: "" },
   ]);
@@ -33,11 +40,27 @@ const AddStudentCourse = ({ studentId, refetch }: Props) => {
     },
   });
 
+  const { data: studentData } = useQuery(GET_A_STUDENT, {
+    variables: {
+      id: studentId,
+      fetchPolicy: "no-cache",
+    },
+    onCompleted: (studentData) => {
+      if (studentData) {
+        setIsValidStudent(vmsNationalCode(studentData?.getStudent.nationality_code.trim()) );
+      }
+    }
+  });
+
   const [createStudentCourse, { loading: addStudentLoading }] = useMutation(
     CREATE_STUDENT_COURSE
   );
 
   const insertStudentCourse = () => {
+    if (!isValidStudent) {
+
+      return;
+    }
     const input = {
       variables: {
         student_id: studentId ? parseInt(studentId) : 0,
@@ -50,10 +73,6 @@ const AddStudentCourse = ({ studentId, refetch }: Props) => {
       refetch();
     });
   };
-
-  // const handleChangeCourse = (e: SelectChangeEvent<string>) => {
-  //     setCourseId(e.target.value)
-  // }
 
   useEffect(() => {
     if (coursesData?.getCourses?.data) {
@@ -121,7 +140,7 @@ const AddStudentCourse = ({ studentId, refetch }: Props) => {
           onClick={() => {
             insertStudentCourse();
           }}
-          disabled={addStudentLoading}
+          disabled={addStudentLoading || !isValidStudent}
           endIcon={
             addStudentLoading ? (
               <CircularProgress color="inherit" size={10} />
@@ -130,6 +149,11 @@ const AddStudentCourse = ({ studentId, refetch }: Props) => {
         >
           افزودن
         </Button>
+        {
+          !isValidStudent ? <Alert sx={{ mt: 2 }} severity="error">کد ملی دانش آموز در پرونده وارد نشده است </Alert> : null
+        }
+
+
       </Box>
     </Box>
   );

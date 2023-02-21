@@ -194,7 +194,7 @@ const CoursesScreen = () => {
   if (!courses) {
     return (
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-        <Skeleton width="100%" height={100} />
+        <Skeleton width="100%" height={100} />        
         <Skeleton variant="rectangular" width="100%" height={300} />
       </Container>
     );
