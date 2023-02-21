@@ -23,7 +23,7 @@ export const educationLevelsObject: any = {
 }
 
 export const dayOfWeeksObject: any = {
-    'شنبه': 'MONDAY',
+    'شنبه': 'Saturday',
     'یکشنبه': 'Sunday',
     'دوشنبه': 'Monday',
     'سه شنبه': 'Tuesday',
