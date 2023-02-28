@@ -99,7 +99,7 @@ const UersScreen = () => {
             group_id: undefined,
             branch_id: undefined,
         },
-        onCompleted: (data) => {
+        onCompleted: (data) => {         
             setPageInfo(data.getUsers.paginatorInfo);
             setUsers(data.getUsers.data);
         },
@@ -186,15 +186,17 @@ const UersScreen = () => {
             });
         });
     };
-    if (!users || users.length === 0) {
+
+    if (!users ) {
         return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Skeleton width="100%" height={100} />
             <Skeleton variant="rectangular" width="100%" height={300} />
         </Container>
             ;
-    }
+    }   
 
-    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+    return (
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 3 }} >
             مدیریت کاربران
         </Typography>
