@@ -17,53 +17,45 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import Box from '@mui/material/Box';
 //import { GET_COSULTANT_TESTS } from './gql/query';
-import { GET_COSULTANT_TESTS } from './gql/query';
-import { DELETE_CONSULTANT_TEST } from './gql/mutation';
-//import { DELETE_FAULT } from './gql/mutation';
+//import { DELETE_CONSULTANT_TEST } from './gql/mutation';
+import { DELETE_CONSULTANT } from './gql/mutation';
 import { useMutation, useQuery } from '@apollo/client';
 import PaginatorInfo from '../../interfaces/paginator-info.interface';
 import { useNavigate } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 import moment from 'moment-jalaali';
-import { Typography } from '@mui/material';
+import { AccordionDetails, AccordionSummary, Typography } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
-import SearchConsultantTest from "../../components/SearchConsultantTest";
+import SearchConsultant from "../../components/SearchConsultant";
+import { GET_CONSULTANTS } from "./gql/query";
+import SchedulerConsultant from "./components/SchedulerConsultant";
+
+
 
 class SearchData {
-    code?: number;
-    lessonId?: number;
-    level?: TestLevel;
-    subject?: string;
+    email?: string;
+    first_name?: string;
+    last_name?: string;
 }
-interface ConsultantTestData {
+interface ConsultantData {
+    id: string;
+    email?: string;
+    first_name?: string;
+    last_name?: string;
+}
 
-    _id: string;
-    subject: string;
-    lessonId: number;
-    level: TestLevel;
-    code: number;
-
-}
-export enum TestLevel {
-    A,
-    B,
-    C,
-    D,
-}
-class GetConsultantTestVariabls {
+class GetConsultantUserVariabls {
     first?: number;
     page?: number;
     orderBy?: { column: string; order: string }[];
-    code?: number;
-    // lesson_id?: number | undefined;
-    //gender?: string | undefined;
-    lessonId?: number;
-    subject?: string;
-    level?: TestLevel;
+    //code?: number;
+    email?: string;
+    first_name?: string;
+    last_name?: string;
 
 }
 
-const ConsultantTestScreen = () => {
+const ConsultantScreen = () => {
     const navigate = useNavigate();
     const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
         count: 0,
@@ -78,13 +70,13 @@ const ConsultantTestScreen = () => {
 
     const [searchLoading, setSearchLoading] = useState<boolean>(false);
     const [search, setSearch] = useState<SearchData>({
-        code: undefined,
-        lessonId: undefined,
-        level: undefined,
-        subject: undefined,
+        first_name: undefined,
+        last_name: undefined,
+        email: undefined,
+        // subject: undefined,
     })
 
-    const [deleteConsultant] = useMutation(DELETE_CONSULTANT_TEST);
+    const [deleteConsultant] = useMutation(DELETE_CONSULTANT);
 
     function delConsultant(id: string) {
         //console.log("id is:", id);
@@ -98,10 +90,10 @@ const ConsultantTestScreen = () => {
             });
         });
     }
-    const [consultant_test_state, setConsultant_test_state] = useState<ConsultantTestData[] | null>(null);
+    const [consultant_state, setConsultant_state] = useState<ConsultantData[] | null>(null);
 
     ///  the firt time is loading 
-    const { fetchMore, refetch } = useQuery<any, GetConsultantTestVariabls>(GET_COSULTANT_TESTS, {
+    const { fetchMore, refetch } = useQuery<any, GetConsultantUserVariabls>(GET_CONSULTANTS, {
         variables: {
             first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
             page: 1,
@@ -109,18 +101,19 @@ const ConsultantTestScreen = () => {
                 column: '_id',
                 order: 'DESC'
             }],
-            code: undefined,
-            subject: undefined,
-            level: undefined,
+            first_name: undefined,
+            last_name: undefined,
+            email: undefined,
             //   lesson_id: undefined,
             //   gender: undefined,
         },
         onCompleted: (data) => {
-            setPageInfo(data.tests.paginatorInfo);
-            setConsultant_test_state(data.tests.data);
+            setPageInfo(data.getUsers.paginatorInfo);
+            setConsultant_state(data.getUsers.data);
         },
         fetchPolicy: "network-only",
     });
+
 
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -143,7 +136,7 @@ const ConsultantTestScreen = () => {
     }));
 
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        setConsultant_test_state([]);
+        setConsultant_state([]);
         fetchMore({
             variables: {
                 first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
@@ -152,24 +145,24 @@ const ConsultantTestScreen = () => {
                     column: 'id',
                     order: 'DESC'
                 }],
-                code: search?.code ? +search.code : undefined,
-                subject: search?.subject ? +search.subject : undefined,
-                level: search?.level ? +search.level : undefined,
+                first_name: search?.first_name ? search.first_name : undefined,
+                last_name: search?.last_name ? search.last_name : undefined,
+                email: search?.email ? search.email : undefined,
             },
             updateQuery: (prev, { fetchMoreResult }) => {
-                setPageInfo(fetchMoreResult.tests.paginatorInfo);
-                setConsultant_test_state(fetchMoreResult.tests.data);
+                setPageInfo(fetchMoreResult.getUsers.paginatorInfo);
+                setConsultant_state(fetchMoreResult.getUsers.data);
             }
         });
     };
 
 
-    const searchMaper = (input: SearchData): Partial<GetConsultantTestVariabls> => {
+    const searchMaper = (input: SearchData): Partial<GetConsultantUserVariabls> => {
         return {
-            code: input?.code ? Number(input.code) : undefined,
-            subject: input?.subject ? input.subject : undefined,
-            level: input?.level ? input.level : undefined,
-            lessonId: input?.lessonId ? Number(input.lessonId) : undefined,
+            first_name: input?.first_name ? input.first_name : undefined,
+            last_name: input?.last_name ? input.last_name : undefined,
+            email: input?.email ? input.email : undefined,
+            // lessonId: input?.lessonId ? Number(input.lessonId) : undefined,
             //   gender: input?.gender && input?.gender !== "" ? input?.gender : undefined,
         };
     };
@@ -180,18 +173,19 @@ const ConsultantTestScreen = () => {
         setSearch({ ...searchData });
         const refetchData: SearchData = { ...searchData };
         refetch(searchMaper(refetchData)).then(() => {
+
             setSearchLoading(false);
         });
     };
 
-    if (!consultant_test_state) {
+    if (!consultant_state) {
         return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Skeleton width="100%" height={100} />
             <Skeleton variant="rectangular" width="100%" height={300} />
         </Container>
             ;
     }
-   
+
 
     return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }} >
@@ -202,43 +196,71 @@ const ConsultantTestScreen = () => {
             justifyContent="flex-end"
             alignItems="flex-end"
         >
-            <Button
+            {/* <Button
                 variant="contained"
                 startIcon={<AddCircleIcon />}
                 sx={{ mb: 4 }}
                 onClick={() => navigate('/consultant/create')} >
                 افزودن مشاور جدید
-            </Button>
+            </Button> */}
         </Box>
-        <SearchConsultantTest callBack={handleSearch} loading={searchLoading} />
+        <SearchConsultant callBack={handleSearch} loading={searchLoading} />
         <TableContainer component={Paper}>
             <Table aria-label="customized table">
                 <TableHead>
                     <TableRow>
                         <StyledTableCell align="left">ردیف</StyledTableCell>
-                        <StyledTableCell align="left">کد تست</StyledTableCell>
-                        <StyledTableCell align="left"> شماره درس </StyledTableCell>
-                        <StyledTableCell align="left"> سطح </StyledTableCell>
-                        <StyledTableCell align="left"> عنوان </StyledTableCell>
+                        <StyledTableCell align="left"> نام </StyledTableCell>
+                        <StyledTableCell align="left"> نام خانوادگی  </StyledTableCell>
+                        <StyledTableCell align="left"> نام کاربری </StyledTableCell>
+                        <StyledTableCell align="left"> تعریف جلسات حضور </StyledTableCell>
+                        <StyledTableCell align="left">  تخصیص دانش آموز </StyledTableCell>
                         <StyledTableCell align="left">ویرایش</StyledTableCell>
                         <StyledTableCell align="left">حذف</StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {consultant_test_state.map((element: ConsultantTestData, index: number) => (
-                        <StyledTableRow key={element._id}>
+                    {consultant_state.map((element: ConsultantData, index: number) => (
+                        <StyledTableRow key={element.id}>
                             <StyledTableCell align="left">
                                 {(pageInfo.perPage * (pageInfo.currentPage - 1)) + index + 1}
                             </StyledTableCell>
-                            <StyledTableCell align="left">{element.code}</StyledTableCell>
-                            <StyledTableCell align="left">{element.lessonId} </StyledTableCell>
-                            <StyledTableCell align="left">{element.level} </StyledTableCell>
-                            <StyledTableCell align="left">{element.subject} </StyledTableCell>
+                            <StyledTableCell align="left">{element.first_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.last_name} </StyledTableCell>
+                            <StyledTableCell align="left">{element.email} </StyledTableCell>
 
                             <StyledTableCell align="left"><Button
                                 size="small"
                                 onClick={() => {
-                                    navigate(`/consultant-test/edit/${element._id}`);
+                                    navigate(`/consultant/edit/${element.id}`);
+                                }}
+                                variant="contained"
+                                startIcon={<EditIcon />}
+                                color="primary"
+                            >
+                                جلسات حضور
+                            </Button></StyledTableCell>
+                            <StyledTableCell align="left">
+                                
+                                {/* <SchedulerConsultant userId={element.id} > تخصیص مشاوره  </SchedulerConsultant> */}
+                                <Button
+                                    size="small"
+                                    onClick={() => {
+                                        navigate(`/consultant/${element.id}/SchedulerConsultant`);
+                                    }}
+                                    variant="contained"
+                                    startIcon={<DeleteIcon />}
+                                    color="info"
+                                >
+                                    تخصیص مشاوره
+                                </Button>
+                            </StyledTableCell>
+
+
+                            <StyledTableCell align="left"><Button
+                                size="small"
+                                onClick={() => {
+                                    navigate(`/consultant/edit/${element.id}`);
                                 }}
                                 variant="contained"
                                 startIcon={<EditIcon />}
@@ -249,7 +271,7 @@ const ConsultantTestScreen = () => {
                             <StyledTableCell align="left">
                                 <Button
                                     size="small"
-                                    onClick={() => delConsultant(element._id)}
+                                    onClick={() => delConsultant(element.id)}
                                     variant="contained"
                                     startIcon={<DeleteIcon />}
                                     color="error"
@@ -271,9 +293,7 @@ const ConsultantTestScreen = () => {
         </TableContainer>
     </Container >)
 
-
-
 }
 
-export default ConsultantTestScreen;
+export default ConsultantScreen;
 

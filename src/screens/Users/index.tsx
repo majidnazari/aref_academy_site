@@ -25,15 +25,40 @@ import {
 } from "react-router-dom"
 import { showSuccess, showConfirm } from "../../utils/swlAlert";
 import { Typography } from '@mui/material';
+
+import SearchUser from "../../components/SearchUser";
+
+
+class SearchData {
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    group_id?: number;
+    branch_id?: number;
+}
+
+class GetUserVariabls {
+    first?: number;
+    page?: number;
+    orderBy?: { column: string; order: string }[];
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    email?: string | undefined;
+    group_id?: number | undefined;
+    branch_id?: number | undefined;
+  }
 interface UserData {
+    first?: number;
+    page?: number;
+    orderBy?: { column: string; order: string }[];
     id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-    group: {
+    email?: string;
+    first_name?: string;
+    last_name?: string;
+    group?: {
         persian_name: string;
     };
-    branch: {
+    branch?: {
         name: string;
     }
 }
@@ -51,13 +76,30 @@ const UersScreen = () => {
         total: 0,
     });
     const [users, setUsers] = useState<UserData[]>();
+    const [searchLoading, setSearchLoading] = useState<boolean>(false);
+    const [search, setSearch] = useState<SearchData>({
+        first_name: undefined,
+        last_name: undefined,
+        email: undefined,
+        group_id: undefined,
+        branch_id: undefined,
+    })
 
-    const { fetchMore, refetch } = useQuery(GET_USERS, {
+    const { fetchMore, refetch } = useQuery<any, GetUserVariabls>(GET_USERS, {
         variables: {
             first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
             page: 1,
+            orderBy: [{
+                column: '_id',
+                order: 'DESC'
+            }],            
+            first_name: undefined,
+            last_name: undefined,
+            email: undefined,
+            group_id: undefined,
+            branch_id: undefined,
         },
-        onCompleted: (data) => {
+        onCompleted: (data) => {         
             setPageInfo(data.getUsers.paginatorInfo);
             setUsers(data.getUsers.data);
         },
@@ -92,11 +134,41 @@ const UersScreen = () => {
             variables: {
                 first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
                 page: value,
+                orderBy: [{
+                    column: 'id',
+                    order: 'DESC'
+                }],
+                first_name: search?.first_name ? search.first_name : undefined,
+                last_name: search?.last_name ? search.last_name : undefined,
+                email: search?.email ? search.email : undefined,
+                group_id: search?.group_id ? search.group_id : undefined,
+                branch_id: search?.branch_id ? search.branch_id : undefined,
             },
+            
             updateQuery: (prev, { fetchMoreResult }) => {
                 setPageInfo(fetchMoreResult.getUsers.paginatorInfo);
                 setUsers(fetchMoreResult.getUsers.data);
             }
+        });
+    };
+
+    const searchMaper = (input: SearchData): Partial<GetUserVariabls> => {
+        return {
+            first_name: input?.first_name ? input.first_name : undefined,
+            last_name: input?.last_name ? input.last_name : undefined,
+            email: input?.email ? input.email : undefined,
+            group_id: input?.group_id ? Number(input.group_id) : undefined,
+            branch_id: input?.branch_id ? Number(input.branch_id) : undefined,
+            //lessonId: input?.lessonId ? Number(input.lessonId) : undefined,
+            //   gender: input?.gender && input?.gender !== "" ? input?.gender : undefined,
+        };
+    };
+    const handleSearch = (searchData: SearchData): void => {
+        setSearchLoading(true);
+        setSearch({ ...searchData });
+        const refetchData: SearchData = { ...searchData };
+        refetch(searchMaper(refetchData)).then(() => {
+            setSearchLoading(false);
         });
     };
 
@@ -114,15 +186,17 @@ const UersScreen = () => {
             });
         });
     };
-    if (!users || users.length === 0) {
+
+    if (!users ) {
         return <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Skeleton width="100%" height={100} />
             <Skeleton variant="rectangular" width="100%" height={300} />
         </Container>
             ;
-    }
+    }   
 
-    return (<Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+    return (
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 3 }} >
             مدیریت کاربران
         </Typography>
@@ -139,6 +213,7 @@ const UersScreen = () => {
                 افزودن کاربر جدید
             </Button>
         </Box>
+        <SearchUser callBack={handleSearch} loading={searchLoading} />
         <TableContainer component={Paper}>
             <Table aria-label="customized table">
                 <TableHead>
@@ -162,7 +237,7 @@ const UersScreen = () => {
                             <StyledTableCell align="left">{element.first_name}</StyledTableCell>
                             <StyledTableCell align="left">{element.last_name}</StyledTableCell>
                             <StyledTableCell align="left">{element.email}</StyledTableCell>
-                            <StyledTableCell align="left">{element.group.persian_name}</StyledTableCell>
+                            <StyledTableCell align="left">{element.group?.persian_name}</StyledTableCell>
                             <StyledTableCell align="left">{element?.branch?.name || '--'}</StyledTableCell>
                             <StyledTableCell align="left"><Button
                                 size="small"

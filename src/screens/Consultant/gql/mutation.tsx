@@ -8,14 +8,14 @@ interface TimeTable {
     end: string,
   }
 }
-export const addConsultantWithDefinition = (variables: any) => {  
+export const addConsultantWithDefinition = (variables: any) => {
 
   //alert("function runs"); 
- 
+
   let timetable: TimeTable;
   let statement = " mutation ADD_CONSULTANT($userId:ID!,$step:Int!,$start:String!,$end:String!,";
   for (let i = 0; i < variables.dayofWeek.length; i++) {
-    statement += "$dayofWeek" + (i + 1) + ":DayOfWeek!,";   
+    statement += "$dayofWeek" + (i + 1) + ":DayOfWeek!,";
   }
   statement += " ){addConsultant(consultant:{userId:$userId step:$step timeTable:[";
   for (let i = 0; i < variables.dayofWeek.length; i++) {
@@ -29,13 +29,13 @@ export const addConsultantWithDefinition = (variables: any) => {
       }
     };
     statement += "{ dayOfWeek :$dayofWeek" + (i + 1) + " ";
-    statement += "startEnd:{ start:$start " ;// + (i + 1) + " ";
-    statement += " end:$end }}," ;//+ (i + 1) + " }}, ";    
+    statement += "startEnd:{ start:$start ";// + (i + 1) + " ";
+    statement += " end:$end }},";//+ (i + 1) + " }}, ";    
   }
- 
+
   statement += " ]}){_id  userId step timeTable{ dayOfWeek startEnd{ start  end  } }}} ";
-  const tmp = gql` ${statement} `;  
-  return tmp;  
+  const tmp = gql` ${statement} `;
+  return tmp;
 }
 
 export const ADD_A_COUNSULTANT = gql`
@@ -124,14 +124,13 @@ export const UPDATE_CONSULTANT_TEST = gql`
     }
     }
 `;
-export const DELETE_CONSULTANT_TEST = gql`
-        mutation CONSULTANT_TEST_DELETE($_id:ID!)
-        { 
-            deleteTest(_id:$_id)
+export const DELETE_CONSULTANT = gql`
+        mutation DELETE_CONSULTANT($id:ID!){
+            deleteConsultant(_id:$id)
             {
-                success
+             success
             }
-        }
+          }
         `;
 
 

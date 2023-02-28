@@ -21,6 +21,7 @@ import FaultsCreateScreen from "../screens/Faults/create";
 
 import Consultant from "../screens/Consultant";
 import ConsultantCreateScreen from "../screens/Consultant/create";
+import SchedulerConsultant from "../screens/Consultant/components/SchedulerConsultant";
 // import ConsultantTestEditScreen from "../screens/Consultant_test/edit";
 
 import ConsultantTest from "../screens/Consultant_test";
@@ -117,6 +118,10 @@ const MainRouter = () => {
             <Route path="" element={<Consultant />} />
             <Route path="edit/:_id" element={<ConsultantTestEditScreen />} />
             <Route path="create" element={<ConsultantCreateScreen />} />
+            <Route
+              path=":userId/SchedulerConsultant"
+              element={<SchedulerConsultant />}
+            />            
             <Route path="*" element={<NoMatch />} />
           </Route>
 

@@ -4,8 +4,13 @@ export const GET_USERS = gql`
     query GET_USERS(
         $first: Int!
         $page: Int!
+        $first_name:String
+        $last_name:String
+        $email:String
+        $group_id:Int
+        $branch_id:Int
     ){
-    getUsers(first:$first,page:$page){
+    getUsers(first:$first,page:$page,first_name:$first_name,last_name:$last_name,email:$email,group_id:$group_id,branch_id:$branch_id){
         data{
           id
           first_name
