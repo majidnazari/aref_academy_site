@@ -196,13 +196,13 @@ const ConsultantScreen = () => {
             justifyContent="flex-end"
             alignItems="flex-end"
         >
-            <Button
+            {/* <Button
                 variant="contained"
                 startIcon={<AddCircleIcon />}
                 sx={{ mb: 4 }}
                 onClick={() => navigate('/consultant/create')} >
                 افزودن مشاور جدید
-            </Button>
+            </Button> */}
         </Box>
         <SearchConsultant callBack={handleSearch} loading={searchLoading} />
         <TableContainer component={Paper}>

@@ -298,7 +298,7 @@ const CreateConsultantCreateScreen = () => {
                 sx={{ float: "right" }}
                 variant="contained"
                 color="secondary"
-                onClick={() => navigate(`/consultant-test`)}
+                onClick={() => navigate(`/consultant`)}
                 disabled={loading}
             >
                 <ArrowBackIcon />
