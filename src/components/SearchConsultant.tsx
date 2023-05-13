@@ -136,7 +136,6 @@ const SearchConsultant = ({ callBack, loading }: SearchConsultantProp) => {
         variant="contained"
         startIcon={<SearchIcon />}
         onClick={() => {
-          console.log(search);
           callBack(search);
         }}
         sx={{

@@ -28,7 +28,6 @@ import ConsultantTest from "../screens/Consultant_test";
 import ConsultantTestCreateScreen from "../screens/Consultant_test/create";
 import ConsultantTestEditScreen from "../screens/Consultant_test/edit";
 
-
 import BranchesScreen from "../screens/Branches";
 import BranchesEditScreen from "../screens/Branches/edit";
 import BranchesCreateScreen from "../screens/Branches/create";
@@ -71,7 +70,8 @@ const MainRouter = () => {
   const [isLogged, setisLogged] = useState(false);
   useEffect(() => {
     setisLogged(appContext.isLoggedIn);
-  }, [appContext.isLoggedIn, isLogged]);
+    console.log(appContext);
+  }, [appContext.isLoggedIn]);
   return (
     <Routes>
       {isLogged ? (
@@ -121,7 +121,7 @@ const MainRouter = () => {
             <Route
               path=":userId/SchedulerConsultant"
               element={<SchedulerConsultant />}
-            />            
+            />
             <Route path="*" element={<NoMatch />} />
           </Route>
 
@@ -131,9 +131,6 @@ const MainRouter = () => {
             <Route path="create" element={<ConsultantTestCreateScreen />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
-
-          
-
 
           <Route path="branches">
             <Route path="" element={<BranchesScreen />} />
@@ -191,7 +188,7 @@ const MainRouter = () => {
             />
 
             <Route path="financial" element={<ReporstFinancialScreen />} />
-            
+
             <Route path="*" element={<NoMatch />} />
           </Route>
 
