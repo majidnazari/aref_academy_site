@@ -155,9 +155,8 @@ export const MainListItems = () => {
 };
 
 export const MainListItems2 = () => {
-  let navigate = useNavigate();
   return (
-    <>     
+    <>
       {/* <ListItemButton onClick={() => navigate("/consultant-test")}>
         <ListItemIcon>
           <LogoutIcon />
@@ -168,22 +167,20 @@ export const MainListItems2 = () => {
   );
 };
 
-
 export const SecondaryListItems = () => {
   const [open, setOpen] = React.useState(true);
-
+  let navigate = useNavigate();
   const handleClick = () => {
     setOpen(!open);
   };
 
   return process.env.REACT_APP_DEVELEP_MOD === "0" ? null : (
     <React.Fragment>
-
-      <ListItemButton>
+      <ListItemButton onClick={() => navigate("/consultant")}>
         <ListItemIcon>
           <BarChartIcon />
         </ListItemIcon>
-        <ListItemText primary="تعریف مشاور" />
+        <ListItemText primary="وقتهای مشاوران" />
       </ListItemButton>
 
       <ListItemButton>

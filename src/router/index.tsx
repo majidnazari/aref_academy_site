@@ -19,10 +19,10 @@ import FaultsScreen from "../screens/Faults";
 import FaultsEditScreen from "../screens/Faults/edit";
 import FaultsCreateScreen from "../screens/Faults/create";
 
-import Consultant from "../screens/Consultant";
+import ConsultantScreen from "../screens/Consultant";
 import ConsultantCreateScreen from "../screens/Consultant/create";
 import SchedulerConsultant from "../screens/Consultant/components/SchedulerConsultant";
-// import ConsultantTestEditScreen from "../screens/Consultant_test/edit";
+import ConsultantEditScreen from "screens/Consultant/edit";
 
 import ConsultantTest from "../screens/Consultant_test";
 import ConsultantTestCreateScreen from "../screens/Consultant_test/create";
@@ -70,7 +70,6 @@ const MainRouter = () => {
   const [isLogged, setisLogged] = useState(false);
   useEffect(() => {
     setisLogged(appContext.isLoggedIn);
-    console.log(appContext);
   }, [appContext.isLoggedIn]);
   return (
     <Routes>
@@ -115,8 +114,10 @@ const MainRouter = () => {
           </Route>
 
           <Route path="consultant">
-            <Route path="" element={<Consultant />} />
-            <Route path="edit/:_id" element={<ConsultantTestEditScreen />} />
+            <Route path="" element={<ConsultantScreen />} />
+            <Route path="edit/:id" element={<ConsultantEditScreen courseId={0} callBack={function (): void {
+              throw new Error("Function not implemented.");
+            } } />} />
             <Route path="create" element={<ConsultantCreateScreen />} />
             <Route
               path=":userId/SchedulerConsultant"
