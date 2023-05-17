@@ -11,7 +11,6 @@ import { dayOfWeeksObject } from "../../constants/index";
 import AdapterJalali from "@date-io/date-fns-jalali";
 import TextField from "@mui/material/TextField";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import { Button, Container } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -21,6 +20,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import FormHelperText from "@mui/material/FormHelperText";
 import { showSuccess } from "utils/swlAlert";
 import { GET_BRANCH_CLASSROOMS } from "./gql/query";
+import { CREATE_CONSULTANT_DEFINITION_DETAIL } from "./gql/mutation";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -42,33 +42,27 @@ const daysOfWeek = [
   "پنج شنبه",
   "جمعه",
 ];
-interface IProps {
-  courseId: number;
-  callBack: () => void;
-}
 
 interface ErrorData {
   days?: string;
-  startDate?: string;
-  endDate?: string;
   startTime?: string;
   endTime?: string;
   branch_classroom_id?: string;
 }
 
-const ConsultantEditScreen = ({ courseId, callBack }: IProps) => {
+const ConsultantEditScreen = ({ title }: { title: string }) => {
   const [days, setDays] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [week, setWeek] = useState<"current" | "next">("next");
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndtTime] = useState<Date | null>(null);
   const [step, setStep] = useState<string>("15");
   const [branchClassRoomId, setBranchClassRoomId] = useState<string>("");
-  const [special, setSpecial] = useState<string>("0");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorData>({});
 
-  //   const [insertMultiCourse] = useMutation(CREATE_MULTI_SESSIONS);
+  const [insertMultiConsultantTimes] = useMutation(
+    CREATE_CONSULTANT_DEFINITION_DETAIL
+  );
 
   const { data: branchClassroomsData } = useQuery(GET_BRANCH_CLASSROOMS, {
     variables: {
@@ -89,9 +83,7 @@ const ConsultantEditScreen = ({ courseId, callBack }: IProps) => {
     } = event;
     setDays(typeof value === "string" ? value.split(",") : value);
   };
-  const handleChangeSpecial = (event: SelectChangeEvent<string>) => {
-    setSpecial(event.target.value);
-  };
+
   const handleChangeBranchClassRoomId = (event: SelectChangeEvent<string>) => {
     setBranchClassRoomId(event.target.value);
   };
@@ -104,25 +96,22 @@ const ConsultantEditScreen = ({ courseId, callBack }: IProps) => {
       daysTmp.push(dayOfWeeksObject[days[i]]);
     }
     const variables = {
-      course_id: courseId,
+      consultant_id: 1,
       days: daysTmp,
-      start_date: moment(startDate).format("YYYY-MM-DD"),
-      end_date: moment(endDate).format("YYYY-MM-DD"),
-      start_time: moment(startTime).format("HH:mm"),
-      end_time: moment(endTime).format("HH:mm"),
-      step,
+      week,
+      start_hour: moment(startTime).format("HH:mm"),
+      end_hour: moment(endTime).format("HH:mm"),
+      step: +step,
       branch_class_room_id: Number(branchClassRoomId),
-      special: special === "1",
     };
-    // insertMultiCourse({ variables })
-    //   .then(() => {
-    //     setLoading(false);
-    //     showSuccess("جلسات جدید با موفقیت ایجاد شد");
-    //     callBack();
-    //   })
-    //   .finally(() => {
-    //     setLoading(false);
-    //   });
+    insertMultiConsultantTimes({ variables })
+      .then(() => {
+        setLoading(false);
+        showSuccess("وقتهای جدید با موفقیت ایجاد شد");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const validation = () => {
@@ -133,14 +122,7 @@ const ConsultantEditScreen = ({ courseId, callBack }: IProps) => {
       result = { ...result, days: "لطفا روز های دوره را انتخاب کنید" };
       out = false;
     }
-    if (!startDate) {
-      result = { ...result, startDate: "لطفا تاریخ شروع را انتخاب کنید" };
-      out = false;
-    }
-    if (!endDate) {
-      result = { ...result, endDate: "لطفا تاریخ پایان را انتخاب کنید" };
-      out = false;
-    }
+
     if (!startTime) {
       result = { ...result, startTime: "لطفا ساعت شروع را انتخاب کنید" };
       out = false;
@@ -192,45 +174,27 @@ const ConsultantEditScreen = ({ courseId, callBack }: IProps) => {
             )}
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={4} xl={4}>
-          <LocalizationProvider dateAdapter={AdapterJalali}>
-            <DatePicker
-              label="تاریخ شروع"
-              value={startDate}
-              onChange={(newValue) => {
-                setStartDate(newValue);
+        <Grid item xs={12} sm={6} md={2} xl={2}>
+          <FormControl sx={{ width: "100%" }}>
+            <InputLabel id="week-label">هفته</InputLabel>
+            <Select
+              labelId="week-label"
+              id="week-select"
+              value={week}
+              onChange={(e) => {
+                setWeek(e.target.value as "current" | "next");
               }}
-              renderInput={(params) => (
-                <TextField {...params} style={{ width: "100%" }} />
-              )}
-              mask="____/__/__"
-            />
-          </LocalizationProvider>
-          {error.startDate ? (
-            <FormHelperText error>{error.startDate}</FormHelperText>
-          ) : (
-            ""
-          )}
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} xl={4}>
-          <LocalizationProvider dateAdapter={AdapterJalali}>
-            <DatePicker
-              label="تاریخ پایان"
-              value={endDate}
-              onChange={(newValue) => {
-                setEndDate(newValue);
-              }}
-              renderInput={(params) => (
-                <TextField {...params} style={{ width: "100%" }} />
-              )}
-              mask="____/__/__"
-            />
-          </LocalizationProvider>
-          {error.endDate ? (
-            <FormHelperText error>{error.endDate}</FormHelperText>
-          ) : (
-            ""
-          )}
+              input={<OutlinedInput label="هفته" />}
+            >
+              <MenuItem value="current">جاری</MenuItem>
+              <MenuItem value="next">آتی</MenuItem>
+            </Select>
+            {error.days ? (
+              <FormHelperText error>{error.days}</FormHelperText>
+            ) : (
+              ""
+            )}
+          </FormControl>
         </Grid>
         <Grid item xs={12} sm={6} md={4} xl={3}>
           <LocalizationProvider dateAdapter={AdapterJalali}>

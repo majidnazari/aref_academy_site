@@ -20,8 +20,6 @@ import FaultsEditScreen from "../screens/Faults/edit";
 import FaultsCreateScreen from "../screens/Faults/create";
 
 import ConsultantScreen from "../screens/Consultant";
-import ConsultantCreateScreen from "../screens/Consultant/create";
-import SchedulerConsultant from "../screens/Consultant/components/SchedulerConsultant";
 import ConsultantEditScreen from "screens/Consultant/edit";
 
 import ConsultantTest from "../screens/Consultant_test";
@@ -115,14 +113,8 @@ const MainRouter = () => {
 
           <Route path="consultant">
             <Route path="" element={<ConsultantScreen />} />
-            <Route path="edit/:id" element={<ConsultantEditScreen courseId={0} callBack={function (): void {
-              throw new Error("Function not implemented.");
-            } } />} />
-            <Route path="create" element={<ConsultantCreateScreen />} />
-            <Route
-              path=":userId/SchedulerConsultant"
-              element={<SchedulerConsultant />}
-            />
+            <Route path="edit/:id" element={<ConsultantEditScreen title="ویرایش/ایجاد زمانهای مشاور" />} />
+            <Route path=":userId/add-user-consultant" element={<></>} />
             <Route path="*" element={<NoMatch />} />
           </Route>
 
