@@ -16,9 +16,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import Box from "@mui/material/Box";
-//import { GET_COSULTANT_TESTS } from './gql/query';
-//import { DELETE_CONSULTANT_TEST } from './gql/mutation';
-import { CREATE_CONSULTANT_DEFINITION_DETAIL } from "./gql/mutation";
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { useMutation, useQuery } from "@apollo/client";
 import PaginatorInfo from "../../interfaces/paginator-info.interface";
 import { useNavigate } from "react-router-dom";
@@ -244,17 +242,16 @@ const ConsultantScreen = () => {
                   </Button>
                 </StyledTableCell>
                 <StyledTableCell align="left">
-                  {/* <SchedulerConsultant userId={element.id} > تخصیص مشاوره  </SchedulerConsultant> */}
                   <Button
                     size="small"
                     onClick={() => {
-                      navigate(`/consultant/${element.id}/SchedulerConsultant`);
+                      navigate(`/consultant/${element.id}/add-user-consultant`);
                     }}
                     variant="contained"
-                    startIcon={<DeleteIcon />}
+                    startIcon={<PersonAddAltIcon />}
                     color="info"
                   >
-                    تخصیص مشاوره
+                    دانش آموزان
                   </Button>
                 </StyledTableCell>
 

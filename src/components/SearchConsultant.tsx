@@ -14,7 +14,6 @@ import {
 
 import React, { useEffect, useState } from "react";
 import { GET_CONSULTANTS } from "screens/Consultant/gql/query";
-import { GET_LESSONS } from "screens/Consultant_test/gql/query";
 import { SelectChangeEvent } from "@mui/material/Select";
 import SearchIcon from "@mui/icons-material/Search";
 

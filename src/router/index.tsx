@@ -21,10 +21,7 @@ import FaultsCreateScreen from "../screens/Faults/create";
 
 import ConsultantScreen from "../screens/Consultant";
 import ConsultantEditScreen from "screens/Consultant/edit";
-
-import ConsultantTest from "../screens/Consultant_test";
-import ConsultantTestCreateScreen from "../screens/Consultant_test/create";
-import ConsultantTestEditScreen from "../screens/Consultant_test/edit";
+import AddConsultantStudent from "screens/Consultant/addStudent";
 
 import BranchesScreen from "../screens/Branches";
 import BranchesEditScreen from "../screens/Branches/edit";
@@ -113,15 +110,16 @@ const MainRouter = () => {
 
           <Route path="consultant">
             <Route path="" element={<ConsultantScreen />} />
-            <Route path="edit/:id" element={<ConsultantEditScreen title="ویرایش/ایجاد زمانهای مشاور" />} />
-            <Route path=":userId/add-user-consultant" element={<></>} />
-            <Route path="*" element={<NoMatch />} />
-          </Route>
-
-          <Route path="consultant-test">
-            <Route path="" element={<ConsultantTest />} />
-            <Route path="edit/:_id" element={<ConsultantTestEditScreen />} />
-            <Route path="create" element={<ConsultantTestCreateScreen />} />
+            <Route
+              path="edit/:id"
+              element={
+                <ConsultantEditScreen title="ویرایش/ایجاد زمانهای مشاور" />
+              }
+            />
+            <Route
+              path=":userId/add-user-consultant"
+              element={<AddConsultantStudent title="افزودن دانش آموز به مشاور" />}
+            />
             <Route path="*" element={<NoMatch />} />
           </Route>
 

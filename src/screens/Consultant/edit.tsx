@@ -19,8 +19,12 @@ import moment from "moment";
 import { useMutation, useQuery } from "@apollo/client";
 import FormHelperText from "@mui/material/FormHelperText";
 import { showSuccess } from "utils/swlAlert";
-import { GET_BRANCH_CLASSROOMS } from "./gql/query";
+import {
+  GET_BRANCH_CLASSROOMS,
+  GET_CONSULTANT_DEFINITION_DETAILS,
+} from "./gql/query";
 import { CREATE_CONSULTANT_DEFINITION_DETAIL } from "./gql/mutation";
+import { useParams } from "react-router-dom";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -52,13 +56,15 @@ interface ErrorData {
 
 const ConsultantEditScreen = ({ title }: { title: string }) => {
   const [days, setDays] = useState<string[]>([]);
-  const [week, setWeek] = useState<"current" | "next">("next");
+  const [week, setWeek] = useState<"Current" | "Next">("Next");
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndtTime] = useState<Date | null>(null);
   const [step, setStep] = useState<string>("15");
   const [branchClassRoomId, setBranchClassRoomId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorData>({});
+
+  const { id } = useParams();
 
   const [insertMultiConsultantTimes] = useMutation(
     CREATE_CONSULTANT_DEFINITION_DETAIL
@@ -74,6 +80,20 @@ const ConsultantEditScreen = ({ title }: { title: string }) => {
           order: "DESC",
         },
       ],
+    },
+  });
+
+  const { data: sessions } = useQuery(GET_CONSULTANT_DEFINITION_DETAILS, {
+    variables: {
+      first: 10,
+      page: 1,
+      orderBy: [
+        {
+          column: "id",
+          order: "DESC",
+        },
+      ],
+      consultant_id: +(id as string),
     },
   });
 
@@ -96,7 +116,7 @@ const ConsultantEditScreen = ({ title }: { title: string }) => {
       daysTmp.push(dayOfWeeksObject[days[i]]);
     }
     const variables = {
-      consultant_id: 1,
+      consultant_id: +(id as string),
       days: daysTmp,
       week,
       start_hour: moment(startTime).format("HH:mm"),
@@ -182,12 +202,12 @@ const ConsultantEditScreen = ({ title }: { title: string }) => {
               id="week-select"
               value={week}
               onChange={(e) => {
-                setWeek(e.target.value as "current" | "next");
+                setWeek(e.target.value as "Current" | "Next");
               }}
               input={<OutlinedInput label="هفته" />}
             >
-              <MenuItem value="current">جاری</MenuItem>
-              <MenuItem value="next">آتی</MenuItem>
+              <MenuItem value="Current">جاری</MenuItem>
+              <MenuItem value="Next">آتی</MenuItem>
             </Select>
             {error.days ? (
               <FormHelperText error>{error.days}</FormHelperText>

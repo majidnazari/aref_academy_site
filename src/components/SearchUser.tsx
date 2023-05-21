@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 
 import React, { useEffect, useState } from "react";
-import { GET_LESSONS } from "screens/Consultant_test/gql/query";
+//import { GET_LESSONS } from "screens/Consultant_test/gql/query";
 import { SelectChangeEvent } from "@mui/material/Select";
 import SearchIcon from "@mui/icons-material/Search";
 import { GET_USERS } from "screens/Users/gql/query";
@@ -63,24 +63,24 @@ const SearchUser = ({ callBack, loading }: SearchUserProp) => {
   
 
 
-  const { refetch: refetchGetLessons } = useQuery(GET_LESSONS, {
-    variables: {
-      first: 1,
-      page: 1,
-      full_name: "",
-      last_name:"",
-      fetchPolicy: "network-only",
-    },
-    onCompleted: (data) => {
-     // console.log("the skip is" + skip);
-      if (!skip) {
-        setLessonOptions(data.getLessons.data);
-        //console.log("the fetch get lesson is run");
-        //console.log(data.getLessons.data);
-      }
-    },
+  // const { refetch: refetchGetLessons } = useQuery(GET_LESSONS, {
+  //   variables: {
+  //     first: 1,
+  //     page: 1,
+  //     full_name: "",
+  //     last_name:"",
+  //     fetchPolicy: "network-only",
+  //   },
+  //   onCompleted: (data) => {
+  //    // console.log("the skip is" + skip);
+  //     if (!skip) {
+  //       setLessonOptions(data.getLessons.data);
+  //       //console.log("the fetch get lesson is run");
+  //       //console.log(data.getLessons.data);
+  //     }
+  //   },
 
-  });
+  // });
   
 
   const { refetch: refetchGetBranches } = useQuery(GET_BRANCHES, {
