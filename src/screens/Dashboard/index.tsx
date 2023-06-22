@@ -2,20 +2,102 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import TitleBox from 'components/TitleBox';
 import GroupIcon from '@mui/icons-material/Group';
-import { Box,TableContainer ,Table,TableBody,TableHead,TableCell,TableRow,Paper,Pagination,Stack} from '@mui/material';
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import EditIcon from "@mui/icons-material/Edit";
-import Skeleton from "@mui/material/Skeleton"; 
+import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import Paper from '@mui/material/Paper';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import { useNavigate } from "react-router-dom"
 import ClassIcon from '@mui/icons-material/Class';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { styled } from "@mui/material/styles";
-import { tableCellClasses } from "@mui/material/TableCell";
+import { GET_COURSES_AT_SPECIALTIME } from  "../Students/StudentCourses/gql/query";
+import { GET_COURSE_SESSION_BY_DATE } from  "../Students/StudentCourses/gql/query";
+
+import { useQuery } from '@apollo/client';
+import { useState } from 'react';
+import PaginatorInfo from 'interfaces/paginator-info.interface';
+import moment from 'moment';
+import moment_jalali from "moment-jalaali";
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+  
+}));
 
 const DashboardScreen = () => {
     const navigate = useNavigate();
+
+    const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
+      count: 0,
+      currentPage: 1,
+      firstItem: 0,
+      hasMorePages: false,
+      lastItem: 0,
+      lastPage: 1,
+      perPage: 10,
+      total: 0,
+  });
+  interface CourseSessionsOrderByDate {
+
+     
+      date:String;
+      details:CourseSessionDetails[];
+  }
+  interface CourseSessionDetails {
+        id : number;
+        name: String;
+        start_date: String;
+        start_time: String;
+        end_time: String;
+        course_id: number;
+        course_name:String;
+        lesson_name: String;
+        teacher_name: String;
+  }
+
+  const [courseSessions, setCourseSessions] = useState<CourseSessionsOrderByDate[] >([]);
+
+
+  var currentDate = moment();
+  let weekStart =currentDate.clone().startOf('week').add(-1,'day');
+  let startOfDate=currentDate.year()+"-"+(currentDate.month()+1) +"-"+  weekStart.date();
+  let endOfDate=currentDate.year()+"-"+(currentDate.month()+1 )+"-"+  weekStart.clone().add(6, 'days').date();
+  //console.log(startOfDate + " " + endOfDate);
+  //console.log(currentDate.month()+1);
+  
+
+    const { fetchMore, refetch, loading } = useQuery(GET_COURSE_SESSION_BY_DATE, {
+      variables: {
+        // first: process.env.REACT_APP_USERS_PER_PAGE
+        //   ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
+        //   : 10,
+        // page: 1,
+        session_date_from:startOfDate,
+        session_date_to:endOfDate,
+        // orderBy: [
+        //   {
+        //     column: "id",
+        //     order: "DESC",
+        //   },
+        //],        
+      },
+      onCompleted: (data) => {
+        //setPageInfo(data.getCourseTotalReportAtSpecialTime.paginatorInfo);
+        setCourseSessions(data.getCourseSessionOrderbyDate);
+        console.log(data.getCourseSessionOrderbyDate);
+      },
+      fetchPolicy: "network-only",
+    });
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -28,7 +110,7 @@ const DashboardScreen = () => {
       }));
 
     return (
-    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }} >
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}  >
         <Grid container spacing={2}>
             <Grid item xs={12} md={4} lg={4}>
                 <Box
@@ -94,115 +176,323 @@ const DashboardScreen = () => {
             </Grid>
         </Grid>
 
-        <TableContainer component={Paper}>
-        <Table aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell align="left">ردیف</StyledTableCell>
-              <StyledTableCell align="left"> کد</StyledTableCell>
-              <StyledTableCell align="left">سال</StyledTableCell>
-              <StyledTableCell align="left">دبیر</StyledTableCell>
-              <StyledTableCell align="left">کاربر ثبت کننده</StyledTableCell>
-              <StyledTableCell align="left">درس پایه</StyledTableCell>
-              <StyledTableCell align="left">نوع</StyledTableCell>
-              <StyledTableCell align="left">مقطع</StyledTableCell>
-              <StyledTableCell align="left">جنسیت</StyledTableCell>
-              <StyledTableCell align="left">شعبه</StyledTableCell>
-              <StyledTableCell align="left">تایید حسابداری</StyledTableCell>
-              <StyledTableCell align="left">جلسات</StyledTableCell>
-              <StyledTableCell align="left">ویرایش</StyledTableCell>
-              <StyledTableCell align="left">حذف</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {/* {courses.map((element: CourseData, index: number) => (
-              <StyledTableRow key={element.id}>
-                <StyledTableCell align="left">
-                  {pageInfo.perPage * (pageInfo.currentPage - 1) + index + 1}
-                </StyledTableCell>
-                <StyledTableCell align="left">{element.name}</StyledTableCell>
-                <StyledTableCell align="left">
-                  {element.year.name}
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  {element.teacher.first_name} {element.teacher.last_name}
-                </StyledTableCell>
-
-                <StyledTableCell align="left">
-                  {element.user.first_name} {element.user.last_name}
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  {element.lesson?.name}
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  {typesObject[element.type]}
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  {educationLevelsObject[element.education_level]}
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  {element.gender === "male" ? "پسرانه" : "دخترانه"}
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  {element.branch?.name}
-                </StyledTableCell>
-
-                <StyledTableCell align="center">
-                  {element.financial_status === "approved" ? (
-                    <CheckIcon color="success" />
-                  ) : (
-                    <ReportProblemIcon color="disabled" />
-                  )}
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  <Button
-                    size="small"
-                    onClick={() => {
-                      navigate(`/courses/${element.id}/sessions`);
+        <Grid item xs={12} md={12} lg={12}>
+                <Box
+                    sx={{
+                        backgroundColor: "white",
+                        color: "white",
+                        borderRadius: "5px",
+                        boxShadow: 3,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        py: 2,
+                        mt:1
                     }}
-                    variant="contained"
-                    // startIcon={<EditIcon />}
-                    color="primary"
-                  >
-                    جلسات
-                  </Button>
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  <Button
-                    size="small"
-                    onClick={() => {
-                      navigate(`/courses/edit/${element.id}`);
-                    }}
-                    variant="contained"
-                    startIcon={<EditIcon />}
-                    color="success"
-                  >
-                    ویرایش
-                  </Button>
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  <Button
-                    size="small"
-                    onClick={() => deleteCourse(element.id)}
-                    variant="contained"
-                    startIcon={<DeleteIcon />}
-                    color="error"
-                  >
-                    حذف
-                  </Button>
-                </StyledTableCell>
-              </StyledTableRow>
-            ))} */}
-          </TableBody>
-        </Table>
-        {/* <Stack spacing={5} sx={{ my: 2 }}>
-          <Pagination
-            count={pageInfo.lastPage}
-            page={pageInfo.currentPage}
-            onChange={handleChange}
-          />
-        </Stack> */}
-      </TableContainer>
+                    // onClick={() => {
+                    //     navigate('students');
+                    // }}
+                >
+                  <TableContainer component={Paper}>
+                      <Table aria-label="customized table">
+                        <TableHead>
+                          <TableRow>
+                            <StyledTableCell align="center">شنبه  {moment_jalali(startOfDate).format('jYYYY/jMM/jDD')} </StyledTableCell>
+                            <StyledTableCell align="center"> یکشنبه {moment_jalali(startOfDate).add(1,"day").format('jYYYY/jMM/jDD')}</StyledTableCell>
+                            <StyledTableCell align="center">دوشنبه {moment_jalali(startOfDate).add(2,"day").format('jYYYY/jMM/jDD')}</StyledTableCell>
+                            <StyledTableCell align="center">سه شنبه {moment_jalali(startOfDate).add(3,"day").format('jYYYY/jMM/jDD')}</StyledTableCell>
+                            <StyledTableCell align="center"> چهارشنبه {moment_jalali(startOfDate).add(4,"day").format('jYYYY/jMM/jDD')}</StyledTableCell>
+                            <StyledTableCell align="center"> پنج شنبه {moment_jalali(startOfDate).add(5,"day").format('jYYYY/jMM/jDD')}</StyledTableCell>
+                            <StyledTableCell align="center">جمعه {moment_jalali(startOfDate).add(6,"day").format('jYYYY/jMM/jDD')}</StyledTableCell>
+                          
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          <StyledTableRow >    
+                          {courseSessions.map((element: CourseSessionsOrderByDate,index:number) => (                                                      
+                              <> 
+                              {
+                                element.date==moment(startOfDate).format('YYYY-MM-DD') 
+                                ?
+                                <StyledTableCell align="center" >
+                                  {
+                                      element.details.map((element_detail: CourseSessionDetails) =>(
+                                        <Grid item xs={12} md={4} lg={4}>
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: "purple",
+                                                    color: "white",
+                                                    borderRadius: "5px",
+                                                    boxShadow: 3,
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    py: 2,
+                                                    px:2,
+                                                    width:200,
+                                                    m:1
+                                                    
+                                                }}                                        
+                                            >
+                                                {element_detail.start_time} - {element_detail.end_time}<br></br>                                            
+                                                {element_detail.course_name}<br></br>
+                                                {element_detail.name}<br></br>
+                                                {element_detail.lesson_name}<br></br>
+                                                {element_detail.teacher_name}<br></br>
+                                              </Box>
+                                        </Grid>
+                                        
+  
+                                      )) 
+                                  }  
+                                </StyledTableCell>
+                                :null
+                               
+                              }                            
+                              {
+                                element.date==moment(startOfDate).add(1,"day").format('YYYY-MM-DD') 
+                                ?
+                                <StyledTableCell align="center" >
+                                  {
+                                      element.details.map((element_detail: CourseSessionDetails) =>(
+                                        <Grid item xs={12} md={4} lg={4}>
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: "purple",
+                                                    color: "white",
+                                                    borderRadius: "5px",
+                                                    boxShadow: 3,
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    py: 2,
+                                                    px:2,
+                                                    width:200,
+                                                    m:3
+                                                    
+                                                }}                                        
+                                            >
+                                                {element_detail.start_time} - {element_detail.end_time}<br></br>                                            
+                                                {element_detail.course_name}<br></br>
+                                                {element_detail.name}<br></br>
+                                                {element_detail.lesson_name}<br></br>
+                                                {element_detail.teacher_name}<br></br>
+                                              </Box>
+                                        </Grid>
+                                        
+  
+                                      )) 
+                                  }  
+                                </StyledTableCell>
+                                :null
+                               
+                              }
+                              {
+                                element.date==moment(startOfDate).add(2,"day").format('YYYY-MM-DD') 
+                                ?
+                                <StyledTableCell align="center" >
+                                  {
+                                      element.details.map((element_detail: CourseSessionDetails) =>(
+                                        <Grid item xs={12} md={4} lg={4}>
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: "purple",
+                                                    color: "white",
+                                                    borderRadius: "5px",
+                                                    boxShadow: 3,
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    py: 2,
+                                                    px:2,
+                                                    width:200,
+                                                    m:1
+                                                    
+                                                }}                                        
+                                            >
+                                                {element_detail.start_time} - {element_detail.end_time}<br></br>                                            
+                                                {element_detail.course_name}<br></br>
+                                                {element_detail.name}<br></br>
+                                                {element_detail.lesson_name}<br></br>
+                                                {element_detail.teacher_name}<br></br>
+                                              </Box>
+                                        </Grid>
+                                        
+  
+                                      )) 
+                                  }  
+                                </StyledTableCell>
+                                :null
+                               
+                              }
+                              {
+                                element.date==moment(startOfDate).add(3,"day").format('YYYY-MM-DD') 
+                                ?
+                                <StyledTableCell align="center" >
+                                  {
+                                      element.details.map((element_detail: CourseSessionDetails) =>(
+                                        <Grid item xs={12} md={4} lg={4}>
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: "purple",
+                                                    color: "white",
+                                                    borderRadius: "5px",
+                                                    boxShadow: 3,
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    py: 2,
+                                                    px:2,
+                                                    width:200,
+                                                    m:1
+                                                    
+                                                }}                                        
+                                            >
+                                                {element_detail.start_time} - {element_detail.end_time}<br></br>                                            
+                                                {element_detail.course_name}<br></br>
+                                                {element_detail.name}<br></br>
+                                                {element_detail.lesson_name}<br></br>
+                                                {element_detail.teacher_name}<br></br>
+                                              </Box>
+                                        </Grid>
+                                        
+  
+                                      )) 
+                                  }  
+                                </StyledTableCell>
+                                :null
+                               
+                              } 
+                              {
+                                element.date==moment(startOfDate).add(4,"day").format('YYYY-MM-DD') 
+                                ?
+                                <StyledTableCell align="center" >
+                                  {
+                                      element.details.map((element_detail: CourseSessionDetails) =>(
+                                        <Grid item xs={12} md={4} lg={4}>
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: "purple",
+                                                    color: "white",
+                                                    borderRadius: "5px",
+                                                    boxShadow: 3,
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    py: 2,
+                                                    px:2,
+                                                    width:200,
+                                                    m:1
+                                                    
+                                                }}                                        
+                                            >
+                                                {element_detail.start_time} - {element_detail.end_time}<br></br>                                            
+                                                {element_detail.course_name}<br></br>
+                                                {element_detail.name}<br></br>
+                                                {element_detail.lesson_name}<br></br>
+                                                {element_detail.teacher_name}<br></br>
+                                              </Box>
+                                        </Grid>
+                                        
+  
+                                      )) 
+                                  }  
+                                </StyledTableCell>
+                                :null
+                               
+                              }
+                              {
+                                element.date==moment(startOfDate).add(5,"day").format('YYYY-MM-DD') 
+                                ?
+                                <StyledTableCell align="center" >
+                                  {
+                                      element.details.map((element_detail: CourseSessionDetails) =>(
+                                        <Grid item xs={12} md={4} lg={4}>
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: "purple",
+                                                    color: "white",
+                                                    borderRadius: "5px",
+                                                    boxShadow: 3,
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    py: 2,
+                                                    px:2,
+                                                    width:200,
+                                                    m:1
+                                                }}                                        
+                                            >
+                                                {element_detail.start_time} - {element_detail.end_time}<br></br>                                            
+                                                {element_detail.course_name}<br></br>
+                                                {element_detail.name}<br></br>
+                                                {element_detail.lesson_name}<br></br>
+                                                {element_detail.teacher_name}<br></br>
+                                              </Box>
+                                        </Grid>
+                                        
+  
+                                      )) 
+                                  }  
+                                </StyledTableCell>
+                                :null
+                               
+                              }
+                              {
+                                element.date==moment(startOfDate).add(6,"day").format('YYYY-MM-DD') 
+                                ?
+                                <StyledTableCell align="center" >
+                                  {
+                                      element.details.map((element_detail: CourseSessionDetails) =>(
+                                        <Grid item xs={12} md={4} lg={4}>
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: "purple",
+                                                    color: "white",
+                                                    borderRadius: "5px",
+                                                    boxShadow: 3,
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    py: 2,
+                                                    px:2,
+                                                    width:200,
+                                                    m:1
+                                                    
+                                                }}                                        
+                                            >
+                                                {element_detail.start_time} - {element_detail.end_time}<br></br>                                            
+                                                {element_detail.course_name}<br></br>
+                                                {element_detail.name}<br></br>
+                                                {element_detail.lesson_name}<br></br>
+                                                {element_detail.teacher_name}<br></br>
+                                              </Box>
+                                        </Grid>
+                                        
+  
+                                      )) 
+                                  }  
+                                </StyledTableCell>
+                                :null
+                               
+                              }                                
+                            
+                              </>
+                            
+                          ))}
+                          </StyledTableRow>
+                        </TableBody>
+                      </Table>
+                      {/* <Stack spacing={5} sx={{ my: 2 }}>
+                        <Pagination
+                          count={pageInfo.lastPage}
+                          page={pageInfo.currentPage}
+                          onChange={handleChange}
+                        />
+                      </Stack> */}
+                  </TableContainer>
+                </Box>
+        </Grid>    
     </Container>)
 }
 
