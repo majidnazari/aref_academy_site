@@ -214,7 +214,7 @@ const ListStudents = ({ course_id, course_session_id }: PropType) => {
                   </Box>
                 </StyledTableCell>
                 <StyledTableCell align="left">
-                  <AbsencepresenceBtns
+                  <AbsencepresenceBtns 
                     id={element.id}
                     ap_status={element.ap_status}
                     callBack={updateOriginalList}

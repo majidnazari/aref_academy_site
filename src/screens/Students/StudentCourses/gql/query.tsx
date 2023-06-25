@@ -182,7 +182,9 @@ export const GET_COURSE_SESSION_BY_DATE=gql`
       course_name
       lesson_name
       teacher_name
-      
+      class_rome_name
+      gender
+      education_level
     }
   }
 }`
