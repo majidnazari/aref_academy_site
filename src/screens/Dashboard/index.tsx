@@ -22,9 +22,7 @@ const DashboardScreen = () => {
   //   perPage: 10,
   //   total: 0,
   // }); 
-
-  let index_showweeklyreport=0;
-
+  
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={2}>
@@ -114,7 +112,7 @@ const DashboardScreen = () => {
             mt: 1,
           }}
         >
-          <ShowWeeklyReport key={index_showweeklyreport++}></ShowWeeklyReport>
+          <ShowWeeklyReport ></ShowWeeklyReport>
         </Box>
       </Grid>
     </Container>

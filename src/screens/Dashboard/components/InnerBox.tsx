@@ -70,8 +70,8 @@ const InnerBox = ({ details }: { details: CourseSessionDetailsType[] }) => {
   return (
     <>
       {details?.map((detail, index: number) => (
-        <Grid item xs={12} md={4} lg={4}>
-          <Box sx={checkEducation(detail.education_level)}>
+        <Grid item xs={12} md={4} lg={4} key={index}>
+          <Box sx={checkEducation(detail.education_level)} >
             <Box>
               {" "}
               {detail.start_time}- {detail.end_time}{" "}
@@ -82,13 +82,14 @@ const InnerBox = ({ details }: { details: CourseSessionDetailsType[] }) => {
             <Box> {detail.name} </Box>
             <Box>{detail.lesson_name}</Box>
             <Box>{detail.teacher_name}</Box>
-            <Box>
+            <Box>{detail.gender==="female" ? "دخترانه"  : "پسرانه"}</Box>
+            {/* <Box>
               <img
                 src={detail.gender === "female" ? femalepng : malepng}
                 alt=""
                 width={30}
               />
-            </Box>
+            </Box> */}
             {/* <Box >{detail.education_level}</Box> */}
           </Box>
         </Grid>

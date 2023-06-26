@@ -16,7 +16,6 @@ import moment from "moment";
 import moment_jalali from "moment-jalaali";
 
 import CourseSessionsOrderByDateType from "../dto/CourseSessionsOrderByDateType";
-import CourseSessionDetailsType from "../dto/CourseSessionsOrderByDateType";
 import InnerBox from "./InnerBox";
 
 const ShowWeeklyReport = () => {
@@ -28,7 +27,7 @@ const ShowWeeklyReport = () => {
   useQuery(GET_COURSE_SESSION_BY_DATE, {
     onCompleted: (data) => {
       setCourseSessions(data.getCourseSessionOrderbyDate);
-      console.log(data.getCourseSessionOrderbyDate);
+      //console.log(data.getCourseSessionOrderbyDate);
     },
     fetchPolicy: "network-only",
   });
@@ -58,6 +57,8 @@ const ShowWeeklyReport = () => {
     m: 1,
     direction: "rtl",
   };
+  
+
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -84,7 +85,7 @@ const ShowWeeklyReport = () => {
   let index_row = 0;
 
   return (
-    <TableContainer component={Paper} key={index_row++}>
+    <TableContainer component={Paper} >
       <Table aria-label="customized table">
         <TableHead>
           <TableRow key={index_row++}>
@@ -121,48 +122,48 @@ const ShowWeeklyReport = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          <StyledTableRow key={index_row++}>
+          <StyledTableRow >
             {(courseSessions || []).map(
               (element: CourseSessionsOrderByDateType, index: number) => (
                 <>
                   {element.date === moment(startOfDate).format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" key={index++}>
+                    <StyledTableCell align="center" >
                       <InnerBox details={element?.details || []} />
                     </StyledTableCell>
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(1, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" key={index++}>
+                    <StyledTableCell align="center" >
                       <InnerBox details={element?.details || []} />
                     </StyledTableCell>
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(2, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" key={index++}>
+                    <StyledTableCell align="center" >
                       <InnerBox details={element?.details || []} />
                     </StyledTableCell>
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(3, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" key={index++}>
+                    <StyledTableCell align="center" >
                       <InnerBox details={element?.details || []} />
                     </StyledTableCell>
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(4, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" key={index++}>
+                    <StyledTableCell align="center" >
                       <InnerBox details={element?.details || []} />
                     </StyledTableCell>
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(5, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" key={index++}>
+                    <StyledTableCell align="center" >
                       <InnerBox details={element?.details || []} />
                     </StyledTableCell>
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(6, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" key={index++}>
+                    <StyledTableCell align="center" >
                       <InnerBox details={element?.details || []} />
                     </StyledTableCell>
                   ) : null}
