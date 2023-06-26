@@ -112,3 +112,79 @@ export const GET_COURSES = gql`
       }
     }  
 `;
+
+export const GET_COURSES_AT_SPECIALTIME=gql` 
+      query getCourseTotalReportAtSpecialTime(
+          $first: Int!
+          $page: Int
+          $course_date_from:String
+          $course_date_to:String
+          $orderBy: [OrderByClause!]
+
+      )
+      {
+        getCourseTotalReportAtSpecialTime(
+          first:$first 
+          page:$page  
+          course_date_from: $course_date_from 
+          course_date_to: $course_date_to
+          orderBy:$orderBy
+        ){
+          data{
+            id
+            name
+            gender
+            branch{
+              name
+            }
+            teacher{
+              last_name
+              first_name
+            }     
+            lesson{
+              name
+            }
+            education_level
+            type
+            financial_status
+            courseSession {
+              id
+              start_date
+            }
+            courseStudent{
+              id
+            }
+          }
+          
+        }
+      }
+      `;
+
+export const GET_COURSE_SESSION_BY_DATE=gql`
+      query getCourseSessionByDate(
+  $session_date_from:String,
+  $session_date_to:String,
+  
+){
+  getCourseSessionOrderbyDate(
+    session_date_from:$session_date_from
+    session_date_to:$session_date_to
+  )
+  {
+    date
+    details{
+      id
+      name
+      start_date
+      start_time
+      end_time
+      course_id
+      course_name
+      lesson_name
+      teacher_name
+      class_rome_name
+      gender
+      education_level
+    }
+  }
+}`

@@ -9,10 +9,10 @@ const FinancialRefusedStatus = ({
       out = "پرداختی نداشته است";
       break;
     case "not_returned":
-      out = "برگشتی داشته است";
+      out = "عدم برگشت وجه";
       break;
     case "returned":
-      out = "عدم برگشت وجه";
+      out = "برگشتی داشته است";
       break;
     default:
       break;

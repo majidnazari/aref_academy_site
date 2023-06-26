@@ -15,6 +15,7 @@ import {
   TableBody,
   Button,
   Box,
+  Alert,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -29,7 +30,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Edit from "components/EditCourseStudentStatus";
 import { showSuccess, showConfirm } from "utils/swlAlert";
 import FinancialRefusedStatus from "components/FinancialRefusedStatus";
-
+import { useNavigate } from "react-router-dom";
 interface EditStudentCourse {
   openDialog: boolean;
   studentCourse: StudentCoursesType;
@@ -38,6 +39,7 @@ interface EditStudentCourse {
 }
 
 const StudentCourses = () => {
+  const navigate = useNavigate();
   const { studentId } = useParams<string>();
   const [studentCourses, setStudentCourses] = useState<StudentCoursesType[]>(
     []
@@ -213,7 +215,11 @@ const StudentCourses = () => {
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {/* {element.financial_refused_status} */}
-                      <FinancialRefusedStatus financial_refused_status={element.financial_refused_status} />
+                      <FinancialRefusedStatus
+                        financial_refused_status={
+                          element.financial_refused_status
+                        }
+                      />
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {moment(element.created_at).format("jYYYY/jMM/jDD")}
@@ -259,7 +265,22 @@ const StudentCourses = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <AddStudentCourse studentId={studentId} refetch={refetch} />
+
+      {!loading && studentData.getStudent.nationality_code ? (
+        <AddStudentCourse studentId={studentId} refetch={refetch} />
+      ) : (
+        <Alert severity="error">
+          جهت افزودن درس به این دانش آموز کد ملی را در قسمت
+          <Button
+            onClick={() => {
+              navigate(`/students/edit/${studentId}`);
+            }}
+          >
+            پروفایل
+          </Button>
+          وارد کنید
+        </Alert>
+      )}
       <Edit
         openDialog={editStudentCourse.openDialog}
         studentCourse={editStudentCourse.studentCourse}

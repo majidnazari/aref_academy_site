@@ -89,10 +89,10 @@ const AddStudentQuikly = ({
     useMutation(CREATE_STUDENT);
 
   const createNewStudentAndAddToClass = () => {
-    reloadList();
     if (!validateForm()) {
       return;
     }
+    reloadList();
     if (search.id) {
       createCourseStudent({
         variables: {
@@ -129,6 +129,10 @@ const AddStudentQuikly = ({
     let out = true;
     if (!search.phone || search.phone === "") {
       tmpError.phone = "تلفن همراه را وارد کنید";
+      out = false;
+    }
+    if (!search.nationality_code || search.nationality_code === "") {
+      tmpError.nationality_code = "کد ملی را وارد کنید";
       out = false;
     }
     if (!search.first_name || search.first_name === "") {
@@ -262,6 +266,22 @@ const AddStudentQuikly = ({
               />
             </Grid>
 
+            <Grid item md={6} sm={12}>
+              <TextField
+                fullWidth
+                label="کد ملی"
+                id="nationality_code"
+                value={search.nationality_code}
+                onChange={(e: any) =>
+                  setSearch({ ...search, nationality_code: e.target.value })
+                }
+                variant="filled"
+                error={error.nationality_code ? true : false}
+                helperText={
+                  error.nationality_code ? error.nationality_code : ""
+                }
+              />
+            </Grid>
             <Grid item md={6} sm={12}>
               <TextField
                 fullWidth

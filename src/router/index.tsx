@@ -19,15 +19,9 @@ import FaultsScreen from "../screens/Faults";
 import FaultsEditScreen from "../screens/Faults/edit";
 import FaultsCreateScreen from "../screens/Faults/create";
 
-import Consultant from "../screens/Consultant";
-import ConsultantCreateScreen from "../screens/Consultant/create";
-import SchedulerConsultant from "../screens/Consultant/components/SchedulerConsultant";
-// import ConsultantTestEditScreen from "../screens/Consultant_test/edit";
-
-import ConsultantTest from "../screens/Consultant_test";
-import ConsultantTestCreateScreen from "../screens/Consultant_test/create";
-import ConsultantTestEditScreen from "../screens/Consultant_test/edit";
-
+import ConsultantScreen from "../screens/Consultant";
+import ConsultantEditScreen from "screens/Consultant/edit";
+import AddConsultantStudent from "screens/Consultant/addStudent";
 
 import BranchesScreen from "../screens/Branches";
 import BranchesEditScreen from "../screens/Branches/edit";
@@ -71,7 +65,7 @@ const MainRouter = () => {
   const [isLogged, setisLogged] = useState(false);
   useEffect(() => {
     setisLogged(appContext.isLoggedIn);
-  }, [appContext.isLoggedIn, isLogged]);
+  }, [appContext.isLoggedIn]);
   return (
     <Routes>
       {isLogged ? (
@@ -115,25 +109,19 @@ const MainRouter = () => {
           </Route>
 
           <Route path="consultant">
-            <Route path="" element={<Consultant />} />
-            <Route path="edit/:_id" element={<ConsultantTestEditScreen />} />
-            <Route path="create" element={<ConsultantCreateScreen />} />
+            <Route path="" element={<ConsultantScreen />} />
             <Route
-              path=":userId/SchedulerConsultant"
-              element={<SchedulerConsultant />}
-            />            
+              path="edit/:id"
+              element={
+                <ConsultantEditScreen title="ویرایش/ایجاد زمانهای مشاور" />
+              }
+            />
+            <Route
+              path=":userId/add-user-consultant"
+              element={<AddConsultantStudent title="افزودن دانش آموز به مشاور" />}
+            />
             <Route path="*" element={<NoMatch />} />
           </Route>
-
-          <Route path="consultant-test">
-            <Route path="" element={<ConsultantTest />} />
-            <Route path="edit/:_id" element={<ConsultantTestEditScreen />} />
-            <Route path="create" element={<ConsultantTestCreateScreen />} />
-            <Route path="*" element={<NoMatch />} />
-          </Route>
-
-          
-
 
           <Route path="branches">
             <Route path="" element={<BranchesScreen />} />
@@ -191,7 +179,7 @@ const MainRouter = () => {
             />
 
             <Route path="financial" element={<ReporstFinancialScreen />} />
-            
+
             <Route path="*" element={<NoMatch />} />
           </Route>
 

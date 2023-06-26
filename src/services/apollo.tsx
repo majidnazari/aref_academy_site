@@ -32,8 +32,8 @@ const logoutLink = onError((networkError) => {
         if (networkError.response.errors[0].message === "Unauthenticated."
             ||
             networkError.response.errors[0].message === "unauthorized access") {
-            removeToken();
-            window.location.href = "/login";
+            //removeToken();
+            //window.location.href = "/login";
         }
         let message = networkError.response.errors[0].message;
         if (networkError.response.errors[0].extensions.validation) {
