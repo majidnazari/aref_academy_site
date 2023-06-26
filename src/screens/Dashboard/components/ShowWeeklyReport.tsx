@@ -125,49 +125,49 @@ const ShowWeeklyReport = () => {
           <StyledTableRow >
             {(courseSessions || []).map(
               (element: CourseSessionsOrderByDateType, index: number) => (
-                <>
+                <StyledTableCell align="center" key={index}>
                   {element.date === moment(startOfDate).format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" >
+                   
                       <InnerBox details={element?.details || []} />
-                    </StyledTableCell>
+                    
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(1, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" >
+                   
                       <InnerBox details={element?.details || []} />
-                    </StyledTableCell>
+                    
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(2, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" >
+                    
                       <InnerBox details={element?.details || []} />
-                    </StyledTableCell>
+                   
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(3, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" >
+                   
                       <InnerBox details={element?.details || []} />
-                    </StyledTableCell>
+                 
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(4, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" >
+                    
                       <InnerBox details={element?.details || []} />
-                    </StyledTableCell>
+                   
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(5, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" >
+                   
                       <InnerBox details={element?.details || []} />
-                    </StyledTableCell>
+                    
                   ) : null}
                   {element.date ===
                   moment(startOfDate).add(6, "day").format("YYYY-MM-DD") ? (
-                    <StyledTableCell align="center" >
+                   
                       <InnerBox details={element?.details || []} />
-                    </StyledTableCell>
+                    
                   ) : null}
-                </>
+                </StyledTableCell>
               )
             )}
           </StyledTableRow>
