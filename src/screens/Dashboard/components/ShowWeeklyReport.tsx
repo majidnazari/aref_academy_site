@@ -173,13 +173,13 @@ const ShowWeeklyReport = () => {
           </StyledTableRow>
         </TableBody>
       </Table>
-      {/* <Stack spacing={5} sx={{ my: 2 }}>
-                        <Pagination
-                          count={pageInfo.lastPage}
-                          page={pageInfo.currentPage}
-                          onChange={handleChange}
-                        />
-                      </Stack> */}
+      {/* // <Stack spacing={5} sx={{ my: 2 }}>
+      //                   <Pagination
+      //                     count={pageInfo.lastPage}
+      //                     page={pageInfo.currentPage}
+      //                     onChange={handleChange}
+      //                   />
+      //                 </Stack> */}
     </TableContainer>
   );
 };
