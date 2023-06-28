@@ -79,7 +79,7 @@ const InnerBox = ({ details }: { details: CourseSessionDetailsType[] }) => {
             <Box> {detail.name} </Box>
             <Box>{detail.lesson_name}</Box>
             <Box>{detail.teacher_name}</Box>
-            <Box>{detail.education_level}</Box>
+           
 
             <Box
               sx={{
@@ -91,9 +91,10 @@ const InnerBox = ({ details }: { details: CourseSessionDetailsType[] }) => {
                 p:1
               }}
             >
-              <Box sx={{ px: 1 }}>
+              {/* <Box sx={{ px: 1 }}>
                 {detail.gender === "female" ? "دخترانه" : "پسرانه"}
-              </Box>
+              </Box> */}
+              <Box sx={{ px: 1 }}>{detail.education_level}</Box>
 
               {detail.gender === "female" ? <Face2Icon fontSize="small" /> : <FaceIcon />}
             </Box>
