@@ -11,23 +11,25 @@ import TableRow from "@mui/material/TableRow";
 
 import { GET_COURSE_SESSION_BY_DATE } from "../../Students/StudentCourses/gql/query";
 import { useQuery } from "@apollo/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import moment from "moment";
 import moment_jalali from "moment-jalaali";
 
 import CourseSessionsOrderByDateType from "../dto/CourseSessionsOrderByDateType";
 import InnerBox from "./InnerBox";
+import HeaderBox from "./HeaderBox";
 
 const ShowWeeklyReport = () => {
   const [courseSessions, setCourseSessions] = useState<
     CourseSessionsOrderByDateType[]
   >([]);
 
+  
   //const [ courseSessions ] =
   useQuery(GET_COURSE_SESSION_BY_DATE, {
     onCompleted: (data) => {
       setCourseSessions(data.getCourseSessionOrderbyDate);
-      //console.log(data.getCourseSessionOrderbyDate);
+      
     },
     fetchPolicy: "network-only",
   });
@@ -57,9 +59,7 @@ const ShowWeeklyReport = () => {
     m: 1,
     direction: "rtl",
   };
-  
-
-
+ 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -70,116 +70,40 @@ const ShowWeeklyReport = () => {
     },
   }));
 
-  var currentDate = moment();
-  let weekStart = currentDate.clone().startOf("week").add(-1, "day");
-  let startOfDate =
-    currentDate.year() +
-    "-" +
-    (currentDate.month() + 1) +
-    "-" +
-    weekStart.date();
-  //let endOfDate=currentDate.year()+"-"+(currentDate.month()+1 )+"-"+  weekStart.clone().add(6, 'days').date();
-  //console.log(startOfDate + " " + endOfDate);
-  //console.log(currentDate.month()+1);
-
-  let index_row = 0;
+ 
 
   return (
-    <TableContainer component={Paper} >
+    <TableContainer component={Paper}>
       <Table aria-label="customized table">
         <TableHead>
-          <TableRow key={index_row++}>
-            <StyledTableCell align="center" key={index_row++}>
-              شنبه {moment_jalali(startOfDate).format("jYYYY/jMM/jDD")}{" "}
-            </StyledTableCell>
-            <StyledTableCell align="center" key={index_row++}>
-              {" "}
-              یکشنبه{" "}
-              {moment_jalali(startOfDate).add(1, "day").format("jYYYY/jMM/jDD")}
-            </StyledTableCell>
-            <StyledTableCell align="center" key={index_row++}>
-              دوشنبه{" "}
-              {moment_jalali(startOfDate).add(2, "day").format("jYYYY/jMM/jDD")}
-            </StyledTableCell>
-            <StyledTableCell align="center" key={index_row++}>
-              سه شنبه{" "}
-              {moment_jalali(startOfDate).add(3, "day").format("jYYYY/jMM/jDD")}
-            </StyledTableCell>
-            <StyledTableCell align="center" key={index_row++}>
-              {" "}
-              چهارشنبه{" "}
-              {moment_jalali(startOfDate).add(4, "day").format("jYYYY/jMM/jDD")}
-            </StyledTableCell>
-            <StyledTableCell align="center" key={index_row++}>
-              {" "}
-              پنج شنبه{" "}
-              {moment_jalali(startOfDate).add(5, "day").format("jYYYY/jMM/jDD")}
-            </StyledTableCell>
-            <StyledTableCell align="center" key={index_row++}>
-              جمعه{" "}
-              {moment_jalali(startOfDate).add(6, "day").format("jYYYY/jMM/jDD")}
-            </StyledTableCell>
+          
+          <TableRow>
+            {(courseSessions || []).map(
+              (element_header: CourseSessionsOrderByDateType , index_header: number) => {
+               return ( <StyledTableCell align="center" key={index_header}>
+                  <HeaderBox element_date={element_header.date} />
+                  
+                </StyledTableCell>
+            )}
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
-          <StyledTableRow >
+          <StyledTableRow>
             {(courseSessions || []).map(
               (element: CourseSessionsOrderByDateType, index: number) => (
                 <StyledTableCell align="center" key={index}>
-                  {element.date === moment(startOfDate).format("YYYY-MM-DD") ? (
-                   
-                      <InnerBox details={element?.details || []} />
-                    
-                  ) : null}
-                  {element.date ===
-                  moment(startOfDate).add(1, "day").format("YYYY-MM-DD") ? (
-                   
-                      <InnerBox details={element?.details || []} />
-                    
-                  ) : null}
-                  {element.date ===
-                  moment(startOfDate).add(2, "day").format("YYYY-MM-DD") ? (
-                    
-                      <InnerBox details={element?.details || []} />
-                   
-                  ) : null}
-                  {element.date ===
-                  moment(startOfDate).add(3, "day").format("YYYY-MM-DD") ? (
-                   
-                      <InnerBox details={element?.details || []} />
+                  {
+                  <InnerBox details={element?.details || []} />
+                  }
                  
-                  ) : null}
-                  {element.date ===
-                  moment(startOfDate).add(4, "day").format("YYYY-MM-DD") ? (
-                    
-                      <InnerBox details={element?.details || []} />
-                   
-                  ) : null}
-                  {element.date ===
-                  moment(startOfDate).add(5, "day").format("YYYY-MM-DD") ? (
-                   
-                      <InnerBox details={element?.details || []} />
-                    
-                  ) : null}
-                  {element.date ===
-                  moment(startOfDate).add(6, "day").format("YYYY-MM-DD") ? (
-                   
-                      <InnerBox details={element?.details || []} />
-                    
-                  ) : null}
                 </StyledTableCell>
               )
             )}
           </StyledTableRow>
         </TableBody>
       </Table>
-      {/* // <Stack spacing={5} sx={{ my: 2 }}>
-      //                   <Pagination
-      //                     count={pageInfo.lastPage}
-      //                     page={pageInfo.currentPage}
-      //                     onChange={handleChange}
-      //                   />
-      //                 </Stack> */}
+     
     </TableContainer>
   );
 };

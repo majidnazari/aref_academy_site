@@ -11,6 +11,8 @@ class CourseSessionDetailsType {
     class_rome_name?:String;
     gender?:String;
     education_level?:String;
+    course_type?:String ;   
+    branche_name?:String   ;
 }
 
 export default CourseSessionDetailsType;
