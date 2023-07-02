@@ -160,12 +160,13 @@ const InnerBox = ({
                 alignItems: "center",
                 backgroundColor: "#dae4e963",
                 p: 1,
+                width:120
               }}
             >
               {/* <Box sx={{ px: 1 }}>
                 {detail.gender === "female" ? "دخترانه" : "پسرانه"}
               </Box> */}
-              <Box sx={{ px: 4 }}>{detail.education_level}</Box>
+              <Box sx={{ px: 1 }}>{"مقطع :"}{detail.education_level}</Box>
 
               {detail.gender === "female" ? (
                 <Face2Icon fontSize="small" />

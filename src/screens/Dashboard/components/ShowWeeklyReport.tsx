@@ -18,27 +18,29 @@ import moment_jalali from "moment-jalaali";
 import CourseSessionsOrderByDateType from "../dto/CourseSessionsOrderByDateType";
 import CourseSessionsOrderByDateWithTodayType from "../dto/CourseSessionsOrderByDateWithTodayType";
 
-
 import InnerBox from "./InnerBox";
 import HeaderBox from "./HeaderBox";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 
 const ShowWeeklyReport = () => {
   const [courseSessions, setCourseSessions] = useState<
     CourseSessionsOrderByDateType[]
   >([]);
 
-  const [today,setToday]=useState<String | undefined>();
+  const [today, setToday] = useState<String | undefined>();
 
-  const { fetchMore, refetch } = useQuery(GET_COURSE_SESSION_BY_DATE_WITH_TODAY, {
-    onCompleted: (data) => {
-      setCourseSessions(data.getCourseSessionOrderbyDate.data);
-      setToday(data.getCourseSessionOrderbyDate.today);
-    },
-    fetchPolicy: "network-only",
-  });
+  const { fetchMore, loading: couseLoading } = useQuery(
+    GET_COURSE_SESSION_BY_DATE_WITH_TODAY,
+    {
+      onCompleted: (data) => {
+        setCourseSessions(data.getCourseSessionOrderbyDate.data);
+        setToday(data.getCourseSessionOrderbyDate.today);
+      },
+      fetchPolicy: "network-only",
+    }
+  );
 
   const [nextWeekFlag, setNextWeekFlag] = useState<Boolean>(true);
 
@@ -107,65 +109,81 @@ const ShowWeeklyReport = () => {
   }));
 
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            {(courseSessions || []).map(
-              (
-                element_header: CourseSessionsOrderByDateType,
-                index_header: number
-              ) => {
-                return (
-                  <StyledTableCell align="center" key={index_header}>
-                    <HeaderBox element_date={element_header.date} />
+    <Box>
+      {couseLoading && (
+        <Box
+          component="div"
+          sx={{ display: "flex", justifyContent: "center", p: 1 }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
+      <TableContainer component={Paper}>
+        <Table aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              {(courseSessions || []).map(
+                (
+                  element_header: CourseSessionsOrderByDateType,
+                  index_header: number
+                ) => {
+                  return (
+                    <StyledTableCell align="center" key={index_header}>
+                      <HeaderBox element_date={element_header.date} />
+                    </StyledTableCell>
+                  );
+                }
+              )}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <StyledTableRow>
+              {(courseSessions || []).map(
+                (element: CourseSessionsOrderByDateType, index: number) => (
+                  <StyledTableCell align="center" key={index}>
+                    {
+                      <InnerBox
+                        details={element?.details || []}
+                        todayDate={today}
+                        data={element}
+                      />
+                    }
                   </StyledTableCell>
-                );
-              }
-            )}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <StyledTableRow>
-            {(courseSessions || []).map(
-              (element: CourseSessionsOrderByDateType, index: number) => (
-                <StyledTableCell align="center" key={index}>
-                  {<InnerBox details={element?.details || []}  todayDate={today} data={element}/>}
-                </StyledTableCell>
-              )
-            )}
-          </StyledTableRow>
-        </TableBody>
-      </Table>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          m: 1,
-        }}
-      >
-        <Button
-          size="small"
-          variant="outlined"
-          color="primary"
-          onClick={previousWeek}
-          startIcon={<ArrowForwardIcon />}
-          disabled={nextWeekFlag ? true : false}
+                )
+              )}
+            </StyledTableRow>
+          </TableBody>
+        </Table>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            m: 1,
+          }}
         >
-          قبل
-        </Button>
-        <Button
-          size="small"
-          endIcon={<ArrowBackIcon />}
-          onClick={nextWeek}
-          variant="outlined"
-          color="primary"
-          disabled={nextWeekFlag ? false : true}
-        >
-          بعد
-        </Button>
-      </Box>
-    </TableContainer>
+          <Button
+            size="small"
+            variant="outlined"
+            color="primary"
+            onClick={previousWeek}
+            startIcon={<ArrowForwardIcon />}
+            disabled={nextWeekFlag ? true : false}
+          >
+            قبل
+          </Button>
+          <Button
+            size="small"
+            endIcon={<ArrowBackIcon />}
+            onClick={nextWeek}
+            variant="outlined"
+            color="primary"
+            disabled={nextWeekFlag ? false : true}
+          >
+            بعد
+          </Button>
+        </Box>
+      </TableContainer>
+    </Box>
   );
 };
 
