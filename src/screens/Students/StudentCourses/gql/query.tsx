@@ -156,10 +156,12 @@ export const GET_COURSE_SESSION_BY_DATE = gql`
   query getCourseSessionByDate(
     $session_date_from: String
     $session_date_to: String
+    $next_week:Boolean
   ) {
     getCourseSessionOrderbyDate(
       session_date_from: $session_date_from
       session_date_to: $session_date_to
+      next_week:$next_week
     ) {
       date
       details {
@@ -181,3 +183,42 @@ export const GET_COURSE_SESSION_BY_DATE = gql`
     }
   }
 `;
+
+
+export const GET_COURSE_SESSION_BY_DATE_WITH_TODAY = gql`
+ query getCourseSessionByDateWithToday(
+  $session_date_from:String,
+  $session_date_to:String,
+  $next_week:Boolean,
+  
+){
+  getCourseSessionOrderbyDate(
+    session_date_from:$session_date_from
+    session_date_to:$session_date_to
+    next_week:$next_week
+  )
+  {
+    today
+    data{
+      date
+   		details{
+      id
+      name
+      start_date
+      start_time
+      end_time
+      course_id
+      course_name
+      lesson_name
+      teacher_name
+      class_rome_name
+      gender
+      education_level
+      
+    }
+    }
+    
+  }
+}
+`;
+

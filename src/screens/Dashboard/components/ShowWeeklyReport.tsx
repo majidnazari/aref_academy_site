@@ -10,29 +10,65 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
 import { GET_COURSE_SESSION_BY_DATE } from "../../Students/StudentCourses/gql/query";
+import { GET_COURSE_SESSION_BY_DATE_WITH_TODAY } from "../../Students/StudentCourses/gql/query";
 import { useQuery } from "@apollo/client";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import moment_jalali from "moment-jalaali";
-
 import CourseSessionsOrderByDateType from "../dto/CourseSessionsOrderByDateType";
+import CourseSessionsOrderByDateWithTodayType from "../dto/CourseSessionsOrderByDateWithTodayType";
+
+
 import InnerBox from "./InnerBox";
 import HeaderBox from "./HeaderBox";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { Button } from "@mui/material";
 
 const ShowWeeklyReport = () => {
   const [courseSessions, setCourseSessions] = useState<
     CourseSessionsOrderByDateType[]
   >([]);
 
-  
-  //const [ courseSessions ] =
-  useQuery(GET_COURSE_SESSION_BY_DATE, {
+  const [today,setToday]=useState<String | undefined>();
+
+  const { fetchMore, refetch } = useQuery(GET_COURSE_SESSION_BY_DATE_WITH_TODAY, {
     onCompleted: (data) => {
-      setCourseSessions(data.getCourseSessionOrderbyDate);
-      
+      setCourseSessions(data.getCourseSessionOrderbyDate.data);
+      setToday(data.getCourseSessionOrderbyDate.today);
     },
     fetchPolicy: "network-only",
   });
+
+  const [nextWeekFlag, setNextWeekFlag] = useState<Boolean>(true);
+
+  const nextWeek = () => {
+    setCourseSessions([]);
+    fetchMore({
+      variables: {
+        next_week: true,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        setCourseSessions(fetchMoreResult.getCourseSessionOrderbyDate.data);
+        setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
+        setNextWeekFlag(false);
+      },
+    });
+  };
+
+  const previousWeek = () => {
+    setCourseSessions([]);
+    fetchMore({
+      variables: {
+        next_week: false,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        setCourseSessions(fetchMoreResult.getCourseSessionOrderbyDate.data);
+        setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
+        setNextWeekFlag(true);
+      },
+    });
+  };
 
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
@@ -59,7 +95,7 @@ const ShowWeeklyReport = () => {
     m: 1,
     direction: "rtl",
   };
- 
+
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -70,21 +106,22 @@ const ShowWeeklyReport = () => {
     },
   }));
 
- 
-
   return (
     <TableContainer component={Paper}>
       <Table aria-label="customized table">
         <TableHead>
-          
           <TableRow>
             {(courseSessions || []).map(
-              (element_header: CourseSessionsOrderByDateType , index_header: number) => {
-               return ( <StyledTableCell align="center" key={index_header}>
-                  <HeaderBox element_date={element_header.date} />
-                  
-                </StyledTableCell>
-            )}
+              (
+                element_header: CourseSessionsOrderByDateType,
+                index_header: number
+              ) => {
+                return (
+                  <StyledTableCell align="center" key={index_header}>
+                    <HeaderBox element_date={element_header.date} />
+                  </StyledTableCell>
+                );
+              }
             )}
           </TableRow>
         </TableHead>
@@ -93,17 +130,41 @@ const ShowWeeklyReport = () => {
             {(courseSessions || []).map(
               (element: CourseSessionsOrderByDateType, index: number) => (
                 <StyledTableCell align="center" key={index}>
-                  {
-                  <InnerBox details={element?.details || []} />
-                  }
-                 
+                  {<InnerBox details={element?.details || []}  todayDate={today} data={element}/>}
                 </StyledTableCell>
               )
             )}
           </StyledTableRow>
         </TableBody>
       </Table>
-     
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          m: 1,
+        }}
+      >
+        <Button
+          size="small"
+          variant="outlined"
+          color="primary"
+          onClick={previousWeek}
+          startIcon={<ArrowForwardIcon />}
+          disabled={nextWeekFlag ? true : false}
+        >
+          قبل
+        </Button>
+        <Button
+          size="small"
+          endIcon={<ArrowBackIcon />}
+          onClick={nextWeek}
+          variant="outlined"
+          color="primary"
+          disabled={nextWeekFlag ? false : true}
+        >
+          بعد
+        </Button>
+      </Box>
     </TableContainer>
   );
 };
