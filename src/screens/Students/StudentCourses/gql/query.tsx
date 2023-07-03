@@ -177,7 +177,7 @@ export const GET_COURSE_SESSION_BY_DATE = gql`
         gender
         education_level
         course_type
-        branche_name
+        branch_name
       }
     }
   }
@@ -212,6 +212,8 @@ export const GET_COURSE_SESSION_BY_DATE_WITH_TODAY = gql`
       class_rome_name
       gender
       education_level
+      course_type
+      branch_name
       
     }
     }

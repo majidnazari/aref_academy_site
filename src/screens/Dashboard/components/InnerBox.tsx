@@ -145,11 +145,11 @@ const InnerBox = ({
             </Box>
             <Box>
               {"نوع:"}
-              {convertCourseType(detail?.course_type)}
+              {convertCourseType(detail?.course_type)}              
             </Box>
-            <Box>
+            <Box >
               {"شعبه:"}
-              {detail?.branche_name}
+              {detail?.branch_name}
             </Box>
 
             <Box

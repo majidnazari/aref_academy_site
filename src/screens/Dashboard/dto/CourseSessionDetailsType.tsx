@@ -12,7 +12,7 @@ class CourseSessionDetailsType {
     gender?:String;
     education_level?:String;
     course_type?:String ;   
-    branche_name?:String   ;
+    branch_name?:String   ;
 }
 
 export default CourseSessionDetailsType;
