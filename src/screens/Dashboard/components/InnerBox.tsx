@@ -126,30 +126,30 @@ const InnerBox = ({
             </Box>
 
             <Box>
-              {"کلاس:"} {detail.class_rome_name}{" "}
+              {"کلاس:"} {detail?.class_rome_name}{" "}
             </Box>
             <Box>
               {" "}
               {"نام دوره:"}
-              {detail.course_name}
+              {detail?.course_name}
             </Box>
             {/* <Box> {detail.name} </Box> */}
             <Box>
               {" "}
               {"درس:"}
-              {detail.lesson_name}
+              {detail?.lesson_name}
             </Box>
             <Box>
               {"دبیر:"}
-              {detail.teacher_name}
+              {detail?.teacher_name}
             </Box>
             <Box>
               {"نوع:"}
-              {convertCourseType(detail.course_type)}
+              {convertCourseType(detail?.course_type)}
             </Box>
             <Box>
               {"شعبه:"}
-              {detail.branche_name}
+              {detail?.branche_name}
             </Box>
 
             <Box
@@ -166,7 +166,7 @@ const InnerBox = ({
               {/* <Box sx={{ px: 1 }}>
                 {detail.gender === "female" ? "دخترانه" : "پسرانه"}
               </Box> */}
-              <Box sx={{ px: 1 }}>{"مقطع :"}{detail.education_level}</Box>
+              <Box sx={{ px: 1 }}>{"مقطع :"}{detail?.education_level}</Box>
 
               {detail.gender === "female" ? (
                 <Face2Icon fontSize="small" />

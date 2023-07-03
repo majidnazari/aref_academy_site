@@ -109,7 +109,7 @@ const ShowWeeklyReport = () => {
   }));
 
   return (
-    <Box>
+    <Box sx={{ width:"100%" }}>
       {couseLoading && (
         <Box
           component="div"

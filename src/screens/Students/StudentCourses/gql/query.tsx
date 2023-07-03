@@ -165,8 +165,7 @@ export const GET_COURSE_SESSION_BY_DATE = gql`
     ) {
       date
       details {
-        id
-        name
+        id        
         start_date
         start_time
         end_time
@@ -202,8 +201,7 @@ export const GET_COURSE_SESSION_BY_DATE_WITH_TODAY = gql`
     data{
       date
    		details{
-      id
-      name
+      id      
       start_date
       start_time
       end_time
