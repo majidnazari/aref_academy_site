@@ -32,7 +32,7 @@ const FaultsEditScreen = () => {
     const navigate = useNavigate();
     const branchId = params.branchId;
 
-    useQuery(GET_A_BRANCHE, {
+    useQuery(GET_A_BRANCHE, { 
         variables: {
             id: branchId
         },

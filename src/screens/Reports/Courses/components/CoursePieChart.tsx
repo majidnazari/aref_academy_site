@@ -2,6 +2,7 @@ import { ApexOptions } from "apexcharts";
 import { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
+
 const CoursePieChart = ({
   series,
   width = 500,
@@ -53,12 +54,14 @@ const CoursePieChart = ({
     });
   }, [series]);
   return (
-    <ReactApexChart
-      options={chartData}
-      series={series}
-      type="pie"
-      width={width}
-    />
+    <></>
+    // @ts-ignore
+    // <ReactApexChart
+    //   options={chartData}
+    //   series={series}
+    //   type="pie"
+    //   width={width}
+    // />
   );
 };
 
