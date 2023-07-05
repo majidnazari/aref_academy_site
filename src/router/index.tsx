@@ -20,7 +20,6 @@ import FaultsEditScreen from "../screens/Faults/edit";
 import FaultsCreateScreen from "../screens/Faults/create";
 
 import ConsultantScreen from "../screens/Consultant";
-import ConsultantEditScreen from "screens/Consultant/edit";
 import AddConsultantStudent from "screens/Consultant/addStudent";
 
 import BranchesScreen from "../screens/Branches";
@@ -59,6 +58,7 @@ import Main from "../Layout/main";
 import NoMatch from "../Layout/404";
 import { Routes, Route } from "react-router-dom";
 import { AuthContext } from "../components/AppContext";
+import ConsultantTimeTable from "screens/Consultant/Components/ConsultantTimeTable";
 
 const MainRouter = () => {
   const appContext = useContext(AuthContext);
@@ -110,12 +110,8 @@ const MainRouter = () => {
 
           <Route path="consultant">
             <Route path="" element={<ConsultantScreen />} />
-            <Route
-              path="edit/:id"
-              element={
-                <ConsultantEditScreen title="ویرایش/ایجاد زمانهای مشاور" />
-              }
-            />
+            <Route path=":courseId/timetable" element={<ConsultantTimeTable />} />
+            
             <Route
               path=":userId/add-user-consultant"
               element={<AddConsultantStudent title="افزودن دانش آموز به مشاور" />}
