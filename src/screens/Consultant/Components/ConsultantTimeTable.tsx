@@ -12,9 +12,18 @@ import AdapterJalali from "@date-io/date-fns-jalali";
 import TextField from "@mui/material/TextField";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
-import { Button, Container } from "@mui/material";
+import { Button, Container, TableContainer } from "@mui/material";
+import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import moment from "moment";
+import { styled } from "@mui/material/styles";
+
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import Paper from "@mui/material/Paper";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 
 import { useMutation, useQuery } from "@apollo/client";
 import FormHelperText from "@mui/material/FormHelperText";
@@ -25,6 +34,7 @@ import {
 } from "../gql/query";
 import { CREATE_CONSULTANT_DEFINITION_DETAIL } from "../gql/mutation";
 import { useParams } from "react-router-dom";
+import StudentData from "utils/student";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -37,6 +47,16 @@ const MenuProps = {
   },
 };
 
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
 const daysOfWeek = [
   "شنبه",
   "یکشنبه",
@@ -47,6 +67,22 @@ const daysOfWeek = [
   "جمعه",
 ];
 
+const consultantBox = {
+  backgroundColor: "#02acf5",
+  color: "black",
+  borderRadius: "5px",
+  boxShadow: 3,
+  cursor: "pointer",
+  display: "inline-block",
+  ustifyContent: "flex-end",
+  alignItems: "flex-end",
+  p: 2,
+  width: 160,
+  m: 1,
+  direction: "rtl",
+  whiteSpace: "pre-wrap",
+};
+
 interface ErrorData {
   days?: string;
   startTime?: string;
@@ -54,15 +90,39 @@ interface ErrorData {
   branch_classroom_id?: string;
 }
 
+interface getConsultantDefinitionDetailsData {
+  date?: string;
+  details?: detailsData[];
+}
+
+interface detailsData {
+  consultant_id: number;
+  id: string;
+  consultant_first_name: string;
+  student_id: string;
+  student: StudentData;
+  branch_class_room_id: number;
+  start_hour: string;
+  end_hour: string;
+  session_date: string;
+  branchClassRoom_name: string;
+}
+
 const ConsultantTimeTable = () => {
+  const params = useParams<string>();
+  const consultantId = params.consultantId;
+
   const [days, setDays] = useState<string[]>([]);
-  const [week, setWeek] = useState<"Current" | "Next">("Next");
+  const [week, setWeek] = useState<"Current" | "Next">("Current");
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndtTime] = useState<Date | null>(null);
   const [step, setStep] = useState<string>("15");
   const [branchClassRoomId, setBranchClassRoomId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorData>({});
+  const [timeTable, setTimeTable] = useState<
+    getConsultantDefinitionDetailsData[]
+  >([]);
 
   const { id } = useParams();
 
@@ -83,19 +143,21 @@ const ConsultantTimeTable = () => {
     },
   });
 
-  const { data: sessions } = useQuery(GET_CONSULTANT_DEFINITION_DETAILS, {
-    variables: {
-      first: 10,
-      page: 1,
-      orderBy: [
-        {
-          column: "id",
-          order: "DESC",
-        },
-      ],
-      consultant_id: +(id as string),
-    },
-  });
+  const { fetchMore, refetch } = useQuery(
+    GET_CONSULTANT_DEFINITION_DETAILS,
+    {
+      variables: {
+        session_date_from: "2023-07-10",
+        session_date_to: "2023-07-17",
+        consultant_id: Number(consultantId),
+      },
+      onCompleted: (data) => {
+        setTimeTable(data.getConsultantDefinitionDetails);
+        //console.log(data.getConsultantDefinitionDetails);
+      },
+      fetchPolicy: "no-cache",
+    }
+  );
 
   const handleChange = (event: SelectChangeEvent<typeof days>) => {
     const {
@@ -116,16 +178,18 @@ const ConsultantTimeTable = () => {
       daysTmp.push(dayOfWeeksObject[days[i]]);
     }
     const variables = {
-      consultant_id: +(id as string),
+      //consultant_id: +(id as string),
       days: daysTmp,
       week,
       start_hour: moment(startTime).format("HH:mm"),
       end_hour: moment(endTime).format("HH:mm"),
       step: +step,
       branch_class_room_id: Number(branchClassRoomId),
+      consultant_id: Number(consultantId),
     };
     insertMultiConsultantTimes({ variables })
       .then(() => {
+        refetch();
         setLoading(false);
         showSuccess("وقتهای جدید با موفقیت ایجاد شد");
       })
@@ -312,6 +376,39 @@ const ConsultantTimeTable = () => {
           </Button>
         </Grid>
       </Grid>
+      <TableContainer component={Paper}>
+        <Table aria-label="customized table">
+          <TableHead>
+            <StyledTableCell align="center"> تاریخ </StyledTableCell>
+            <StyledTableCell align="center"> زمان مشاوره </StyledTableCell>
+          </TableHead>
+          <TableBody>
+            {timeTable.map((element: getConsultantDefinitionDetailsData) => (
+              <TableRow>
+                <StyledTableCell align="center">
+                  {" "}
+                  {element.date}{" "}
+                </StyledTableCell>
+                <StyledTableCell align="left">
+                  {element.details?.map((detail: detailsData) => (
+                    <Box sx={consultantBox}>
+                      {"ساعت :"} {detail.end_hour}-{detail.start_hour}
+                      {" کلاس:"} {detail.branchClassRoom_name}
+                      {" دانش آموز:"} {detail?.student?.first_name}{" "}
+                      {detail?.student?.last_name} <br/>
+                      {"ثبت نامی:"}{" "}
+                      {detail?.student?.is_academy_student === 1
+                        ? " آکادمی"
+                        : "جذب"} <br/>
+                      {"کد ملی:"} {detail?.student?.nationality_code}
+                    </Box>
+                  ))}
+                </StyledTableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Container>
   );
 };

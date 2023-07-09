@@ -37,6 +37,7 @@ const ShowWeeklyReport = () => {
       onCompleted: (data) => {
         setCourseSessions(data.getCourseSessionOrderbyDate.data);
         setToday(data.getCourseSessionOrderbyDate.today);
+        console.log(data.getCourseSessionOrderbyDate);
       },
       fetchPolicy: "network-only",
     }

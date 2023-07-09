@@ -110,7 +110,7 @@ const MainRouter = () => {
 
           <Route path="consultant">
             <Route path="" element={<ConsultantScreen />} />
-            <Route path=":courseId/timetable" element={<ConsultantTimeTable />} />
+            <Route path=":consultantId/timetable" element={<ConsultantTimeTable />} />
             
             <Route
               path=":userId/add-user-consultant"
