@@ -130,6 +130,7 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
     $student_status: [StudentStatus]
     $test_description: String
     $user_id: Int
+    $next_week:Boolean
   ) {
     getConsultantDefinitionDetails(
       absent_present_description: $absent_present_description
@@ -148,6 +149,7 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
       student_status: $student_status
       test_description: $test_description
       user_id: $user_id
+      next_week:$next_week
     ) {
       date
       details {

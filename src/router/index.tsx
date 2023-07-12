@@ -59,6 +59,7 @@ import NoMatch from "../Layout/404";
 import { Routes, Route } from "react-router-dom";
 import { AuthContext } from "../components/AppContext";
 import ConsultantTimeTable from "screens/Consultant/Components/ConsultantTimeTable";
+import ComponentStudentDialog from "screens/Consultant/Components/ComponentStudentDialog";
 
 const MainRouter = () => {
   const appContext = useContext(AuthContext);
@@ -111,6 +112,7 @@ const MainRouter = () => {
           <Route path="consultant">
             <Route path="" element={<ConsultantScreen />} />
             <Route path=":consultantId/timetable" element={<ConsultantTimeTable />} />
+            
             
             <Route
               path=":userId/add-user-consultant"

@@ -35,6 +35,10 @@ import {
 import { CREATE_CONSULTANT_DEFINITION_DETAIL } from "../gql/mutation";
 import { useParams } from "react-router-dom";
 import StudentData from "utils/student";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ComponentStudentDialog from "./ComponentStudentDialog";
+import { Link, useNavigate } from "react-router-dom";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -124,7 +128,10 @@ const ConsultantTimeTable = () => {
     getConsultantDefinitionDetailsData[]
   >([]);
 
+  const [listKey, setListKey] = useState<number>(0);
+
   const { id } = useParams();
+  let navigate = useNavigate();
 
   const [insertMultiConsultantTimes] = useMutation(
     CREATE_CONSULTANT_DEFINITION_DETAIL
@@ -141,23 +148,29 @@ const ConsultantTimeTable = () => {
         },
       ],
     },
+    onCompleted: (data) => {
+      //console.log(data.getBranchClassRooms);
+      //setTimeTable(data.getConsultantDefinitionDetails);
+    },
   });
 
-  const { fetchMore, refetch } = useQuery(
-    GET_CONSULTANT_DEFINITION_DETAILS,
-    {
-      variables: {
-        session_date_from: "2023-07-10",
-        session_date_to: "2023-07-17",
-        consultant_id: Number(consultantId),
-      },
-      onCompleted: (data) => {
-        setTimeTable(data.getConsultantDefinitionDetails);
-        //console.log(data.getConsultantDefinitionDetails);
-      },
-      fetchPolicy: "no-cache",
-    }
-  );
+  const current_date = moment().format("YYYY-MM-DD");
+  const next_date = moment().add(7, "days").format("YYYY-MM-DD");
+
+  const { fetchMore, refetch } = useQuery(GET_CONSULTANT_DEFINITION_DETAILS, {
+    variables: {
+      //session_date_from: current_date,//"2023-07-10",
+      // session_date_to: next_date,//"2023-07-17",
+      consultant_id: Number(consultantId),
+    },
+    onCompleted: (data) => {
+      setTimeTable(data.getConsultantDefinitionDetails);
+      console.log("current_date", current_date);
+      console.log("next_date", next_date);
+      console.log(data.getConsultantDefinitionDetails);
+    },
+    fetchPolicy: "no-cache",
+  });
 
   const handleChange = (event: SelectChangeEvent<typeof days>) => {
     const {
@@ -224,6 +237,37 @@ const ConsultantTimeTable = () => {
     }
     setError(result);
     return out;
+  };
+  const [nextWeekFlag, setNextWeekFlag] = useState<Boolean>(true);
+
+  const nextWeek = () => {
+    setTimeTable([]);
+    fetchMore({
+      variables: {
+        next_week: true,
+        consultant_id: Number(consultantId),
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
+        //setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
+        setNextWeekFlag(false);
+      },
+    });
+  };
+
+  const previousWeek = () => {
+    setTimeTable([]);
+    fetchMore({
+      variables: {
+        next_week: false,
+        consultant_id: Number(consultantId),
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
+        // setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
+        setNextWeekFlag(true);
+      },
+    });
   };
 
   return (
@@ -383,31 +427,71 @@ const ConsultantTimeTable = () => {
             <StyledTableCell align="center"> زمان مشاوره </StyledTableCell>
           </TableHead>
           <TableBody>
-            {timeTable.map((element: getConsultantDefinitionDetailsData) => (
-              <TableRow>
-                <StyledTableCell align="center">
-                  {" "}
-                  {element.date}{" "}
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  {element.details?.map((detail: detailsData) => (
-                    <Box sx={consultantBox}>
-                      {"ساعت :"} {detail.end_hour}-{detail.start_hour}
-                      {" کلاس:"} {detail.branchClassRoom_name}
-                      {" دانش آموز:"} {detail?.student?.first_name}{" "}
-                      {detail?.student?.last_name} <br/>
-                      {"ثبت نامی:"}{" "}
-                      {detail?.student?.is_academy_student === 1
-                        ? " آکادمی"
-                        : "جذب"} <br/>
-                      {"کد ملی:"} {detail?.student?.nationality_code}
-                    </Box>
-                  ))}
-                </StyledTableCell>
-              </TableRow>
-            ))}
+          <ComponentStudentDialog />
+            {timeTable.map(
+              (element: getConsultantDefinitionDetailsData, index: number) => (
+                <TableRow key={index}>
+                  <StyledTableCell align="center">
+                    {" "}
+                    {element.date}{" "}
+                  </StyledTableCell>
+                  <StyledTableCell align="left">
+                    {element.details?.map((detail: detailsData) => (
+                      <Box
+                        sx={consultantBox}
+                        onClick={() =>
+                          navigate(`/consultant/${detail.id}/setStudent`)
+                        }
+                      >
+                        {"ساعت :"} {detail.end_hour}-{detail.start_hour}
+                        <br />
+                        {" کلاس:"} {detail.branchClassRoom_name}
+                        <br />
+                        {" دانش آموز:"} {detail?.student?.first_name}{" "}
+                        {detail?.student?.last_name} <br />
+                        {"ثبت نامی:"}{" "}
+                        {detail?.student?.is_academy_student === 1
+                          ? " آکادمی"
+                          : "جذب"}{" "}
+                        <br />
+                        {"کد ملی:"} {detail?.student?.nationality_code}
+                        <br />
+                      </Box>
+                    ))}
+                  </StyledTableCell>
+                </TableRow>
+              )
+            )}
           </TableBody>
         </Table>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            m: 1,
+          }}
+        >
+          <Button
+            size="small"
+            variant="outlined"
+            color="primary"
+            onClick={previousWeek}
+            startIcon={<ArrowForwardIcon />}
+            disabled={nextWeekFlag ? true : false}
+          >
+            قبل
+          </Button>
+          <Button
+            size="small"
+            endIcon={<ArrowBackIcon />}
+            onClick={nextWeek}
+            variant="outlined"
+            color="primary"
+            disabled={nextWeekFlag ? false : true}
+          >
+            بعد
+          </Button>
+        </Box>
       </TableContainer>
     </Container>
   );
