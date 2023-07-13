@@ -40,6 +40,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ComponentStudentDialog from "./ComponentStudentDialog";
 import { Link, useNavigate } from "react-router-dom";
 
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -165,9 +166,9 @@ const ConsultantTimeTable = () => {
     },
     onCompleted: (data) => {
       setTimeTable(data.getConsultantDefinitionDetails);
-      console.log("current_date", current_date);
-      console.log("next_date", next_date);
-      console.log(data.getConsultantDefinitionDetails);
+      //console.log("current_date", current_date);
+     // console.log("next_date", next_date);
+      //console.log(data.getConsultantDefinitionDetails);
     },
     fetchPolicy: "no-cache",
   });
@@ -427,7 +428,7 @@ const ConsultantTimeTable = () => {
             <StyledTableCell align="center"> زمان مشاوره </StyledTableCell>
           </TableHead>
           <TableBody>
-          <ComponentStudentDialog />
+          {/* <ComponentStudentDialog /> */}
             {timeTable.map(
               (element: getConsultantDefinitionDetailsData, index: number) => (
                 <TableRow key={index}>
@@ -439,10 +440,11 @@ const ConsultantTimeTable = () => {
                     {element.details?.map((detail: detailsData) => (
                       <Box
                         sx={consultantBox}
-                        onClick={() =>
-                          navigate(`/consultant/${detail.id}/setStudent`)
-                        }
+                        // onClick={() =>
+                        //   navigate(`/consultant/${detail.id}/setStudent`)
+                        // }
                       >
+                        <ComponentStudentDialog consultantTimeTableId={detail.id } />
                         {"ساعت :"} {detail.end_hour}-{detail.start_hour}
                         <br />
                         {" کلاس:"} {detail.branchClassRoom_name}

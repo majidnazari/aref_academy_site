@@ -112,6 +112,7 @@ const MainRouter = () => {
           <Route path="consultant">
             <Route path="" element={<ConsultantScreen />} />
             <Route path=":consultantId/timetable" element={<ConsultantTimeTable />} />
+            {/* <Route path=":consultantTimeTableId/setStudent" element={<ComponentStudentDialog  />} /> */}
             
             
             <Route

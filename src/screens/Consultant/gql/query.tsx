@@ -237,3 +237,16 @@ export const GET_A_USER = gql`
     }
   }
 `;
+
+
+export const GET_A_CONSULTANT_TIME_TABLE=gql`
+query GET_CONSULTANT_DEFINITION_DETAIL($id:ID!){
+  getConsultantDefinitionDetail(id:$id){
+    id
+    consultant_id
+    start_hour
+    end_hour
+    session_date
+  }
+}
+`;
