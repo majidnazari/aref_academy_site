@@ -119,6 +119,7 @@ const InnerBox = ({
           }}
         >
           <Box sx={checkEducation(detail.education_level)}>
+            
             <Box sx={{ mt: 1 }}>
               {" ساعت:"}
               {detail.end_time?.substring(0, 5)}-{" "}

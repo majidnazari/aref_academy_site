@@ -50,6 +50,7 @@ const ListStudentsScreen = () => {
         reloadList={() => {
           setListKey(listKey + 1);
           console.log(listKey + 1);
+          console.log("the plus icon start ");
         }}
         courseId={+(courseId as string)}
       />

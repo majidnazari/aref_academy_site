@@ -45,7 +45,7 @@ const SearchFinancial = ({ callBack }: { callBack: Function }) => {
   const [loadingLesson, setLoadingLesson] = useState<boolean>(false);
   const [lessonOptions, setLessonOptions] = useState<any[]>([]);
 
-  const { refetch: refetchLessons } = useQuery(GET_STUDENTS, {
+  const { refetch: refetchLessons } = useQuery(GET_STUDENTS, { 
     variables: {
       first: 1,
       page: 1,

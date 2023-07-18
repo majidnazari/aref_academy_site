@@ -121,10 +121,6 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
     $consultant_test_id: Int
     $end_hour_from: String
     $end_hour_to: String
-    $first: Int!
-    $orderBy: [OrderByClause!]
-    $page: Int
-    $session_date_days: [DaysOfWeek]
     $session_date_from: Date
     $session_date_to: Date
     $start_hour_from: String
@@ -134,6 +130,7 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
     $student_status: [StudentStatus]
     $test_description: String
     $user_id: Int
+    $next_week:Boolean
   ) {
     getConsultantDefinitionDetails(
       absent_present_description: $absent_present_description
@@ -142,10 +139,7 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
       consultant_test_id: $consultant_test_id
       end_hour_from: $end_hour_from
       end_hour_to: $end_hour_to
-      first: $first
-      orderBy: $orderBy
-      page: $page
-      session_date_days: $session_date_days
+
       session_date_from: $session_date_from
       session_date_to: $session_date_to
       start_hour_from: $start_hour_from
@@ -155,40 +149,33 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
       student_status: $student_status
       test_description: $test_description
       user_id: $user_id
+      next_week:$next_week
     ) {
-      data {
-        absent_present_description
-        branchClassRoom {
-          branch {
-            name
-          }
-        }
-        end_hour
+      date
+      details {
+        consultant_id
         id
-        session_date
-        start_hour
-        step
+        consultant_id
+        consultant_first_name
+        student_id
         student {
           first_name
           last_name
-          phone
+          is_academy_student
+          egucation_level
+          concours_year
+          father_phone
+          home_phone
+          major
+          mother_phone
+          nationality_code
+          student_phone
         }
-        student_status
-        test_description
-        user {
-          first_name
-          last_name
-        }
-      }
-      paginatorInfo {
-        count
-        currentPage
-        firstItem
-        hasMorePages
-        lastItem
-        lastPage
-        perPage
-        total
+        branch_class_room_id
+        start_hour
+        end_hour
+        session_date
+        branchClassRoom_name
       }
     }
   }
@@ -249,4 +236,17 @@ export const GET_A_USER = gql`
       email
     }
   }
+`;
+
+
+export const GET_A_CONSULTANT_TIME_TABLE=gql`
+query GET_CONSULTANT_DEFINITION_DETAIL($id:ID!){
+  getConsultantDefinitionDetail(id:$id){
+    id
+    consultant_id
+    start_hour
+    end_hour
+    session_date
+  }
+}
 `;
