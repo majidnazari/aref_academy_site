@@ -40,7 +40,6 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ComponentStudentDialog from "./ComponentStudentDialog";
 import { Link, useNavigate } from "react-router-dom";
 
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -122,6 +121,7 @@ const ConsultantTimeTable = () => {
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndtTime] = useState<Date | null>(null);
   const [step, setStep] = useState<string>("15");
+  const [studentId, setStudentId] = useState<number>();
   const [branchClassRoomId, setBranchClassRoomId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorData>({});
@@ -160,15 +160,10 @@ const ConsultantTimeTable = () => {
 
   const { fetchMore, refetch } = useQuery(GET_CONSULTANT_DEFINITION_DETAILS, {
     variables: {
-      //session_date_from: current_date,//"2023-07-10",
-      // session_date_to: next_date,//"2023-07-17",
       consultant_id: Number(consultantId),
     },
     onCompleted: (data) => {
       setTimeTable(data.getConsultantDefinitionDetails);
-      //console.log("current_date", current_date);
-     // console.log("next_date", next_date);
-      //console.log(data.getConsultantDefinitionDetails);
     },
     fetchPolicy: "no-cache",
   });
@@ -269,6 +264,10 @@ const ConsultantTimeTable = () => {
         setNextWeekFlag(true);
       },
     });
+  };
+
+  const refreshStudent = () => {
+    refetch();
   };
 
   return (
@@ -383,7 +382,7 @@ const ConsultantTimeTable = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={3} xl={4}>
+        <Grid item xs={12} sm={6} md={2} xl={4}>
           <FormControl sx={{ width: "100%" }}>
             <InputLabel id="special-label">محل برگزاری</InputLabel>
             <Select
@@ -408,19 +407,33 @@ const ConsultantTimeTable = () => {
             )}
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={12} md={12} xl={12}>
-          <Button
-            onClick={() => {
-              insertMultiSessions();
-            }}
-            variant="contained"
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={15} color="primary" /> : null}
-            ذخیره
-          </Button>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={6}
+          xl={6}
+          sx={{
+            display: "flex",
+            justifyContent: "end",
+            width: "30%",          
+          }}
+        >
+          <FormControl sx={{ width: "30%"}}>
+            <Button
+              onClick={() => {
+                insertMultiSessions();
+              }}
+              variant="contained"
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={15} color="primary" /> : null}
+              ذخیره
+            </Button>
+          </FormControl>
         </Grid>
       </Grid>
+      <br></br>
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
           <TableHead>
@@ -428,7 +441,6 @@ const ConsultantTimeTable = () => {
             <StyledTableCell align="center"> زمان مشاوره </StyledTableCell>
           </TableHead>
           <TableBody>
-          {/* <ComponentStudentDialog /> */}
             {timeTable.map(
               (element: getConsultantDefinitionDetailsData, index: number) => (
                 <TableRow key={index}>
@@ -444,7 +456,11 @@ const ConsultantTimeTable = () => {
                         //   navigate(`/consultant/${detail.id}/setStudent`)
                         // }
                       >
-                        <ComponentStudentDialog consultantTimeTableId={detail.id } />
+                        <ComponentStudentDialog
+                          consultantTimeTableId={detail.id}
+                          parentStudentId={studentId}
+                          refreshData={refreshStudent}
+                        />
                         {"ساعت :"} {detail.end_hour}-{detail.start_hour}
                         <br />
                         {" کلاس:"} {detail.branchClassRoom_name}
