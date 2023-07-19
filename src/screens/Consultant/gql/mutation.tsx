@@ -25,3 +25,28 @@ export const CREATE_CONSULTANT_DEFINITION_DETAIL = gql`
     }
   }
 `;
+
+export const UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID=gql`
+mutation UPDATE_STUDENT_OF_CONSULTANTDEFINITIONDETAIL
+(
+  $id:ID!
+  $student_id:Int!
+)
+{
+    updateConsultantDefinitionDetail(input:{
+       id:$id,
+      student_id:$student_id
+    })
+  {
+    id
+    consultant_id
+    student_id
+    branch_class_room_id
+    consultant_test_id
+    user_id
+    start_hour
+    end_hour
+    session_date
+  } 
+}
+`;

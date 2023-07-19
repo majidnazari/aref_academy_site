@@ -49,7 +49,7 @@ const StudentEditScreen = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorData>({});
   const [editStudent] = useMutation(EDIT_STUDENT);
-
+ 
   const navigate = useNavigate();
   useQuery(GET_A_STUDENT, {
     variables: {

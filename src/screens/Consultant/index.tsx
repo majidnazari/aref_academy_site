@@ -13,17 +13,13 @@ import Stack from "@mui/material/Stack";
 import Skeleton from "@mui/material/Skeleton";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
-import Box from "@mui/material/Box";
-import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { useMutation, useQuery } from "@apollo/client";
 import PaginatorInfo from "../../interfaces/paginator-info.interface";
 import { useNavigate } from "react-router-dom";
-import { showSuccess, showConfirm } from "../../utils/swlAlert";
-import moment from "moment-jalaali";
-import {  Typography } from "@mui/material";
-import { Refresh } from "@mui/icons-material";
+
+import { Typography } from "@mui/material";
 import SearchConsultant from "../../components/SearchConsultant";
 import { GET_CONSULTANTS } from "./gql/query";
 
@@ -43,7 +39,6 @@ class GetConsultantUserVariabls {
   first?: number;
   page?: number;
   orderBy?: { column: string; order: string }[];
-  //code?: number;
   email?: string;
   first_name?: string;
   last_name?: string;
@@ -67,14 +62,8 @@ const ConsultantScreen = () => {
     first_name: undefined,
     last_name: undefined,
     email: undefined,
-    // subject: undefined,
   });
 
-  const deleteConsultant = () => {};
-
-  function delConsultant(id: string) {
-    console.log("id is:", id);
-  }
   const [consultant_state, setConsultant_state] = useState<
     ConsultantData[] | null
   >(null);
@@ -97,8 +86,6 @@ const ConsultantScreen = () => {
         first_name: undefined,
         last_name: undefined,
         email: undefined,
-        //   lesson_id: undefined,
-        //   gender: undefined,
       },
       onCompleted: (data) => {
         setPageInfo(data.getUsers.paginatorInfo);
@@ -159,8 +146,6 @@ const ConsultantScreen = () => {
       first_name: input?.first_name ? input.first_name : undefined,
       last_name: input?.last_name ? input.last_name : undefined,
       email: input?.email ? input.email : undefined,
-      // lessonId: input?.lessonId ? Number(input.lessonId) : undefined,
-      //   gender: input?.gender && input?.gender !== "" ? input?.gender : undefined,
     };
   };
 
@@ -190,15 +175,6 @@ const ConsultantScreen = () => {
       >
         مدیریت مشاور
       </Typography>
-      <Box display="flex" justifyContent="flex-end" alignItems="flex-end">
-        {/* <Button
-                variant="contained"
-                startIcon={<AddCircleIcon />}
-                sx={{ mb: 4 }}
-                onClick={() => navigate('/consultant/create')} >
-                افزودن مشاور جدید
-            </Button> */}
-      </Box>
       <SearchConsultant callBack={handleSearch} loading={searchLoading} />
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
@@ -209,9 +185,7 @@ const ConsultantScreen = () => {
               <StyledTableCell align="left"> نام خانوادگی </StyledTableCell>
               <StyledTableCell align="left"> نام کاربری </StyledTableCell>
               <StyledTableCell align="left"> تعریف جلسات حضور </StyledTableCell>
-              <StyledTableCell align="left"> تخصیص دانش آموز </StyledTableCell>
-              <StyledTableCell align="left">ویرایش</StyledTableCell>
-              <StyledTableCell align="left">حذف</StyledTableCell>
+             
             </TableRow>
           </TableHead>
           <TableBody>
@@ -232,7 +206,7 @@ const ConsultantScreen = () => {
                   <Button
                     size="small"
                     onClick={() => {
-                      navigate(`/consultant/edit/${element.id}`);
+                      navigate(`/consultant/${element.id}/timetable`);
                     }}
                     variant="contained"
                     startIcon={<EditIcon />}
@@ -241,7 +215,7 @@ const ConsultantScreen = () => {
                     جلسات حضور
                   </Button>
                 </StyledTableCell>
-                <StyledTableCell align="left">
+                {/* <StyledTableCell align="left">
                   <Button
                     size="small"
                     onClick={() => {
@@ -253,32 +227,10 @@ const ConsultantScreen = () => {
                   >
                     دانش آموزان
                   </Button>
-                </StyledTableCell>
+                </StyledTableCell> */}
 
-                <StyledTableCell align="left">
-                  <Button
-                    size="small"
-                    onClick={() => {
-                      navigate(`/consultant/edit/${element.id}`);
-                    }}
-                    variant="contained"
-                    startIcon={<EditIcon />}
-                    color="success"
-                  >
-                    ویرایش
-                  </Button>
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  <Button
-                    size="small"
-                    onClick={() => delConsultant(element.id)}
-                    variant="contained"
-                    startIcon={<DeleteIcon />}
-                    color="error"
-                  >
-                    حذف
-                  </Button>
-                </StyledTableCell>
+               
+                
               </StyledTableRow>
             ))}
           </TableBody>

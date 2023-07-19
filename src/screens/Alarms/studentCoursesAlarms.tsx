@@ -215,7 +215,7 @@ export default function StudentCoursesAlarms() {
       first: process.env.REACT_APP_USERS_PER_PAGE
         ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
         : 10,
-      page: 1,
+      page: pageInfo.currentPage,
       ...generateQueryOptions(),
       orderBy: [
         {
