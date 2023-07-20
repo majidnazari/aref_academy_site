@@ -39,6 +39,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ComponentStudentDialog from "./ComponentStudentDialog";
 import { Link, useNavigate } from "react-router-dom";
+import moment_jalali from "moment-jalaali";
+import "../../../../src/assets/stringDate.css";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -269,6 +271,24 @@ const ConsultantTimeTable = () => {
   const refreshStudent = () => {
     refetch();
   };
+  const convertDayIntoShamsi = (day: string) => {
+    switch (day) {
+      case "Saturday":
+        return "شنبه";
+      case "Sunday":
+        return "یکشنبه";
+      case "Monday":
+        return "دوشنبه";
+      case "Tuesday":
+        return "سه شنبه";
+      case "Wednesday":
+        return "چهارشنبه";
+      case "Thursday":
+        return "پنج شنبه";
+      case "Friday":
+        return "جمعه";
+    }
+  };
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -416,10 +436,10 @@ const ConsultantTimeTable = () => {
           sx={{
             display: "flex",
             justifyContent: "end",
-            width: "30%",          
+            width: "30%",
           }}
         >
-          <FormControl sx={{ width: "30%"}}>
+          <FormControl sx={{ width: "30%" }}>
             <Button
               onClick={() => {
                 insertMultiSessions();
@@ -436,17 +456,28 @@ const ConsultantTimeTable = () => {
       <br></br>
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
-          <TableHead>
-            <StyledTableCell align="center"> تاریخ </StyledTableCell>
+          <TableHead >
+            <StyledTableCell align="center" width="50" > تاریخ </StyledTableCell>
             <StyledTableCell align="center"> زمان مشاوره </StyledTableCell>
           </TableHead>
           <TableBody>
             {timeTable.map(
               (element: getConsultantDefinitionDetailsData, index: number) => (
                 <TableRow key={index}>
-                  <StyledTableCell align="center">
-                    {" "}
-                    {element.date}{" "}
+                  <StyledTableCell align="center" >
+                    <a href="#"  id="dateOfWeekString">
+                      {moment_jalali(element.date?.toString()).format(
+                        "jYYYY/jMM/jDD"
+                      )}{" "}
+                      <br />
+                      {convertDayIntoShamsi(
+                        moment_jalali(element.date).format("dddd")
+                      )}
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </a>
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {element.details?.map((detail: detailsData) => (
