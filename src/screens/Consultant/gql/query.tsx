@@ -250,3 +250,47 @@ query GET_CONSULTANT_DEFINITION_DETAIL($id:ID!){
   }
 }
 `;
+
+export const GET_CONSULTANT_SHOW_TIMES=gql`
+# Write your query or mutation here
+query GET_CONSULTANTS_TIME_SHOW(
+  $consultant_id:Int,
+  $target_date:String
+){
+  getConsultantsTimeShow
+  (
+    consultant_id: $consultant_id,
+    target_date:$target_date
+  ){
+    consultant{
+      id
+      first_name
+      last_name
+      email
+      branch{
+        id
+        name        
+      }
+      
+    }
+    times{
+      id
+      student_id
+      session_date
+      start_hour
+      end_hour
+      branch_class_room_id
+      student_status
+      absent_present_description
+      test_description
+      step
+      branchClassRoom{
+        id
+        name        
+      }
+      
+      
+    }
+  }
+}
+`;
