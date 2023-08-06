@@ -33,6 +33,7 @@ import SpeakerNotesIcon from "@mui/icons-material/SpeakerNotes";
 import { getUserData } from "utils/user";
 import { UserData } from "utils/dto/user-data.dto";
 import ShowPhone from "./components/ShowPhone";
+import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
 
 interface StudentData {
   id: number;
@@ -229,7 +230,7 @@ const StudentsScreen = () => {
                 setSearch({ ...search, last_name: e.target.value })
               }
               variant="filled"
-              onKeyPress={(e) => {
+              onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleSearch();
                 }
@@ -245,7 +246,7 @@ const StudentsScreen = () => {
                 setSearch({ ...search, phone: e.target.value })
               }
               variant="filled"
-              onKeyPress={(e) => {
+              onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleSearch();
                 }
@@ -261,7 +262,7 @@ const StudentsScreen = () => {
                 setSearch({ ...search, nationality_code: e.target.value })
               }
               variant="filled"
-              onKeyPress={(e) => {
+              onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleSearch();
                 }
@@ -302,6 +303,7 @@ const StudentsScreen = () => {
                 <StyledTableCell align="left">کامنت</StyledTableCell>
               ) : null}
               <StyledTableCell align="left">کلاسها</StyledTableCell>
+              <StyledTableCell align="left">مشاورها</StyledTableCell>
               <StyledTableCell align="left">ویرایش</StyledTableCell>
               <StyledTableCell align="left">حذف</StyledTableCell>
             </TableRow>
@@ -358,6 +360,19 @@ const StudentsScreen = () => {
                       target="_blank"
                     >
                       کلاسها
+                    </Button>
+                  </StyledTableCell>
+                  <StyledTableCell align="left">
+                    <Button
+                      size="small"
+                      variant="contained"
+                      startIcon={<PsychologyAltIcon />}
+                      color="warning"
+                      component={Link}
+                      to={`/students/${element.id}/cosultants`}
+                      target="_blank"
+                    >
+                      مشاورها
                     </Button>
                   </StyledTableCell>
                   <StyledTableCell align="left">

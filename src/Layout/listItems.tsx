@@ -24,6 +24,7 @@ import { Collapse, List } from "@mui/material";
 import { ExpandLess, ExpandMore, StarBorder } from "@mui/icons-material";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import { Menu } from "utils/dto/user-data.dto";
+import PsychologyAltIcon from "@mui/icons-material/PsychologyAlt";
 
 interface MenuItem extends Menu {}
 
@@ -41,6 +42,7 @@ const Components: any = {
   MenuBookIcon: MenuBookIcon,
   CoPresentIcon: CoPresentIcon,
   AddBoxIcon: AddBoxIcon,
+  PsychologyAltIcon: PsychologyAltIcon,
 };
 const loadIcon = (input: any) => {
   return React.createElement(Components[input], {});
@@ -178,7 +180,7 @@ export const SecondaryListItems = () => {
     <React.Fragment>
       <ListItemButton onClick={() => navigate("/consultant")}>
         <ListItemIcon>
-          <BarChartIcon />
+          <PsychologyAltIcon />
         </ListItemIcon>
         <ListItemText primary="وقتهای مشاوران" />
       </ListItemButton>

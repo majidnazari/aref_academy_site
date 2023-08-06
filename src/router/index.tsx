@@ -34,6 +34,7 @@ import StudentEditScreen from "../screens/Students/edit";
 import StudentCreateScreen from "../screens/Students/create";
 import StudentCourses from "../screens/Students/StudentCourses";
 import StudentWarnings from "../screens/Students/StudentWarnings";
+import StudentCosultants from "../screens/Students/StudentCosultants";
 
 import SigninScreen from "../screens/Signin";
 import SignoutScreen from "../screens/Signout";
@@ -59,7 +60,6 @@ import NoMatch from "../Layout/404";
 import { Routes, Route } from "react-router-dom";
 import { AuthContext } from "../components/AppContext";
 import ConsultantTimeTable from "screens/Consultant/Components/ConsultantTimeTable";
-import ComponentStudentDialog from "screens/Consultant/Components/ComponentStudentDialog";
 
 const MainRouter = () => {
   const appContext = useContext(AuthContext);
@@ -111,13 +111,17 @@ const MainRouter = () => {
 
           <Route path="consultant">
             <Route path="" element={<ConsultantScreen />} />
-            <Route path=":consultantId/timetable" element={<ConsultantTimeTable />} />
+            <Route
+              path=":consultantId/timetable"
+              element={<ConsultantTimeTable />}
+            />
             {/* <Route path=":consultantTimeTableId/setStudent" element={<ComponentStudentDialog  />} /> */}
-            
-            
+
             <Route
               path=":userId/add-user-consultant"
-              element={<AddConsultantStudent title="افزودن دانش آموز به مشاور" />}
+              element={
+                <AddConsultantStudent title="افزودن دانش آموز به مشاور" />
+              }
             />
             <Route path="*" element={<NoMatch />} />
           </Route>
@@ -146,6 +150,7 @@ const MainRouter = () => {
             <Route path="edit/:studentId" element={<StudentEditScreen />} />
             <Route path="create" element={<StudentCreateScreen />} />
             <Route path=":studentId/courses" element={<StudentCourses />} />
+            <Route path=":studentId/cosultants" element={<StudentCosultants />} />
             <Route path=":studentId/warnings" element={<StudentWarnings />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
