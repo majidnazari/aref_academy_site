@@ -113,15 +113,15 @@ const MainRouter = () => {
 
           <Route path="consultant">
             <Route path="" element={<ConsultantScreen />} />
-<<<<<<< HEAD
             <Route
               path=":consultantId/timetable"
               element={<ConsultantTimeTable />}
             />
-=======
-            <Route path=":consultantId/timetable" element={<ConsultantTimeTable />} />
+            <Route
+              path=":consultantId/timetable"
+              element={<ConsultantTimeTable />}
+            />
             <Route path="show-all" element={<ShowAllConsultantsTimes />} />
->>>>>>> b9f5d9b518e63d1ee322c70b817a40ff9a56f0c0
             {/* <Route path=":consultantTimeTableId/setStudent" element={<ComponentStudentDialog  />} /> */}
 
             <Route
@@ -157,7 +157,10 @@ const MainRouter = () => {
             <Route path="edit/:studentId" element={<StudentEditScreen />} />
             <Route path="create" element={<StudentCreateScreen />} />
             <Route path=":studentId/courses" element={<StudentCourses />} />
-            <Route path=":studentId/cosultants" element={<StudentCosultants />} />
+            <Route
+              path=":studentId/cosultants"
+              element={<StudentCosultants />}
+            />
             <Route path=":studentId/warnings" element={<StudentWarnings />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
