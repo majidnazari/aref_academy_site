@@ -12,10 +12,8 @@ import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import Skeleton from "@mui/material/Skeleton";
 import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import PaginatorInfo from "../../interfaces/paginator-info.interface";
 import { useNavigate } from "react-router-dom";
 
@@ -185,7 +183,6 @@ const ConsultantScreen = () => {
               <StyledTableCell align="left"> نام خانوادگی </StyledTableCell>
               <StyledTableCell align="left"> نام کاربری </StyledTableCell>
               <StyledTableCell align="left"> تعریف جلسات حضور </StyledTableCell>
-             
             </TableRow>
           </TableHead>
           <TableBody>
@@ -228,9 +225,6 @@ const ConsultantScreen = () => {
                     دانش آموزان
                   </Button>
                 </StyledTableCell> */}
-
-               
-                
               </StyledTableRow>
             ))}
           </TableBody>

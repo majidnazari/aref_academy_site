@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import AddStudentCourse from "./components/AddStudentCourse";
+import AddStudentConsultant from "./components/AddStudentConsultant";
 import PaginatorInfo from "interfaces/paginator-info.interface";
 import StudentCoursesType from "interfaces/studentCourses.interface";
 import CourseName from "components/CourseName";
@@ -141,7 +141,7 @@ const StudentCourses = () => {
           <TableHead>
             <TableRow>
               <StyledTableCell align="left">ردیف</StyledTableCell>
-              <StyledTableCell align="left">نام درس</StyledTableCell>
+              <StyledTableCell align="left">نام مشاور</StyledTableCell>
               <StyledTableCell align="left">وضعیت دانش آموز</StyledTableCell>
               <StyledTableCell align="left">تایید مدیر</StyledTableCell>
               <StyledTableCell align="left">تایید حسابداری</StyledTableCell>
@@ -267,7 +267,7 @@ const StudentCourses = () => {
       </TableContainer>
 
       {!loading && studentData.getStudent.nationality_code ? (
-        <AddStudentCourse studentId={studentId} refetch={refetch} />
+        <AddStudentConsultant studentId={studentId} refetch={refetch} />
       ) : (
         <Alert severity="error">
           جهت افزودن درس به این دانش آموز کد ملی را در قسمت

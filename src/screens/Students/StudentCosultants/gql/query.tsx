@@ -87,22 +87,71 @@ export const GET_A_STUDENT_COURSES = gql`
   }
 `;
 
-export const GET_COURSES = gql`
-  query GET_COURSES($first: Int!, $page: Int!) {
-    getCourses(first: $first, page: $page) {
+export const GET_YEARS = gql`
+  query GET_YEARS(
+    $first: Int!
+    $page: Int!
+    $active: Boolean
+    $orderBy: [OrderByClause!]
+  ) {
+    getYears(first: $first, page: $page, active: $active, orderBy: $orderBy) {
       data {
         id
+        user_id_creator
         name
-        lesson {
-          id
+        active
+      }
+      paginatorInfo {
+        count
+        currentPage
+        firstItem
+        hasMorePages
+        lastItem
+        lastPage
+        perPage
+        total
+      }
+    }
+  }
+`;
+
+export const GET_CONSULTANTS = gql`
+  query GET_USERS(
+    $first: Int!
+    $page: Int!
+    $first_name: String
+    $last_name: String
+    $email: String
+  ) {
+    getUsers(
+      first: $first
+      page: $page
+      group_id: 6
+      first_name: $first_name
+      last_name: $last_name
+      email: $email
+    ) {
+      data {
+        id
+        first_name
+        last_name
+        email
+        group {
+          persian_name
+        }
+        branch {
           name
         }
-        type
-        teacher {
-          first_name
-          last_name
-        }
-        education_level
+      }
+      paginatorInfo {
+        count
+        currentPage
+        firstItem
+        hasMorePages
+        lastItem
+        lastPage
+        perPage
+        total
       }
     }
   }
@@ -156,16 +205,16 @@ export const GET_COURSE_SESSION_BY_DATE = gql`
   query getCourseSessionByDate(
     $session_date_from: String
     $session_date_to: String
-    $next_week:Boolean
+    $next_week: Boolean
   ) {
     getCourseSessionOrderbyDate(
       session_date_from: $session_date_from
       session_date_to: $session_date_to
-      next_week:$next_week
+      next_week: $next_week
     ) {
       date
       details {
-        id        
+        id
         start_date
         start_time
         end_time
@@ -183,42 +232,36 @@ export const GET_COURSE_SESSION_BY_DATE = gql`
   }
 `;
 
-
 export const GET_COURSE_SESSION_BY_DATE_WITH_TODAY = gql`
- query getCourseSessionByDateWithToday(
-  $session_date_from:String,
-  $session_date_to:String,
-  $next_week:Boolean,
-  
-){
-  getCourseSessionOrderbyDate(
-    session_date_from:$session_date_from
-    session_date_to:$session_date_to
-    next_week:$next_week
-  )
-  {
-    today
-    data{
-      date
-   		details{
-      id      
-      start_date
-      start_time
-      end_time
-      course_id
-      course_name
-      lesson_name
-      teacher_name
-      class_rome_name
-      gender
-      education_level
-      course_type
-      branch_name
-      
+  query getCourseSessionByDateWithToday(
+    $session_date_from: String
+    $session_date_to: String
+    $next_week: Boolean
+  ) {
+    getCourseSessionOrderbyDate(
+      session_date_from: $session_date_from
+      session_date_to: $session_date_to
+      next_week: $next_week
+    ) {
+      today
+      data {
+        date
+        details {
+          id
+          start_date
+          start_time
+          end_time
+          course_id
+          course_name
+          lesson_name
+          teacher_name
+          class_rome_name
+          gender
+          education_level
+          course_type
+          branch_name
+        }
+      }
     }
-    }
-    
   }
-}
 `;
-
