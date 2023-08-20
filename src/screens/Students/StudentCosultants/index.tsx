@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_A_STUDENT, GET_A_STUDENT_COURSES } from "./gql/query";
+import { GET_A_STUDENT, GET_A_STUDENT_CONSULTANTS } from "./gql/query";
 import { DELETE_STUDENT_COURSE } from "./gql/mutation";
 import {
   CircularProgress,
@@ -41,9 +41,7 @@ interface EditStudentCourse {
 const StudentCourses = () => {
   const navigate = useNavigate();
   const { studentId } = useParams<string>();
-  const [studentCourses, setStudentCourses] = useState<StudentCoursesType[]>(
-    []
-  );
+  const [studentConsultants, setStudentConsultants] = useState<any[]>([]);
   const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
     count: 0,
     currentPage: 1,
@@ -69,24 +67,27 @@ const StudentCourses = () => {
     },
   });
 
-  const { refetch, loading: courseLoading } = useQuery(GET_A_STUDENT_COURSES, {
-    variables: {
-      first: 200,
-      page: 1,
-      student_id: studentId ? parseInt(studentId) : 0,
-      orderBy: [
-        {
-          column: "id",
-          order: "DESC",
-        },
-      ],
-    },
-    onCompleted: (data) => {
-      setPageInfo(data.getCourseStudents.paginatorInfo);
-      setStudentCourses(data.getCourseStudents.data);
-    },
-    fetchPolicy: "no-cache",
-  });
+  const { refetch, loading: courseLoading } = useQuery(
+    GET_A_STUDENT_CONSULTANTS,
+    {
+      variables: {
+        first: 200,
+        page: 1,
+        student_id: studentId ? parseInt(studentId) : 0,
+        orderBy: [
+          {
+            column: "id",
+            order: "DESC",
+          },
+        ],
+      },
+      onCompleted: (data) => {
+        setPageInfo(data.getConsultantFinancials.paginatorInfo);
+        setStudentConsultants(data.getConsultantFinancials.data);
+      },
+      fetchPolicy: "no-cache",
+    }
+  );
 
   const [deleteCourseStudent] = useMutation(DELETE_STUDENT_COURSE);
 
@@ -152,8 +153,8 @@ const StudentCourses = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {studentCourses &&
-              studentCourses.map(
+            {studentConsultants &&
+              studentConsultants.map(
                 (element: StudentCoursesType, index: number) => (
                   <StyledTableRow key={element.id}>
                     <StyledTableCell align="left">

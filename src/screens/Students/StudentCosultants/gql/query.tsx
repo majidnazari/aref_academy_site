@@ -11,67 +11,21 @@ export const GET_A_STUDENT = gql`
   }
 `;
 
-export const GET_A_STUDENT_COURSES = gql`
-  query GET_A_STUDENT_COURSES(
+export const GET_A_STUDENT_CONSULTANTS = gql`
+  query GET_A_STUDENT_CONSULTANTS(
     $first: Int!
     $page: Int
     $student_id: Int
     $orderBy: [OrderByClause!]
   ) {
-    getCourseStudents(
+    getConsultantFinancials(
       first: $first
       page: $page
       student_id: $student_id
       orderBy: $orderBy
     ) {
       data {
-        id
-        financial_status
         manager_status
-        student_status
-        created_at
-        description
-        user_manager {
-          first_name
-          last_name
-        }
-        user_creator {
-          first_name
-          last_name
-        }
-        user_financial {
-          first_name
-          last_name
-        }
-        user_student_status {
-          first_name
-          last_name
-        }
-        course {
-          name
-          lesson {
-            name
-          }
-          type
-          teacher {
-            first_name
-            last_name
-          }
-          education_level
-        }
-        transferred_course {
-          name
-          lesson {
-            name
-          }
-          type
-          teacher {
-            first_name
-            last_name
-          }
-          education_level
-        }
-        financial_refused_status
       }
       paginatorInfo {
         count
