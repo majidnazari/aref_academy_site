@@ -41,6 +41,14 @@ import ComponentStudentDialog from "./ComponentStudentDialog";
 import { Link, useNavigate } from "react-router-dom";
 import moment_jalali from "moment-jalaali";
 import "../../../../src/assets/stringDate.css";
+import { Height } from "@mui/icons-material";
+import StudentStatusComponent from "./StudentStatusDialog";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+
+import HourglassDisabledIcon from '@mui/icons-material/HourglassDisabled';
+import CoPresentIcon from '@mui/icons-material/CoPresent';
+import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -73,20 +81,27 @@ const daysOfWeek = [
   "جمعه",
 ];
 
-const consultantBox = {
-  backgroundColor: "#02acf5",
+const consultantNotFilledStudentBox = {
+  backgroundColor: "#adadad",
+  width: 160,
   color: "black",
   borderRadius: "5px",
   boxShadow: 3,
   cursor: "pointer",
-  display: "inline-block",
-  ustifyContent: "flex-end",
-  alignItems: "flex-end",
-  p: 2,
+  minHeight: "200px",
+  mx: 1,
+  p: 1,
+};
+const consultantFilledStudentBox = {
+  backgroundColor: "#00BFFF",
   width: 160,
-  m: 1,
-  direction: "rtl",
-  whiteSpace: "pre-wrap",
+  color: "black",
+  borderRadius: "5px",
+  boxShadow: 3,
+  cursor: "pointer",
+  minHeight: "200px",
+  mx: 1,
+  p: 1,
 };
 
 interface ErrorData {
@@ -112,6 +127,7 @@ interface detailsData {
   end_hour: string;
   session_date: string;
   branchClassRoom_name: string;
+  student_status: string;
 }
 
 const ConsultantTimeTable = () => {
@@ -130,6 +146,12 @@ const ConsultantTimeTable = () => {
   const [timeTable, setTimeTable] = useState<
     getConsultantDefinitionDetailsData[]
   >([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const [dialogconsultantTimeTableId, setDialogConsultantTimeTableId] =
+    useState<string >();
+  const [dialogrefreshData, setDialogRefreshData] = useState<boolean>(false);
+  const [studentDialogOpen, setStudentDialogOpen] = useState<boolean>(false);
+  const [studentStatusDialogOpen, setStudentStatusDialogOpen] = useState<boolean>(false);
 
   const [listKey, setListKey] = useState<number>(0);
 
@@ -152,10 +174,43 @@ const ConsultantTimeTable = () => {
       ],
     },
     onCompleted: (data) => {
-      //console.log(data.getBranchClassRooms);
       //setTimeTable(data.getConsultantDefinitionDetails);
     },
   });
+
+  const convertStudentStatus=(studentStatus: string) => {
+
+    switch(studentStatus) {
+      case "no_action" : 
+        return <HourglassDisabledIcon 
+        sx={{
+          color: "black",
+          fontSize: 13,
+          fontWeight: 800,
+          textAlign: "right",
+        }}
+        />;
+      case "present":
+        return <CoPresentIcon 
+        sx={{
+          color: "black",
+          fontSize: 13,
+          fontWeight: 800,
+          textAlign: "right",
+        }}
+        />;
+      case "absent":
+        return <CancelPresentationIcon 
+        sx={{
+          color: "black",
+          fontSize: 13,
+          fontWeight: 800,
+          textAlign: "right",
+        }}
+        />;   
+    }
+
+  }
 
   const current_date = moment().format("YYYY-MM-DD");
   const next_date = moment().add(7, "days").format("YYYY-MM-DD");
@@ -176,6 +231,25 @@ const ConsultantTimeTable = () => {
     } = event;
     setDays(typeof value === "string" ? value.split(",") : value);
   };
+
+  const handleAddStudent = (defenitionId: string) => {
+    setDialogConsultantTimeTableId(defenitionId);
+    setStudentDialogOpen(true);
+  };
+
+  const handleAddStudentStatus = (defenitionId: string) => {
+    //alert(defenitionId);
+    setDialogConsultantTimeTableId(defenitionId);
+    setStudentStatusDialogOpen(true);   
+  };
+
+  
+  const closeDialog = () => {
+    setStudentDialogOpen(false);
+  }
+  const closeStudentStatusDialog = () => {
+    setStudentStatusDialogOpen(false);
+  }
 
   const handleChangeBranchClassRoomId = (event: SelectChangeEvent<string>) => {
     setBranchClassRoomId(event.target.value);
@@ -269,6 +343,9 @@ const ConsultantTimeTable = () => {
   };
 
   const refreshStudent = () => {
+    refetch();
+  };
+  const refreshConsultantDefinition = () => {
     refetch();
   };
   const convertDayIntoShamsi = (day: string) => {
@@ -456,16 +533,38 @@ const ConsultantTimeTable = () => {
       <br></br>
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
-          <TableHead >
-            <StyledTableCell align="center" width="50" > تاریخ </StyledTableCell>
-            <StyledTableCell align="center"> زمان مشاوره </StyledTableCell>
+          <TableHead>
+            <TableRow>
+              <StyledTableCell
+                align="center"
+                width="50"
+                sx={{
+                  fontSize: 25,
+                  fontWeight: 800,
+                  textAlign: "center",
+                }}
+              >
+                {" "}
+                تاریخ{" "}
+              </StyledTableCell>
+              <StyledTableCell
+                align="center"
+                sx={{
+                  fontSize: 25,
+                  fontWeight: 800,
+                  textAlign: "center",
+                }}
+              >
+                زمان مشاوره
+              </StyledTableCell>
+            </TableRow>
           </TableHead>
           <TableBody>
             {timeTable.map(
               (element: getConsultantDefinitionDetailsData, index: number) => (
                 <TableRow key={index}>
-                  <StyledTableCell align="center" >
-                    <a href="#"  id="dateOfWeekString">
+                  <StyledTableCell align="center">
+                    <a href="#" id="dateOfWeekString">
                       {moment_jalali(element.date?.toString()).format(
                         "jYYYY/jMM/jDD"
                       )}{" "}
@@ -480,33 +579,123 @@ const ConsultantTimeTable = () => {
                     </a>
                   </StyledTableCell>
                   <StyledTableCell align="left">
-                    {element.details?.map((detail: detailsData) => (
-                      <Box
-                        sx={consultantBox}
-                        // onClick={() =>
-                        //   navigate(`/consultant/${detail.id}/setStudent`)
-                        // }
-                      >
-                        <ComponentStudentDialog
-                          consultantTimeTableId={detail.id}
-                          parentStudentId={studentId}
-                          refreshData={refreshStudent}
-                        />
-                        {"ساعت :"} {detail.end_hour}-{detail.start_hour}
-                        <br />
-                        {" کلاس:"} {detail.branchClassRoom_name}
-                        <br />
-                        {" دانش آموز:"} {detail?.student?.first_name}{" "}
-                        {detail?.student?.last_name} <br />
-                        {"ثبت نامی:"}{" "}
-                        {detail?.student?.is_academy_student === 1
-                          ? " آکادمی"
-                          : "جذب"}{" "}
-                        <br />
-                        {"کد ملی:"} {detail?.student?.nationality_code}
-                        <br />
-                      </Box>
-                    ))}
+                    <Box sx={{ display: "flex", flexDirection: "row" }}>
+                      {element.details?.map(
+                        (detail: detailsData, index_details: number) => (
+                          <Box key={index_details}>
+                            <Box
+                              sx={{
+                                border: 1,
+                                borderColor: "#0288d1",
+                                fontSize: 18,
+                                fontWeight: 800,
+                                textAlign: "center",
+                                backgroundColor: "white",
+                                color: "#0288d1",
+                                borderRadius: "5px",
+                                boxShadow: 3,
+                                display: "inline-block",
+                                ustifyContent: "flex-end",
+                                alignItems: "flex-end",
+                                p: 2,
+                                width: 160,
+                                m: 1,
+                                direction: "rtl",
+                                whiteSpace: "pre-wrap",
+                              }}
+                            >
+                              {detail.end_hour}-{detail.start_hour}
+                            </Box>
+
+                            <Box
+                              sx={
+                                detail?.student_id
+                                  ? consultantFilledStudentBox
+                                  : consultantNotFilledStudentBox
+                              }
+                              key={index_details}
+                              // onClick={() =>
+                              //   navigate(`/consultant/${detail.id}/setStudent`)
+                              // }
+                            >
+                              <Box
+                                display="flex"
+                                justifyContent="space-between"
+                                alignItems="center"
+                              >
+                                {/* <ComponentStudentDialog
+                                consultantTimeTableId={detail.id}
+                                parentStudentId={studentId}
+                                refreshData={refreshStudent}
+                              /> */}
+                                <Button
+                                  startIcon={
+                                    <PersonAddAlt1Icon 
+                                      sx={{ textAlign: "right" }}
+                                    />
+                                  }
+                                  sx={{
+                                    color: "black",
+                                    fontSize: 13,
+                                    fontWeight: 800,
+                                    textAlign: "right",
+                                  }}
+                                  onClick={() => handleAddStudent(detail.id)}
+                                >
+                                  {" "}
+                                </Button>
+                                {/* <StudentStatusComponent
+                                  consultantTimeTableId={detail.id}                                  
+                                  refreshData={refreshStudent}
+                                /> */}
+
+                                <Button
+                                  startIcon={
+                                    <ManageAccountsIcon
+                                      sx={{ textAlign: "left" }}
+                                    />
+                                  }
+                                  sx={{
+                                    color: "black",
+                                    fontSize: 13,
+                                    fontWeight: 800,
+                                    textAlign: "left",
+                                  }}
+                                  onClick={() => handleAddStudentStatus(detail.id)}
+                                >
+                                  {" "}
+                                </Button>
+
+                              </Box>
+
+                              {detail?.student_id ? (
+                                <Box>
+                                  <Box>
+                                    کلاس : {detail.branchClassRoom_name}
+                                  </Box>
+                                  <Box>
+                                    دانش آموز : {detail?.student?.first_name}{" "}
+                                    {detail?.student?.last_name}
+                                  </Box>
+                                  <Box>
+                                    ثبت نامی :{" "}
+                                    {detail?.student?.is_academy_student === 1
+                                      ? " آکادمی"
+                                      : "جذب"}{" "}
+                                  </Box>
+                                  <Box>
+                                    کد ملی :{detail?.student?.nationality_code}
+                                  </Box>
+                                  <Box>
+                                   {convertStudentStatus(detail?.student_status)}
+                                  </Box>
+                                </Box>
+                              ) : null}
+                            </Box>
+                          </Box>
+                        )
+                      )}
+                    </Box>
                   </StyledTableCell>
                 </TableRow>
               )
@@ -542,6 +731,29 @@ const ConsultantTimeTable = () => {
           </Button>
         </Box>
       </TableContainer>
+      {studentDialogOpen ? (
+        <ComponentStudentDialog
+          consultantTimeTableId={dialogconsultantTimeTableId}
+          //parentStudentId={studentId}
+          refreshData={refreshConsultantDefinition}
+          openDialog={true}
+          //setDialogOpen={() => {}}
+          closeDialog={closeDialog}
+        />
+      ) : null}
+
+      {studentStatusDialogOpen ? (
+        <StudentStatusComponent
+          consultantTimeTableId={dialogconsultantTimeTableId}
+          //parentStudentId={studentId}
+          refreshData={refreshConsultantDefinition}
+          openStudentStatusDialog={true}
+          //setDialogOpen={() => {}}
+          closeStudentStatusDialog={closeStudentStatusDialog}
+        />
+      ) : null}
+
+
     </Container>
   );
 };

@@ -31,11 +31,15 @@ mutation UPDATE_STUDENT_OF_CONSULTANTDEFINITIONDETAIL
 (
   $id:ID!
   $student_id:Int!
+  $student_status:String
+  $absent_present_description:String
 )
 {
     updateConsultantDefinitionDetail(input:{
-       id:$id,
+      id:$id,
       student_id:$student_id
+      student_status:$student_status
+      absent_present_description:$absent_present_description
     })
   {
     id

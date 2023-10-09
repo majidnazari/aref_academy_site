@@ -176,13 +176,45 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
         end_hour
         session_date
         branchClassRoom_name
+        student_status
       }
     }
   }
 `;
 
+export const GET_CONSULTANT_DEFINITION_DETAIL=gql`
+query GET_A_CONSULTANTDEFINITIONDETAIL($id: ID!)
+  {    
+  getConsultantDefinitionDetail(id:$id){
+    id
+    absent_present_description
+    branchClassRoom{
+      id
+    }
+    branch_class_room_id
+    consultant{
+      id
+    }
+    consultant_id
+    consultant_test_id
+    start_hour
+    end_hour
+    session_date
+    step
+    student{
+      id
+    }
+    student_id
+    student_status
+    test_description
+    user_id
+    
+  }
+}
+`;
+
 export const GET_STUDENTS = gql`
-  query GET_STUDENTS(
+  query GET_STUDENTS(    
     $first: Int!
     $page: Int!
     $first_name: String
@@ -190,6 +222,7 @@ export const GET_STUDENTS = gql`
     $orderBy: [OrderByClause!]
     $phone: String
     $nationality_code: String
+    $ids:[Int]
   ) {
     getStudents(
       first: $first
@@ -199,6 +232,7 @@ export const GET_STUDENTS = gql`
       orderBy: $orderBy
       phone: $phone
       nationality_code: $nationality_code
+      ids:$ids
     ) {
       data {
         id
@@ -262,35 +296,46 @@ query GET_CONSULTANTS_TIME_SHOW(
     consultant_id: $consultant_id,
     target_date:$target_date
   ){
-    consultant{
-      id
-      first_name
-      last_name
-      email
-      branch{
+      consultant{
         id
-        name        
+        first_name
+        last_name        
       }
-      
-    }
-    times{
-      id
-      student_id
-      session_date
-      start_hour
-      end_hour
-      branch_class_room_id
-      student_status
-      absent_present_description
-      test_description
-      step
-      branchClassRoom{
+      details{
+        student_id
         id
-        name        
-      }
-      
-      
+        student_id
+        student_status     
+        student{
+          first_name
+          last_name
+          is_academy_student
+          nationality_code
+        }
+        branchClassRoom_name      
+        user_id
+        start_hour
+        end_hour
+      }    
     }
+  }
+`;
+
+export const GET_CONSULTANT_FINANCIALS = gql`
+  query GET_CONSULTANT_FINANCIALS(
+  $first: Int!,
+  $page: Int!, 
+  $consultant_id: Int 
+) {
+  getConsultantFinancials(
+    first: $first
+    page: $page   
+    consultant_id: $consultant_id
+  ){
+    data{
+      id
+      student_id      
+    }    
   }
 }
 `;

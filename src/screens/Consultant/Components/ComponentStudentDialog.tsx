@@ -9,7 +9,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { useState } from "react";
-import { GET_A_CONSULTANT_TIME_TABLE, GET_STUDENTS } from "../gql/query";
+import {
+  GET_A_CONSULTANT_TIME_TABLE,
+  GET_STUDENTS,
+  GET_CONSULTANT_FINANCIALS,
+} from "../gql/query";
 import {
   Autocomplete,
   CircularProgress,
@@ -19,7 +23,8 @@ import {
 import { SearchProps } from "../dto/search-student";
 import { UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID } from "../gql/mutation";
 import { showSuccess } from "utils/swlAlert";
-import FaceIcon from "@mui/icons-material/Face";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 
 interface detailsData {
   id: string;
@@ -37,60 +42,94 @@ interface detailsData {
 const ComponentStudentDialog = ({
   consultantTimeTableId,
   refreshData,
-  parentStudentId,
+  //parentStudentId,
+  openDialog,
+  //setDialogOpen
+  closeDialog,
 }: {
-  consultantTimeTableId: string;
-  refreshData: any;
-  parentStudentId: number | undefined;
+  consultantTimeTableId: string | undefined;
+  refreshData: Function;
+  //parentStudentId: number | undefined;
+  closeDialog: Function;
+  openDialog: boolean;
+  //setDialogOpen:Function;
 }) => {
+  console.log("component student dialog is:", consultantTimeTableId);
+
   const params = useParams<string>();
   const timeTableId = consultantTimeTableId;
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(openDialog);
+  // const [dialogrefreshData, setDialogRefreshData] = React.useState(refreshData);
   const [skip, setSkip] = useState<Boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
-  const [lessonName, setLessonName] = useState<string>("");
-  const [loadingLesson, setLoadingLesson] = useState<boolean>(false);
-  const [lessonOptions, setLessonOptions] = useState<any[]>([]);
+  const [studentName, setStudentName] = useState<string>("");
+  const [loadingStudent, setLoadingStudent] = useState<boolean>(false);
+  const [loadingConsultantStudent, setLoadingConsultantStudent] =
+    useState<boolean>(false);
+  const [studentOptions, setStudentOptions] = useState<any[]>([]);
+  const [studentIds, setStudentIds] = useState<number[]>([]);
   const [search, setSearch] = useState<SearchProps>({});
   const [editConsultantTimeTable] = useMutation(
     UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
   );
+  const customStyles = {
+    width: 300,
+    margin: "2px",
+  };
 
-  const { refetch: refetchLessons } = useQuery(GET_STUDENTS, {
+  const { refetch: refetchStudents } = useQuery(GET_STUDENTS, {
     variables: {
       first: 1,
       page: 1,
       full_name: "",
+      ids: [1],
       fetchPolicy: "network-only",
     },
     onCompleted: (data) => {
-      if (!skip) {
-        const tmp: any = [];
-        data.getStudents.data.map((item: any) => {
-          tmp.push({
-            id: +item.id,
-            name: item.first_name + " " + item.last_name + " " + item.phone,
-          });
-          return item;
+      // if (!skip) {
+      const tmp: any = [];
+      data.getStudents.data.map((item: any) => {
+        tmp.push({
+          id: +item.id,
+          name: item.first_name + " " + item.last_name + " " + item.phone,
         });
-        //console.log(tmp);
-        setLessonOptions(tmp);
-      }
+        return item;
+      });
+      setStudentOptions(tmp);
+      //}
     },
   });
 
-  React.useEffect(() => {
-    setLoadingLesson(true);
-    refetchLessons({
-      first: 1000,
-      page: 1,
-      full_name: lessonName,
-    }).then(() => {
-      setLoadingLesson(false);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lessonName]);
+  const { refetch: refetchStudentFinancials } = useQuery(
+    GET_CONSULTANT_FINANCIALS,
+    {
+      variables: {
+        first: 100,
+        page: 1,
+        full_name: "",
+        consultant_id: Number(params.consultantId),
+        fetchPolicy: "network-only",
+      },
+      onCompleted: (data) => {
+        //if (!skip) {
+        const studentIds: number[] = [];
+        data.getConsultantFinancials.data.map((item: any) => {
+          studentIds.push(Number(item.student_id));
+          return item;
+        });
+        // }
+
+        setStudentIds(studentIds);
+        refetchStudents({
+          first: 1000,
+          page: 1,
+          full_name: studentName,
+          ids: studentIds,
+        });
+      },
+    }
+  );
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -105,17 +144,22 @@ const ComponentStudentDialog = ({
       },
     })
       .then(() => {
+        
         showSuccess("ویرایش با موفقبت انجام شد.");
-        refreshData(search.student_id);
+        refreshData();
+        //refreshData(search.student_id);
+        // setDialogRefreshData(true);
       })
       .finally(() => {
         setLoading(false);
         setOpen(false);
+        closeDialog(true);
       });
   };
 
   const handleCancel = () => {
     setOpen(false);
+    closeDialog(true);
   };
 
   const [onetimeTable, setOneTimeTable] = useState<detailsData>();
@@ -143,7 +187,7 @@ const ComponentStudentDialog = ({
            
            </DialogContentText> */}
 
-            <TextField
+            {/* <TextField
               autoFocus
               margin="dense"
               id="name"
@@ -151,16 +195,17 @@ const ComponentStudentDialog = ({
               type="text"
               fullWidth
               variant="standard"
-            />
+            /> */}
+
             <FormControl
               sx={{
                 m: 1,
-                width: "100%",
+                width: "90%",
               }}
             >
               <Autocomplete
-                id="lesson-names"
-                options={lessonOptions}
+                id="student-names"
+                options={studentOptions}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -169,24 +214,25 @@ const ComponentStudentDialog = ({
                     onChange={(e) => {
                       if (e.target.value.trim().length >= 1) {
                         setSkip(false);
-                        setLessonName(e.target.value.trim());
+                        setStudentName(e.target.value.trim());
                       }
                     }}
                     InputProps={{
                       ...params.InputProps,
                       endAdornment: (
-                        <React.Fragment>
-                          {loadingLesson ? (
+                        <>
+                          {loadingStudent ? (
                             <CircularProgress color="inherit" size={20} />
                           ) : null}
                           {params.InputProps.endAdornment}
-                        </React.Fragment>
+                        </>
                       ),
                     }}
                   />
                 )}
                 getOptionLabel={(option) => option.name}
                 value={search?.student_id}
+                style={customStyles}
                 onChange={(_event, newTeam) => {
                   setSearch({
                     ...search,
@@ -203,11 +249,17 @@ const ComponentStudentDialog = ({
           </DialogActions>
         </Dialog>
       </div>
-      <div>
-        <Button sx={{ color: "red" }} onClick={handleClickOpen}>
-          دانش آموز +
-        </Button>
-       
+      <div style={{ textAlign: "right" }}>
+        <Button
+          startIcon={<PersonAddAlt1Icon sx={{ textAlign: "right" }} />}
+          sx={{
+            color: "black",
+            fontSize: 13,
+            fontWeight: 800,
+            textAlign: "right",
+          }}
+          onClick={handleClickOpen}
+        ></Button>
       </div>
     </div>
   );

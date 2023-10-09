@@ -117,10 +117,10 @@ const MainRouter = () => {
               path=":consultantId/timetable"
               element={<ConsultantTimeTable />}
             />
-            <Route
+            {/* <Route
               path=":consultantId/timetable"
               element={<ConsultantTimeTable />}
-            />
+            /> */}
             <Route path="show-all" element={<ShowAllConsultantsTimes />} />
             {/* <Route path=":consultantTimeTableId/setStudent" element={<ComponentStudentDialog  />} /> */}
 
