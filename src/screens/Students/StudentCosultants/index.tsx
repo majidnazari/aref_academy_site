@@ -82,6 +82,7 @@ const StudentCourses = () => {
         ],
       },
       onCompleted: (data) => {
+        //console.log(data);
         setPageInfo(data.getConsultantFinancials.paginatorInfo);
         setStudentConsultants(data.getConsultantFinancials.data);
       },

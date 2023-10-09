@@ -95,7 +95,7 @@ const AddStudentConsultant = ({ studentId, refetch }: Props) => {
     setYearId(event.target.value);
   };
 
-  const [createStudentConsultant, { loading: addStudentLoading }] = useMutation(
+  const [createStudentConsultant, { loading: addStudentLoading }] = useMutation( 
     CREATE_STUDENT_CONSULTANT
   );
 
