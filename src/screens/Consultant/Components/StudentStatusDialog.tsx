@@ -23,12 +23,13 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
+  Typography,
 } from "@mui/material";
 import { SearchProps } from "../dto/search-student-status";
 import { UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID } from "../gql/mutation";
 import { GET_CONSULTANT_DEFINITION_DETAIL } from "../gql/query";
 
-import { showSuccess } from "utils/swlAlert";
+import { showError, showSuccess } from "utils/swlAlert";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 
@@ -49,19 +50,15 @@ const StudentStatusComponent = ({
   consultantTimeTableId,
   refreshData,
   openStudentStatusDialog,
-  closeStudentStatusDialog
+  closeStudentStatusDialog,
 }: {
   consultantTimeTableId: string | undefined;
   refreshData: Function;
-  openStudentStatusDialog:boolean;
-  closeStudentStatusDialog:Function;
+  openStudentStatusDialog: boolean;
+  closeStudentStatusDialog: Function;
 }) => {
   const params = useParams<string>();
   const timeTableId = consultantTimeTableId;
-
-  console.log("component student status is:" , timeTableId);
-  console.log("component student status setOpen is:" , openStudentStatusDialog);
-
   const [open, setOpen] = React.useState(openStudentStatusDialog);
   const [skip, setSkip] = useState<Boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
@@ -70,41 +67,29 @@ const StudentStatusComponent = ({
   const [loadingConsultantStudent, setLoadingConsultantStudent] =
     useState<boolean>(false);
   const [studentOptions, setStudentOptions] = useState<any[]>([]);
-  const [studentIds, setStudentIds] = useState<number[]>([]);
+  const [studentId, setStudentId] = useState<number>(1);
+  const [studentFullName, setStudentFullName] = useState<string>();
   const [search, setSearch] = useState<SearchProps>({});
   const [editConsultantTimeTable] = useMutation(
     UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
   );
   const [studentStatus, setStudentStatus] = useState<string>("no_action");
   const [studentDescription, setStudentDescription] = useState<string>("");
+  const [startHour, setStartHour] = useState<string>("");
+  const [endtHour, setEndHour] = useState<string>("");
 
   const customStyles = {
-    width: 300,
+    width: 500,
     margin: "2px",
   };
 
-  // const { refetch: refetchStudents } = useQuery(GET_STUDENTS, {
-  //   variables: {
-  //     first: 1,
-  //     page: 1,
-  //     full_name: "",
-  //     ids: [1],
-  //     fetchPolicy: "network-only",
-  //   },
-  //   onCompleted: (data) => {
-  //     // if (!skip) {
-  //     const tmp: any = [];
-  //     data.getStudents.data.map((item: any) => {
-  //       tmp.push({
-  //         id: +item.id,
-  //         name: item.first_name + " " + item.last_name + " " + item.phone,
-  //       });
-  //       return item;
-  //     });
-  //     setStudentOptions(tmp);
-  //     //}
-  //   },
-  // });
+  const divStyle = {
+    backgroundColor: "blue",
+    color: "white",
+    padding: "10px",
+    borderRadius: "5px",
+    width: "800px",
+  };
 
   // const { refetch: refetchStudentFinancials } = useQuery(
   //   GET_CONSULTANT_FINANCIALS,
@@ -118,50 +103,107 @@ const StudentStatusComponent = ({
   //     },
   //     onCompleted: (data) => {
   //       //if (!skip) {
-  //       const studentIds: number[] = [];
+  //       const studentId: number[] = [];
   //       data.getConsultantFinancials.data.map((item: any) => {
-  //         studentIds.push(Number(item.student_id));
+  //         studentId.push(Number(item.student_id));
   //         return item;
   //       });
   //       // }
 
-  //       setStudentIds(studentIds);
+  //       setStudentId(studentId);
   //       refetchStudents({
   //         first: 1000,
   //         page: 1,
   //         full_name: studentName,
-  //         ids: studentIds,
+  //         ids: studentId,
   //       });
   //     },
   //   }
   // );
 
-  const { refetch:refetchConsultantDefinitionDetail } = useQuery(GET_CONSULTANT_DEFINITION_DETAIL, {
-    variables: {
-      id: timeTableId,
-    },
-    onCompleted: (data) => {
-      console.log("the row  and GET_CONSULTANT_DEFINITION_DETAIL" + timeTableId + " is:" ,data.getConsultantDefinitionDetail);
-      setStudentIds(data.getConsultantDefinitionDetail.student_id);
-      alert("student id is:" + data.getConsultantDefinitionDetail.student_id)
-    },
-    fetchPolicy: "no-cache",
-  });
+  const { refetch: refetchConsultantDefinitionDetail, loading: isLoading } =
+    useQuery(GET_CONSULTANT_DEFINITION_DETAIL, {
+      variables: {
+        id: timeTableId,
+      },
+      onCompleted: (data) => {
+        
+        setStudentId(data.getConsultantDefinitionDetail.student_id ?? 1 );
+        setStudentStatus(data.getConsultantDefinitionDetail.student_status);
+        setStudentDescription(
+          data.getConsultantDefinitionDetail.absent_present_description
+        );
+        setStartHour(data.getConsultantDefinitionDetail.start_hour);
+        setEndHour(data.getConsultantDefinitionDetail.end_hour);
+      },
+      fetchPolicy: "no-cache",
+    });
+
+  const { refetch: refetchStudents, loading: studentLoading } = useQuery(
+    GET_STUDENTS,
+    {
+      variables: {
+        first: 1,
+        page: 1,
+        full_name: "",
+        ids: studentId ,
+        fetchPolicy: "network-only",
+      },
+      onCompleted: (data) => {
+        const tmp =
+          data.getStudents.data[0].first_name +
+          " " +
+          data.getStudents.data[0].last_name;
+        setStudentFullName(tmp);
+        //alert(studentId);
+
+        // if (!skip) {
+        // const tmp: any = [];
+        // data.getStudents.data.map((item: any) => {
+        //   tmp.push({
+        //     id: +item.id,
+        //     name: item.first_name + " " + item.last_name + " " + item.phone,
+        //   });
+        //   return item;
+        // });
+        // setStudentOptions(tmp);
+        //}
+      },
+      skip:true
+    }
+  );
+
+  React.useEffect(() => {     
+    
+    setLoadingStudent(true);
+    refetchStudents({
+      first: 1,
+      page: 1,
+      ids: studentId,
+    }).then((data) => {
+      //console.log("data is:" , data);
+      setLoadingStudent(false);
+    });
+  }, [studentId]);
+
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleAdd = () => {
-    alert( search?.student_status);
-    alert( search?.absent_present_description);
+    if(studentId===1){
+      showError("دانش آموزی انتخاب نشده است.");
+      return null;
+    }
+    
     setLoading(true);
     editConsultantTimeTable({
       variables: {
         id: consultantTimeTableId,
-        student_id: studentIds,
-        student_status: search?.student_status,
-        absent_present_description: search?.absent_present_description,
+        student_id: studentId,
+        student_status: studentStatus,
+        absent_present_description: studentDescription,
       },
     })
       .then(() => {
@@ -172,7 +214,6 @@ const StudentStatusComponent = ({
         setLoading(false);
         setOpen(false);
         closeStudentStatusDialog(true);
-
       });
   };
 
@@ -195,67 +236,70 @@ const StudentStatusComponent = ({
   });
 
   return (
-    <div>
-      <div>
-        {/* <FaceIcon fontSize="small" onClick={handleClickOpen} /> */}
+    <Dialog open={openStudentStatusDialog} onClose={handleCancel} >
+      <DialogTitle minWidth={600}> تغییر وضعیت دانش آموز </DialogTitle>
+      <Grid> </Grid>
+      <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+        <FormControl sx={{ width: "50%", alignItems: "center" }}>
+            <Typography variant="h6" component="h6">
+              {(studentFullName) ? studentFullName : " دانش آموزی وجود ندارد" }
+            </Typography>
+          </FormControl>
+        <FormControl sx={{ width: "50%", alignItems: "left" }}>
+          <Typography variant="h6" component="h6">
+            {startHour} - {endtHour}
+          </Typography>
+        </FormControl>
+      </Grid>
+      
+      <DialogContent>
+        <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+          <FormControl sx={{ width: "100%" }}>
+            <InputLabel id="session-time-label"> وضعیت دانش آموز </InputLabel>
+            <Select
+              labelId="session-time-label"
+              value={studentStatus}
+              onChange={(e) => {
+                setStudentStatus(e.target.value);
+              }}
+              input={<OutlinedInput label=" وضعیت دانش آموز " />}
+              fullWidth
+            >
+              <MenuItem value={"no_action"}> بدون تغییر</MenuItem>
+              <MenuItem value={"absent"}> غایب </MenuItem>
+              <MenuItem value={"present"}> حاضر </MenuItem>
+              <MenuItem value={"dellay"}> تاخیر </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+      </DialogContent>
+      <DialogContent>
+        <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+          <FormControl sx={{ width: "100%" }}>
+            <TextField
+              fullWidth
+              label="توضیحات"
+              value={studentDescription}
+              onChange={(e) => {
+                setStudentDescription(e.target.value);
+              }}
+            />
+          </FormControl>
+        </Grid>
+      </DialogContent>
 
-        <Dialog open={open} onClose={handleCancel}>
-          <DialogTitle> تغییر وضعیت دانش آموز </DialogTitle><Grid></Grid>
-          <DialogContent>            
-            <Grid item xs={12} sm={6} md={2} xl={2}>
-              <FormControl sx={{ width: "100%" }}>
-                <InputLabel id="session-time-label">
-                  {" "}
-                  وضعیت دانش آموز{" "}
-                </InputLabel>
-                <Select
-                  labelId="session-time-label"
-                  value={studentStatus}
-                  onChange={(e) => {
-                    setStudentStatus(e.target.value);
-                  }}
-                  input={<OutlinedInput label=" وضعیت دانش آموز " />}
-                  fullWidth
-                >
-                  <MenuItem value={"no_action"}> بدون تغییر</MenuItem>
-                  <MenuItem value={"absent"}> غایب </MenuItem>
-                  <MenuItem value={"present"}> حاضر </MenuItem>
-                  <MenuItem value={"dellay"}> تاخیر </MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </DialogContent>
-          <DialogContent>
-            <Grid item xs={12} sm={6} md={2} xl={2}>
-              <FormControl
-                sx={{ width: "100%" }}
-              >
-                <TextField
-                  fullWidth
-                  label="توضیحات"
-                  value={studentDescription}
-                  onChange={(e) => {
-                    setStudentDescription(e.target.value )
-                  }}
-                  
-                />
-              </FormControl>
-            </Grid>
-          </DialogContent>
-
-          <DialogActions>
-            <Button onClick={handleCancel}>انصراف</Button>
-            <Button onClick={handleAdd}> ذخیره </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
-      <div>
+      <DialogActions>
+        <Button onClick={handleCancel}>انصراف</Button>
         <Button
-          endIcon={<ManageAccountsIcon />}
-          onClick={handleClickOpen}
-        ></Button>
-      </div>
-    </div>
+          onClick={handleAdd}
+          disabled={isLoading}
+          endIcon={isLoading && <CircularProgress size={15} />}
+        >
+          {" "}
+          ذخیره{" "}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

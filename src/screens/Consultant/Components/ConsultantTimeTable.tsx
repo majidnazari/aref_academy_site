@@ -46,9 +46,9 @@ import StudentStatusComponent from "./StudentStatusDialog";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 
-import HourglassDisabledIcon from '@mui/icons-material/HourglassDisabled';
-import CoPresentIcon from '@mui/icons-material/CoPresent';
-import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
+import HourglassDisabledIcon from "@mui/icons-material/HourglassDisabled";
+import CoPresentIcon from "@mui/icons-material/CoPresent";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -148,10 +148,11 @@ const ConsultantTimeTable = () => {
   >([]);
   const [open, setOpen] = useState<boolean>(false);
   const [dialogconsultantTimeTableId, setDialogConsultantTimeTableId] =
-    useState<string >();
+    useState<string>();
   const [dialogrefreshData, setDialogRefreshData] = useState<boolean>(false);
   const [studentDialogOpen, setStudentDialogOpen] = useState<boolean>(false);
-  const [studentStatusDialogOpen, setStudentStatusDialogOpen] = useState<boolean>(false);
+  const [studentStatusDialogOpen, setStudentStatusDialogOpen] =
+    useState<boolean>(false);
 
   const [listKey, setListKey] = useState<number>(0);
 
@@ -178,39 +179,43 @@ const ConsultantTimeTable = () => {
     },
   });
 
-  const convertStudentStatus=(studentStatus: string) => {
-
-    switch(studentStatus) {
-      case "no_action" : 
-        return <HourglassDisabledIcon 
-        sx={{
-          color: "black",
-          fontSize: 13,
-          fontWeight: 800,
-          textAlign: "right",
-        }}
-        />;
+  const convertStudentStatus = (studentStatus: string) => {
+    switch (studentStatus) {
+      case "no_action":
+        return (
+          <HourglassDisabledIcon
+            sx={{
+              color: "black",
+              fontSize: 13,
+              fontWeight: 800,
+              textAlign: "right",
+            }}
+          />
+        );
       case "present":
-        return <CoPresentIcon 
-        sx={{
-          color: "black",
-          fontSize: 13,
-          fontWeight: 800,
-          textAlign: "right",
-        }}
-        />;
+        return (
+          <CoPresentIcon
+            sx={{
+              color: "black",
+              fontSize: 13,
+              fontWeight: 800,
+              textAlign: "right",
+            }}
+          />
+        );
       case "absent":
-        return <CancelPresentationIcon 
-        sx={{
-          color: "black",
-          fontSize: 13,
-          fontWeight: 800,
-          textAlign: "right",
-        }}
-        />;   
+        return (
+          <CancelPresentationIcon
+            sx={{
+              color: "black",
+              fontSize: 13,
+              fontWeight: 800,
+              textAlign: "right",
+            }}
+          />
+        );
     }
-
-  }
+  };
 
   const current_date = moment().format("YYYY-MM-DD");
   const next_date = moment().add(7, "days").format("YYYY-MM-DD");
@@ -240,16 +245,15 @@ const ConsultantTimeTable = () => {
   const handleAddStudentStatus = (defenitionId: string) => {
     //alert(defenitionId);
     setDialogConsultantTimeTableId(defenitionId);
-    setStudentStatusDialogOpen(true);   
+    setStudentStatusDialogOpen(true);
   };
 
-  
   const closeDialog = () => {
     setStudentDialogOpen(false);
-  }
+  };
   const closeStudentStatusDialog = () => {
     setStudentStatusDialogOpen(false);
-  }
+  };
 
   const handleChangeBranchClassRoomId = (event: SelectChangeEvent<string>) => {
     setBranchClassRoomId(event.target.value);
@@ -369,6 +373,36 @@ const ConsultantTimeTable = () => {
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+      {studentDialogOpen && (
+        <ComponentStudentDialog
+          consultantTimeTableId={dialogconsultantTimeTableId}
+          //parentStudentId={studentId}
+          refreshData={refreshConsultantDefinition}
+          openDialog={studentDialogOpen}
+          //setDialogOpen={() => {}}
+          closeDialog={closeDialog}
+        />
+      )}
+
+      {/* {studentStatusDialogOpen ? (
+        <StudentStatusComponent
+          consultantTimeTableId={dialogconsultantTimeTableId}
+          //parentStudentId={studentId}
+          refreshData={refreshConsultantDefinition}
+          openStudentStatusDialog={true}
+          //setDialogOpen={() => {}}
+          closeStudentStatusDialog={closeStudentStatusDialog}
+        />
+      ) : null} */}
+      {studentStatusDialogOpen && (
+        <StudentStatusComponent
+          consultantTimeTableId={dialogconsultantTimeTableId}
+          refreshData={refreshConsultantDefinition}
+          openStudentStatusDialog={studentStatusDialogOpen}
+          closeStudentStatusDialog={closeStudentStatusDialog}
+        />
+      )}
+
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6} md={4} xl={4}>
           <FormControl sx={{ width: "100%" }}>
@@ -630,7 +664,7 @@ const ConsultantTimeTable = () => {
                               /> */}
                                 <Button
                                   startIcon={
-                                    <PersonAddAlt1Icon 
+                                    <PersonAddAlt1Icon
                                       sx={{ textAlign: "right" }}
                                     />
                                   }
@@ -649,23 +683,26 @@ const ConsultantTimeTable = () => {
                                   refreshData={refreshStudent}
                                 /> */}
 
-                                <Button
-                                  startIcon={
-                                    <ManageAccountsIcon
-                                      sx={{ textAlign: "left" }}
-                                    />
-                                  }
-                                  sx={{
-                                    color: "black",
-                                    fontSize: 13,
-                                    fontWeight: 800,
-                                    textAlign: "left",
-                                  }}
-                                  onClick={() => handleAddStudentStatus(detail.id)}
-                                >
-                                  {" "}
-                                </Button>
-
+                                {detail?.student_id ? (
+                                  <Button
+                                    startIcon={
+                                      <ManageAccountsIcon
+                                        sx={{ textAlign: "left" }}
+                                      />
+                                    }
+                                    sx={{
+                                      color: "black",
+                                      fontSize: 13,
+                                      fontWeight: 800,
+                                      textAlign: "left",
+                                    }}
+                                    onClick={() =>
+                                      handleAddStudentStatus(detail.id)
+                                    }
+                                  >
+                                    {" "}
+                                  </Button>
+                                ) : null}
                               </Box>
 
                               {detail?.student_id ? (
@@ -687,7 +724,9 @@ const ConsultantTimeTable = () => {
                                     کد ملی :{detail?.student?.nationality_code}
                                   </Box>
                                   <Box>
-                                   {convertStudentStatus(detail?.student_status)}
+                                    {convertStudentStatus(
+                                      detail?.student_status
+                                    )}
                                   </Box>
                                 </Box>
                               ) : null}
@@ -731,29 +770,6 @@ const ConsultantTimeTable = () => {
           </Button>
         </Box>
       </TableContainer>
-      {studentDialogOpen ? (
-        <ComponentStudentDialog
-          consultantTimeTableId={dialogconsultantTimeTableId}
-          //parentStudentId={studentId}
-          refreshData={refreshConsultantDefinition}
-          openDialog={true}
-          //setDialogOpen={() => {}}
-          closeDialog={closeDialog}
-        />
-      ) : null}
-
-      {studentStatusDialogOpen ? (
-        <StudentStatusComponent
-          consultantTimeTableId={dialogconsultantTimeTableId}
-          //parentStudentId={studentId}
-          refreshData={refreshConsultantDefinition}
-          openStudentStatusDialog={true}
-          //setDialogOpen={() => {}}
-          closeStudentStatusDialog={closeStudentStatusDialog}
-        />
-      ) : null}
-
-
     </Container>
   );
 };
