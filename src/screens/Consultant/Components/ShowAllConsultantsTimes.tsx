@@ -41,6 +41,13 @@ import "../../../../src/assets/stringDate.css";
 import { DatePicker } from "@mui/x-date-pickers";
 import { SearchAllConsultantProps } from "../dto/search-consultant-showalltime";
 import SearchAllConsultantTimes from "./SearchAllConsultantTimes";
+import StudentStatusComponent from "./StudentStatusDialog";
+
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import HourglassDisabledIcon from "@mui/icons-material/HourglassDisabled";
+import CoPresentIcon from "@mui/icons-material/CoPresent";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -129,6 +136,12 @@ const ShowAllConsultantsTimes = () => {
 
   const [studentId, setStudentId] = useState<number>();
   const [timeTable, setTimeTable] = useState<getConsultantsTimeShowData[]>([]);
+  const [dialogconsultantTimeTableId, setDialogConsultantTimeTableId] =
+    useState<string>();
+  const [dialogrefreshData, setDialogRefreshData] = useState<boolean>(false);
+  const [studentDialogOpen, setStudentDialogOpen] = useState<boolean>(false);
+  const [studentStatusDialogOpen, setStudentStatusDialogOpen] =
+    useState<boolean>(false);
 
   const consultantNotFilledStudentBox = {
     backgroundColor: "#adadad",
@@ -206,7 +219,18 @@ const ShowAllConsultantsTimes = () => {
   const [search, setSearch] = useState<SearchData>({
     consultant_id: undefined,
     target_date: current_date,
-  });
+  });  
+
+  const closeDialog = () => {
+    setStudentDialogOpen(false);
+  };
+  const closeStudentStatusDialog = () => {
+    setStudentStatusDialogOpen(false);
+  };  
+
+  const refreshConsultantDefinition = () => {
+    refetch();
+  };
 
   const searchMaper = (input: SearchData) => {
     return {
@@ -229,45 +253,117 @@ const ShowAllConsultantsTimes = () => {
     });
   };
 
+  const handleAddStudent = (defenitionId: string) => {
+    setDialogConsultantTimeTableId(defenitionId);
+    setStudentDialogOpen(true);
+  };
+  
+  const handleAddStudentStatus = (defenitionId: string) => {
+    //alert(defenitionId);
+    setDialogConsultantTimeTableId(defenitionId);
+    setStudentStatusDialogOpen(true);
+  };
+
+  const convertStudentStatus = (studentStatus: string) => {
+    switch (studentStatus) {
+      case "no_action":
+        return (
+          <HourglassDisabledIcon
+            sx={{
+              color: "black",
+              fontSize: 13,
+              fontWeight: 800,
+              textAlign: "right",
+            }}
+          />
+        );
+      case "present":
+        return (
+          <CoPresentIcon
+            sx={{
+              color: "black",
+              fontSize: 13,
+              fontWeight: 800,
+              textAlign: "right",
+            }}
+          />
+        );
+      case "absent":
+        return (
+          <CancelPresentationIcon
+            sx={{
+              color: "black",
+              fontSize: 13,
+              fontWeight: 800,
+              textAlign: "right",
+            }}
+          />
+        );
+    }
+  };
+
   return (
     <Paper sx={{ width: "100%", mb: 2 }}>
       <SearchAllConsultantTimes callBack={handleSearch} />
 
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+        {studentDialogOpen && (
+          <ComponentStudentDialog
+            consultantTimeTableId={dialogconsultantTimeTableId}
+            refreshData={refreshConsultantDefinition}
+            openDialog={studentDialogOpen}            
+            closeDialog={closeDialog}
+          />
+        )}
+
+        {studentStatusDialogOpen && (
+          <StudentStatusComponent
+            consultantTimeTableId={dialogconsultantTimeTableId}
+            refreshData={refreshConsultantDefinition}
+            openStudentStatusDialog={studentStatusDialogOpen}
+            closeStudentStatusDialog={closeStudentStatusDialog}
+          />
+        )}
+
         <TableContainer component={Paper}>
           <Table aria-label="customized table">
             <TableHead>
-              <StyledTableCell align="center" width="50"
-               sx={{
-                fontSize: 25,
-                fontWeight: 800,
-                textAlign: "center",
-              }}
-              >
-                {" "}
-                مشاوران{" "}
-              </StyledTableCell>
-              <StyledTableCell align="center" 
-               sx={{
-                fontSize: 25,
-                fontWeight: 800,
-                textAlign: "center",
-              }}
-              >
-                {" "}
-                برنامه روزانه مشاور
-              </StyledTableCell>
+            <TableRow >
+                <StyledTableCell
+                  align="center"
+                  width="50"
+                  sx={{
+                    fontSize: 25,
+                    fontWeight: 800,
+                    textAlign: "center",
+                  }}
+                >
+                  {" "}
+                  مشاوران{" "}
+                </StyledTableCell>
+                <StyledTableCell
+                  align="center"
+                  sx={{
+                    fontSize: 25,
+                    fontWeight: 800,
+                    textAlign: "center",
+                  }}
+                >
+                  {" "}
+                  برنامه روزانه مشاور
+                </StyledTableCell>
+              </TableRow>
             </TableHead>
             <TableBody>
               {timeTable.map(
                 (element: getConsultantsTimeShowData, index: number) => (
                   <TableRow key={index}>
-                    <StyledTableCell align="center"  >
-                      <a href="#" id="dateOfWeekString" >
-                      <span> </span>
-                        {element.consultant?.first_name}{"    "}
+                    <StyledTableCell align="center">
+                      <a href="#" id="dateOfWeekString">
+                        <span> </span>
+                        {element.consultant?.first_name}
+                        {"    "}
                         {element.consultant?.last_name} {"    "}
-                       
                         <span></span>
                         <span></span>
                         <span></span>
@@ -275,70 +371,116 @@ const ShowAllConsultantsTimes = () => {
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       <Box sx={{ display: "flex", flexDirection: "row" }}>
-                        {element.details?.map((detail: detailsData , detailIndex:number) => (
-                          <Box >
-                            <Box
-                              sx={{
-                                border: 1,
-                                borderColor: "#0288d1",
-                                fontSize: 18,
-                                fontWeight: 800,
-                                textAlign: "center",
-                                backgroundColor: "white",
-                                color: "#0288d1",
-                                borderRadius: "5px",
-                                boxShadow: 3,
-                                display: "inline-block",
-                                ustifyContent: "flex-end",
-                                alignItems: "flex-end",
-                                p: 2,
-                                width: 160,
-                                m: 1,
-                                direction: "rtl",
-                                whiteSpace: "pre-wrap",
-                              }}
-                            >
-                              {detail.end_hour}-{detail.start_hour}
+                        {element.details?.map(
+                          (detail: detailsData, detailIndex: number) => (
+                            <Box key={detailIndex}>
+                              <Box
+                                sx={{
+                                  border: 1,
+                                  borderColor: "#0288d1",
+                                  fontSize: 18,
+                                  fontWeight: 800,
+                                  textAlign: "center",
+                                  backgroundColor: "white",
+                                  color: "#0288d1",
+                                  borderRadius: "5px",
+                                  boxShadow: 3,
+                                  display: "inline-block",
+                                  ustifyContent: "flex-end",
+                                  alignItems: "flex-end",
+                                  p: 2,
+                                  width: 160,
+                                  m: 1,
+                                  direction: "rtl",
+                                  whiteSpace: "pre-wrap",
+                                }}
+                              >
+                                {detail.end_hour}-{detail.start_hour}
+                              </Box>
+                              <Box
+                                sx={
+                                  detail?.student
+                                    ? consultantFilledStudentBox
+                                    : consultantNotFilledStudentBox
+                                }                               
+                              >
+                                 <Box
+                                display="flex"
+                                justifyContent="space-between"
+                                alignItems="center"
+                              >
+                               
+                                <Button
+                                  startIcon={
+                                    <PersonAddAlt1Icon
+                                      sx={{ textAlign: "right" }}
+                                    />
+                                  }
+                                  sx={{
+                                    color: "black",
+                                    fontSize: 13,
+                                    fontWeight: 800,
+                                    textAlign: "right",
+                                  }}
+                                  onClick={() => handleAddStudent(detail.id)}
+                                >
+                                  {" "}
+                                </Button>
+                               
+                                {detail?.student_id ? (
+                                  <Button
+                                    startIcon={
+                                      <ManageAccountsIcon
+                                        sx={{ textAlign: "left" }}
+                                      />
+                                    }
+                                    sx={{
+                                      color: "black",
+                                      fontSize: 13,
+                                      fontWeight: 800,
+                                      textAlign: "left",
+                                    }}
+                                    onClick={() =>
+                                      handleAddStudentStatus(detail.id)
+                                    }
+                                  >
+                                    {" "}
+                                  </Button>
+                                ) : null}
+                              </Box>
+                               
+                                {detail?.student ? (
+                                  <Box>
+                                    <Box>
+                                      کلاس : {detail.branchClassRoom_name}
+                                    </Box>
+                                    <Box>
+                                      دانش آموز : {detail?.student?.first_name}{" "}
+                                      {detail?.student?.last_name}
+                                    </Box>
+                                    <Box>
+                                      ثبت نامی :{" "}
+                                      {detail?.student?.is_academy_student === 1
+                                        ? " آکادمی"
+                                        : "جذب"}{" "}
+                                    </Box>
+                                    <Box>
+                                      کد ملی :
+                                      {detail?.student?.nationality_code}
+                                    </Box>
+
+                                    <Box>
+                                    {convertStudentStatus(
+                                      detail?.student_status
+                                    )}
+                                  </Box>
+
+                                  </Box>
+                                ) : null}
+                              </Box>
                             </Box>
-                            <Box
-                              sx={
-                                detail?.student
-                                  ? consultantFilledStudentBox
-                                  : consultantNotFilledStudentBox
-                              }
-                              // onClick={() =>
-                              //   navigate(`/consultant/${detail.id}/setStudent`)
-                              // }
-                            >
-                              {/* <ComponentStudentDialog
-                                consultantTimeTableId={detail.id}
-                                parentStudentId={studentId}
-                                refreshData={refreshStudent}
-                              /> */}
-                              { 
-                              detail?.student 
-                              ?
-                              <Box>
-                                <Box>کلاس : {detail.branchClassRoom_name}</Box>
-                                <Box>
-                                  دانش آموز : {detail?.student?.first_name}{" "}
-                                  {detail?.student?.last_name}
-                                </Box>
-                                <Box>
-                                  ثبت نامی :{" "}
-                                  {detail?.student?.is_academy_student === 1
-                                    ? " آکادمی"
-                                    : "جذب"}{" "}
-                                </Box>
-                                <Box>
-                                  کد ملی :{detail?.student?.nationality_code}
-                                </Box> 
-                              </Box>  
-                              : null 
-                              }
-                            </Box>
-                          </Box>
-                        ))}
+                          )
+                        )}
                       </Box>
                     </StyledTableCell>
                   </TableRow>

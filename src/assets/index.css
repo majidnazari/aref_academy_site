@@ -2,6 +2,10 @@
   font-family: "VazirFarsiNumbers";
   src: local("VazirFarsiNumbers"), url(./fonts/vazir-fd.ttf) format("truetype");
   font-weight: 100;
+
+}
+.swal2-container{
+  z-index: 2000;
 }
 .colored-toast.swal2-icon-error {
   background-color: #d42727 !important;
