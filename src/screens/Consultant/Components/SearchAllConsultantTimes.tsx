@@ -125,7 +125,7 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
             <LocalizationProvider dateAdapter={AdapterJalali}>
               <DatePicker
                 label="از تاریخ"
-                value={search.target_date || null}
+                value={search.target_date || moment().format("YYYY/MM/DD")}
                 onChange={(newValue) => {
                   if (newValue) {
                     setSearch({

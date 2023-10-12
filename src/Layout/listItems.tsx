@@ -178,12 +178,12 @@ export const SecondaryListItems = () => {
 
   return process.env.REACT_APP_DEVELEP_MOD === "0" ? null : (
     <React.Fragment>
-      <ListItemButton onClick={() => navigate("/consultant")}>
+      {/* <ListItemButton onClick={() => navigate("/consultant")}>
         <ListItemIcon>
           <PsychologyAltIcon />
         </ListItemIcon>
-        <ListItemText primary="وقتهای مشاوران" />
-      </ListItemButton>
+        <ListItemText primary="زمانبندی مشاوران" />
+      </ListItemButton> */}
 
       <ListItemButton>
         <ListItemIcon>

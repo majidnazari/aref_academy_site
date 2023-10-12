@@ -84,6 +84,18 @@ const Topbar = ({ toggleDrawer, open = true, isDarkTheme = false, setDarktheme }
             <IconButton
                 color="inherit"
                 onClick={() => {
+                    navigate('/alarms/consultant-financial');
+                }}
+            >
+                <Badge badgeContent={
+                    data?.getCourseStudents?.paginatorInfo.total || 0
+                } color="secondary">
+                    <NotificationsIcon />
+                </Badge>
+            </IconButton>
+            <IconButton
+                color="inherit"
+                onClick={() => {
                     navigate('/alarms/student-courses');
                 }}
             >

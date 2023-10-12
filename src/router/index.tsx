@@ -62,18 +62,41 @@ import { AuthContext } from "../components/AppContext";
 import ConsultantTimeTable from "screens/Consultant/Components/ConsultantTimeTable";
 import ComponentStudentDialog from "screens/Consultant/Components/ComponentStudentDialog";
 import ShowAllConsultantsTimes from "screens/Consultant/Components/ShowAllConsultantsTimes";
+import { getUserData } from "utils/user";
+import { group } from "console";
+import ConsultantStudentManager from "screens/Dashboard/ConsultantStudentManager";
+import StudentsConsultantManagerScreen from "screens/Students/consultant_manager/index_consultant_manager";
 
 const MainRouter = () => {
   const appContext = useContext(AuthContext);
   const [isLogged, setisLogged] = useState(false);
+  const [dashboardName, setDashboardName] = useState<string>("");
   useEffect(() => {
+    const getRoute= getUserData();
+    setDashboardName(getRoute.group.name);
     setisLogged(appContext.isLoggedIn);
   }, [appContext.isLoggedIn]);
+
+  const convertNameComponent = (dashboardName:string) => {
+
+    switch(dashboardName){
+      case "consultant_manager":
+        return <ShowAllConsultantsTimes />
+       // return <ConsultantStudentManager />
+      default:
+        return <DashboardScreen />
+    }
+   
+  }
   return (
     <Routes>
       {isLogged ? (
         <Route element={<Main />}>
-          <Route index element={<DashboardScreen />} />
+
+          <Route index element={convertNameComponent(dashboardName)  } /> 
+
+          {/* <Route index element={<DashboardScreen />} /> */}
+          
 
           <Route path="users">
             <Route path="" element={<UsersScreen />} />
@@ -108,6 +131,13 @@ const MainRouter = () => {
             <Route path="" element={<FaultsScreen />} />
             <Route path="edit/:faultId" element={<FaultsEditScreen />} />
             <Route path="create" element={<FaultsCreateScreen />} />
+            <Route path="*" element={<NoMatch />} />
+          </Route>
+
+          <Route path="consultant_manager">
+            <Route path="" element={<ShowAllConsultantsTimes />} />
+            <Route path="edit/:userId" element={<UsersEditScreen />} />
+            <Route path="create" element={<UsersCreateScreen />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
 
@@ -154,6 +184,8 @@ const MainRouter = () => {
 
           <Route path="students">
             <Route path="" element={<StudentsScreen />} />
+            <Route path="consultant_manager" element={<StudentsConsultantManagerScreen />} />
+            
             <Route path="edit/:studentId" element={<StudentEditScreen />} />
             <Route path="create" element={<StudentCreateScreen />} />
             <Route path=":studentId/courses" element={<StudentCourses />} />

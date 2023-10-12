@@ -62,7 +62,8 @@ const StudentCreateScreen = () => {
     })
       .then(() => {
         showSuccess("دانش آموز جدید با موفقیت اضافه شد.");
-        navigate("/students");
+        //navigate("/students");
+        navigate(-1);
       })
       .finally(() => {
         setLoading(false);
@@ -300,7 +301,8 @@ const StudentCreateScreen = () => {
           sx={{ float: "right" }}
           variant="contained"
           color="secondary"
-          onClick={() => navigate(`/students`)}
+          //onClick={() => navigate(`/students`)}
+          onClick={() => navigate(-1)}
           disabled={loading}
         >
           <ArrowBackIcon />
