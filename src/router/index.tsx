@@ -66,6 +66,7 @@ import { getUserData } from "utils/user";
 import { group } from "console";
 import ConsultantStudentManager from "screens/Dashboard/ConsultantStudentManager";
 import StudentsConsultantManagerScreen from "screens/Students/consultant_manager/index_consultant_manager";
+import ConsultantFinancials from "screens/Consultant/Components/ConsultantFinancials";
 
 const MainRouter = () => {
   const appContext = useContext(AuthContext);
@@ -141,6 +142,13 @@ const MainRouter = () => {
             <Route path="*" element={<NoMatch />} />
           </Route>
 
+          <Route path="consultant-financial">
+            <Route path="" element={<ConsultantFinancials />} />
+            <Route path="edit/:userId" element={<UsersEditScreen />} />
+            <Route path="create" element={<UsersCreateScreen />} />
+            <Route path="*" element={<NoMatch />} />
+          </Route>
+
           <Route path="consultant">
             <Route path="" element={<ConsultantScreen />} />
             <Route
@@ -159,7 +167,8 @@ const MainRouter = () => {
               element={
                 <AddConsultantStudent title="افزودن دانش آموز به مشاور" />
               }
-            />
+            />         
+            
             <Route path="*" element={<NoMatch />} />
           </Route>
 

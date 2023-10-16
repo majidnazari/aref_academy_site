@@ -259,6 +259,27 @@ export const GET_STUDENTS = gql`
   }
 `;
 
+export const GET_A_STUDENT = gql`
+    query GET_A_STUDENT(
+        $id: ID!
+    ){
+      getStudent(id:$id){
+        egucation_level
+        father_phone
+        first_name
+        home_phone
+        id
+        last_name
+        major
+        mother_phone
+        parents_job_title
+        phone
+        nationality_code
+        concours_year
+      }
+    }  
+`;
+
 export const GET_A_USER = gql`
   query GET_A_USERS($id: ID!) {
     getUser(id: $id) {
@@ -314,24 +335,24 @@ export const GET_CONSULTANT_SHOW_TIMES = gql`
   }
 `;
 
-export const GET_CONSULTANT_FINANCIALS = gql`
-  query GET_CONSULTANT_FINANCIALS(
-    $first: Int!
-    $page: Int!
-    $consultant_id: Int
-  ) {
-    getConsultantFinancials(
-      first: $first
-      page: $page
-      consultant_id: $consultant_id
-    ) {
-      data {
-        id
-        student_id
-      }
-    }
-  }
-`;
+// export const GET_CONSULTANT_FINANCIALS = gql`
+//   query GET_CONSULTANT_FINANCIALS(
+//     $first: Int!
+//     $page: Int!
+//     $consultant_id: Int
+//   ) {
+//     getConsultantFinancials(
+//       first: $first
+//       page: $page
+//       consultant_id: $consultant_id
+//     ) {
+//       data {
+//         id
+//         student_id
+//       }
+//     }
+//   }
+// `;
 
 export const GET_A_CONSULTANT_FINANCIAL = gql`
   query GET_A_CONSULTANT_FINANCIAL($id: ID!) {
@@ -395,6 +416,111 @@ export const GET_A_CONSULTANT_FINANCIAL = gql`
       financial_status_updated_at
       user_id_student_status
       description
+    }
+  }
+`;
+
+export const GET_CONSULTANT_FINANCIALS = gql`
+  query GET_CONSULTANT_FINANCIALS(
+    $first: Int!
+    $page: Int!
+    $consultant_id: Int
+    $student_id: Int
+    $manager_status: ManagerStatus
+    $financial_status: FinancialStatus
+    $student_status: StudentStatusConsultantFinancial
+    $financial_refused_status: FinancialRefusedStatus
+    $user_id_manager: Int
+    $user_id_financial: Int
+    $user_id_student_status: Int
+    $description: String
+  ) {
+    getConsultantFinancials(
+      first: $first
+      page: $page
+      consultant_id: $consultant_id
+      student_id: $student_id
+      manager_status: $manager_status
+      financial_status: $financial_status
+      student_status: $student_status
+      financial_refused_status: $financial_refused_status
+      user_id_manager: $user_id_manager
+      user_id_financial: $user_id_financial
+      user_id_student_status: $user_id_student_status
+      description: $description
+    ) {
+      paginatorInfo {
+        count
+        currentPage
+        firstItem
+        hasMorePages
+        lastItem
+        lastPage
+        perPage
+        total
+        __typename
+      }
+      data {
+        id
+        year_id
+        year {
+          active
+          name
+        }
+        branch_id
+        branch {
+          id
+          name
+        }
+        student_id
+        student {
+          id
+          first_name
+          last_name
+          is_academy_student
+        }
+        consultant_id
+        consultant {
+          id
+          email
+          first_name
+          last_name
+        }
+        user_id_creator
+        user {
+          id
+          first_name
+          last_name
+        }
+        user_id_manager
+        manager {
+          id
+          first_name
+          last_name
+        }
+        user_id_financial
+        financial {
+          id
+          first_name
+          last_name
+        }
+        user_id_student_status
+        consultant_definition_detail_id
+        consultantDefinitionDetails {
+          id
+          start_hour
+          end_hour
+          session_date
+        }
+        description
+        financial_status
+        manager_status
+        student_status
+        financial_refused_status
+        financial_status_updated_at
+        user_id_student_status
+        description
+      }
     }
   }
 `;
