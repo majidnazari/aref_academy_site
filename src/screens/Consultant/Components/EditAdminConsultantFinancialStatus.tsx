@@ -6,7 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { useState } from "react";
 import {
@@ -29,10 +29,12 @@ import {
 import { SearchProps } from "../dto/search-student-status";
 import { UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID } from "../gql/mutation";
 import { GET_CONSULTANT_DEFINITION_DETAIL } from "../gql/query";
+import { UPDATE_CONSULTANT_FINANCIAL } from "../gql/mutation";
 
 import { showError, showSuccess } from "utils/swlAlert";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import { getUserData, useAuth } from "utils/user";
 
 interface ConsultantFinancialType {
   id: number;
@@ -41,15 +43,15 @@ interface ConsultantFinancialType {
   manager_status: string;
 }
 
-const EditConsultantFinancialStatus = ({
+const EditAdminConsultantFinancialStatus = ({
   consultantFinancialId,
-  //refreshData,
+  refreshData,
   openConsultantFinancialDialog,
   closeConsultantFinancialDialog,
 }: //closeStudentStatusDialog,
 {
   consultantFinancialId: number;
-  // refreshData: Function;
+  refreshData: Function;
   openConsultantFinancialDialog: boolean;
   closeConsultantFinancialDialog: Function;
 }) => {
@@ -63,16 +65,31 @@ const EditConsultantFinancialStatus = ({
   const [loadingConsultantStudent, setLoadingConsultantStudent] =
     useState<boolean>(false);
   const [studentOptions, setStudentOptions] = useState<any[]>([]);
-  const [studentId, setStudentId] = useState<number>(1);
   const [studentFullName, setStudentFullName] = useState<string>();
   const [search, setSearch] = useState<SearchProps>({});
   const [editConsultantTimeTable] = useMutation(
     UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
   );
+  const [editConsultantfinancial] = useMutation(UPDATE_CONSULTANT_FINANCIAL);
   const [studentStatus, setStudentStatus] = useState<string>("no_action");
   const [managerStatus, setManagerStatus] = useState<string>("pending");
   const [financialStatus, setFinancialStatus] = useState<string>("pending");
+  const [financialRefusedStatus, setFinancialRefusedStatus] = useState<string>("noMoney");
   const [financialDescription, setFinancialDescription] = useState<string>("");
+
+  const [consultantId, setConsultantId] = useState<number>(0);
+  const [studentId, setStudentId] = useState<number>(0);
+  const [branchId, setBranchId] = useState<number>(0);
+  const [yearId, setYearId] = useState<number>(0);
+
+  
+
+  // const userInfo = useAuth();
+  // const navigate = useNavigate();
+
+  // if (!userInfo) {
+  //   navigate("/signout");
+  // }
 
   const { refetch: refetchConsultantFinancial, loading: isLoading } = useQuery(
     GET_A_CONSULTANT_FINANCIAL,
@@ -81,80 +98,55 @@ const EditConsultantFinancialStatus = ({
         id: consultantFinancialId,
       },
       onCompleted: (data) => {
+       
         setStudentStatus(data.getConsultantFinancial.student_status);
         setManagerStatus(data.getConsultantFinancial.manager_status);
         setFinancialStatus(data.getConsultantFinancial.financial_status);
+        setFinancialRefusedStatus(data.getConsultantFinancial.financial_refused_status);
         setFinancialDescription(data.getConsultantFinancial.description);
+
+        setConsultantId(data.getConsultantFinancial.consultant_id);
+        setStudentId(data.getConsultantFinancial.student_id);
+        setBranchId(data.getConsultantFinancial.branch_id);
+        setYearId(data.getConsultantFinancial.year_id);
       },
       fetchPolicy: "no-cache",
     }
   );
 
-  // React.useEffect(() => {
-
-  //   setLoadingStudent(true);
-  //   refetchStudents({
-  //     first: 1,
-  //     page: 1,
-  //     ids: studentId,
-  //   }).then((data) => {
-  //     //console.log("data is:" , data);
-  //     setLoadingStudent(false);
-  //   });
-  // }, [studentId]);
-
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  // };
-
   const handleAdd = () => {
-    // if(studentId===1){
-    //   showError("دانش آموزی انتخاب نشده است.");
-    //   return null;
-    // }
+    editConsultantfinancial({
+      variables: {
+        consultant_id: consultantId,
+        student_id: studentId,
+        branch_id: branchId,
+        year_id: yearId,
+
+        manager_status: managerStatus,
+        financial_status: financialStatus,
+        student_status: studentStatus,
+        description: financialDescription,
+      },
+      onCompleted(data, clientOptions) {
+        //console.log("data is:", data);
+        //showError("دانش آموزی انتخاب نشده است.");
+
+        showSuccess("ویرایش با موفقیت انجام شد.");
+        refreshData();
+      },
+    });
   };
 
-  //   setLoading(true);
-  //   editConsultantTimeTable({
-  //     variables: {
-  //       id: consultantTimeTableId,
-  //       student_id: studentId,
-  //       student_status: studentStatus,
-  //       absent_present_description: studentDescription,
-  //     },
-  //   })
-  //     .then(() => {
-  //       showSuccess("ویرایش با موفقبت انجام شد.");
-  //       refreshData(search.student_status);
-  //     })
-  //     .finally(() => {
-  //       setLoading(false);
-  //       setOpen(false);
-  //       closeStudentStatusDialog(true);
-  //     });
-  // };
 
   const handleCancel = () => {
     setOpen(false);
     closeConsultantFinancialDialog(true);
   };
 
-  // const [onetimeTable, setOneTimeTable] = useState<detailsData>();
-
-  //const { fetchMore, refetch } =
-  // useQuery(GET_A_CONSULTANT_TIME_TABLE, {
-  //   variables: {
-  //     id: timeTableId,
-  //   },
-  //   onCompleted: (data) => {
-  //     setOneTimeTable(data.getConsultantDefinitionDetail);
-  //   },
-  //   fetchPolicy: "no-cache",
-  // });
-
   return (
+    
     <Dialog open={open} onClose={handleCancel}>
-      <DialogTitle minWidth={600}> مالی مشاور دانش آموز</DialogTitle>
+      <DialogTitle minWidth={600}> فرم وضعیت دانش آموز</DialogTitle>
       <Grid> </Grid>
       <DialogContent>
         <FormControl sx={{ width: "30%", alignItems: "center", margin: "2px" }}>
@@ -168,7 +160,7 @@ const EditConsultantFinancialStatus = ({
             input={<OutlinedInput label=" وضعیت دانش آموز " />}
             fullWidth
           >
-            <MenuItem value="ok">تایید شده</MenuItem>
+            <MenuItem value="ok"> فعال </MenuItem>
             <MenuItem value="refused">انصراف</MenuItem>
             <MenuItem value="fired">اخراج</MenuItem>
             <MenuItem value={"financial_pending"}> در انتظار پرداخت </MenuItem>
@@ -187,7 +179,7 @@ const EditConsultantFinancialStatus = ({
             fullWidth
           >
             <MenuItem value="approved">تایید شده</MenuItem>
-            <MenuItem value="pending">عدم تایید</MenuItem>
+            <MenuItem value="pending"> در انتظار تایید</MenuItem>
           </Select>
         </FormControl>
 
@@ -203,13 +195,38 @@ const EditConsultantFinancialStatus = ({
             input={<OutlinedInput label=" وضعیت مالی  " />}
             fullWidth
           >
+            <MenuItem value="approved">تایید شده</MenuItem>
             <MenuItem value="pending">در انتظار تایید</MenuItem>
             <MenuItem value="semi_approved">عدم پرداخت کامل</MenuItem>
-            <MenuItem value="approved">تایید شده</MenuItem>
           </Select>
         </FormControl>
         {/* </Grid> */}
       </DialogContent>
+      {/* <DialogContent>
+      {studentStatus !== "ok" ? (
+        <Grid item xs={12} sm={6} md={6}>
+          <FormControl fullWidth sx={{ my: 2 }}>
+            <InputLabel>وضعیت پرداخت پس از انصراف</InputLabel>
+            <Select
+              label="وضعیت پرداخت پس از انصراف"
+              value={studentStatus}              
+              onChange={(e) => {
+                setFinancialRefusedStatus(e.target.value);
+              }}
+              displayEmpty
+            >
+              <MenuItem value="0" disabled selected>
+                <em>نامشخص</em>
+              </MenuItem>
+              <MenuItem value="noMoney">پرداختی نداشته است</MenuItem>
+              <MenuItem value="returned">برگشتی داشته است</MenuItem>
+              <MenuItem value="not_returned">عدم برگشت وجه</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+      ) : null}
+      </DialogContent>
+
       <DialogContent>
         <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
           <FormControl sx={{ width: "100%" }}>
@@ -223,10 +240,10 @@ const EditConsultantFinancialStatus = ({
             />
           </FormControl>
         </Grid>
-      </DialogContent>
+      </DialogContent> */}
 
       <DialogActions>
-        <Button onClick={handleCancel}>انصراف</Button>
+        <Button onClick={handleCancel}>بستن</Button>
         <Button
           onClick={handleAdd}
           disabled={isLoading}
@@ -240,4 +257,4 @@ const EditConsultantFinancialStatus = ({
   );
 };
 
-export default EditConsultantFinancialStatus;
+export default EditAdminConsultantFinancialStatus;

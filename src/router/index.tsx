@@ -243,6 +243,10 @@ const MainRouter = () => {
               path="student-courses"
               element={<StudentCoursesAlarmsScreen />}
             />
+             <Route
+              path="consultant-financial"
+              element={<ConsultantFinancials />}
+            />
             <Route path="*" element={<NoMatch />} />
           </Route>
 

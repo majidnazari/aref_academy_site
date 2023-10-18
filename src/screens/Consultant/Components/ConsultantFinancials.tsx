@@ -30,7 +30,11 @@ import { showSuccess, showConfirm } from "utils/swlAlert";
 import FinancialRefusedStatus from "components/FinancialRefusedStatus";
 import { useNavigate } from "react-router-dom";
 import ConsultantGetEditBox from "./ConsultantGetEditBox";
-import EditConsultantFinancialStatus from "./EditConsultantFinancialStatus";
+import EditConsultantFinancialStatus from "./EditAdminConsultantFinancialStatus";
+import { getUserData } from "utils/user";
+import EditFinancialConsultantFinancialStatus from "./EditFinancialConsultantFinancialStatus";
+import EditManagerConsultantFinancialStatus from "./EditManagerConsultantFinancialStatus";
+import EditAdminConsultantFinancialStatus from "./EditAdminConsultantFinancialStatus";
 
 interface EditConsultantFinancial {
   openDialog: boolean;
@@ -40,15 +44,19 @@ interface EditConsultantFinancial {
 }
 
 const ConsultantFinancials = () => {
-  const navigate = useNavigate();
   const { studentId } = useParams<string>();
   const [consultantFinancial, setConsultantFinancial] = useState<
     ConsultantFinancialType[]
   >([]);
-  const [opensultantFinancialStatusDialog, setOpensultantFinancialStatusDialog] = useState(false);
-  const [closeConsultantFinancialDialog, setCloseConsultantFinancialDialog] = useState(false);
-    
+  const [
+    opensultantFinancialStatusDialog,
+    setOpensultantFinancialStatusDialog,
+  ] = useState(false);
+  const [closeConsultantFinancialDialog, setCloseConsultantFinancialDialog] =
+    useState(false);
+
   const [consultantFinancialId, setConsultantFinancialId] = useState(0);
+  const [userType, setUserType] = useState<string>("");
 
   const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
     count: 0,
@@ -70,8 +78,7 @@ const ConsultantFinancials = () => {
   const closeConsultantFinancialDialogHnadler = () => {
     setCloseConsultantFinancialDialog(true);
     setOpensultantFinancialStatusDialog(false);
-
-  };  
+  };
 
   const { refetch, loading: ConsultantFinancialLoading } = useQuery(
     GET_CONSULTANT_FINANCIALS,
@@ -79,8 +86,6 @@ const ConsultantFinancials = () => {
       variables: {
         first: 200,
         page: 1,
-        // student_id: studentId ? parseInt(studentId) : 0,
-        //consultant_id: studentId ? parseInt(studentId) : 0,
         orderBy: [
           {
             column: "id",
@@ -89,6 +94,8 @@ const ConsultantFinancials = () => {
         ],
       },
       onCompleted: (data) => {
+
+        setUserType(user.group.name);       
         setPageInfo(data.getConsultantFinancials.paginatorInfo);
         setConsultantFinancial(data.getConsultantFinancials.data);
       },
@@ -96,20 +103,11 @@ const ConsultantFinancials = () => {
     }
   );
 
-  // const [deleteCourseStudent] = useMutation(DELETE_STUDENT_COURSE);
+  const refreshConsultantFinancialHandler = () => {
+    refetch();
+  };
 
-  // const deleteCourseStudentHandler = (id: number) => {
-  //   showConfirm(() => {
-  //     deleteCourseStudent({
-  //       variables: {
-  //         id,
-  //       },
-  //     }).then(() => {
-  //       refetch();
-  //       showSuccess("حذف با موفقیت انجام شد.");
-  //     });
-  //   });
-  // };
+  const user = getUserData();
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -129,16 +127,49 @@ const ConsultantFinancials = () => {
       border: 0,
     },
   }));
+
+  const convertNameComponent = (userType: string) => {
+    switch (userType) {
+      case "admin":
+        return (
+          <EditAdminConsultantFinancialStatus
+            consultantFinancialId={consultantFinancialId}
+            refreshData={refreshConsultantFinancialHandler}
+            openConsultantFinancialDialog={opensultantFinancialStatusDialog}
+            closeConsultantFinancialDialog={
+              closeConsultantFinancialDialogHnadler
+            }
+          />
+        );
+      case "financial":
+        return (
+          <EditFinancialConsultantFinancialStatus
+            consultantFinancialId={consultantFinancialId}
+            refreshData={refreshConsultantFinancialHandler}
+            openConsultantFinancialDialog={opensultantFinancialStatusDialog}
+            closeConsultantFinancialDialog={
+              closeConsultantFinancialDialogHnadler
+            }
+          />
+        );
+
+      default:
+        return (
+          <EditManagerConsultantFinancialStatus
+            consultantFinancialId={consultantFinancialId}
+            refreshData={refreshConsultantFinancialHandler}
+            openConsultantFinancialDialog={opensultantFinancialStatusDialog}
+            closeConsultantFinancialDialog={
+              closeConsultantFinancialDialogHnadler
+            }
+          />
+        );
+    }
+  };
+
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      {opensultantFinancialStatusDialog && (
-        <EditConsultantFinancialStatus
-          consultantFinancialId={consultantFinancialId}
-          // refreshData={refreshConsultantDefinition}
-           openConsultantFinancialDialog={opensultantFinancialStatusDialog}
-           closeConsultantFinancialDialog={closeConsultantFinancialDialogHnadler}
-        />
-      )}
+      {opensultantFinancialStatusDialog && convertNameComponent(userType)}     
 
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
@@ -165,17 +196,6 @@ const ConsultantFinancials = () => {
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {element.branch?.name}
-                    {/* <CourseName course={element.course} />
-                      <Box sx={{ fontSize: 10, pt: 1 }}>
-                        {element.description !== ""
-                          ? "توضیحات:" + element.description
-                          : null}
-
-                        {element.transferred_course ? " جابجایی:" : null}
-                        {element.transferred_course ? (
-                          <CourseName course={element.transferred_course} />
-                        ) : null}
-                      </Box> */}
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {element.consultant?.first_name}{" "}
@@ -238,8 +258,6 @@ const ConsultantFinancials = () => {
                     <Button
                       size="small"
                       onClick={() => {
-                        //console.log("element is:" );
-                        //console.log(element );
                         fillConsultantFinancialHandler(element.id);
                       }}
                       variant="contained"
@@ -249,51 +267,12 @@ const ConsultantFinancials = () => {
                       ویرایش
                     </Button>
                   </StyledTableCell>
-                  {/* <StyledTableCell align="left">
-                      {element.student_status === "ok" &&
-                      element.manager_status === "pending" &&
-                      element.financial_status === "pending" ? (
-                        <Button
-                          size="small"
-                          onClick={() => deleteCourseStudentHandler(element.id)}
-                          variant="contained"
-                          startIcon={<DeleteIcon />}
-                          color="error"
-                        >
-                          حذف
-                        </Button>
-                      ) : (
-                        ""
-                      )}
-                    </StyledTableCell> */}
                 </StyledTableRow>
               )
             )}
           </TableBody>
         </Table>
       </TableContainer>
-
-      {/* {!loading && studentData.getStudent.nationality_code ? (
-        <AddStudentCourse studentId={studentId} refetch={refetch} />
-      ) : (
-        <Alert severity="error">
-          جهت افزودن درس به این دانش آموز کد ملی را در قسمت
-          <Button
-            onClick={() => {
-              navigate(`/students/edit/${studentId}`);
-            }}
-          >
-            پروفایل
-          </Button>
-          وارد کنید
-        </Alert>
-      )} */}
-      {/* <EditConsultantFinancialStatus
-        openDialog={editConsultantFinancial.openDialog}
-        consultantFinancial={editConsultantFinancial.consultantFinancial}
-        key={editConsultantFinancial.key}
-        refresh={refetch}
-      /> */}
     </Container>
   );
 };
