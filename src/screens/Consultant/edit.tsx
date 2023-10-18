@@ -127,7 +127,7 @@ const ConsultantEditScreen = ({ title }: { title: string }) => {
     insertMultiConsultantTimes({ variables })
       .then(() => {
         setLoading(false);
-        showSuccess("وقتهای جدید با موفقیت ایجاد شد");
+        showSuccess("زمانبندی جدید با موفقیت ایجاد شد");
       })
       .finally(() => {
         setLoading(false);

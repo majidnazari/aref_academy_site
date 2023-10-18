@@ -301,7 +301,7 @@ const StudentEditScreen = () => {
           sx={{ float: "right" }}
           variant="contained"
           color="secondary"
-          onClick={() => navigate(`/students`)}
+          onClick={() => navigate(-1)} //</Box>navigate(`/students`)}
           disabled={loading}
         >
           <ArrowBackIcon />

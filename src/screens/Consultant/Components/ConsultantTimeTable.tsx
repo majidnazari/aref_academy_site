@@ -280,7 +280,7 @@ const ConsultantTimeTable = () => {
       .then(() => {
         refetch();
         setLoading(false);
-        showSuccess("وقتهای جدید با موفقیت ایجاد شد");
+        showSuccess("زمانبندی جدید با موفقیت ایجاد شد");
       })
       .finally(() => {
         setLoading(false);
