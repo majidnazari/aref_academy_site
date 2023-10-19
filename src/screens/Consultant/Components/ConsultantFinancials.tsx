@@ -15,6 +15,8 @@ import {
   Button,
   Box,
   Alert,
+  Stack,
+  Pagination,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -80,7 +82,7 @@ const ConsultantFinancials = () => {
     setOpensultantFinancialStatusDialog(false);
   };
 
-  const { refetch, loading: ConsultantFinancialLoading } = useQuery(
+  const { fetchMore,refetch, loading: ConsultantFinancialLoading } = useQuery(
     GET_CONSULTANT_FINANCIALS,
     {
       variables: {
@@ -165,6 +167,31 @@ const ConsultantFinancials = () => {
           />
         );
     }
+  };
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setConsultantFinancial([]);
+    fetchMore({
+      variables: {
+        first: process.env.REACT_APP_USERS_PER_PAGE
+          ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
+          : 10,
+        page: value,
+        orderBy: [
+          {
+            column: "id",
+            order: "DESC",
+          },
+        ],
+        // first_name: search?.first_name ? search.first_name : undefined,
+        // last_name: search?.last_name ? search.last_name : undefined,
+        // email: search?.email ? search.email : undefined,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        setPageInfo(fetchMoreResult.getConsultantFinancials.paginatorInfo);
+        setConsultantFinancial(fetchMoreResult.getConsultantFinancials.data);
+      },
+    });
   };
 
   return (
@@ -272,6 +299,13 @@ const ConsultantFinancials = () => {
             )}
           </TableBody>
         </Table>
+        <Stack spacing={5} sx={{ my: 2 }}>
+          <Pagination
+            count={pageInfo.lastPage}
+            page={pageInfo.currentPage}
+            onChange={handleChange}
+          />
+        </Stack>
       </TableContainer>
     </Container>
   );
