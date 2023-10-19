@@ -25,6 +25,10 @@ import { ExpandLess, ExpandMore, StarBorder } from "@mui/icons-material";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import { Menu } from "utils/dto/user-data.dto";
 import PsychologyAltIcon from "@mui/icons-material/PsychologyAlt";
+import TableViewIcon from '@mui/icons-material/TableView';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import AddAlarmIcon from '@mui/icons-material/AddAlarm';
+
 
 interface MenuItem extends Menu {}
 
@@ -43,6 +47,9 @@ const Components: any = {
   CoPresentIcon: CoPresentIcon,
   AddBoxIcon: AddBoxIcon,
   PsychologyAltIcon: PsychologyAltIcon,
+  TableViewIcon:TableViewIcon,
+  GroupAddIcon:GroupAddIcon,
+  AddAlarmIcon:AddAlarmIcon,
 };
 const loadIcon = (input: any) => {
   return React.createElement(Components[input], {});

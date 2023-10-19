@@ -121,7 +121,7 @@ interface EnhancedTableProps {
   ) => void;
   order: Order;
   orderBy: string;
-  rowCount: number;
+  rowCount: number; 
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
@@ -243,11 +243,11 @@ export default function StudentCoursesAlarms() {
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof Data
-  ) => {
+  ) => {    
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
-    reloadData(property, isAsc ? "DESC" : "ASC");
+    reloadData(property, isAsc ? "DESC" : "ASC"); 
   };
 
   const handleChangePage = (
