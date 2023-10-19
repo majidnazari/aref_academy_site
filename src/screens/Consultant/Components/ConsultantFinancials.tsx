@@ -17,6 +17,7 @@ import {
   Alert,
   Stack,
   Pagination,
+  TableSortLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -37,6 +38,8 @@ import { getUserData } from "utils/user";
 import EditFinancialConsultantFinancialStatus from "./EditFinancialConsultantFinancialStatus";
 import EditManagerConsultantFinancialStatus from "./EditManagerConsultantFinancialStatus";
 import EditAdminConsultantFinancialStatus from "./EditAdminConsultantFinancialStatus";
+import { generateQueryOptions } from "utils/utils";
+import { visuallyHidden } from "@mui/utils";
 
 interface EditConsultantFinancial {
   openDialog: boolean;
@@ -60,6 +63,9 @@ const ConsultantFinancials = () => {
   const [consultantFinancialId, setConsultantFinancialId] = useState(0);
   const [userType, setUserType] = useState<string>("");
 
+  const [order, setOrder] = useState<Order>("asc");
+  const [orderBy, setOrderBy] = useState<string>("created_at");
+
   const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
     count: 0,
     currentPage: 1,
@@ -82,28 +88,27 @@ const ConsultantFinancials = () => {
     setOpensultantFinancialStatusDialog(false);
   };
 
-  const { fetchMore,refetch, loading: ConsultantFinancialLoading } = useQuery(
-    GET_CONSULTANT_FINANCIALS,
-    {
-      variables: {
-        first: 200,
-        page: 1,
-        orderBy: [
-          {
-            column: "id",
-            order: "DESC",
-          },
-        ],
-      },
-      onCompleted: (data) => {
-
-        setUserType(user.group.name);       
-        setPageInfo(data.getConsultantFinancials.paginatorInfo);
-        setConsultantFinancial(data.getConsultantFinancials.data);
-      },
-      fetchPolicy: "no-cache",
-    }
-  );
+  const { fetchMore, refetch} = useQuery(GET_CONSULTANT_FINANCIALS, {
+    variables: {
+      first: process.env.REACT_APP_USERS_PER_PAGE
+        ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
+        : 10,
+      page: pageInfo.currentPage,
+      ...generateQueryOptions(),
+      orderBy: [
+        {
+          column: "created_at",
+          order: "DESC",
+        },
+      ],
+    },
+    onCompleted: (data) => {
+      setUserType(user.group.name);
+      setPageInfo(data.getConsultantFinancials.paginatorInfo);
+      setConsultantFinancial(data.getConsultantFinancials.data);
+    },
+    fetchPolicy: "no-cache",
+  });
 
   const refreshConsultantFinancialHandler = () => {
     refetch();
@@ -169,18 +174,177 @@ const ConsultantFinancials = () => {
     }
   };
 
+  interface Data {
+    student: string;
+    branch: string;
+    consultant: string;
+    financial_refused_status: string;
+    student_status: string;
+    manager_status: string;
+    financial_status: string;
+    user_creator: string;
+    created_at: string;
+    edit?: string;
+  }
+
+  interface HeadCell {
+    disablePadding: boolean;
+    id: keyof Data;
+    label: string;
+    sortable: boolean;
+  }
+
+  type Order = "asc" | "desc";
+
+  interface EnhancedTableProps {
+    onRequestSort: (
+      event: React.MouseEvent<unknown>,
+      property: keyof Data
+    ) => void;
+    order: Order;
+    orderBy: string;
+    rowCount: number;
+  }
+  const headCells: readonly HeadCell[] = [
+    {
+      id: "branch",
+      sortable: false,
+      disablePadding: true,
+      label: "شعبه",
+    },
+    {
+      id: "consultant",
+      sortable: false,
+      disablePadding: false,
+      label: "مشاور",
+    },
+    {
+      id: "student",
+      sortable: false,
+      disablePadding: false,
+      label: " دانش آموز",
+    },
+    {
+      id: "student_status",
+      sortable: true,
+      disablePadding: false,
+      label: "وضعیت دانش آموز",
+    },
+    {
+      id: "manager_status",
+      sortable: true,
+      disablePadding: false,
+      label: "تایید مدیر",
+    },
+    {
+      id: "financial_status",
+      sortable: true,
+      disablePadding: false,
+      label: "تایید مالی",
+    },
+    {
+      id: "financial_refused_status",
+      sortable: false,
+      disablePadding: false,
+      label: " وضعیت برگشت وجه",
+    },
+    {
+      id: "created_at",
+      sortable: true,
+      disablePadding: false,
+      label: "تاریخ ایجاد",
+    },
+    {
+      id: "edit",
+      sortable: false,
+      disablePadding: false,
+      label: "ویرایش",
+    },
+  ];
+
+  function EnhancedTableHead(props: EnhancedTableProps) {
+    const { order, orderBy, onRequestSort } = props;
+    const createSortHandler =
+      (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+        onRequestSort(event, property);
+      };
+
+    return (
+      <TableHead>
+        <TableRow>
+          <TableCell padding="checkbox">ردیف</TableCell>
+          {headCells.map((headCell) => (
+            <TableCell
+              key={headCell.id}
+              align="left"
+              padding={headCell.disablePadding ? "none" : "normal"}
+              sortDirection={orderBy === headCell.id ? order : false}
+            >
+              {headCell.sortable ? (
+                <TableSortLabel
+                  active={orderBy === headCell.id}
+                  direction={orderBy === headCell.id ? order : "asc"}
+                  onClick={createSortHandler(headCell.id)}
+                >
+                  {headCell.label}
+                  {orderBy === headCell.id ? (
+                    <Box component="span" sx={visuallyHidden}>
+                      {order === "desc"
+                        ? "sorted descending"
+                        : "sorted ascending"}
+                    </Box>
+                  ) : null}
+                </TableSortLabel>
+              ) : (
+                headCell.label
+              )}
+            </TableCell>
+          ))}
+        </TableRow>
+      </TableHead>
+    );
+  }
+
+  const reloadData = (field: string, order: string) => {
+   
+    refetch({
+      first: process.env.REACT_APP_USERS_PER_PAGE
+        ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
+        : 10,
+      page: 1,
+      ...generateQueryOptions(),
+      orderBy: [
+        {
+          column: field,
+          order: order,
+        },
+      ],
+    });
+  };
+
+  const handleRequestSort = (
+    event: React.MouseEvent<unknown>,
+    property: keyof Data
+  ) => {   
+
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+    reloadData(property, isAsc ? "DESC" : "ASC");
+  };
+
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setConsultantFinancial([]);
     fetchMore({
       variables: {
         first: process.env.REACT_APP_USERS_PER_PAGE
           ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
-          : 10,
+          : 5,
         page: value,
         orderBy: [
           {
-            column: "id",
-            order: "DESC",
+            column: orderBy,
+            order: order.toUpperCase(),
           },
         ],
         // first_name: search?.first_name ? search.first_name : undefined,
@@ -196,11 +360,17 @@ const ConsultantFinancials = () => {
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      {opensultantFinancialStatusDialog && convertNameComponent(userType)}     
+      {opensultantFinancialStatusDialog && convertNameComponent(userType)}
 
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
-          <TableHead>
+          <EnhancedTableHead
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+            rowCount={consultantFinancial.length}
+          />
+          {/* <TableHead>
             <TableRow>
               <StyledTableCell align="left">ردیف</StyledTableCell>
               <StyledTableCell align="left"> شعبه </StyledTableCell>
@@ -213,7 +383,7 @@ const ConsultantFinancials = () => {
               <StyledTableCell align="left">تاریخ</StyledTableCell>
               <StyledTableCell align="left">ویرایش</StyledTableCell>
             </TableRow>
-          </TableHead>
+          </TableHead> */}
           <TableBody>
             {consultantFinancial.map(
               (element: ConsultantFinancialType, index: number) => (

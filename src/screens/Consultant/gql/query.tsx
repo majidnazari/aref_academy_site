@@ -434,6 +434,7 @@ export const GET_CONSULTANT_FINANCIALS = gql`
     $user_id_financial: Int
     $user_id_student_status: Int
     $description: String
+    $orderBy:[OrderByClause!]
   ) {
     getConsultantFinancials(
       first: $first
@@ -448,6 +449,7 @@ export const GET_CONSULTANT_FINANCIALS = gql`
       user_id_financial: $user_id_financial
       user_id_student_status: $user_id_student_status
       description: $description
+      orderBy:$orderBy
     ) {
       paginatorInfo {
         count
