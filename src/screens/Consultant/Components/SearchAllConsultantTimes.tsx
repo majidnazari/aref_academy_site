@@ -26,6 +26,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import AdapterJalali from "@date-io/date-fns-jalali";
 import { GET_BRANCH_CLASSROOMS, GET_CONSULTANT_SHOW_TIMES } from "../gql/query";
 import moment from "moment";
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 
 const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
   const [search, setSearch] = useState<SearchAllConsultantProps>({});

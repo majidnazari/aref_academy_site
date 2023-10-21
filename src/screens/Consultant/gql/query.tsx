@@ -299,6 +299,7 @@ export const GET_A_CONSULTANT_TIME_TABLE = gql`
       start_hour
       end_hour
       session_date
+      student_id
     }
   }
 `;

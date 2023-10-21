@@ -49,6 +49,9 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import HourglassDisabledIcon from "@mui/icons-material/HourglassDisabled";
 import CoPresentIcon from "@mui/icons-material/CoPresent";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import { red } from "@mui/material/colors";
+import ComponentDeleteStudentDialog from "./ComponentDeleteStudentDialog";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -140,6 +143,7 @@ const ConsultantTimeTable = () => {
   const [endTime, setEndtTime] = useState<Date | null>(null);
   const [step, setStep] = useState<string>("15");
   const [studentId, setStudentId] = useState<number>();
+  const [studentFullName, setStudentFullName] = useState<string>();
   const [branchClassRoomId, setBranchClassRoomId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorData>({});
@@ -153,6 +157,8 @@ const ConsultantTimeTable = () => {
   const [studentDialogOpen, setStudentDialogOpen] = useState<boolean>(false);
   const [studentStatusDialogOpen, setStudentStatusDialogOpen] =
     useState<boolean>(false);
+  const [studentDeleteDialogOpen, setStudentDeleteDialogOpen] =useState<boolean>(false);
+  // const [studentDeleteDialogClose, setStudentDeleteDialogClose] =useState<boolean>(false);
 
   const [listKey, setListKey] = useState<number>(0);
 
@@ -247,12 +253,21 @@ const ConsultantTimeTable = () => {
     setDialogConsultantTimeTableId(defenitionId);
     setStudentStatusDialogOpen(true);
   };
+  const handleDeleteStudentForm = (defenitionId: string , studentName :string) => {
+    setStudentFullName(studentName);
+    setDialogConsultantTimeTableId(defenitionId);
+    setStudentDeleteDialogOpen(true);
+  };
 
   const closeDialog = () => {
     setStudentDialogOpen(false);
   };
   const closeStudentStatusDialog = () => {
     setStudentStatusDialogOpen(false);
+  };
+
+  const closeStudentDeleteDialog = () => {
+    setStudentDeleteDialogOpen(false);
   };
 
   const handleChangeBranchClassRoomId = (event: SelectChangeEvent<string>) => {
@@ -376,11 +391,19 @@ const ConsultantTimeTable = () => {
       {studentDialogOpen && (
         <ComponentStudentDialog
           consultantTimeTableId={dialogconsultantTimeTableId}
-          //parentStudentId={studentId}
           refreshData={refreshConsultantDefinition}
           openDialog={studentDialogOpen}
-          //setDialogOpen={() => {}}
           closeDialog={closeDialog}
+        />
+      )}
+
+      {studentDeleteDialogOpen && (
+        <ComponentDeleteStudentDialog
+          consultantTimeTableId={dialogconsultantTimeTableId} 
+          studentName={studentFullName}
+          refreshData={refreshConsultantDefinition}
+          openStudentDeleteDialog={studentDeleteDialogOpen}         
+          closeStudentDeleteDialog={closeStudentDeleteDialog}
         />
       )}
 
@@ -723,10 +746,30 @@ const ConsultantTimeTable = () => {
                                   <Box>
                                     کد ملی :{detail?.student?.nationality_code}
                                   </Box>
-                                  <Box>
+                                  <Box sx={{ borderColor: red }}>
                                     {convertStudentStatus(
                                       detail?.student_status
                                     )}
+                                  </Box>
+                                  <Box>
+                                    <Button
+                                      startIcon={
+                                        <PersonRemoveIcon
+                                          sx={{ textAlign: "left" }}
+                                        />
+                                      }
+                                      sx={{
+                                        color: "black",
+                                        fontSize: 13,
+                                        fontWeight: 800,
+                                        textAlign: "left",
+                                      }}
+                                      onClick={() =>
+                                        handleDeleteStudentForm(detail.id,detail?.student?.first_name + " " + detail?.student?.last_name)
+                                      }
+                                    >
+                                      {" "}
+                                    </Button>
                                   </Box>
                                 </Box>
                               ) : null}

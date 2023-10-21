@@ -32,7 +32,6 @@ import Edit from "components/EditCourseStudentStatus";
 import { showSuccess, showConfirm } from "utils/swlAlert";
 import FinancialRefusedStatus from "components/FinancialRefusedStatus";
 import { useNavigate } from "react-router-dom";
-import ConsultantGetEditBox from "./ConsultantGetEditBox";
 import EditConsultantFinancialStatus from "./EditAdminConsultantFinancialStatus";
 import { getUserData } from "utils/user";
 import EditFinancialConsultantFinancialStatus from "./EditFinancialConsultantFinancialStatus";
