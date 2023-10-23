@@ -260,24 +260,22 @@ export const GET_STUDENTS = gql`
 `;
 
 export const GET_A_STUDENT = gql`
-    query GET_A_STUDENT(
-        $id: ID!
-    ){
-      getStudent(id:$id){
-        egucation_level
-        father_phone
-        first_name
-        home_phone
-        id
-        last_name
-        major
-        mother_phone
-        parents_job_title
-        phone
-        nationality_code
-        concours_year
-      }
-    }  
+  query GET_A_STUDENT($id: ID!) {
+    getStudent(id: $id) {
+      egucation_level
+      father_phone
+      first_name
+      home_phone
+      id
+      last_name
+      major
+      mother_phone
+      parents_job_title
+      phone
+      nationality_code
+      concours_year
+    }
+  }
 `;
 
 export const GET_A_USER = gql`
@@ -435,7 +433,7 @@ export const GET_CONSULTANT_FINANCIALS = gql`
     $user_id_financial: Int
     $user_id_student_status: Int
     $description: String
-    $orderBy:[OrderByClause!]
+    $orderBy: [OrderByClause!]
   ) {
     getConsultantFinancials(
       first: $first
@@ -450,7 +448,7 @@ export const GET_CONSULTANT_FINANCIALS = gql`
       user_id_financial: $user_id_financial
       user_id_student_status: $user_id_student_status
       description: $description
-      orderBy:$orderBy
+      orderBy: $orderBy
     ) {
       paginatorInfo {
         count
@@ -525,5 +523,11 @@ export const GET_CONSULTANT_FINANCIALS = gql`
         description
       }
     }
+  }
+`;
+
+export const GetConsultantStudentsByDefinitionId = gql`
+  query GET_CONSULTANT_STUDENTS_BY_DEFINITION_ID($id: ID!) {
+    GetConsultantStudentsByDefinitionId(id: $id)
   }
 `;

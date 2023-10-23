@@ -22,7 +22,7 @@ import {
   Typography,
 } from "@mui/material";
 import { SearchProps } from "../dto/search-student";
-import { UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID } from "../gql/mutation";
+import { DELETE_CONSULTANTN_DEFINITION_STUDENT_ID } from "../gql/mutation";
 import { showSuccess } from "utils/swlAlert";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
@@ -73,8 +73,8 @@ const ComponentDeleteStudentDialog = ({
   const [studentOptions, setStudentOptions] = useState<any[]>([]);
   const [studentIds, setStudentIds] = useState<number[]>([]);
   const [search, setSearch] = useState<SearchProps>({});
-  const [editConsultantTimeTable] = useMutation(
-    UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
+  const [deleteConsultantTimeTableStudentId] = useMutation(
+    DELETE_CONSULTANTN_DEFINITION_STUDENT_ID
   );
 
   useQuery(GET_A_CONSULTANT_TIME_TABLE, {
@@ -147,14 +147,13 @@ const ComponentDeleteStudentDialog = ({
 
   const handleDelete = () => {
     setLoading(true);
-    editConsultantTimeTable({
+    deleteConsultantTimeTableStudentId({
       variables: {
-        id: consultantTimeTableId,
-        student_id: null,
+        id: consultantTimeTableId,       
       },
     })
       .then(() => {
-        showSuccess("ویرایش با موفقبت انجام شد.");
+        showSuccess("حذف با موفقبت انجام شد.");
         refreshData();
       })
       .finally(() => {

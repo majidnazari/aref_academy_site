@@ -27,12 +27,13 @@ import TableRow from "@mui/material/TableRow";
 
 import { useMutation, useQuery } from "@apollo/client";
 import FormHelperText from "@mui/material/FormHelperText";
-import { showSuccess } from "utils/swlAlert";
+import { showConfirm, showSuccess } from "utils/swlAlert";
 import {
   GET_BRANCH_CLASSROOMS,
   GET_CONSULTANT_DEFINITION_DETAILS,
+  GetConsultantStudentsByDefinitionId,
 } from "../gql/query";
-import { CREATE_CONSULTANT_DEFINITION_DETAIL } from "../gql/mutation";
+import { CREATE_CONSULTANT_DEFINITION_DETAIL, DELETE_CONSULTANTN_DEFINITION_STUDENT_ID } from "../gql/mutation";
 import { useParams } from "react-router-dom";
 import StudentData from "utils/student";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -52,6 +53,8 @@ import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import { red } from "@mui/material/colors";
 import ComponentDeleteStudentDialog from "./ComponentDeleteStudentDialog";
+
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -142,7 +145,7 @@ const ConsultantTimeTable = () => {
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndtTime] = useState<Date | null>(null);
   const [step, setStep] = useState<string>("15");
-  const [studentId, setStudentId] = useState<number>();
+  const [studentIds, setStudentIds] = useState<number[]>([1]);
   const [studentFullName, setStudentFullName] = useState<string>();
   const [branchClassRoomId, setBranchClassRoomId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -167,6 +170,9 @@ const ConsultantTimeTable = () => {
 
   const [insertMultiConsultantTimes] = useMutation(
     CREATE_CONSULTANT_DEFINITION_DETAIL
+  );
+  const [deleteConsultantTimeTableStudentId] = useMutation(
+    DELETE_CONSULTANTN_DEFINITION_STUDENT_ID
   );
 
   const { data: branchClassroomsData } = useQuery(GET_BRANCH_CLASSROOMS, {
@@ -244,6 +250,12 @@ const ConsultantTimeTable = () => {
   };
 
   const handleAddStudent = (defenitionId: string) => {
+    //alert("one is:" + defenitionId);
+    refetchConsultantStudentsByDefinitionId({
+      id:+defenitionId
+    }).then((res)=>{
+      //console.log("res is " ,res);
+    });
     setDialogConsultantTimeTableId(defenitionId);
     setStudentDialogOpen(true);
   };
@@ -346,6 +358,20 @@ const ConsultantTimeTable = () => {
     });
   };
 
+  const { refetch:refetchConsultantStudentsByDefinitionId  } = useQuery(
+    GetConsultantStudentsByDefinitionId,
+    {
+      variables: {
+        id: -1,
+      },
+      onCompleted: (data) => {
+        setStudentIds(data.GetConsultantStudentsByDefinitionId);
+      },
+      fetchPolicy: "no-cache",
+      skip:true,
+    }
+  );
+
   const previousWeek = () => {
     setTimeTable([]);
     fetchMore({
@@ -384,13 +410,14 @@ const ConsultantTimeTable = () => {
       case "Friday":
         return "جمعه";
     }
-  };
+  }; 
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       {studentDialogOpen && (
         <ComponentStudentDialog
           consultantTimeTableId={dialogconsultantTimeTableId}
+          studentIdsOfOneConsultant={studentIds}
           refreshData={refreshConsultantDefinition}
           openDialog={studentDialogOpen}
           closeDialog={closeDialog}
@@ -700,6 +727,7 @@ const ConsultantTimeTable = () => {
                                   onClick={() => handleAddStudent(detail.id)}
                                 >
                                   {" "}
+                                  {detail?.branchClassRoom_name}
                                 </Button>
                                 {/* <StudentStatusComponent
                                   consultantTimeTableId={detail.id}                                  
@@ -751,26 +779,38 @@ const ConsultantTimeTable = () => {
                                       detail?.student_status
                                     )}
                                   </Box>
-                                  <Box>
-                                    <Button
-                                      startIcon={
-                                        <PersonRemoveIcon
-                                          sx={{ textAlign: "left" }}
-                                        />
+                                  {detail?.student_status ==="no_action" ?                                   
+                                
+                                    <Box>
+                                      <Button
+                                        startIcon={
+                                          <PersonRemoveIcon
+                                            sx={{ textAlign: "left" }}
+                                          />
+                                        }
+                                        sx={{
+                                          color: "black",
+                                          fontSize: 13,
+                                          fontWeight: 800,
+                                          textAlign: "left",
+                                        }}
+                                        onClick={() =>{
+                                          showConfirm( async ()=>  deleteConsultantTimeTableStudentId({
+                                            variables: {
+                                              id: detail.id,       
+                                            },
+                                          }).then(()=>{
+                                            showSuccess("حذف با موفقیت انجام شد.");
+                                            refetch();
+                                          }));
+                                          //handleDeleteStudentForm(detail.id,detail?.student?.first_name + " " + detail?.student?.last_name)
+                                        }}
+                                      >
+                                        {" "}
+                                      </Button>
+                                    </Box>
+                                    : null
                                       }
-                                      sx={{
-                                        color: "black",
-                                        fontSize: 13,
-                                        fontWeight: 800,
-                                        textAlign: "left",
-                                      }}
-                                      onClick={() =>
-                                        handleDeleteStudentForm(detail.id,detail?.student?.first_name + " " + detail?.student?.last_name)
-                                      }
-                                    >
-                                      {" "}
-                                    </Button>
-                                  </Box>
                                 </Box>
                               ) : null}
                             </Box>
