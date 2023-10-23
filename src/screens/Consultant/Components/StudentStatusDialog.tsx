@@ -48,11 +48,13 @@ interface detailsData {
 
 const StudentStatusComponent = ({
   consultantTimeTableId,
+
   refreshData,
   openStudentStatusDialog,
   closeStudentStatusDialog,
 }: {
   consultantTimeTableId: string | undefined;
+  
   refreshData: Function;
   openStudentStatusDialog: boolean;
   closeStudentStatusDialog: Function;

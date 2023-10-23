@@ -143,3 +143,16 @@ export const UPDATE_CONSULTANT_FINANCIAL = gql`
     }
   }
 `;
+
+export const DELETE_CONSULTANTN_DEFINITION_STUDENT_ID = gql`
+  mutation DELETE_CONSULTANTN_DEFINITION_STUDENT_ID($id: ID!) {
+    deleteConsultantDefinitionDetailStudentId(input: { id: $id }) {
+      id
+      user_id
+      start_hour
+      end_hour
+    }
+  }
+`;
+
+

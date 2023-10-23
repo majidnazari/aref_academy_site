@@ -42,19 +42,19 @@ interface detailsData {
 const ComponentStudentDialog = ({
   consultantTimeTableId,
   refreshData,
-  //parentStudentId,
+  studentIdsOfOneConsultant,
   openDialog,
   //setDialogOpen
   closeDialog,
 }: {
   consultantTimeTableId: string | undefined;
   refreshData: Function;
-  //parentStudentId: number | undefined;
+  studentIdsOfOneConsultant: number[] | undefined;
   closeDialog: Function;
   openDialog: boolean;
   //setDialogOpen:Function;
 }) => {
-  console.log("component student dialog is:", consultantTimeTableId);
+  //console.log("component student dialog studentIdsOfOneConsultant are :", studentIdsOfOneConsultant);
 
   const params = useParams<string>();
   const timeTableId = consultantTimeTableId;
@@ -80,10 +80,10 @@ const ComponentStudentDialog = ({
 
   const { refetch: refetchStudents } = useQuery(GET_STUDENTS, {
     variables: {
-      first: 1,
+      first: 100,
       page: 1,
       full_name: "",
-      ids: [1],
+      ids: studentIdsOfOneConsultant,
       fetchPolicy: "network-only",
     },
     onCompleted: (data) => {
@@ -99,37 +99,39 @@ const ComponentStudentDialog = ({
       setStudentOptions(tmp);
       //}
     },
+    //skip: true,
   });
 
-  const { refetch: refetchStudentFinancials } = useQuery(
-    GET_CONSULTANT_FINANCIALS,
-    {
-      variables: {
-        first: 100,
-        page: 1,
-        full_name: "",
-        consultant_id: Number(params.consultantId),
-        fetchPolicy: "network-only",
-      },
-      onCompleted: (data) => {
-        //if (!skip) {
-        const studentIds: number[] = [];
-        data.getConsultantFinancials.data.map((item: any) => {
-          studentIds.push(Number(item.student_id));
-          return item;
-        });
-        // }
+  // const { refetch: refetchStudentFinancials } = useQuery(
+  //   GET_CONSULTANT_FINANCIALS,
+  //   {
+  //     variables: {
+  //       first: 100,
+  //       page: 1,
+  //       full_name: "",
+  //       consultant_id: Number(params.consultantId),
+  //       fetchPolicy: "network-only",
+  //     },
+  //     onCompleted: (data) => {
+  //       //if (!skip) {
+  //       const studentIds: number[] = [];
+  //       data.getConsultantFinancials.data.map((item: any) => {
+  //         studentIds.push(Number(item.student_id));
+  //         return item;
+  //       });
+  //       // }
 
-        setStudentIds(studentIds);
-        refetchStudents({
-          first: 1000,
-          page: 1,
-          full_name: studentName,
-          ids: studentIds,
-        });
-      },
-    }
-  );
+  //       setStudentIds(studentIds);
+  //       refetchStudents({
+  //         first: 1000,
+  //         page: 1,
+  //         full_name: studentName,
+  //         ids: studentIds,
+  //       });
+  //     },
+  //     skip: Boolean(studentIdsOfOneConsultant),
+  //   }
+  // );
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -144,7 +146,6 @@ const ComponentStudentDialog = ({
       },
     })
       .then(() => {
-        
         showSuccess("ویرایش با موفقبت انجام شد.");
         refreshData();
         //refreshData(search.student_id);
@@ -205,7 +206,7 @@ const ComponentStudentDialog = ({
             >
               <Autocomplete
                 id="student-names"
-                options={studentOptions}
+                options={studentOptions || studentIdsOfOneConsultant }
                 renderInput={(params) => (
                   <TextField
                     {...params}

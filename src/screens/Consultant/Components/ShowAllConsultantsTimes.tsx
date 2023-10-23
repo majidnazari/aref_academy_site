@@ -27,9 +27,16 @@ import TableRow from "@mui/material/TableRow";
 
 import { useMutation, useQuery } from "@apollo/client";
 import FormHelperText from "@mui/material/FormHelperText";
-import { showSuccess } from "utils/swlAlert";
-import { GET_BRANCH_CLASSROOMS, GET_CONSULTANT_SHOW_TIMES } from "../gql/query";
-import { CREATE_CONSULTANT_DEFINITION_DETAIL } from "../gql/mutation";
+import { showConfirm, showSuccess } from "utils/swlAlert";
+import {
+  GET_BRANCH_CLASSROOMS,
+  GET_CONSULTANT_SHOW_TIMES,
+  GetConsultantStudentsByDefinitionId,
+} from "../gql/query";
+import {
+  CREATE_CONSULTANT_DEFINITION_DETAIL,
+  DELETE_CONSULTANTN_DEFINITION_STUDENT_ID,
+} from "../gql/mutation";
 import { useParams } from "react-router-dom";
 import StudentData from "utils/student";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -48,6 +55,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import HourglassDisabledIcon from "@mui/icons-material/HourglassDisabled";
 import CoPresentIcon from "@mui/icons-material/CoPresent";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -135,6 +143,7 @@ const ShowAllConsultantsTimes = () => {
   const consultantId = params.consultantId;
 
   const [studentId, setStudentId] = useState<number>();
+  const [studentIds, setStudentIds] = useState<number[]>();
   const [timeTable, setTimeTable] = useState<getConsultantsTimeShowData[]>([]);
   const [dialogconsultantTimeTableId, setDialogConsultantTimeTableId] =
     useState<string>();
@@ -178,6 +187,20 @@ const ShowAllConsultantsTimes = () => {
     fetchPolicy: "no-cache",
   });
 
+  const { refetch:refetchConsultantStudentsByDefinitionId , data:students } = useQuery(
+    GetConsultantStudentsByDefinitionId,
+    {
+      variables: {
+        id: -1,
+      },
+      onCompleted: (data) => {
+        setStudentIds(data.GetConsultantStudentsByDefinitionId);
+      },
+      fetchPolicy: "no-cache",
+      skip:true,
+    }
+  );
+
   const [nextWeekFlag, setNextWeekFlag] = useState<Boolean>(true);
 
   const nextWeek = () => {
@@ -219,18 +242,21 @@ const ShowAllConsultantsTimes = () => {
   const [search, setSearch] = useState<SearchData>({
     consultant_id: undefined,
     target_date: current_date,
-  });  
+  });
 
   const closeDialog = () => {
     setStudentDialogOpen(false);
   };
   const closeStudentStatusDialog = () => {
     setStudentStatusDialogOpen(false);
-  };  
+  };
 
   const refreshConsultantDefinition = () => {
     refetch();
   };
+  const [deleteConsultantTimeTableStudentId] = useMutation(
+    DELETE_CONSULTANTN_DEFINITION_STUDENT_ID
+  );
 
   const searchMaper = (input: SearchData) => {
     return {
@@ -254,10 +280,17 @@ const ShowAllConsultantsTimes = () => {
   };
 
   const handleAddStudent = (defenitionId: string) => {
+   // alert("all is:" + defenitionId);
+    refetchConsultantStudentsByDefinitionId({
+      id:+defenitionId
+    }).then((res)=>{
+      //console.log("res is " ,res);
+    });
+    //console.log(students);
     setDialogConsultantTimeTableId(defenitionId);
     setStudentDialogOpen(true);
   };
-  
+
   const handleAddStudentStatus = (defenitionId: string) => {
     //alert(defenitionId);
     setDialogConsultantTimeTableId(defenitionId);
@@ -309,9 +342,10 @@ const ShowAllConsultantsTimes = () => {
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         {studentDialogOpen && (
           <ComponentStudentDialog
+            studentIdsOfOneConsultant={studentIds}
             consultantTimeTableId={dialogconsultantTimeTableId}
             refreshData={refreshConsultantDefinition}
-            openDialog={studentDialogOpen}            
+            openDialog={studentDialogOpen}
             closeDialog={closeDialog}
           />
         )}
@@ -328,7 +362,7 @@ const ShowAllConsultantsTimes = () => {
         <TableContainer component={Paper}>
           <Table aria-label="customized table">
             <TableHead>
-            <TableRow >
+              <TableRow>
                 <StyledTableCell
                   align="center"
                   width="50"
@@ -402,53 +436,53 @@ const ShowAllConsultantsTimes = () => {
                                   detail?.student
                                     ? consultantFilledStudentBox
                                     : consultantNotFilledStudentBox
-                                }                               
+                                }
                               >
-                                 <Box
-                                display="flex"
-                                justifyContent="space-between"
-                                alignItems="center"
-                              >
-                               
-                                <Button
-                                  startIcon={
-                                    <PersonAddAlt1Icon
-                                      sx={{ textAlign: "right" }}
-                                    />
-                                  }
-                                  sx={{
-                                    color: "black",
-                                    fontSize: 13,
-                                    fontWeight: 800,
-                                    textAlign: "right",
-                                  }}
-                                  onClick={() => handleAddStudent(detail.id)}
+                                <Box
+                                  display="flex"
+                                  justifyContent="space-between"
+                                  alignItems="center"
                                 >
-                                  {" "}
-                                </Button>
-                               
-                                {detail?.student_id ? (
                                   <Button
                                     startIcon={
-                                      <ManageAccountsIcon
-                                        sx={{ textAlign: "left" }}
+                                      <PersonAddAlt1Icon
+                                        sx={{ textAlign: "right" }}
                                       />
                                     }
                                     sx={{
                                       color: "black",
                                       fontSize: 13,
                                       fontWeight: 800,
-                                      textAlign: "left",
+                                      textAlign: "right",
                                     }}
-                                    onClick={() =>
-                                      handleAddStudentStatus(detail.id)
-                                    }
+                                    onClick={() => handleAddStudent(detail.id)}
                                   >
                                     {" "}
+                                    {detail?.branchClassRoom_name}
                                   </Button>
-                                ) : null}
-                              </Box>
-                               
+
+                                  {detail?.student_id ? (
+                                    <Button
+                                      startIcon={
+                                        <ManageAccountsIcon
+                                          sx={{ textAlign: "left" }}
+                                        />
+                                      }
+                                      sx={{
+                                        color: "black",
+                                        fontSize: 13,
+                                        fontWeight: 800,
+                                        textAlign: "left",
+                                      }}
+                                      onClick={() =>
+                                        handleAddStudentStatus(detail.id)
+                                      }
+                                    >
+                                      {" "}
+                                    </Button>
+                                  ) : null}
+                                </Box>
+
                                 {detail?.student ? (
                                   <Box>
                                     <Box>
@@ -470,11 +504,47 @@ const ShowAllConsultantsTimes = () => {
                                     </Box>
 
                                     <Box>
-                                    {convertStudentStatus(
-                                      detail?.student_status
-                                    )}
-                                  </Box>
+                                      {convertStudentStatus(
+                                        detail?.student_status
+                                      )}
+                                    </Box>
 
+                                    {detail?.student_status === "no_action" ? (
+                                      <Box>
+                                        <Button
+                                          startIcon={
+                                            <PersonRemoveIcon
+                                              sx={{ textAlign: "left" }}
+                                            />
+                                          }
+                                          sx={{
+                                            color: "black",
+                                            fontSize: 13,
+                                            fontWeight: 800,
+                                            textAlign: "left",
+                                          }}
+                                          onClick={() => {
+                                            showConfirm(async () =>
+                                              deleteConsultantTimeTableStudentId(
+                                                {
+                                                  variables: {
+                                                    id: detail.id,
+                                                  },
+                                                }
+                                              ).then(() => {
+                                                showSuccess(
+                                                  "حذف با موفقیت انجام شد."
+                                                );
+                                                refetch();
+                                              })
+                                            );
+                                            //handleDeleteStudentForm(detail.id,detail?.student?.first_name + " " + detail?.student?.last_name)
+                                          }}
+                                        >
+                                          {" "}
+                                        </Button>
+                                      </Box>
+                                    ) : null}
                                   </Box>
                                 ) : null}
                               </Box>
