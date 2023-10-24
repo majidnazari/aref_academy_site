@@ -33,7 +33,11 @@ import {
   GET_CONSULTANT_DEFINITION_DETAILS,
   GetConsultantStudentsByDefinitionId,
 } from "../gql/query";
-import { CREATE_CONSULTANT_DEFINITION_DETAIL, DELETE_CONSULTANTN_DEFINITION_STUDENT_ID } from "../gql/mutation";
+import {
+  CREATE_CONSULTANT_DEFINITION_DETAIL,
+  DELETE_CONSULTANTN_DEFINITION_STUDENT_ID,
+  UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID,
+} from "../gql/mutation";
 import { useParams } from "react-router-dom";
 import StudentData from "utils/student";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -51,10 +55,8 @@ import HourglassDisabledIcon from "@mui/icons-material/HourglassDisabled";
 import CoPresentIcon from "@mui/icons-material/CoPresent";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-import { red } from "@mui/material/colors";
+import { green, red } from "@mui/material/colors";
 import ComponentDeleteStudentDialog from "./ComponentDeleteStudentDialog";
-
-
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -88,26 +90,74 @@ const daysOfWeek = [
 ];
 
 const consultantNotFilledStudentBox = {
-  backgroundColor: "#adadad",
+  backgroundColor: "#ebebeb",
   width: 160,
   color: "black",
   borderRadius: "5px",
   boxShadow: 3,
   cursor: "pointer",
-  minHeight: "200px",
+  minHeight: "240px",
   mx: 1,
   p: 1,
 };
 const consultantFilledStudentBox = {
-  backgroundColor: "#00BFFF",
+  backgroundColor: "#1bebeb",
   width: 160,
   color: "black",
   borderRadius: "5px",
   boxShadow: 3,
   cursor: "pointer",
-  minHeight: "200px",
+  minHeight: "240px",
   mx: 1,
   p: 1,
+};
+const consultantPresentStudentBox = {
+  backgroundColor: "#ace1a3",
+  width: 160,
+  color: "black",
+  borderRadius: "5px",
+  boxShadow: 3,
+  cursor: "pointer",
+  minHeight: "240px",
+  mx: 1,
+  p: 1,
+};
+
+const consultantAbsentStudentBox = {
+  backgroundColor: "#efaf77",
+  width: 160,
+  color: "black",
+  borderRadius: "5px",
+  boxShadow: 3,
+  cursor: "pointer",
+  minHeight: "240px",
+  mx: 1,
+  p: 1,
+};
+
+const consultantDellayStudentBox = {
+  backgroundColor: "#f1f16f",
+  width: 160,
+  color: "black",
+  borderRadius: "5px",
+  boxShadow: 3,
+  cursor: "pointer",
+  minHeight: "240px",
+  mx: 1,
+  p: 1,
+};
+
+const convertStudentStatusTheme = (student_status: string) => {
+  switch (student_status) {
+    case "present":
+      return consultantPresentStudentBox;
+    case "absent":
+      return consultantAbsentStudentBox;
+    case "dellay":
+      return consultantDellayStudentBox;
+    default:
+      return consultantNotFilledStudentBox;
+  }
 };
 
 interface ErrorData {
@@ -160,7 +210,8 @@ const ConsultantTimeTable = () => {
   const [studentDialogOpen, setStudentDialogOpen] = useState<boolean>(false);
   const [studentStatusDialogOpen, setStudentStatusDialogOpen] =
     useState<boolean>(false);
-  const [studentDeleteDialogOpen, setStudentDeleteDialogOpen] =useState<boolean>(false);
+  const [studentDeleteDialogOpen, setStudentDeleteDialogOpen] =
+    useState<boolean>(false);
   // const [studentDeleteDialogClose, setStudentDeleteDialogClose] =useState<boolean>(false);
 
   const [listKey, setListKey] = useState<number>(0);
@@ -173,6 +224,10 @@ const ConsultantTimeTable = () => {
   );
   const [deleteConsultantTimeTableStudentId] = useMutation(
     DELETE_CONSULTANTN_DEFINITION_STUDENT_ID
+  );
+
+  const [ConsultantTimeTableStudentStatus] = useMutation(
+    UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
   );
 
   const { data: branchClassroomsData } = useQuery(GET_BRANCH_CLASSROOMS, {
@@ -190,44 +245,6 @@ const ConsultantTimeTable = () => {
       //setTimeTable(data.getConsultantDefinitionDetails);
     },
   });
-
-  const convertStudentStatus = (studentStatus: string) => {
-    switch (studentStatus) {
-      case "no_action":
-        return (
-          <HourglassDisabledIcon
-            sx={{
-              color: "black",
-              fontSize: 13,
-              fontWeight: 800,
-              textAlign: "right",
-            }}
-          />
-        );
-      case "present":
-        return (
-          <CoPresentIcon
-            sx={{
-              color: "black",
-              fontSize: 13,
-              fontWeight: 800,
-              textAlign: "right",
-            }}
-          />
-        );
-      case "absent":
-        return (
-          <CancelPresentationIcon
-            sx={{
-              color: "black",
-              fontSize: 13,
-              fontWeight: 800,
-              textAlign: "right",
-            }}
-          />
-        );
-    }
-  };
 
   const current_date = moment().format("YYYY-MM-DD");
   const next_date = moment().add(7, "days").format("YYYY-MM-DD");
@@ -252,8 +269,8 @@ const ConsultantTimeTable = () => {
   const handleAddStudent = (defenitionId: string) => {
     //alert("one is:" + defenitionId);
     refetchConsultantStudentsByDefinitionId({
-      id:+defenitionId
-    }).then((res)=>{
+      id: +defenitionId,
+    }).then((res) => {
       //console.log("res is " ,res);
     });
     setDialogConsultantTimeTableId(defenitionId);
@@ -265,7 +282,10 @@ const ConsultantTimeTable = () => {
     setDialogConsultantTimeTableId(defenitionId);
     setStudentStatusDialogOpen(true);
   };
-  const handleDeleteStudentForm = (defenitionId: string , studentName :string) => {
+  const handleDeleteStudentForm = (
+    defenitionId: string,
+    studentName: string
+  ) => {
     setStudentFullName(studentName);
     setDialogConsultantTimeTableId(defenitionId);
     setStudentDeleteDialogOpen(true);
@@ -358,7 +378,7 @@ const ConsultantTimeTable = () => {
     });
   };
 
-  const { refetch:refetchConsultantStudentsByDefinitionId  } = useQuery(
+  const { refetch: refetchConsultantStudentsByDefinitionId } = useQuery(
     GetConsultantStudentsByDefinitionId,
     {
       variables: {
@@ -368,7 +388,7 @@ const ConsultantTimeTable = () => {
         setStudentIds(data.GetConsultantStudentsByDefinitionId);
       },
       fetchPolicy: "no-cache",
-      skip:true,
+      skip: true,
     }
   );
 
@@ -410,7 +430,7 @@ const ConsultantTimeTable = () => {
       case "Friday":
         return "جمعه";
     }
-  }; 
+  };
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -426,24 +446,13 @@ const ConsultantTimeTable = () => {
 
       {studentDeleteDialogOpen && (
         <ComponentDeleteStudentDialog
-          consultantTimeTableId={dialogconsultantTimeTableId} 
+          consultantTimeTableId={dialogconsultantTimeTableId}
           studentName={studentFullName}
           refreshData={refreshConsultantDefinition}
-          openStudentDeleteDialog={studentDeleteDialogOpen}         
+          openStudentDeleteDialog={studentDeleteDialogOpen}
           closeStudentDeleteDialog={closeStudentDeleteDialog}
         />
       )}
-
-      {/* {studentStatusDialogOpen ? (
-        <StudentStatusComponent
-          consultantTimeTableId={dialogconsultantTimeTableId}
-          //parentStudentId={studentId}
-          refreshData={refreshConsultantDefinition}
-          openStudentStatusDialog={true}
-          //setDialogOpen={() => {}}
-          closeStudentStatusDialog={closeStudentStatusDialog}
-        />
-      ) : null} */}
       {studentStatusDialogOpen && (
         <StudentStatusComponent
           consultantTimeTableId={dialogconsultantTimeTableId}
@@ -692,26 +701,16 @@ const ConsultantTimeTable = () => {
                             </Box>
 
                             <Box
-                              sx={
-                                detail?.student_id
-                                  ? consultantFilledStudentBox
-                                  : consultantNotFilledStudentBox
-                              }
+                              sx={convertStudentStatusTheme(
+                                detail?.student_status
+                              )}
                               key={index_details}
-                              // onClick={() =>
-                              //   navigate(`/consultant/${detail.id}/setStudent`)
-                              // }
                             >
                               <Box
                                 display="flex"
                                 justifyContent="space-between"
                                 alignItems="center"
                               >
-                                {/* <ComponentStudentDialog
-                                consultantTimeTableId={detail.id}
-                                parentStudentId={studentId}
-                                refreshData={refreshStudent}
-                              /> */}
                                 <Button
                                   startIcon={
                                     <PersonAddAlt1Icon
@@ -758,59 +757,172 @@ const ConsultantTimeTable = () => {
 
                               {detail?.student_id ? (
                                 <Box>
-                                  <Box>
+                                  {/* <Box>
                                     کلاس : {detail.branchClassRoom_name}
-                                  </Box>
-                                  <Box>
-                                    دانش آموز : {detail?.student?.first_name}{" "}
+                                  </Box> */}
+                                  <Box
+                                    sx={{
+                                      fontWeight: 800,
+                                      pl: 1,
+                                    }}
+                                  >
+                                    {detail?.student?.first_name}{" "}
                                     {detail?.student?.last_name}
                                   </Box>
-                                  <Box>
+                                  {/* <Box>
                                     ثبت نامی :{" "}
                                     {detail?.student?.is_academy_student === 1
                                       ? " آکادمی"
                                       : "جذب"}{" "}
+                                  </Box> */}
+                                  <Box
+                                    sx={{
+                                      fontWeight: 800,
+                                      pl: 1,
+                                    }}
+                                  >
+                                    {detail?.student?.phone}
+                                  </Box>
+                                  <Box
+                                    display={"flex"}
+                                    justifyContent={"space-between"}
+                                    mt={1}
+                                  >
+                                    <Button
+                                      color="success"
+                                      variant="contained"
+                                      sx={{
+                                        fontSize: 13,
+                                      }}
+                                      onClick={() => {
+                                        ConsultantTimeTableStudentStatus(
+                                          {
+                                            variables: {
+                                              id: detail.id,
+                                              student_id: detail.student_id,
+                                              student_status: "present",
+                                            },
+                                          }
+                                        ).then(() => {
+                                          showSuccess(
+                                            "وضعیت دانش آموز با موفقیت به حاضر تغییر کرد."
+                                          );
+                                          refetch();
+                                        });
+                                      }}
+                                    >
+                                      {"حاضر "}
+                                    </Button>
+                                    <Button
+                                      color="warning"
+                                      variant="contained"
+                                      sx={{
+                                        fontSize: 13,
+                                      }}
+                                      onClick={() => {
+                                        ConsultantTimeTableStudentStatus(
+                                          {
+                                            variables: {
+                                              id: detail.id,
+                                              student_id: detail.student_id,
+                                              student_status: "absent",
+                                            },
+                                          }
+                                        ).then(() => {
+                                          showSuccess(
+                                            "وضعیت دانش آموز با موفقیت به غایب تغییر کرد."
+                                          );
+                                          refetch();
+                                        });
+                                      }}
+                                    >
+                                      {"غایب "}
+                                    </Button>
                                   </Box>
                                   <Box>
-                                    کد ملی :{detail?.student?.nationality_code}
+                                    <FormControl
+                                      sx={{
+                                        mt: 2,
+
+                                        backgroundColor: "white",
+                                        width: "100%",
+                                      }}
+                                    >
+                                      <Select
+                                        sx={{
+                                          height: 35,
+                                          backgroundColor: "white",
+                                          width: "100%",
+                                          fontSize: 13,
+                                        }}
+                                        labelId="week-label"
+                                        id="week-select"
+                                        value={detail?.student_status}
+                                        onClick={() => {
+                                          ConsultantTimeTableStudentStatus(
+                                            {
+                                              variables: {
+                                                id: detail.id,
+                                                student_id: detail.student_id,
+                                                student_status: "dellay",
+                                              },
+                                            }
+                                          ).then(() => {
+                                            showSuccess(
+                                              "وضعیت دانش آموز با موفقیت به تاخیر تغییر کرد."
+                                            );
+                                            refetch();
+                                          });
+                                        }}
+                                        input={<OutlinedInput />}
+                                      >
+                                        <MenuItem value="">
+                                         
+                                        </MenuItem>
+                                        <MenuItem value="dellay">
+                                         تاخیر
+                                        </MenuItem>
+                                        {/* <MenuItem value="dellay10">
+                                          تاخیر ۱۰ دقیقه
+                                        </MenuItem>
+                                        <MenuItem value="dellay15">
+                                          تاخیر ۱۵ دقیقه
+                                        </MenuItem>
+                                        <MenuItem value="dellay15more">
+                                          تاخیر بیشتر از ۱۵ دقیقه
+                                        </MenuItem> */}
+                                      </Select>
+                                    </FormControl>
                                   </Box>
-                                  <Box sx={{ borderColor: red }}>
-                                    {convertStudentStatus(
-                                      detail?.student_status
-                                    )}
-                                  </Box>
-                                  {detail?.student_status ==="no_action" ?                                   
-                                
+
+                                  {detail?.student_id ? (
                                     <Box>
                                       <Button
-                                        startIcon={
-                                          <PersonRemoveIcon
-                                            sx={{ textAlign: "left" }}
-                                          />
-                                        }
-                                        sx={{
-                                          color: "black",
-                                          fontSize: 13,
-                                          fontWeight: 800,
-                                          textAlign: "left",
+                                        color="error"
+                                        variant="contained"
+                                        onClick={() => {
+                                          showConfirm(async () =>
+                                            deleteConsultantTimeTableStudentId({
+                                              variables: {
+                                                id: detail.id,
+                                              },
+                                            }).then(() => {
+                                              showSuccess(
+                                                "حذف با موفقیت انجام شد."
+                                              );
+                                              refetch();
+                                            })
+                                          );
                                         }}
-                                        onClick={() =>{
-                                          showConfirm( async ()=>  deleteConsultantTimeTableStudentId({
-                                            variables: {
-                                              id: detail.id,       
-                                            },
-                                          }).then(()=>{
-                                            showSuccess("حذف با موفقیت انجام شد.");
-                                            refetch();
-                                          }));
-                                          //handleDeleteStudentForm(detail.id,detail?.student?.first_name + " " + detail?.student?.last_name)
+                                        sx={{
+                                          mt: 2,
+                                          fontSize: 13,
                                         }}
                                       >
-                                        {" "}
+                                        {" حذف "}
                                       </Button>
                                     </Box>
-                                    : null
-                                      }
+                                  ) : null}
                                 </Box>
                               ) : null}
                             </Box>

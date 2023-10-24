@@ -54,7 +54,7 @@ const StudentStatusComponent = ({
   closeStudentStatusDialog,
 }: {
   consultantTimeTableId: string | undefined;
-  
+
   refreshData: Function;
   openStudentStatusDialog: boolean;
   closeStudentStatusDialog: Function;
@@ -129,8 +129,7 @@ const StudentStatusComponent = ({
         id: timeTableId,
       },
       onCompleted: (data) => {
-        
-        setStudentId(data.getConsultantDefinitionDetail.student_id ?? 1 );
+        setStudentId(data.getConsultantDefinitionDetail.student_id ?? 1);
         setStudentStatus(data.getConsultantDefinitionDetail.student_status);
         setStudentDescription(
           data.getConsultantDefinitionDetail.absent_present_description
@@ -148,7 +147,7 @@ const StudentStatusComponent = ({
         first: 1,
         page: 1,
         full_name: "",
-        ids: studentId ,
+        ids: studentId,
         fetchPolicy: "network-only",
       },
       onCompleted: (data) => {
@@ -171,12 +170,11 @@ const StudentStatusComponent = ({
         // setStudentOptions(tmp);
         //}
       },
-      skip:true
+      skip: true,
     }
   );
 
-  React.useEffect(() => {     
-    
+  React.useEffect(() => {
     setLoadingStudent(true);
     refetchStudents({
       first: 1,
@@ -188,17 +186,16 @@ const StudentStatusComponent = ({
     });
   }, [studentId]);
 
-
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleAdd = () => {
-    if(studentId===1){
+    if (studentId === 1) {
       showError("دانش آموزی انتخاب نشده است.");
       return null;
     }
-    
+
     setLoading(true);
     editConsultantTimeTable({
       variables: {
@@ -238,24 +235,24 @@ const StudentStatusComponent = ({
   });
 
   return (
-    <Dialog open={openStudentStatusDialog} onClose={handleCancel} >
+    <Dialog open={openStudentStatusDialog} onClose={handleCancel}>
       <DialogTitle minWidth={600}> تغییر وضعیت دانش آموز </DialogTitle>
       <Grid> </Grid>
       <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
         <FormControl sx={{ width: "50%", alignItems: "center" }}>
-            <Typography variant="h6" component="h6">
-              {(studentFullName) ? studentFullName : " دانش آموزی وجود ندارد" }
-            </Typography>
-          </FormControl>
+          <Typography variant="h6" component="h6">
+            {studentFullName ? studentFullName : " دانش آموزی وجود ندارد"}
+          </Typography>
+        </FormControl>
         <FormControl sx={{ width: "50%", alignItems: "left" }}>
           <Typography variant="h6" component="h6">
             {startHour} - {endtHour}
           </Typography>
         </FormControl>
       </Grid>
-      
+
       <DialogContent>
-        <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+        {/* <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
           <FormControl sx={{ width: "100%" }}>
             <InputLabel id="session-time-label"> وضعیت دانش آموز </InputLabel>
             <Select
@@ -273,7 +270,7 @@ const StudentStatusComponent = ({
               <MenuItem value={"dellay"}> تاخیر </MenuItem>
             </Select>
           </FormControl>
-        </Grid>
+        </Grid> */}
       </DialogContent>
       <DialogContent>
         <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
@@ -290,9 +287,19 @@ const StudentStatusComponent = ({
         </Grid>
       </DialogContent>
 
-      <DialogActions>
-        <Button onClick={handleCancel}>انصراف</Button>
+      <DialogActions
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          px: 5,
+        }}
+      >
+        <Button color="error" variant="contained" onClick={handleCancel}>
+          انصراف
+        </Button>
         <Button
+          color="success"
+          variant="contained"
           onClick={handleAdd}
           disabled={isLoading}
           endIcon={isLoading && <CircularProgress size={15} />}

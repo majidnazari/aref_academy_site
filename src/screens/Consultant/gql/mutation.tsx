@@ -155,4 +155,3 @@ export const DELETE_CONSULTANTN_DEFINITION_STUDENT_ID = gql`
   }
 `;
 
-
