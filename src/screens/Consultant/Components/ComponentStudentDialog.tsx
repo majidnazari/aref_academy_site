@@ -206,7 +206,7 @@ const ComponentStudentDialog = ({
             >
               <Autocomplete
                 id="student-names"
-                options={studentOptions || studentIdsOfOneConsultant }
+                options={studentOptions || studentIdsOfOneConsultant}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -244,9 +244,19 @@ const ComponentStudentDialog = ({
             </FormControl>
           </DialogContent>
 
-          <DialogActions>
-            <Button onClick={handleCancel}>انصراف</Button>
-            <Button onClick={handleAdd}>افزودن</Button>
+          <DialogActions
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              px: 5,
+            }}
+          >
+            <Button color="error" variant="contained" onClick={handleCancel}>
+              انصراف
+            </Button>
+            <Button color="success" variant="contained" onClick={handleAdd}>
+              افزودن
+            </Button>
           </DialogActions>
         </Dialog>
       </div>

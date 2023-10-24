@@ -170,6 +170,7 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
           mother_phone
           nationality_code
           student_phone
+          phone
         }
         branch_class_room_id
         start_hour
@@ -324,6 +325,7 @@ export const GET_CONSULTANT_SHOW_TIMES = gql`
           last_name
           is_academy_student
           nationality_code
+          phone
         }
         branchClassRoom_name
         user_id
@@ -479,6 +481,7 @@ export const GET_CONSULTANT_FINANCIALS = gql`
           first_name
           last_name
           is_academy_student
+          phone
         }
         consultant_id
         consultant {
