@@ -27,7 +27,7 @@ import TableRow from "@mui/material/TableRow";
 
 import { useMutation, useQuery } from "@apollo/client";
 import FormHelperText from "@mui/material/FormHelperText";
-import { showConfirm, showSuccess } from "utils/swlAlert";
+import { showConfirm, showError, showSuccess } from "utils/swlAlert";
 import {
   GET_BRANCH_CLASSROOMS,
   GET_CONSULTANT_DEFINITION_DETAILS,
@@ -37,6 +37,7 @@ import {
   CREATE_CONSULTANT_DEFINITION_DETAIL,
   DELETE_CONSULTANTN_DEFINITION_STUDENT_ID,
   UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID,
+  CPOY_TIME_TABLE_OF_CONSULTANT,
 } from "../gql/mutation";
 import { useParams } from "react-router-dom";
 import StudentData from "utils/student";
@@ -222,6 +223,10 @@ const ConsultantTimeTable = () => {
   const [insertMultiConsultantTimes] = useMutation(
     CREATE_CONSULTANT_DEFINITION_DETAIL
   );
+  const [insertCopyMultiConsultantTimes] = useMutation(
+    CPOY_TIME_TABLE_OF_CONSULTANT
+  );
+
   const [deleteConsultantTimeTableStudentId] = useMutation(
     DELETE_CONSULTANTN_DEFINITION_STUDENT_ID
   );
@@ -374,6 +379,7 @@ const ConsultantTimeTable = () => {
         setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
         //setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
         setNextWeekFlag(false);
+        setWeek("Next");
       },
     });
   };
@@ -403,6 +409,7 @@ const ConsultantTimeTable = () => {
         setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
         // setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
         setNextWeekFlag(true);
+        setWeek("Current");
       },
     });
   };
@@ -432,8 +439,39 @@ const ConsultantTimeTable = () => {
     }
   };
 
+  const changeWeek = () => {
+    if (week === "Current") {
+      nextWeek();
+    } else {
+      previousWeek();
+    }
+  };
+
+  const copyPlan = () => {
+    if (week === "Next") {
+      showError("امکان کپی هفته بعد وجود ندارد.");
+      return null;
+    }
+
+    showConfirm(() => {
+      // alert(consultantId);
+      insertCopyMultiConsultantTimes({
+        variables: {
+          consultant_id: consultantId ? Number(consultantId) : 0,
+        },
+      }).then(() => {
+        refetch();
+        nextWeek();
+        showSuccess("کپی زمانبندی جدید با موفقیت ایجاد شد");
+      });
+    });
+  };
+
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+      <Grid>
+        <h1> مشاور: </h1>
+      </Grid>
       {studentDialogOpen && (
         <ComponentStudentDialog
           consultantTimeTableId={dialogconsultantTimeTableId}
@@ -501,6 +539,8 @@ const ConsultantTimeTable = () => {
               value={week}
               onChange={(e) => {
                 setWeek(e.target.value as "Current" | "Next");
+                changeWeek();
+                //nextWeek();
               }}
               input={<OutlinedInput label="هفته" />}
             >
@@ -620,11 +660,94 @@ const ConsultantTimeTable = () => {
               {loading ? <CircularProgress size={15} color="primary" /> : null}
               ذخیره
             </Button>
+            {nextWeekFlag ? (
+              <Button
+                onClick={() => {
+                  copyPlan();
+                }}
+                variant="contained"
+                disabled={loading}
+                sx={{
+                  mt: 1,
+                }}
+              >
+                {loading ? (
+                  <CircularProgress size={15} color="primary" />
+                ) : null}
+                کپی برنامه به هفته بعد
+              </Button>
+            ) : null}
           </FormControl>
         </Grid>
       </Grid>
-      <br></br>
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          mt: 1,
+        }}
+      >
+        <Table>
+          <TableBody>
+            <TableRow>
+              <StyledTableCell
+                align="center"
+                sx={{
+                  fontSize: 25,
+                  fontWeight: 800,
+                  textAlign: "center",
+                  backgroundColor: "white",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    m: 1,
+                  }}
+                >
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    onClick={previousWeek}
+                    startIcon={<ArrowForwardIcon />}
+                    disabled={nextWeekFlag ? true : false}
+                  >
+                    هفته جاری
+                  </Button>
+                </Box>
+              </StyledTableCell>
+              <StyledTableCell
+                align="center"
+                sx={{
+                  fontSize: 25,
+                  fontWeight: 800,
+                  textAlign: "center",
+                  backgroundColor: "white",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "end",
+                    m: 1,
+                  }}
+                >
+                  <Button
+                    size="small"
+                    endIcon={<ArrowBackIcon />}
+                    onClick={nextWeek}
+                    variant="outlined"
+                    color="primary"
+                    disabled={nextWeekFlag ? false : true}
+                  >
+                    هفته آتی
+                  </Button>
+                </Box>
+              </StyledTableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
         <Table aria-label="customized table">
           <TableHead>
             <TableRow>
@@ -795,15 +918,13 @@ const ConsultantTimeTable = () => {
                                         fontSize: 13,
                                       }}
                                       onClick={() => {
-                                        ConsultantTimeTableStudentStatus(
-                                          {
-                                            variables: {
-                                              id: detail.id,
-                                              student_id: detail.student_id,
-                                              student_status: "present",
-                                            },
-                                          }
-                                        ).then(() => {
+                                        ConsultantTimeTableStudentStatus({
+                                          variables: {
+                                            id: detail.id,
+                                            student_id: detail.student_id,
+                                            student_status: "present",
+                                          },
+                                        }).then(() => {
                                           showSuccess(
                                             "وضعیت دانش آموز با موفقیت به حاضر تغییر کرد."
                                           );
@@ -820,15 +941,13 @@ const ConsultantTimeTable = () => {
                                         fontSize: 13,
                                       }}
                                       onClick={() => {
-                                        ConsultantTimeTableStudentStatus(
-                                          {
-                                            variables: {
-                                              id: detail.id,
-                                              student_id: detail.student_id,
-                                              student_status: "absent",
-                                            },
-                                          }
-                                        ).then(() => {
+                                        ConsultantTimeTableStudentStatus({
+                                          variables: {
+                                            id: detail.id,
+                                            student_id: detail.student_id,
+                                            student_status: "absent",
+                                          },
+                                        }).then(() => {
                                           showSuccess(
                                             "وضعیت دانش آموز با موفقیت به غایب تغییر کرد."
                                           );
@@ -859,15 +978,13 @@ const ConsultantTimeTable = () => {
                                         id="week-select"
                                         value={detail?.student_status}
                                         onClick={() => {
-                                          ConsultantTimeTableStudentStatus(
-                                            {
-                                              variables: {
-                                                id: detail.id,
-                                                student_id: detail.student_id,
-                                                student_status: "dellay",
-                                              },
-                                            }
-                                          ).then(() => {
+                                          ConsultantTimeTableStudentStatus({
+                                            variables: {
+                                              id: detail.id,
+                                              student_id: detail.student_id,
+                                              student_status: "dellay",
+                                            },
+                                          }).then(() => {
                                             showSuccess(
                                               "وضعیت دانش آموز با موفقیت به تاخیر تغییر کرد."
                                             );
@@ -876,11 +993,9 @@ const ConsultantTimeTable = () => {
                                         }}
                                         input={<OutlinedInput />}
                                       >
-                                        <MenuItem value="">
-                                         
-                                        </MenuItem>
+                                        <MenuItem value=""></MenuItem>
                                         <MenuItem value="dellay">
-                                         تاخیر
+                                          تاخیر
                                         </MenuItem>
                                         {/* <MenuItem value="dellay10">
                                           تاخیر ۱۰ دقیقه
@@ -936,34 +1051,6 @@ const ConsultantTimeTable = () => {
             )}
           </TableBody>
         </Table>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            m: 1,
-          }}
-        >
-          <Button
-            size="small"
-            variant="outlined"
-            color="primary"
-            onClick={previousWeek}
-            startIcon={<ArrowForwardIcon />}
-            disabled={nextWeekFlag ? true : false}
-          >
-            قبل
-          </Button>
-          <Button
-            size="small"
-            endIcon={<ArrowBackIcon />}
-            onClick={nextWeek}
-            variant="outlined"
-            color="primary"
-            disabled={nextWeekFlag ? false : true}
-          >
-            بعد
-          </Button>
-        </Box>
       </TableContainer>
     </Container>
   );
