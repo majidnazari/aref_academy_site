@@ -36,6 +36,7 @@ import {
 import {
   CREATE_CONSULTANT_DEFINITION_DETAIL,
   DELETE_CONSULTANTN_DEFINITION_STUDENT_ID,
+  DELETE_ONE_SESSION_OF_TIME_TABLE,
   UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID,
 } from "../gql/mutation";
 import { useParams } from "react-router-dom";
@@ -57,6 +58,7 @@ import HourglassDisabledIcon from "@mui/icons-material/HourglassDisabled";
 import CoPresentIcon from "@mui/icons-material/CoPresent";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -112,6 +114,7 @@ interface ErrorData {
 }
 
 interface ConsultantData {
+  id: number;
   first_name?: string;
   last_name?: string;
 }
@@ -249,42 +252,44 @@ const ShowAllConsultantsTimes = () => {
       fetchPolicy: "no-cache",
       skip: true,
     });
+    const navigate = useNavigate();
+
 
   const [nextWeekFlag, setNextWeekFlag] = useState<Boolean>(true);
 
-  const nextWeek = () => {
-    setTimeTable([]);
-    fetchMore({
-      variables: {
-        next_week: true,
-        consultant_id: Number(consultantId),
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
-        //setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
-        setNextWeekFlag(false);
-      },
-    });
-  };
+  // const nextWeek = () => {
+  //   setTimeTable([]);
+  //   fetchMore({
+  //     variables: {
+  //       next_week: true,
+  //       consultant_id: Number(consultantId),
+  //     },
+  //     updateQuery: (prev, { fetchMoreResult }) => {
+  //       setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
+  //       //setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
+  //       setNextWeekFlag(false);
+  //     },
+  //   });
+  // };
 
-  const previousWeek = () => {
-    setTimeTable([]);
-    fetchMore({
-      variables: {
-        next_week: false,
-        consultant_id: Number(consultantId),
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
-        // setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
-        setNextWeekFlag(true);
-      },
-    });
-  };
+  // const previousWeek = () => {
+  //   setTimeTable([]);
+  //   fetchMore({
+  //     variables: {
+  //       next_week: false,
+  //       consultant_id: Number(consultantId),
+  //     },
+  //     updateQuery: (prev, { fetchMoreResult }) => {
+  //       setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
+  //       // setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
+  //       setNextWeekFlag(true);
+  //     },
+  //   });
+  // };
 
-  const refreshStudent = () => {
-    refetch();
-  };
+  // const refreshStudent = () => {
+  //   refetch();
+  // };
 
   const [searchData, setSearchData] = useState<SearchAllConsultantProps>({});
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
@@ -305,6 +310,10 @@ const ShowAllConsultantsTimes = () => {
   };
   const [deleteConsultantTimeTableStudentId] = useMutation(
     DELETE_CONSULTANTN_DEFINITION_STUDENT_ID
+  );
+
+  const [deleteOneSessionTimeTable] = useMutation(
+    DELETE_ONE_SESSION_OF_TIME_TABLE
   );
 
   const searchMaper = (input: SearchData) => {
@@ -329,19 +338,19 @@ const ShowAllConsultantsTimes = () => {
   };
 
   const handleAddStudent = (defenitionId: string) => {
-    // alert("all is:" + defenitionId);
+   
     refetchConsultantStudentsByDefinitionId({
       id: +defenitionId,
     }).then((res) => {
       //console.log("res is " ,res);
     });
-    //console.log(students);
+    
     setDialogConsultantTimeTableId(defenitionId);
     setStudentDialogOpen(true);
   };
 
   const handleAddStudentStatus = (defenitionId: string) => {
-    //alert(defenitionId);
+    
     setDialogConsultantTimeTableId(defenitionId);
     setStudentStatusDialogOpen(true);
   };
@@ -388,6 +397,12 @@ const ShowAllConsultantsTimes = () => {
     }
   };
 
+  
+
+  const consultantRedirect = (consultant_id: number | undefined) => {
+  
+    navigate('/consultant/' + consultant_id + "/select-one");
+  };
   return (
     <Paper sx={{ width: "100%", mb: 2 }}>
       <SearchAllConsultantTimes callBack={handleSearch} />
@@ -446,7 +461,13 @@ const ShowAllConsultantsTimes = () => {
                 (element: getConsultantsTimeShowData, index: number) => (
                   <TableRow key={index}>
                     <StyledTableCell align="center">
-                      <a href="#" id="dateOfWeekString">
+                      <a
+                        href="#"
+                        id="dateOfWeekString"
+                        onClick={() =>
+                          consultantRedirect(element.consultant?.id)
+                        }
+                      >
                         <span> </span>
                         {element.consultant?.first_name}
                         {"    "}
@@ -703,7 +724,32 @@ const ShowAllConsultantsTimes = () => {
                                       </Box>
                                     ) : null}
                                   </Box>
-                                ) : null}
+                                ) : (
+                                  <Button
+                                    color="error"
+                                    variant="contained"
+                                    onClick={() => {
+                                      showConfirm(async () =>
+                                        deleteOneSessionTimeTable({
+                                          variables: {
+                                            id: detail.id,
+                                          },
+                                        }).then(() => {
+                                          showSuccess(
+                                            "حذف  جلسه با موفقیت انجام شد."
+                                          );
+                                          refetch();
+                                        })
+                                      );
+                                    }}
+                                    sx={{
+                                      mt: 2,
+                                      fontSize: 13,
+                                    }}
+                                  >
+                                    {" حذف جلسه  "}
+                                  </Button>
+                                )}
                               </Box>
                             </Box>
                           )
@@ -721,27 +767,7 @@ const ShowAllConsultantsTimes = () => {
               justifyContent: "space-between",
               m: 1,
             }}
-          >
-            {/* <Button
-              size="small"
-              variant="outlined"
-              color="primary"
-              onClick={previousWeek}
-              startIcon={<ArrowForwardIcon />}
-              disabled={nextWeekFlag ? true : false}
-            >
-              قبل
-            </Button>
-            <Button
-              size="small"
-              endIcon={<ArrowBackIcon />}
-              onClick={nextWeek}
-              variant="outlined"
-              color="primary"
-              disabled={nextWeekFlag ? false : true}
-            >
-              بعد
-            </Button> */}
+          >            
           </Box>
         </TableContainer>
       </Container>

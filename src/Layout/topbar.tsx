@@ -69,7 +69,7 @@ const Topbar = ({
     },
   });
 
-  const studentCoursePermission = ["admin", "financial"];
+  const studentCoursePermission = ["admin", "financial","manager"];
   const financialPermission = ["admin", "financial", "consultant_manager"];
 
   const user = getUserData();

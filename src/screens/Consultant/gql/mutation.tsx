@@ -169,3 +169,23 @@ export const CPOY_TIME_TABLE_OF_CONSULTANT = gql`
     }
   }
 `;
+
+export const COPY_STUDENT_TO_NEXT_WEEK = gql`
+  mutation COPY_STUDENT_TO_NEXT_TIME_TABLE($id: ID!) {
+    copyOneStudentToNextTimeTable(id: $id) {
+      id
+      student_id
+      student_status
+    }
+  }
+`;
+
+export const DELETE_ONE_SESSION_OF_TIME_TABLE = gql`
+  mutation DELETE_DEFINITION_DETAIL($id: ID!) {
+    deleteConsultantDefinitionDetail(id: $id) {
+      id
+      student_id
+      student_status
+    }
+  }
+`;
