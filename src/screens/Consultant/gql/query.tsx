@@ -18,17 +18,16 @@ export const GET_A_COSULTANT = gql`
 `;
 
 export const GET_CONSULTANTS = gql`
-  query GET_USERS(
+  query GET_CONSULTANTS(
     $first: Int!
     $page: Int!
     $first_name: String
     $last_name: String
     $email: String
   ) {
-    getUsers(
+    getConsultants(
       first: $first
-      page: $page
-      group_id: 6
+      page: $page     
       first_name: $first_name
       last_name: $last_name
       email: $email
@@ -157,6 +156,7 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
         id
         consultant_id
         consultant_first_name
+        consultant_last_name
         student_id
         student {
           first_name

@@ -67,6 +67,7 @@ import { group } from "console";
 import ConsultantStudentManager from "screens/Dashboard/ConsultantStudentManager";
 import StudentsConsultantManagerScreen from "screens/Students/consultant_manager/index_consultant_manager";
 import ConsultantFinancials from "screens/Consultant/Components/ConsultantFinancials";
+import SelectOneConsultantsTimes from "screens/Consultant/Components/SelectOneConsultantsTimes";
 
 const MainRouter = () => {
   const appContext = useContext(AuthContext);
@@ -160,6 +161,7 @@ const MainRouter = () => {
               element={<ConsultantTimeTable />}
             /> */}
             <Route path="show-all" element={<ShowAllConsultantsTimes />} />
+            <Route path=":consultantId/select-one" element={<SelectOneConsultantsTimes />} />
             {/* <Route path=":consultantTimeTableId/setStudent" element={<ComponentStudentDialog  />} /> */}
 
             <Route

@@ -29,6 +29,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import FormHelperText from "@mui/material/FormHelperText";
 import { showConfirm, showError, showSuccess } from "utils/swlAlert";
 import {
+  GET_A_USER,
   GET_BRANCH_CLASSROOMS,
   GET_CONSULTANT_DEFINITION_DETAILS,
   GetConsultantStudentsByDefinitionId,
@@ -38,6 +39,8 @@ import {
   DELETE_CONSULTANTN_DEFINITION_STUDENT_ID,
   UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID,
   CPOY_TIME_TABLE_OF_CONSULTANT,
+  COPY_STUDENT_TO_NEXT_WEEK,
+  DELETE_ONE_SESSION_OF_TIME_TABLE,
 } from "../gql/mutation";
 import { useParams } from "react-router-dom";
 import StudentData from "utils/student";
@@ -47,16 +50,9 @@ import ComponentStudentDialog from "./ComponentStudentDialog";
 import { Link, useNavigate } from "react-router-dom";
 import moment_jalali from "moment-jalaali";
 import "../../../../src/assets/stringDate.css";
-import { Height } from "@mui/icons-material";
 import StudentStatusComponent from "./StudentStatusDialog";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-
-import HourglassDisabledIcon from "@mui/icons-material/HourglassDisabled";
-import CoPresentIcon from "@mui/icons-material/CoPresent";
-import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-import { green, red } from "@mui/material/colors";
 import ComponentDeleteStudentDialog from "./ComponentDeleteStudentDialog";
 
 const ITEM_HEIGHT = 48;
@@ -198,6 +194,7 @@ const ConsultantTimeTable = () => {
   const [step, setStep] = useState<string>("15");
   const [studentIds, setStudentIds] = useState<number[]>([1]);
   const [studentFullName, setStudentFullName] = useState<string>();
+  const [consultantFullName, setConsultantFullName] = useState<string>("");
   const [branchClassRoomId, setBranchClassRoomId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorData>({});
@@ -231,6 +228,12 @@ const ConsultantTimeTable = () => {
     DELETE_CONSULTANTN_DEFINITION_STUDENT_ID
   );
 
+  const [deleteOneSessionTimeTable] = useMutation(
+    DELETE_ONE_SESSION_OF_TIME_TABLE
+  );
+
+  const [copyStudentToNextWeek] = useMutation(COPY_STUDENT_TO_NEXT_WEEK);
+
   const [ConsultantTimeTableStudentStatus] = useMutation(
     UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
   );
@@ -262,6 +265,22 @@ const ConsultantTimeTable = () => {
       setTimeTable(data.getConsultantDefinitionDetails);
     },
     fetchPolicy: "no-cache",
+  });
+
+  const { data: consultantDetails } = useQuery(GET_A_USER, {
+    variables: {
+      id: consultantId,
+    },
+    onCompleted: (data) => {
+      // console.log("user is: " ,data);
+      setConsultantFullName(
+        data.getUser.first_name + " " + data.getUser.last_name
+      );
+      if(consultantFullName){
+        alert("redirect");
+        navigate("*");
+      }
+    },
   });
 
   const handleChange = (event: SelectChangeEvent<typeof days>) => {
@@ -442,7 +461,8 @@ const ConsultantTimeTable = () => {
   const changeWeek = () => {
     if (week === "Current") {
       nextWeek();
-    } else {
+    }
+    if (week === "Next") {
       previousWeek();
     }
   };
@@ -461,16 +481,28 @@ const ConsultantTimeTable = () => {
         },
       }).then(() => {
         refetch();
-        nextWeek();
+        //nextWeek();
         showSuccess("کپی زمانبندی جدید با موفقیت ایجاد شد");
       });
     });
   };
 
+  const showPreviousWeekBeforeRefresh = () => {
+    if (week === "Current") {
+      previousWeek();
+    }
+    if (week === "Next") {
+      nextWeek();
+    }
+  };
+
   return (
+   consultantFullName 
+    ?
+    (  
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Grid>
-        <h1> مشاور: </h1>
+        <h1> مشاور: {consultantFullName} </h1>
       </Grid>
       {studentDialogOpen && (
         <ComponentStudentDialog
@@ -649,35 +681,39 @@ const ConsultantTimeTable = () => {
             width: "30%",
           }}
         >
-          <FormControl sx={{ width: "30%" }}>
-            <Button
-              onClick={() => {
-                insertMultiSessions();
-              }}
-              variant="contained"
-              disabled={loading}
-            >
-              {loading ? <CircularProgress size={15} color="primary" /> : null}
-              ذخیره
-            </Button>
-            {nextWeekFlag ? (
+         
+            <FormControl sx={{ width: "30%" }}>
               <Button
                 onClick={() => {
-                  copyPlan();
+                  insertMultiSessions();
                 }}
                 variant="contained"
                 disabled={loading}
-                sx={{
-                  mt: 1,
-                }}
               >
                 {loading ? (
                   <CircularProgress size={15} color="primary" />
                 ) : null}
-                کپی برنامه به هفته بعد
+                ذخیره
               </Button>
-            ) : null}
-          </FormControl>
+              {nextWeekFlag ? (
+                <Button
+                  onClick={() => {
+                    copyPlan();
+                  }}
+                  variant="contained"
+                  disabled={loading}
+                  sx={{
+                    mt: 1,
+                  }}
+                >
+                  {loading ? (
+                    <CircularProgress size={15} color="primary" />
+                  ) : null}
+                  کپی برنامه به هفته بعد
+                </Button>
+              ) : null}
+            </FormControl>
+          
         </Grid>
       </Grid>
       <TableContainer
@@ -1011,7 +1047,10 @@ const ConsultantTimeTable = () => {
                                   </Box>
 
                                   {detail?.student_id ? (
-                                    <Box>
+                                    <Box
+                                      display={"flex"}
+                                      justifyContent={"space-between"}
+                                    >
                                       <Button
                                         color="error"
                                         variant="contained"
@@ -1036,10 +1075,61 @@ const ConsultantTimeTable = () => {
                                       >
                                         {" حذف "}
                                       </Button>
+
+                                      <Button
+                                        color="info"
+                                        variant="contained"
+                                        onClick={() => {
+                                          showConfirm(async () =>
+                                            copyStudentToNextWeek({
+                                              variables: {
+                                                id: detail.id,
+                                              },
+                                            }).then(() => {
+                                              showSuccess(
+                                                "کپی با موفقیت انجام شد."
+                                              );
+                                              refetch();
+                                            })
+                                          );
+                                        }}
+                                        sx={{
+                                          mt: 2,
+                                          fontSize: 13,
+                                        }}
+                                      >
+                                        {"کپی"}
+                                      </Button>
                                     </Box>
                                   ) : null}
                                 </Box>
-                              ) : null}
+                              ) : (
+                                <Button
+                                  color="error"
+                                  variant="contained"
+                                  onClick={() => {
+                                    showConfirm(async () =>
+                                      deleteOneSessionTimeTable({
+                                        variables: {
+                                          id: detail.id,
+                                        },
+                                      }).then(() => {
+                                        showSuccess(
+                                          "حذف  جلسه با موفقیت انجام شد."
+                                        );
+                                        refetch();
+                                        showPreviousWeekBeforeRefresh();
+                                      })
+                                    );
+                                  }}
+                                  sx={{
+                                    mt: 2,
+                                    fontSize: 13,
+                                  }}
+                                >
+                                  {" حذف جلسه  "}
+                                </Button>
+                              )}
                             </Box>
                           </Box>
                         )
@@ -1053,6 +1143,10 @@ const ConsultantTimeTable = () => {
         </Table>
       </TableContainer>
     </Container>
+  )
+  :
+  null
+ 
   );
 };
 export default ConsultantTimeTable;

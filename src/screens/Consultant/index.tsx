@@ -86,8 +86,8 @@ const ConsultantScreen = () => {
         email: undefined,
       },
       onCompleted: (data) => {
-        setPageInfo(data.getUsers.paginatorInfo);
-        setConsultant_state(data.getUsers.data);
+        setPageInfo(data.getConsultants.paginatorInfo);
+        setConsultant_state(data.getConsultants.data);
       },
       fetchPolicy: "network-only",
     }
@@ -131,8 +131,8 @@ const ConsultantScreen = () => {
         email: search?.email ? search.email : undefined,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        setPageInfo(fetchMoreResult.getUsers.paginatorInfo);
-        setConsultant_state(fetchMoreResult.getUsers.data);
+        setPageInfo(fetchMoreResult.getConsultants.paginatorInfo);
+        setConsultant_state(fetchMoreResult.getConsultants.data);
       },
     });
   };

@@ -48,7 +48,7 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
     onCompleted: (data) => {
       // if (!skip) {
       const tmp: any = [];
-      data.getUsers.data.map((item: any) => {
+      data.getConsultants.data.map((item: any) => {
         tmp.push({
           id: +item.id,
           name: item.first_name + " " + item.last_name,
