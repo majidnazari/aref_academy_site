@@ -34,6 +34,7 @@ import {
   GetConsultantStudentsByDefinitionId,
 } from "../gql/query";
 import {
+  COPY_STUDENT_TO_NEXT_WEEK,
   CREATE_CONSULTANT_DEFINITION_DETAIL,
   DELETE_CONSULTANTN_DEFINITION_STUDENT_ID,
   DELETE_ONE_SESSION_OF_TIME_TABLE,
@@ -105,6 +106,8 @@ const consultantBox = {
   direction: "rtl",
   whiteSpace: "pre-wrap",
 };
+
+
 
 interface ErrorData {
   days?: string;
@@ -326,6 +329,8 @@ const ShowAllConsultantsTimes = () => {
         : current_date,
     };
   };
+
+  const [copyStudentToNextWeek] = useMutation(COPY_STUDENT_TO_NEXT_WEEK);
 
   const handleSearch = (searchData: SearchData): void => {
     setSearchLoading(true);
@@ -694,7 +699,10 @@ const ShowAllConsultantsTimes = () => {
                                     </Box>
 
                                     {detail?.student_id ? (
-                                      <Box>
+                                      <Box
+                                      display={"flex"}
+                                      justifyContent={"space-between"}
+                                      >
                                         <Button
                                           color="error"
                                           variant="contained"
@@ -721,6 +729,30 @@ const ShowAllConsultantsTimes = () => {
                                         >
                                           {" حذف "}
                                         </Button>
+                                        <Button
+                                        color="info"
+                                        variant="contained"
+                                        onClick={() => {
+                                          showConfirm(async () =>
+                                            copyStudentToNextWeek({
+                                              variables: {
+                                                id: detail.id,
+                                              },
+                                            }).then(() => {
+                                              showSuccess(
+                                                "کپی با موفقیت انجام شد."
+                                              );
+                                              refetch();
+                                            })
+                                          );
+                                        }}
+                                        sx={{
+                                          mt: 2,
+                                          fontSize: 13,
+                                        }}
+                                      >
+                                        {"کپی"}
+                                      </Button>
                                       </Box>
                                     ) : null}
                                   </Box>
