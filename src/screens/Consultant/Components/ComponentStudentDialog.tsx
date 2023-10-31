@@ -55,7 +55,6 @@ const ComponentStudentDialog = ({
   //setDialogOpen:Function;
 }) => {
   //console.log("component student dialog studentIdsOfOneConsultant are :", studentIdsOfOneConsultant);
-
   const params = useParams<string>();
   const timeTableId = consultantTimeTableId;
 
@@ -76,17 +75,18 @@ const ComponentStudentDialog = ({
   const customStyles = {
     width: 300,
     margin: "2px",
-  };
+  };  
 
   const { refetch: refetchStudents } = useQuery(GET_STUDENTS, {
     variables: {
-      first: 100,
+      first: 99,
       page: 1,
       full_name: "",
-      ids: studentIdsOfOneConsultant,
+      ids: (studentIdsOfOneConsultant) ? (studentIdsOfOneConsultant.length!==0 ? studentIdsOfOneConsultant : -1) :  -1,
       fetchPolicy: "network-only",
     },
-    onCompleted: (data) => {
+    onCompleted: (data) => { 
+      //console.log("ids are:" , (studentIdsOfOneConsultant) ? (studentIdsOfOneConsultant.length!==0 ? studentIdsOfOneConsultant.length : -1) :  -1);
       // if (!skip) {
       const tmp: any = [];
       data.getStudents.data.map((item: any) => {
@@ -176,7 +176,7 @@ const ComponentStudentDialog = ({
     fetchPolicy: "no-cache",
   });
 
-  return (
+  return ( 
     <div>
       <div>
         {/* <FaceIcon fontSize="small" onClick={handleClickOpen} /> */}
