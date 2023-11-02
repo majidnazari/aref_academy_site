@@ -93,6 +93,7 @@ const daysOfWeek = [
 ];
 
 const consultantBox = {
+  
   backgroundColor: "#DDDBDA",
   color: "black",
   borderRadius: "5px",
@@ -151,7 +152,10 @@ const convertStudentStatusTheme = (student_status: string) => {
       return consultantPresentStudentBox;
     case "absent":
       return consultantAbsentStudentBox;
-    case "dellay":
+    case "dellay5":
+    case "dellay10":
+    case "dellay15":
+    case "dellay15more":
       return consultantDellayStudentBox;
     default:
       return consultantNotFilledStudentBox;
@@ -159,6 +163,10 @@ const convertStudentStatusTheme = (student_status: string) => {
 };
 
 const consultantNotFilledStudentBox = {
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+
   backgroundColor: "#ebebeb",
   width: 160,
   color: "black",
@@ -193,7 +201,7 @@ const consultantPresentStudentBox = {
 };
 
 const consultantAbsentStudentBox = {
-  backgroundColor: "#efaf77",
+  backgroundColor: "#ed2a2a",
   width: 160,
   color: "black",
   borderRadius: "5px",
@@ -296,6 +304,8 @@ const ShowAllConsultantsTimes = () => {
 
   const [searchData, setSearchData] = useState<SearchAllConsultantProps>({});
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
+  const [studentStatus, setStudentStatus] = useState<string>("no_action");
+
   const [search, setSearch] = useState<SearchData>({
     consultant_id: undefined,
     target_date: current_date,
@@ -401,7 +411,25 @@ const ShowAllConsultantsTimes = () => {
         );
     }
   };
-
+ 
+  const changeStudentStatus = (
+    id: string,
+    student_id: string,
+    student_status: string
+  ) => {
+    ConsultantTimeTableStudentStatus({
+      variables: {
+        id: id,
+        student_id: student_id,
+        student_status: student_status,
+      },
+    }).then(() => {
+      showSuccess("وضعیت دانش آموز با موفقیت به تاخیر تغییر کرد.");
+      refetch();
+      setStudentStatus(student_status);
+      //showPreviousWeekBeforeRefresh();
+    });
+  };
   
 
   const consultantRedirect = (consultant_id: number | undefined) => {
@@ -656,36 +684,48 @@ const ShowAllConsultantsTimes = () => {
                                         }}
                                       >
                                         <Select
-                                          sx={{
-                                            height: 35,
-                                            backgroundColor: "white",
-                                            width: "100%",
-                                            fontSize: 13,
-                                          }}
-                                          labelId="week-label"
-                                          id="week-select"
-                                          value={detail?.student_status}
-                                          onClick={() => {
-                                            ConsultantTimeTableStudentStatus({
-                                              variables: {
-                                                id: detail.id,
-                                                student_id: detail.student_id,
-                                                student_status: "dellay",
-                                              },
-                                            }).then(() => {
-                                              showSuccess(
-                                                "وضعیت دانش آموز با موفقیت به تاخیر تغییر کرد."
-                                              );
-                                              refetch();
-                                            });
-                                          }}
-                                          input={<OutlinedInput />}
-                                        >
-                                          <MenuItem value=""></MenuItem>
-                                          <MenuItem value="dellay">
-                                            تاخیر
-                                          </MenuItem>
-                                          {/* <MenuItem value="dellay10">
+                                        sx={{
+                                          height: 35,
+                                          backgroundColor: "white",
+                                          width: "100%",
+                                          fontSize: 13,
+                                        }}
+                                        labelId="week-label"
+                                        id="week-select"
+                                        // value={detail?.student_status}
+                                        // onClick={(e) => {
+                                        //   ConsultantTimeTableStudentStatus({
+                                        //     variables: {
+                                        //       id: detail.id,
+                                        //       student_id: detail.student_id,
+                                        //       student_status: e,
+                                        //     },
+                                        //   }).then(() => {
+                                        //     showSuccess(
+                                        //       "وضعیت دانش آموز با موفقیت به تاخیر تغییر کرد."
+                                        //     );
+                                        //     refetch();
+                                        //   });
+                                        // }}
+                                        value={detail.student_status}
+                                        onChange={(e) => {
+                                          changeStudentStatus(
+                                            detail.id,
+                                            detail.student_id,
+                                            e.target.value
+                                          );
+                                          // alert(detail.id);
+                                          // alert(detail.student_id);
+                                          // setStudentStatus(e.target.value);
+                                        }}
+                                        input={<OutlinedInput />}
+                                      >
+                                        <MenuItem value=""></MenuItem>
+
+                                        <MenuItem value="dellay5">
+                                          تاخیر ۵ دقیقه{" "}
+                                        </MenuItem>
+                                        <MenuItem value="dellay10">
                                           تاخیر ۱۰ دقیقه
                                         </MenuItem>
                                         <MenuItem value="dellay15">
@@ -693,8 +733,8 @@ const ShowAllConsultantsTimes = () => {
                                         </MenuItem>
                                         <MenuItem value="dellay15more">
                                           تاخیر بیشتر از ۱۵ دقیقه
-                                        </MenuItem> */}
-                                        </Select>
+                                        </MenuItem>
+                                      </Select>
                                       </FormControl>
                                     </Box>
 

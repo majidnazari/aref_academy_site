@@ -31,6 +31,8 @@ export const UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID = gql`
     $id: ID!
     $student_id: Int!
     $student_status: String
+    $consultant_status: String
+    $session_status: String
     $absent_present_description: String
   ) {
     updateConsultantDefinitionDetail(
@@ -38,6 +40,8 @@ export const UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID = gql`
         id: $id
         student_id: $student_id
         student_status: $student_status
+        consultant_status: $consultant_status
+        session_status: $session_status
         absent_present_description: $absent_present_description
       }
     ) {
@@ -50,6 +54,9 @@ export const UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID = gql`
       start_hour
       end_hour
       session_date
+      session_status
+      consultant_status
+      student_status
     }
   }
 `;

@@ -76,6 +76,8 @@ const StudentStatusComponent = ({
     UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
   );
   const [studentStatus, setStudentStatus] = useState<string>("no_action");
+  const [consultantStatus, setConsultantStatus] = useState<string>("no_action");
+  const [sessionStatus, setSessionStatus] = useState<string>("no_action");
   const [studentDescription, setStudentDescription] = useState<string>("");
   const [startHour, setStartHour] = useState<string>("");
   const [endtHour, setEndHour] = useState<string>("");
@@ -136,6 +138,8 @@ const StudentStatusComponent = ({
         );
         setStartHour(data.getConsultantDefinitionDetail.start_hour);
         setEndHour(data.getConsultantDefinitionDetail.end_hour);
+        setConsultantStatus(data.getConsultantDefinitionDetail.consultant_status);
+        setSessionStatus(data.getConsultantDefinitionDetail.session_status);
       },
       fetchPolicy: "no-cache",
     });
@@ -202,6 +206,8 @@ const StudentStatusComponent = ({
         id: consultantTimeTableId,
         student_id: studentId,
         student_status: studentStatus,
+        consultant_status: consultantStatus,
+        session_status: sessionStatus,
         absent_present_description: studentDescription,
       },
     })
@@ -252,25 +258,84 @@ const StudentStatusComponent = ({
       </Grid>
 
       <DialogContent>
-        {/* <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+        <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
           <FormControl sx={{ width: "100%" }}>
-            <InputLabel id="session-time-label"> وضعیت دانش آموز </InputLabel>
+            <InputLabel id="session-status-label">
+              {" "}
+              وضعیت تاخیر و تعجیل جلسه
+            </InputLabel>
             <Select
-              labelId="session-time-label"
-              value={studentStatus}
+              labelId="session-status-label"
+              value={sessionStatus}
               onChange={(e) => {
-                setStudentStatus(e.target.value);
+                setSessionStatus(e.target.value);
               }}
-              input={<OutlinedInput label=" وضعیت دانش آموز " />}
+              input={<OutlinedInput label=" وضعیت تاخیر وتعجیل جلسه" />}
               fullWidth
             >
               <MenuItem value={"no_action"}> بدون تغییر</MenuItem>
-              <MenuItem value={"absent"}> غایب </MenuItem>
-              <MenuItem value={"present"}> حاضر </MenuItem>
-              <MenuItem value={"dellay"}> تاخیر </MenuItem>
+              <MenuItem value={"earlier_5min_finished"}>
+                {" "}
+                تعجیل ۵ دقیقه ای{" "}
+              </MenuItem>
+              <MenuItem value={"earlier_10min_finished"}>
+                {" "}
+                تعجیل ۱۰ دقیقه ای{" "}
+              </MenuItem>
+              <MenuItem value={"earlier_15min_finished"}>
+                {" "}
+                تعجیل ۱۵ دقیقه ای{" "}
+              </MenuItem>
+              <MenuItem value={"earlier_15min_more_finished"}>
+                {" "}
+                تعجیل بیشتر از ۱۵ دقیقه{" "}
+              </MenuItem>
+              <MenuItem value={"later_5min_started"}>
+                {" "}
+                تاخیر ۵ دقیقه ای{" "}
+              </MenuItem>
+              <MenuItem value={"later_10min_started"}>
+                {" "}
+                تاخیر ۱۰ دقیقه ای{" "}
+              </MenuItem>
+              <MenuItem value={"later_15min_started"}>
+                {" "}
+                تاخیر ۱۵ دقیقه ای{" "}
+              </MenuItem>
+              <MenuItem value={"later_15min_more_started"}>
+                {" "}
+                تاخیر بیشتر از ۱۵ دقیقه{" "}
+              </MenuItem>
             </Select>
           </FormControl>
-        </Grid> */}
+        </Grid>
+      </DialogContent>
+      <DialogContent>
+        <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+          <FormControl sx={{ width: "100%" }}>
+            <InputLabel id="consultant-status-label"> وضعیت مشاور </InputLabel>
+            <Select
+              labelId="consultant-status-label"
+              value={consultantStatus}
+              onChange={(e) => {
+                setConsultantStatus(e.target.value);
+              }}
+              input={<OutlinedInput label=" وضعیت مشاور" />}
+              fullWidth
+            >
+              <MenuItem value={"no_action"}> بدون تغییر</MenuItem>
+              <MenuItem value={"absent"}> حاضر </MenuItem>
+              <MenuItem value={"present"}> غایب </MenuItem>
+              <MenuItem value={"dellay5"}> تاخیر ۵ دقیقه ای </MenuItem>
+              <MenuItem value={"dellay10"}> تاخیر ۱۰ دقیقه ای </MenuItem>
+              <MenuItem value={"dellay15"}> تاخیر ۱۵ دقیقه ای </MenuItem>
+              <MenuItem value={"dellay15more"}>
+                {" "}
+                تاخیر بیشتر از ۱۵ دقیقه{" "}
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
       </DialogContent>
       <DialogContent>
         <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
