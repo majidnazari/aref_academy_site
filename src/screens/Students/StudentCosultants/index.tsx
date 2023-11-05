@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_A_STUDENT, GET_A_STUDENT_CONSULTANTS } from "./gql/query";
+import {
+  GET_A_STUDENT,
+  GET_A_STUDENT_CONSULTANTS,
+  GET_CONSULTANT_FINANCIAL_OF_ONE_STUDENT,
+} from "./gql/query";
 import { DELETE_STUDENT_COURSE } from "./gql/mutation";
 import {
   CircularProgress,
@@ -21,7 +25,6 @@ import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import AddStudentConsultant from "./components/AddStudentConsultant";
 import PaginatorInfo from "interfaces/paginator-info.interface";
-import StudentCoursesType from "interfaces/studentCourses.interface";
 import CourseName from "components/CourseName";
 import StatusIcon from "components/StatusIcon";
 import moment from "moment-jalaali";
@@ -31,14 +34,16 @@ import Edit from "components/EditCourseStudentStatus";
 import { showSuccess, showConfirm } from "utils/swlAlert";
 import FinancialRefusedStatus from "components/FinancialRefusedStatus";
 import { useNavigate } from "react-router-dom";
-interface EditStudentCourse {
-  openDialog: boolean;
-  studentCourse: StudentCoursesType;
-  key: number;
-  id: number;
+import ConsultantFinancialType from "screens/Consultant/dto/consultantFinancial.interface";
+import { UPDATE_CONSULTANT_FINANCIAL } from "screens/Consultant/gql/mutation";
+import EditAdminConsultantFinancialStatus from "screens/Consultant/Components/EditAdminConsultantFinancialStatus";
+import StudentStatusFinancialDialog from "screens/Consultant/Components/StudentStatusFinancialDialog";
+interface EditStudentFinancial {
+  consultantFinancialId: number | undefined;
+  openConsultantFinancialDialog: boolean;
 }
 
-const StudentCourses = () => {
+const StudentFinancial = () => {
   const navigate = useNavigate();
   const { studentId } = useParams<string>();
   const [studentConsultants, setStudentConsultants] = useState<any[]>([]);
@@ -52,23 +57,36 @@ const StudentCourses = () => {
     perPage: 10,
     total: 0,
   });
-  const [editStudentCourse, setEditStudentCourse] = useState<EditStudentCourse>(
-    {
-      openDialog: false,
-      studentCourse: {} as StudentCoursesType,
-      key: 0,
-      id: 0,
-    }
-  );
+  const [consultantFinancialId, setConsultantFinancialId] = useState<
+    number | undefined
+  >();
+  const [
+    financialStudentStatusOpenDialog,
+    setFinancialStudentStatusOpenDialog,
+  ] = useState<boolean>(false);
+
+  const [editStudentFinancial, setEditStudentFinancial] =
+    useState<EditStudentFinancial>({
+      consultantFinancialId: consultantFinancialId,
+      openConsultantFinancialDialog: true,
+    });
 
   const { data: studentData, loading } = useQuery(GET_A_STUDENT, {
     variables: {
       id: studentId,
     },
   });
+  const [editConsultantfinancial] = useMutation(UPDATE_CONSULTANT_FINANCIAL);
 
+  const handleAddStudentStatus = (studentConsultantFinancialId: number) => {
+    //alert(studentConsultantFinancialId);
+    setConsultantFinancialId(
+      studentConsultantFinancialId ? studentConsultantFinancialId : 0
+    );
+    setFinancialStudentStatusOpenDialog(true);
+  };
   const { refetch, loading: courseLoading } = useQuery(
-    GET_A_STUDENT_CONSULTANTS,
+    GET_CONSULTANT_FINANCIAL_OF_ONE_STUDENT,
     {
       variables: {
         first: 200,
@@ -89,7 +107,12 @@ const StudentCourses = () => {
       fetchPolicy: "no-cache",
     }
   );
-
+  const refreshConsultantFinancial = () => {
+    refetch();
+  };
+  const closeDialog = () => {
+    setFinancialStudentStatusOpenDialog(false);
+  };
   const [deleteCourseStudent] = useMutation(DELETE_STUDENT_COURSE);
 
   const deleteCourseStudentHandler = (id: number) => {
@@ -156,7 +179,7 @@ const StudentCourses = () => {
           <TableBody>
             {studentConsultants &&
               studentConsultants.map(
-                (element: StudentCoursesType, index: number) => (
+                (element: ConsultantFinancialType, index: number) => (
                   <StyledTableRow key={element.id}>
                     <StyledTableCell align="left">
                       {pageInfo.perPage * (pageInfo.currentPage - 1) +
@@ -164,16 +187,10 @@ const StudentCourses = () => {
                         1}
                     </StyledTableCell>
                     <StyledTableCell align="left">
-                      <CourseName course={element.course} />
+                      {/* <CourseName course={element.course} /> */}
                       <Box sx={{ fontSize: 10, pt: 1 }}>
-                        {element.description !== ""
-                          ? "توضیحات:" + element.description
-                          : null}
-
-                        {element.transferred_course ? " جابجایی:" : null}
-                        {element.transferred_course ? (
-                          <CourseName course={element.transferred_course} />
-                        ) : null}
+                        {element.consultant?.first_name}
+                        {element.consultant?.last_name}
                       </Box>
                     </StyledTableCell>
                     <StyledTableCell align="center">
@@ -182,11 +199,11 @@ const StudentCourses = () => {
                         component={"div"}
                         sx={{ fontSize: 9, fontWeight: "bold" }}
                       >
-                        {element.user_student_status
+                        {/* {element.user_student_status
                           ? element.user_student_status?.first_name +
                             " " +
                             element.user_student_status?.last_name
-                          : null}
+                          : null} */}
                       </Typography>
                     </StyledTableCell>
                     <StyledTableCell align="center">
@@ -195,11 +212,11 @@ const StudentCourses = () => {
                         component={"div"}
                         sx={{ fontSize: 9, fontWeight: "bold" }}
                       >
-                        {element?.user_manager
+                        {/* {element?.user_manager
                           ? element.user_manager?.first_name +
                             " " +
                             element.user_manager?.last_name
-                          : null}
+                          : null} */}
                       </Typography>
                     </StyledTableCell>
                     <StyledTableCell align="center">
@@ -208,11 +225,11 @@ const StudentCourses = () => {
                         component={"div"}
                         sx={{ fontSize: 9, fontWeight: "bold" }}
                       >
-                        {element.user_financial
+                        {/* {element.user_financial
                           ? element.user_financial?.first_name +
                             " " +
                             element.user_financial?.last_name
-                          : null}
+                          : null} */}
                       </Typography>
                     </StyledTableCell>
                     <StyledTableCell align="left">
@@ -229,14 +246,7 @@ const StudentCourses = () => {
                     <StyledTableCell align="left">
                       <Button
                         size="small"
-                        onClick={() => {
-                          setEditStudentCourse({
-                            openDialog: true,
-                            studentCourse: element,
-                            key: editStudentCourse.key + 1,
-                            id: element.id,
-                          });
-                        }}
+                        onClick={() => handleAddStudentStatus(element.id)}
                         variant="contained"
                         startIcon={<EditIcon />}
                         color="success"
@@ -283,13 +293,15 @@ const StudentCourses = () => {
           وارد کنید
         </Alert>
       )}
-      <Edit
-        openDialog={editStudentCourse.openDialog}
-        studentCourse={editStudentCourse.studentCourse}
-        key={editStudentCourse.key}
-        refresh={refetch}
-      />
+      {consultantFinancialId ? (
+        <StudentStatusFinancialDialog
+          consultantFinancialId={consultantFinancialId}
+          refreshData={refreshConsultantFinancial}
+          openConsultantFinancialDialog={financialStudentStatusOpenDialog}
+          closeConsultantFinancialDialog={closeDialog}
+        />
+      ) : null}
     </Container>
   );
 };
-export default StudentCourses;
+export default StudentFinancial;

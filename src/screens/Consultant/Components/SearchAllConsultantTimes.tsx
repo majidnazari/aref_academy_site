@@ -216,7 +216,7 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
               }}
               disabled = {(showNextWeekFlag)}
             >
-              هفته قبل
+               امروز
             </Button>
             <Button
               variant="contained"

@@ -196,3 +196,20 @@ export const DELETE_ONE_SESSION_OF_TIME_TABLE = gql`
     }
   }
 `;
+
+export const COPY_ONE_DAY_CONSULTANT_TIME_TABLE = gql`
+  mutation COPY_ONE_DAY_CONSULTANT_TIME_TABLE(
+    $consultant_id: Int!
+    $session_date: String!
+  ) {
+    copyOneDayOfOneConsultantTimeTable(
+      input: { consultant_id: $consultant_id, session_date: $session_date }
+    ) {
+      id
+
+      session_date
+      start_hour
+      end_hour
+    }
+  }
+`;

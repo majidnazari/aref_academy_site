@@ -41,6 +41,7 @@ import {
   CPOY_TIME_TABLE_OF_CONSULTANT,
   COPY_STUDENT_TO_NEXT_WEEK,
   DELETE_ONE_SESSION_OF_TIME_TABLE,
+  COPY_ONE_DAY_CONSULTANT_TIME_TABLE,
 } from "../gql/mutation";
 import { useParams } from "react-router-dom";
 import StudentData from "utils/student";
@@ -172,7 +173,7 @@ interface ErrorData {
 }
 
 interface getConsultantDefinitionDetailsData {
-  id:number;
+  id: number;
   date?: string;
   details?: detailsData[];
 }
@@ -243,6 +244,9 @@ const ConsultantTimeTable = () => {
   );
 
   const [copyStudentToNextWeek] = useMutation(COPY_STUDENT_TO_NEXT_WEEK);
+  const [copyOneDayConsultantTimeTable] = useMutation(
+    COPY_ONE_DAY_CONSULTANT_TIME_TABLE
+  );
 
   const [ConsultantTimeTableStudentStatus] = useMutation(
     UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
@@ -445,6 +449,7 @@ const ConsultantTimeTable = () => {
   };
   const refreshConsultantDefinition = () => {
     refetch();
+    showPreviousWeekBeforeRefresh();
   };
   const convertDayIntoShamsi = (day: string) => {
     switch (day) {
@@ -836,35 +841,37 @@ const ConsultantTimeTable = () => {
                 <TableRow key={index}>
                   <StyledTableCell align="center">
                     <>
-                    <a href="#" id="dateOfWeekString">
-                      {moment_jalali(element.date?.toString()).format(
-                        "jYYYY/jMM/jDD"
-                      )}{" "}
-                      <br />
-                      {convertDayIntoShamsi(
-                        moment_jalali(element.date).format("dddd")
-                      )}
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </a>
-
-                    <Button
+                      <a href="#" id="dateOfWeekString">
+                        {moment_jalali(element.date?.toString()).format(
+                          "jYYYY/jMM/jDD"
+                        )}{" "}
+                        <br />
+                        {convertDayIntoShamsi(
+                          moment_jalali(element.date).format("dddd")
+                        )}
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </a>
+                          {
+                          (week==="Current") && (typeof element.details !== 'undefined' && element.details.length > 0)
+                          ? 
+                          <Button
                           color="primary"
                           variant="contained"
                           onClick={() => {
                             showConfirm(async () =>
-
-                            //alert(element.date?.toString()),
-                            //alert(consultantId)
-
-                              deleteOneSessionTimeTable({
+                              //alert(element.date?.toString())
+                              //alert(consultantId)
+  
+                              copyOneDayConsultantTimeTable({
                                 variables: {
-                                  id: 1,
+                                  consultant_id: Number(consultantId),
+                                  session_date: element.date?.toString(),
                                 },
                               }).then(() => {
-                                showSuccess("حذف  جلسه با موفقیت انجام شد.");
+                                showSuccess("کپی  کل روز با موفقیت انجام شد.");
                                 refetch();
                                 showPreviousWeekBeforeRefresh();
                               })
@@ -873,10 +880,13 @@ const ConsultantTimeTable = () => {
                           sx={{
                             mt: 2,
                             fontSize: 13,
-                        }}
-                    >
-                      {" کپی کل روز "}
-                    </Button>
+                          }}
+                        >
+                          {" کپی کل روز "}
+                          </Button>
+                          : 
+                          null}
+                      
                     </>
                   </StyledTableCell>
                   <StyledTableCell align="left">
@@ -1181,7 +1191,7 @@ const ConsultantTimeTable = () => {
                               ) : (
                                 <Button
                                   color="error"
-                                  variant="contained"
+                                  variant="outlined"
                                   onClick={() => {
                                     showConfirm(async () =>
                                       deleteOneSessionTimeTable({

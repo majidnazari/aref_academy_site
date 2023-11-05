@@ -799,7 +799,7 @@ const ShowAllConsultantsTimes = () => {
                                 ) : (
                                   <Button
                                     color="error"
-                                    variant="contained"
+                                    variant="outlined"
                                     onClick={() => {
                                       showConfirm(async () =>
                                         deleteOneSessionTimeTable({
