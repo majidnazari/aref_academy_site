@@ -219,3 +219,108 @@ export const GET_COURSE_SESSION_BY_DATE_WITH_TODAY = gql`
     }
   }
 `;
+
+
+export const GET_CONSULTANT_FINANCIAL_OF_ONE_STUDENT=gql`
+query GET_CONSULTANT_FINANCIALS($first: Int!, $page: Int!, $consultant_id: Int, $student_id: Int, $manager_status: ManagerStatus, $financial_status: FinancialStatus, $student_status: StudentStatusConsultantFinancial, $financial_refused_status: FinancialRefusedStatus, $user_id_manager: Int, $user_id_financial: Int, $user_id_student_status: Int, $description: String, $orderBy: [OrderByClause!]) {
+  getConsultantFinancials(
+    first: $first
+    page: $page
+    consultant_id: $consultant_id
+    student_id: $student_id
+    manager_status: $manager_status
+    financial_status: $financial_status
+    student_status: $student_status
+    financial_refused_status: $financial_refused_status
+    user_id_manager: $user_id_manager
+    user_id_financial: $user_id_financial
+    user_id_student_status: $user_id_student_status
+    description: $description
+    orderBy: $orderBy
+  ) {
+    paginatorInfo {
+      count
+      currentPage
+      firstItem
+      hasMorePages
+      lastItem
+      lastPage
+      perPage
+      total
+      __typename
+    }
+    data {
+      id
+      year_id
+      year {
+        active
+        name
+        __typename
+      }
+      branch_id
+      branch {
+        id
+        name
+        __typename
+      }
+      student_id
+      student {
+        id
+        first_name
+        last_name
+        is_academy_student
+        phone
+        __typename
+      }
+      consultant_id
+      consultant {
+        id
+        email
+        first_name
+        last_name
+        __typename
+      }
+      user_id_creator
+      user {
+        id
+        first_name
+        last_name
+        __typename
+      }
+      user_id_manager
+      manager {
+        id
+        first_name
+        last_name
+        __typename
+      }
+      user_id_financial
+      financial {
+        id
+        first_name
+        last_name
+        __typename
+      }
+      user_id_student_status
+      consultant_definition_detail_id
+      consultantDefinitionDetails {
+        id
+        start_hour
+        end_hour
+        session_date
+        __typename
+      }
+      description
+      financial_status
+      manager_status
+      student_status
+      financial_refused_status
+      financial_status_updated_at
+      user_id_student_status
+      description
+      __typename
+    }
+    __typename
+  }
+}
+`;

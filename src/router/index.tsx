@@ -68,6 +68,7 @@ import ConsultantStudentManager from "screens/Dashboard/ConsultantStudentManager
 import StudentsConsultantManagerScreen from "screens/Students/consultant_manager/index_consultant_manager";
 import ConsultantFinancials from "screens/Consultant/Components/ConsultantFinancials";
 import SelectOneConsultantsTimes from "screens/Consultant/Components/SelectOneConsultantsTimes";
+import ConsultantManagerDashboardIndex from "screens/Dashboard/ConsultantManagerDashboardIndex";
 
 const MainRouter = () => {
   const appContext = useContext(AuthContext);
@@ -83,7 +84,8 @@ const MainRouter = () => {
 
     switch(dashboardName){
       case "consultant_manager":
-        return <ShowAllConsultantsTimes />
+        return <ConsultantManagerDashboardIndex />
+        //return <ShowAllConsultantsTimes />
        // return <ConsultantStudentManager />
       default:
         return <DashboardScreen />
@@ -94,7 +96,7 @@ const MainRouter = () => {
     <Routes>
       {isLogged ? (
         <Route element={<Main />}>
-
+         
           <Route index element={convertNameComponent(dashboardName)  } /> 
 
           {/* <Route index element={<DashboardScreen />} /> */}
@@ -136,8 +138,9 @@ const MainRouter = () => {
             <Route path="*" element={<NoMatch />} />
           </Route>
 
-          <Route path="consultant_manager">
-            <Route path="" element={<ShowAllConsultantsTimes />} />
+          <Route path="consultant-manager-dashboard">
+            <Route path="" element={<ConsultantManagerDashboardIndex />} />
+            {/* <Route path="" element={<ShowAllConsultantsTimes />} /> */}
             <Route path="edit/:userId" element={<UsersEditScreen />} />
             <Route path="create" element={<UsersCreateScreen />} />
             <Route path="*" element={<NoMatch />} />

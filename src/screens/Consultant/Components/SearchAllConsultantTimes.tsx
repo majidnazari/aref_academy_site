@@ -26,7 +26,9 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import AdapterJalali from "@date-io/date-fns-jalali";
 import { GET_BRANCH_CLASSROOMS, GET_CONSULTANT_SHOW_TIMES } from "../gql/query";
 import moment from "moment";
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import momentja from "moment-jalaali";
+
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 
 const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
   const [search, setSearch] = useState<SearchAllConsultantProps>({});
@@ -36,6 +38,15 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
   const [consultantptions, setConsultantOptions] = useState<any[]>([]);
   const [consultantName, setConsultantName] = useState<string>("");
   const [loadingConsultant, setLoadingConsultant] = useState<boolean>(false);
+  const [nextWeekDate, setNextWeekDate] = useState<string>(
+    moment().add(7, "days").format("YYYY/MM/DD")
+  );
+  const [today, setToday] = useState<string>(
+    moment().format("YYYY/MM/DD")
+  );
+ 
+  const [consulatntId, setConsulatntId] = useState<number |  undefined>();
+  const [showNextWeekFlag, setShowNextWeekFlag] = useState<boolean>(true);
 
   const { refetch: refetchConsultants } = useQuery(GET_CONSULTANTS, {
     variables: {
@@ -57,13 +68,43 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
         return item;
       });
 
+     // console.log("consulatnt are:",tmp);
       setConsultantOptions(tmp);
       //}
     },
   });
+
+  const showNextWeek = () => {    
+    setSearch({
+      ...search,
+      target_date: nextWeekDate as string,
+    });    
+    const tmp: any = { ...search };
+    for (const i in tmp) {
+      if (tmp[i] === "") tmp[i] = undefined;
+    }    
+    setShowNextWeekFlag(false);
+    callBack({ target_date: nextWeekDate ,consultant_id:consulatntId});    
+  };
+
+  const showPreviousWeek = () => {   
+    setSearch({
+      ...search,
+      target_date: today as string,
+    });    
+
+    const tmp: any = { ...search };
+    for (const i in tmp) {
+      if (tmp[i] === "") tmp[i] = undefined;
+    }   
+    setShowNextWeekFlag(true);
+    callBack({ target_date: today ,consultant_id:consulatntId});
+     
+  };
+
   const customStyles = {
-    width: 300 ,
-    margin: '0 auto',
+    width: 300,
+    margin: "0 auto",
   };
 
   return (
@@ -72,7 +113,7 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
         component={"div"}
         sx={{ fontSize: 18, fontWeight: "bold", my: 2 }}
       >
-       نمایش روزانه برنامه مشاوران
+        نمایش روزانه برنامه مشاوران
       </Typography>
       <Box sx={{ mb: 1, marginLeft: 1 }}>
         <Grid container sx={{ p: 1 }} spacing={2}>
@@ -117,6 +158,8 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
                     ...search,
                     consultant_id: newTeam?.id ? +newTeam.id : undefined,
                   });
+                  setConsulatntId(search?.consultant_id);
+                 // alert(consulatntId);
                 }}
               />
             </FormControl>
@@ -133,6 +176,9 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
                       ...search,
                       target_date: newValue as string,
                     });
+                    setNextWeekDate(
+                      moment(newValue).add(7, "days").format("YYYY/MM/DD")
+                    );
                   }
                 }}
                 renderInput={(params) => (
@@ -156,6 +202,36 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
               }}
             >
               جستجو
+            </Button>
+            <Button
+              variant="contained"
+              color="info"
+              size="large"
+              sx={{
+                m: 1,
+              }}
+              onClick={() => {
+                // alert(selectedDate);
+                showPreviousWeek();
+              }}
+              disabled = {(showNextWeekFlag)}
+            >
+               امروز
+            </Button>
+            <Button
+              variant="contained"
+              color="info"
+              size="large"
+              sx={{
+                m: 1,
+              }}
+              onClick={() => {
+               
+                showNextWeek();
+              }}
+              disabled = {(!showNextWeekFlag)}
+            >
+              هفته بعد
             </Button>
           </Grid>
         </Grid>

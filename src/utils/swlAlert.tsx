@@ -35,8 +35,11 @@ export const showConfirm = (callBack:Function): any => {
         text: "آیا اطمینان دارید؟",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
+        // confirmButtonColor: '#d33',
+        // cancelButtonColor: '#3085d6',
+
+        confirmButtonColor: 'green',
+        cancelButtonColor: 'red',
         cancelButtonText: "خیر",
         confirmButtonText: 'بله!',
     }).then((result) => {

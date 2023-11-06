@@ -206,6 +206,8 @@ export const GET_CONSULTANT_DEFINITION_DETAIL = gql`
       }
       student_id
       student_status
+      session_status
+      consultant_status
       test_description
       user_id
     }
