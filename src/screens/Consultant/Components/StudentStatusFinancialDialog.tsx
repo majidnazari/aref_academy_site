@@ -32,6 +32,7 @@ import { GET_A_CONSULTANT_FINANCIAL } from "../gql/query";
 import { showError, showSuccess } from "utils/swlAlert";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import { getUserData } from "utils/user";
 
 interface detailsData {
   id: string;
@@ -169,7 +170,7 @@ const StudentStatusFinancialDialog = ({
         manager_status: managerStatus,
         financial_refused_status: financialRefusedStatus,
         description: financialDescription,
-        year_id:yearId
+        year_id: yearId,
       },
     })
       .then(() => {
@@ -201,6 +202,10 @@ const StudentStatusFinancialDialog = ({
     fetchPolicy: "no-cache",
   });
 
+  const studentCoursePermission = ["admin", "financial", "manager"];
+  const financialPermission = ["admin", "financial"];
+  const user = getUserData();
+
   return (
     <Dialog open={openConsultantFinancialDialog} onClose={handleCancel}>
       <DialogTitle minWidth={600}> تغییر وضعیت دانش آموز </DialogTitle>
@@ -217,48 +222,6 @@ const StudentStatusFinancialDialog = ({
           </Typography>
         </FormControl> */}
       </Grid>
-
-      <DialogContent>
-        <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
-          <FormControl sx={{ width: "100%" }}>
-            <InputLabel id="manager-status-label"> تایید مدیر</InputLabel>
-            <Select
-              labelId="manager-status-label"
-              value={managerStatus}
-              onChange={(e) => {
-                setManagerStatus(e.target.value);
-              }}
-              input={<OutlinedInput label=" وضعیت تایید مدیر" />}
-              fullWidth
-            >
-              <MenuItem value={""}> </MenuItem>
-              <MenuItem value={"pending"}> عدم تایید </MenuItem>
-              <MenuItem value={"approved"}> تایید </MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-      </DialogContent>
-      <DialogContent>
-        <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
-          <FormControl sx={{ width: "100%" }}>
-            <InputLabel id="financial-status-label"> وضعیت مالی </InputLabel>
-            <Select
-              labelId="financial-status-label"
-              value={financialStatus}
-              onChange={(e) => {
-                setFinancialStatus(e.target.value);
-              }}
-              input={<OutlinedInput label=" وضعیت مالی" />}
-              fullWidth
-            >
-              <MenuItem value={""}> </MenuItem>
-              <MenuItem value={"approved"}> پرداخت </MenuItem>
-              <MenuItem value={"pending"}> بدهکار </MenuItem>
-              <MenuItem value={"semi_approved"}> عدم تسویه کامل </MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-      </DialogContent>
       <DialogContent>
         <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
           <FormControl sx={{ width: "100%" }}>
@@ -281,37 +244,87 @@ const StudentStatusFinancialDialog = ({
           </FormControl>
         </Grid>
       </DialogContent>
+
       <DialogContent>
         <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
           <FormControl sx={{ width: "100%" }}>
-            <InputLabel id="financial-refused-status-label">
-              {" "}
-              وضعیت اخراج دانش آموز{" "}
-            </InputLabel>
+            <InputLabel id="manager-status-label"> تایید مدیر</InputLabel>
             <Select
-              labelId="financial-refused-status-label"
-              value={financialRefusedStatus}
+              labelId="manager-status-label"
+              value={managerStatus}
               onChange={(e) => {
-                setFinancialRefusedStatus(e.target.value);
+                setManagerStatus(e.target.value);
               }}
-              input={<OutlinedInput label=" وضعیت اخراج دانش آموز" />}
+              input={<OutlinedInput label=" وضعیت تایید مدیر" />}
               fullWidth
             >
               <MenuItem value={""}> </MenuItem>
-              <MenuItem value={"noMoney"}> پول نداده </MenuItem>
-              <MenuItem value={"not_returned"}> پولی ما ندادیم </MenuItem>
-              <MenuItem value={"returned"}> ما تسویه کردیم </MenuItem>
+              <MenuItem value={"pending"}> عدم تایید </MenuItem>
+              <MenuItem value={"approved"}> تایید </MenuItem>
             </Select>
           </FormControl>
         </Grid>
       </DialogContent>
+      {financialPermission.includes(user.group.name) ? (
+        <>
+          <DialogContent>
+            <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+              <FormControl sx={{ width: "100%" }}>
+                <InputLabel id="financial-status-label">
+                  {" "}
+                  وضعیت مالی{" "}
+                </InputLabel>
+                <Select
+                  labelId="financial-status-label"
+                  value={financialStatus}
+                  onChange={(e) => {
+                    setFinancialStatus(e.target.value);
+                  }}
+                  input={<OutlinedInput label=" وضعیت مالی" />}
+                  fullWidth
+                >
+                  <MenuItem value={""}> </MenuItem>
+                  <MenuItem value={"approved"}> پرداخت </MenuItem>
+                  <MenuItem value={"pending"}> بدهکار </MenuItem>
+                  <MenuItem value={"semi_approved"}> عدم تسویه کامل </MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </DialogContent>
+
+          <DialogContent>
+            <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+              <FormControl sx={{ width: "100%" }}>
+                <InputLabel id="financial-refused-status-label">
+                  {" "}
+                  وضعیت اخراج دانش آموز{" "}
+                </InputLabel>
+                <Select
+                  labelId="financial-refused-status-label"
+                  value={financialRefusedStatus}
+                  onChange={(e) => {
+                    setFinancialRefusedStatus(e.target.value);
+                  }}
+                  input={<OutlinedInput label=" وضعیت اخراج دانش آموز" />}
+                  fullWidth
+                >
+                  <MenuItem value={""}> </MenuItem>
+                  <MenuItem value={"noMoney"}> پول نداده </MenuItem>
+                  <MenuItem value={"not_returned"}> پولی ما ندادیم </MenuItem>
+                  <MenuItem value={"returned"}> ما تسویه کردیم </MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </DialogContent>
+        </>
+      ) : null}
+
       <DialogContent>
         <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
           <FormControl sx={{ width: "100%" }}>
-         
             <TextField
-              fullWidth  
-              label="توضیحات"            
+              fullWidth
+              label="توضیحات"
               value={financialDescription}
               onChange={(e) => {
                 setFinancialDescription(e.target.value);

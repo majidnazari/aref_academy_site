@@ -38,6 +38,7 @@ import ConsultantFinancialType from "screens/Consultant/dto/consultantFinancial.
 import { UPDATE_CONSULTANT_FINANCIAL } from "screens/Consultant/gql/mutation";
 import EditAdminConsultantFinancialStatus from "screens/Consultant/Components/EditAdminConsultantFinancialStatus";
 import StudentStatusFinancialDialog from "screens/Consultant/Components/StudentStatusFinancialDialog";
+import { getUserData } from "utils/user";
 interface EditStudentFinancial {
   consultantFinancialId: number | undefined;
   openConsultantFinancialDialog: boolean;
@@ -146,6 +147,7 @@ const StudentFinancial = () => {
       border: 0,
     },
   }));
+  
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Typography
@@ -219,6 +221,7 @@ const StudentFinancial = () => {
                           : null} */}
                       </Typography>
                     </StyledTableCell>
+
                     <StyledTableCell align="center">
                       <StatusIcon status={element.financial_status} />
                       <Typography
@@ -226,10 +229,10 @@ const StudentFinancial = () => {
                         sx={{ fontSize: 9, fontWeight: "bold" }}
                       >
                         {/* {element.user_financial
-                          ? element.user_financial?.first_name +
-                            " " +
-                            element.user_financial?.last_name
-                          : null} */}
+                        ? element.user_financial?.first_name +
+                          " " +
+                          element.user_financial?.last_name
+                        : null} */}
                       </Typography>
                     </StyledTableCell>
                     <StyledTableCell align="left">
@@ -240,6 +243,7 @@ const StudentFinancial = () => {
                         }
                       />
                     </StyledTableCell>
+
                     <StyledTableCell align="left">
                       {moment(element.created_at).format("jYYYY/jMM/jDD")}
                     </StyledTableCell>
