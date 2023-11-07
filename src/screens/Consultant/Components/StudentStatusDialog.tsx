@@ -76,7 +76,7 @@ const StudentStatusComponent = ({
     UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
   );
   const [studentStatus, setStudentStatus] = useState<string>("no_action");
-  const [consultantStatus, setConsultantStatus] = useState<string>("no_action");
+  const [consultantStatus, setConsultantStatus] = useState<string>("present");
   const [sessionStatus, setSessionStatus] = useState<string>("no_action");
   const [studentDescription, setStudentDescription] = useState<string>("");
   const [startHour, setStartHour] = useState<string>("");
@@ -262,7 +262,7 @@ const StudentStatusComponent = ({
           <FormControl sx={{ width: "100%" }}>
             <InputLabel id="session-status-label">
               {" "}
-              وضعیت تاخیر و تعجیل جلسه
+              زود مرخص کردن دانش آموز از جلسه توسط مشاور 
             </InputLabel>
             <Select
               labelId="session-status-label"
@@ -270,27 +270,27 @@ const StudentStatusComponent = ({
               onChange={(e) => {
                 setSessionStatus(e.target.value);
               }}
-              input={<OutlinedInput label=" وضعیت تاخیر وتعجیل جلسه" />}
+              input={<OutlinedInput label=" زود مرخص کردن دانش آموز از جلسه توسط مشاور " />}
               fullWidth
             >
               <MenuItem value={"no_action"}> بدون تغییر</MenuItem>
               <MenuItem value={"earlier_5min_finished"}>
                 {" "}
-                تعجیل ۵ دقیقه ای{" "}
+                 ۵ دقیقه ای{" "}
               </MenuItem>
               <MenuItem value={"earlier_10min_finished"}>
                 {" "}
-                تعجیل ۱۰ دقیقه ای{" "}
+                 ۱۰ دقیقه ای{" "}
               </MenuItem>
               <MenuItem value={"earlier_15min_finished"}>
                 {" "}
-                تعجیل ۱۵ دقیقه ای{" "}
+                 ۱۵ دقیقه ای{" "}
               </MenuItem>
               <MenuItem value={"earlier_15min_more_finished"}>
                 {" "}
-                تعجیل بیشتر از ۱۵ دقیقه{" "}
+                 بیشتر از ۱۵ دقیقه{" "}
               </MenuItem>
-              <MenuItem value={"later_5min_started"}>
+              {/* <MenuItem value={"later_5min_started"}>
                 {" "}
                 تاخیر ۵ دقیقه ای{" "}
               </MenuItem>
@@ -305,7 +305,7 @@ const StudentStatusComponent = ({
               <MenuItem value={"later_15min_more_started"}>
                 {" "}
                 تاخیر بیشتر از ۱۵ دقیقه{" "}
-              </MenuItem>
+              </MenuItem> */}
             </Select>
           </FormControl>
         </Grid>
@@ -313,19 +313,19 @@ const StudentStatusComponent = ({
       <DialogContent>
         <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
           <FormControl sx={{ width: "100%" }}>
-            <InputLabel id="consultant-status-label"> وضعیت مشاور </InputLabel>
+            <InputLabel id="consultant-status-label"> با تاخیر شروع کردن جلسه دانش آموز توسط مشاور </InputLabel>
             <Select
               labelId="consultant-status-label"
               value={consultantStatus}
               onChange={(e) => {
                 setConsultantStatus(e.target.value);
               }}
-              input={<OutlinedInput label=" وضعیت مشاور" />}
+              input={<OutlinedInput label=" با تاخیر شروع کردن جلسه دانش آموز توسط مشاور  " />}
               fullWidth
             >
               <MenuItem value={"no_action"}> بدون تغییر</MenuItem>
-              <MenuItem value={"absent"}> حاضر </MenuItem>
-              <MenuItem value={"present"}> غایب </MenuItem>
+              {/* <MenuItem value={"present"}> حاضر </MenuItem> */}
+              <MenuItem value={"absent"}> عدم حضور مشاور </MenuItem>
               <MenuItem value={"dellay5"}> تاخیر ۵ دقیقه ای </MenuItem>
               <MenuItem value={"dellay10"}> تاخیر ۱۰ دقیقه ای </MenuItem>
               <MenuItem value={"dellay15"}> تاخیر ۱۵ دقیقه ای </MenuItem>
