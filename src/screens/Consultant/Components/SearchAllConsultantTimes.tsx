@@ -41,11 +41,9 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
   const [nextWeekDate, setNextWeekDate] = useState<string>(
     moment().add(7, "days").format("YYYY/MM/DD")
   );
-  const [today, setToday] = useState<string>(
-    moment().format("YYYY/MM/DD")
-  );
- 
-  const [consulatntId, setConsulatntId] = useState<number |  undefined>();
+  const [today, setToday] = useState<string>(moment().format("YYYY/MM/DD"));
+
+  const [consulatntId, setConsulatntId] = useState<number | undefined>();
   const [showNextWeekFlag, setShowNextWeekFlag] = useState<boolean>(true);
 
   const { refetch: refetchConsultants } = useQuery(GET_CONSULTANTS, {
@@ -68,42 +66,41 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
         return item;
       });
 
-     // console.log("consulatnt are:",tmp);
+      // console.log("consulatnt are:",tmp);
       setConsultantOptions(tmp);
       //}
     },
   });
 
-  const showNextWeek = () => {    
+  const showNextWeek = () => {
     setSearch({
       ...search,
       target_date: nextWeekDate as string,
-    });    
+    });
     const tmp: any = { ...search };
     for (const i in tmp) {
       if (tmp[i] === "") tmp[i] = undefined;
-    }    
+    }
     setShowNextWeekFlag(false);
-    callBack({ target_date: nextWeekDate ,consultant_id:consulatntId});    
+    callBack({ target_date: nextWeekDate, consultant_id: consulatntId });
   };
 
-  const showPreviousWeek = () => {   
+  const showPreviousWeek = () => {
     setSearch({
       ...search,
       target_date: today as string,
-    });    
+    });
 
     const tmp: any = { ...search };
     for (const i in tmp) {
       if (tmp[i] === "") tmp[i] = undefined;
-    }   
+    }
     setShowNextWeekFlag(true);
-    callBack({ target_date: today ,consultant_id:consulatntId});
-     
+    callBack({ target_date: today, consultant_id: consulatntId });
   };
 
   const customStyles = {
-    width: 300,
+    width: 200,
     margin: "0 auto",
   };
 
@@ -116,11 +113,12 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
         نمایش روزانه برنامه مشاوران
       </Typography>
       <Box sx={{ mb: 1, marginLeft: 1 }}>
-        <Grid container sx={{ p: 1 }} spacing={2}>
-          <Grid item xs={12} sm={6} md={3} xl={3} lg={3}>
+        <Grid container sx={{ p: 1 }} spacing={1}>
+          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
             <FormControl
               sx={{
                 mr: 1,
+                width:"100%"
               }}
             >
               <Autocomplete
@@ -131,6 +129,7 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
                     {...params}
                     label=" مشاور "
                     variant="filled"
+                    //style={{ width: "100%" }}   
                     onChange={(e) => {
                       if (e.target.value.trim().length >= 1) {
                         setSkip(false);
@@ -142,7 +141,7 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
                       endAdornment: (
                         <>
                           {loadingConsultant ? (
-                            <CircularProgress color="inherit" size={30} />
+                            <CircularProgress color="inherit" size={10} />
                           ) : null}
                           {params.InputProps.endAdornment}
                         </>
@@ -151,7 +150,8 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
                   />
                 )}
                 getOptionLabel={(option) => option.name}
-                style={customStyles}
+               // style={customStyles}
+               //style={{ width: "100%" }} 
                 value={search?.consultant_id}
                 onChange={(_event, newTeam) => {
                   setSearch({
@@ -159,17 +159,18 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
                     consultant_id: newTeam?.id ? +newTeam.id : undefined,
                   });
                   setConsulatntId(search?.consultant_id);
-                 // alert(consulatntId);
+                  // alert(consulatntId);
                 }}
               />
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3} xl={3} lg={3}>
+          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
             <LocalizationProvider dateAdapter={AdapterJalali}>
               <DatePicker
                 label="از تاریخ"
                 value={search.target_date || moment().format("YYYY/MM/DD")}
+                 
                 onChange={(newValue) => {
                   if (newValue) {
                     setSearch({
@@ -182,17 +183,20 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
                   }
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} style={{ width: "100%" }} />
+                  <TextField {...params}  
+                  style={{ width: "100%" }}
+                  />
                 )}
                 mask="____/__/__"
               />
             </LocalizationProvider>
           </Grid>
-          <Grid item xs={12} sm={6} md={3} xl={3} lg={3}>
+          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
             <Button
               variant="contained"
               color="info"
               size="large"
+              style={{ width: "100%" }} 
               onClick={() => {
                 const tmp: any = { ...search };
                 for (const i in tmp) {
@@ -203,35 +207,34 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
             >
               جستجو
             </Button>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
             <Button
               variant="contained"
               color="info"
               size="large"
-              sx={{
-                m: 1,
-              }}
+              style={{ width: "100%" }}               
               onClick={() => {
                 // alert(selectedDate);
                 showPreviousWeek();
               }}
-              disabled = {(showNextWeekFlag)}
+              disabled={showNextWeekFlag}
             >
-               امروز
+              امروز
             </Button>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
             <Button
               variant="contained"
               color="info"
-              size="large"
-              sx={{
-                m: 1,
-              }}
+              style={{ width: "100%" }}               
               onClick={() => {
-               
                 showNextWeek();
               }}
-              disabled = {(!showNextWeekFlag)}
+              disabled={!showNextWeekFlag}
+              size="large"
             >
-              هفته بعد
+               هفته آتی
             </Button>
           </Grid>
         </Grid>

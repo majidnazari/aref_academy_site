@@ -59,7 +59,8 @@ import HourglassDisabledIcon from "@mui/icons-material/HourglassDisabled";
 import CoPresentIcon from "@mui/icons-material/CoPresent";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-
+import VerticalSplitIcon from "@mui/icons-material/VerticalSplit";
+import TimeSpliterDialog from "./TimeSpliterDialog";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -93,7 +94,6 @@ const daysOfWeek = [
 ];
 
 const consultantBox = {
-  
   backgroundColor: "#DDDBDA",
   color: "black",
   borderRadius: "5px",
@@ -107,8 +107,6 @@ const consultantBox = {
   direction: "rtl",
   whiteSpace: "pre-wrap",
 };
-
-
 
 interface ErrorData {
   days?: string;
@@ -235,11 +233,24 @@ const ShowAllConsultantsTimes = () => {
     useState<string>();
   const [dialogrefreshData, setDialogRefreshData] = useState<boolean>(false);
   const [studentDialogOpen, setStudentDialogOpen] = useState<boolean>(false);
+  const [timeSpliterDialogOpen, setTimeSpliterDialogOpen] = useState<boolean>(false);
   const [studentStatusDialogOpen, setStudentStatusDialogOpen] =
     useState<boolean>(false);
 
   const current_date = moment().format("YYYY-MM-DD");
   const next_date = moment().add(7, "days").format("YYYY-MM-DD");
+  const navigate = useNavigate();
+
+  const [nextWeekFlag, setNextWeekFlag] = useState<Boolean>(true);
+ 
+  const [searchData, setSearchData] = useState<SearchAllConsultantProps>({});
+  const [searchLoading, setSearchLoading] = useState<boolean>(false);
+  const [studentStatus, setStudentStatus] = useState<string>("no_action");
+
+  const [search, setSearch] = useState<SearchData>({
+    consultant_id: undefined,
+    target_date: current_date,
+  });
 
   const { fetchMore, refetch } = useQuery(GET_CONSULTANT_SHOW_TIMES, {
     variables: {
@@ -263,59 +274,17 @@ const ShowAllConsultantsTimes = () => {
       fetchPolicy: "no-cache",
       skip: true,
     });
-    const navigate = useNavigate();
-
-
-  const [nextWeekFlag, setNextWeekFlag] = useState<Boolean>(true);
-
-  // const nextWeek = () => {
-  //   setTimeTable([]);
-  //   fetchMore({
-  //     variables: {
-  //       next_week: true,
-  //       consultant_id: Number(consultantId),
-  //     },
-  //     updateQuery: (prev, { fetchMoreResult }) => {
-  //       setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
-  //       //setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
-  //       setNextWeekFlag(false);
-  //     },
-  //   });
-  // };
-
-  // const previousWeek = () => {
-  //   setTimeTable([]);
-  //   fetchMore({
-  //     variables: {
-  //       next_week: false,
-  //       consultant_id: Number(consultantId),
-  //     },
-  //     updateQuery: (prev, { fetchMoreResult }) => {
-  //       setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
-  //       // setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
-  //       setNextWeekFlag(true);
-  //     },
-  //   });
-  // };
-
-  // const refreshStudent = () => {
-  //   refetch();
-  // };
-
-  const [searchData, setSearchData] = useState<SearchAllConsultantProps>({});
-  const [searchLoading, setSearchLoading] = useState<boolean>(false);
-  const [studentStatus, setStudentStatus] = useState<string>("no_action");
-
-  const [search, setSearch] = useState<SearchData>({
-    consultant_id: undefined,
-    target_date: current_date,
-  });
+  
 
   const closeDialog = () => {
     setStudentDialogOpen(false);
   };
   const closeStudentStatusDialog = () => {
     setStudentStatusDialogOpen(false);
+  };
+
+  const closeTimeSpliterDialog = () => {
+    setTimeSpliterDialogOpen(false);
   };
 
   const refreshConsultantDefinition = () => {
@@ -353,21 +322,25 @@ const ShowAllConsultantsTimes = () => {
   };
 
   const handleAddStudent = (defenitionId: string) => {
-   
     refetchConsultantStudentsByDefinitionId({
       id: +defenitionId,
     }).then((res) => {
       //console.log("res is " ,res);
     });
-    
+
     setDialogConsultantTimeTableId(defenitionId);
     setStudentDialogOpen(true);
   };
 
   const handleAddStudentStatus = (defenitionId: string) => {
-    
     setDialogConsultantTimeTableId(defenitionId);
     setStudentStatusDialogOpen(true);
+  };
+
+  const splitTimeHandler = (defenitionId: string) => {
+    
+    setDialogConsultantTimeTableId(defenitionId);
+    setTimeSpliterDialogOpen(true);
   };
 
   const [ConsultantTimeTableStudentStatus] = useMutation(
@@ -411,7 +384,7 @@ const ShowAllConsultantsTimes = () => {
         );
     }
   };
- 
+
   const changeStudentStatus = (
     id: string,
     student_id: string,
@@ -430,11 +403,9 @@ const ShowAllConsultantsTimes = () => {
       //showPreviousWeekBeforeRefresh();
     });
   };
-  
 
   const consultantRedirect = (consultant_id: number | undefined) => {
-  
-    navigate('/consultant/' + consultant_id + "/select-one");
+    navigate("/consultant/" + consultant_id + "/select-one");
   };
   return (
     <Paper sx={{ width: "100%", mb: 2 }}>
@@ -457,6 +428,14 @@ const ShowAllConsultantsTimes = () => {
             refreshData={refreshConsultantDefinition}
             openStudentStatusDialog={studentStatusDialogOpen}
             closeStudentStatusDialog={closeStudentStatusDialog}
+          />
+        )}
+        {timeSpliterDialogOpen && (
+          <TimeSpliterDialog            
+            definitionId={dialogconsultantTimeTableId}
+            refreshData={refreshConsultantDefinition}
+            openTimeSpliterDialog={timeSpliterDialogOpen}
+            closeTimeSplietrDialog={closeTimeSpliterDialog}
           />
         )}
 
@@ -521,7 +500,7 @@ const ShowAllConsultantsTimes = () => {
                                   borderColor: "#0288d1",
                                   fontSize: 18,
                                   fontWeight: 800,
-                                  textAlign: "center",
+                                  textAlign: "left",
                                   backgroundColor: "white",
                                   color: "#0288d1",
                                   borderRadius: "5px",
@@ -529,7 +508,7 @@ const ShowAllConsultantsTimes = () => {
                                   display: "inline-block",
                                   ustifyContent: "flex-end",
                                   alignItems: "flex-end",
-                                  p: 2,
+                                  p: 1,
                                   width: 160,
                                   m: 1,
                                   direction: "rtl",
@@ -537,6 +516,14 @@ const ShowAllConsultantsTimes = () => {
                                 }}
                               >
                                 {detail.end_hour}-{detail.start_hour}
+                                <VerticalSplitIcon
+                                  sx={{
+                                    textAlign: "right",
+                                   // border: 1,
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() => splitTimeHandler(detail.id)}
+                                />
                               </Box>
 
                               <Box
@@ -684,64 +671,64 @@ const ShowAllConsultantsTimes = () => {
                                         }}
                                       >
                                         <Select
-                                        sx={{
-                                          height: 35,
-                                          backgroundColor: "white",
-                                          width: "100%",
-                                          fontSize: 13,
-                                        }}
-                                        labelId="week-label"
-                                        id="week-select"
-                                        // value={detail?.student_status}
-                                        // onClick={(e) => {
-                                        //   ConsultantTimeTableStudentStatus({
-                                        //     variables: {
-                                        //       id: detail.id,
-                                        //       student_id: detail.student_id,
-                                        //       student_status: e,
-                                        //     },
-                                        //   }).then(() => {
-                                        //     showSuccess(
-                                        //       "وضعیت دانش آموز با موفقیت به تاخیر تغییر کرد."
-                                        //     );
-                                        //     refetch();
-                                        //   });
-                                        // }}
-                                        value={detail.student_status}
-                                        onChange={(e) => {
-                                          changeStudentStatus(
-                                            detail.id,
-                                            detail.student_id,
-                                            e.target.value
-                                          );
-                                          // alert(detail.id);
-                                          // alert(detail.student_id);
-                                          // setStudentStatus(e.target.value);
-                                        }}
-                                        input={<OutlinedInput />}
-                                      >
-                                        <MenuItem value=""></MenuItem>
+                                          sx={{
+                                            height: 35,
+                                            backgroundColor: "white",
+                                            width: "100%",
+                                            fontSize: 13,
+                                          }}
+                                          labelId="week-label"
+                                          id="week-select"
+                                          // value={detail?.student_status}
+                                          // onClick={(e) => {
+                                          //   ConsultantTimeTableStudentStatus({
+                                          //     variables: {
+                                          //       id: detail.id,
+                                          //       student_id: detail.student_id,
+                                          //       student_status: e,
+                                          //     },
+                                          //   }).then(() => {
+                                          //     showSuccess(
+                                          //       "وضعیت دانش آموز با موفقیت به تاخیر تغییر کرد."
+                                          //     );
+                                          //     refetch();
+                                          //   });
+                                          // }}
+                                          value={detail.student_status}
+                                          onChange={(e) => {
+                                            changeStudentStatus(
+                                              detail.id,
+                                              detail.student_id,
+                                              e.target.value
+                                            );
+                                            // alert(detail.id);
+                                            // alert(detail.student_id);
+                                            // setStudentStatus(e.target.value);
+                                          }}
+                                          input={<OutlinedInput />}
+                                        >
+                                          <MenuItem value=""></MenuItem>
 
-                                        <MenuItem value="dellay5">
-                                          تاخیر ۵ دقیقه{" "}
-                                        </MenuItem>
-                                        <MenuItem value="dellay10">
-                                          تاخیر ۱۰ دقیقه
-                                        </MenuItem>
-                                        <MenuItem value="dellay15">
-                                          تاخیر ۱۵ دقیقه
-                                        </MenuItem>
-                                        <MenuItem value="dellay15more">
-                                          تاخیر بیشتر از ۱۵ دقیقه
-                                        </MenuItem>
-                                      </Select>
+                                          <MenuItem value="dellay5">
+                                            تاخیر ۵ دقیقه{" "}
+                                          </MenuItem>
+                                          <MenuItem value="dellay10">
+                                            تاخیر ۱۰ دقیقه
+                                          </MenuItem>
+                                          <MenuItem value="dellay15">
+                                            تاخیر ۱۵ دقیقه
+                                          </MenuItem>
+                                          <MenuItem value="dellay15more">
+                                            تاخیر بیشتر از ۱۵ دقیقه
+                                          </MenuItem>
+                                        </Select>
                                       </FormControl>
                                     </Box>
 
                                     {detail?.student_id ? (
                                       <Box
-                                      display={"flex"}
-                                      justifyContent={"space-between"}
+                                        display={"flex"}
+                                        justifyContent={"space-between"}
                                       >
                                         <Button
                                           color="error"
@@ -770,29 +757,29 @@ const ShowAllConsultantsTimes = () => {
                                           {" حذف "}
                                         </Button>
                                         <Button
-                                        color="info"
-                                        variant="contained"
-                                        onClick={() => {
-                                          showConfirm(async () =>
-                                            copyStudentToNextWeek({
-                                              variables: {
-                                                id: detail.id,
-                                              },
-                                            }).then(() => {
-                                              showSuccess(
-                                                "کپی با موفقیت انجام شد."
-                                              );
-                                              refetch();
-                                            })
-                                          );
-                                        }}
-                                        sx={{
-                                          mt: 2,
-                                          fontSize: 13,
-                                        }}
-                                      >
-                                        {"کپی"}
-                                      </Button>
+                                          color="info"
+                                          variant="contained"
+                                          onClick={() => {
+                                            showConfirm(async () =>
+                                              copyStudentToNextWeek({
+                                                variables: {
+                                                  id: detail.id,
+                                                },
+                                              }).then(() => {
+                                                showSuccess(
+                                                  "کپی با موفقیت انجام شد."
+                                                );
+                                                refetch();
+                                              })
+                                            );
+                                          }}
+                                          sx={{
+                                            mt: 2,
+                                            fontSize: 13,
+                                          }}
+                                        >
+                                          {"کپی"}
+                                        </Button>
                                       </Box>
                                     ) : null}
                                   </Box>
@@ -839,8 +826,7 @@ const ShowAllConsultantsTimes = () => {
               justifyContent: "space-between",
               m: 1,
             }}
-          >            
-          </Box>
+          ></Box>
         </TableContainer>
       </Container>
     </Paper>
