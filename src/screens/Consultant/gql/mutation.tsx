@@ -213,3 +213,18 @@ export const COPY_ONE_DAY_CONSULTANT_TIME_TABLE = gql`
     }
   }
 `;
+export const Divide_Consultant_Definition_Detail_Time = gql`
+  mutation DivideConsultantDefinitionDetailTime(
+    $definition_id: Int!
+    $division_time: Int!
+  ) {
+    DivideConsultantDefinitionDetailTime(
+      input: { definition_id: $definition_id, division_time: $division_time }
+    ) {
+      id
+      session_date
+      start_hour
+      end_hour
+    }
+  }
+`;
