@@ -1,5 +1,4 @@
 import { getUserData } from "utils/user";
-import { useTranslation } from 'react-i18next';
 import  translates  from '../../src/locales/fa.json';
 
 const translate = (alertText: string): string => {
