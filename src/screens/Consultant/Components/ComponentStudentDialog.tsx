@@ -79,7 +79,7 @@ const ComponentStudentDialog = ({
 
   const { refetch: refetchStudents } = useQuery(GET_STUDENTS, {
     variables: {
-      first: 99,
+      first: 500,
       page: 1,
       full_name: "",
       ids: (studentIdsOfOneConsultant) ? (studentIdsOfOneConsultant.length!==0 ? studentIdsOfOneConsultant : -1) :  -1,
