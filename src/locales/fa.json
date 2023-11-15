@@ -1,0 +1,97 @@
+{
+    "LESSON-CREATE-RECORD_IS_EXIST":"ایجاد درس:رکورد مورد نظر وجود دارد.",
+    "LESSON-UPDATE-RECORD_IS_EXIST":"بروز رسانی درس:رکورد مورد نظر یافت نشد.",
+    "LESSON-UPDATE-RECORD_NOT_FOUND":"بروز رسانی درس: مورد مورد نظر یافت نشد.",
+    "LESSON-DELETE-RECORD_NOT_FOUND":"حذف درس: رکورد مورد نظر یافت نشد.",
+    "LESSON-DELETE-RECORD_IS_USED" :"به دلیل استفاده از این درس نمیتوانید آنرا حذف کنید",
+
+    "YEAR-CREATE-RECORD_IS_EXIST":"ایجاد سال تحصیلی:رکورد مورد نظر تکراری است.",
+    "YEAR-UPDATE-RECORD_IS_EXIST":"سال تحصیلی تعریف شده از قبل وجود دارد.",
+    "YEAR-UPDATE-RECORD_NOT_FOUND":"بروز رسانی سال تحصیلی: رکورد مورد نظر یافت نشد.",     
+   
+    "ABSENCEPRESENCE-CREATE-RECORD_IS_EXIST":"درج حضور غیاب:رکورد مورد نظر تکراری است.", 
+    "COURSESTUDENTTOTALREPORT_EVENT_LISTENER_HAS_ERROR_CREATE" : "درج حضور غیاب:گزارش دوره های دانش آموز باخطا مواجه شد.",
+    "ABSENCEPRESENCE-UPDATE-RECORD_IS_EXIST":"رکورد مورد نظر وجود دارد",
+    "ABSENCEPRESENCE-UPDATE-RECORD_NOT_FOUND" :"حضور غیاب- رکورد مورد نظر برای به روز رسانی پیدا نشد.",
+    "ABSENCEPRESENCE-DELETE-RECORD_NOT_FOUND":"حذف حضور غیاب:رکورد مورد نظر پیدا نشد.",
+    "COURSESTUDENTTOTALREPORT-UPDATE-RECORD_NOT_FOUND_NEWVALUE":"گزارش دوره های دانش آموز: مقدار جدید در بروز رسانی پیدا نشد.",
+    "ABSENCEPRESENCE-UPDATE-RECORD_NOT_FOUND_WITH_STUDENT_AND_COURSESESSION":" بروز رسانی حضور غیاب: رکورد مورد نظر دانش آموز با دوره دانش آموز پیدا نشد.",
+    "COURSESTUDENTTOTALREPORT-UPDATE-RECORD_NOT_FOUND_OLDVALUE":"بروز رسانی حضور غیاب: بروز رسانی مقادیر رکوردهای قدیمی با خطا روبرو شد.",
+
+    "AZMOON-CREATE-RECORD_IS_EXIST":"رکورد مورد نظر وجود دارد",
+    "AZMOON-UPDATE-RECORD_IS_EXIST":"رکورد مورد نظر وجود دارد",
+    "AZMOON-UPDATE-RECORD_NOT_FOUND":"رکورد مورد نظر یافت نشد.",
+    "AZMOON-DELETE-RECORD_NOT_FOUND" : "رکورد مورد نظر یافت نشد.",
+
+    "AZMOONRESULT-CREATE-RECORD_IS_EXIST" : " رکورد مورد نظر وجود دارد. ",
+    "AZMOONRESULT-UPDATE-RECORD_IS_EXIST" : " رکورد مورد نظر وجود دارد. ",
+    "AZMOONRESULT-UPDATE-RECORD_NOT_FOUND" : " رکورد مورد نظر یافت نشد.",
+    "AZMOONRESULT-DELETE-RECORD_NOT_FOUND" : " رکورد مورد نظر یافت نشد.",
+
+    "BRANCH-CREATE-RECORD_IS_EXIST" : "ایجاد شعبه : رکورد مورد نظر تکراری است.",
+    "BRANCH-UPDATE-RECORD_IS_EXIST" : " رکورد مورد نظر وجود دارد. ",
+    "BRANCH-UPDATE-RECORD_NOT_FOUND" : "بروز رسانی شعبه: رکورد مورد نظر یافت نشد.",
+    "BRANCH-DELETE-RECORD_NOT_FOUND" : "حذف شعبه : شعبه مورد نظر پیدا نشد.",
+
+    "BRANCHCLASSROOM-CREATE-RECORD_IS_EXIST": "درج کلاس های شعبه: رکورد مورد نظر تکراری است.",
+    "BRANCHCLASSROOM-UPDATE-RECORD_IS_EXIST": " رکورد مورد نظر وجود دارد. ",
+    "BRANCHCLASSROOM-UPDATE-RECORD_NOT_FOUND" : "بروز رسانی مراکز شعبه:رکورد مورد نظر یافت نشد.",
+    "BRANCHCLASSROOM-DELETE-RECORD_NOT_FOUND" : "حذف کلا سهای شعبه:رکورد مورد نظر یافت نشد. ",
+
+    "COURSE-CREATE-RECORD_IS_EXIST": "ایجاد دوره:رکورد مورد نظر تکراری است.",
+    "COURSE-UPDATE-RECORD_IS_EXIST": " رکورد مورد نظر وجود دارد. ",
+    "COURSE-UPDATE-RECORD_NOT_FOUND" : "بروزرسانی دوره:رکورد مورد نظر یافت نشد.",
+    "COURSE-DELETE-RECORD_NOT_FOUND" : "حذف دوره: رکورد مورد نظر یافت نشد.",
+
+
+    "USER-DELETE-RECORD_NOT_FOUND" : "حذف دانش آموز: رکورد مورد نظر یافت نشد.",
+    "USER-DELETE-CANNOT_SUICIDE":"حذف کاربر: نمیتوانید خود را حذف کنید.",
+    "USER-CREATE-RECORD_IS_EXIST" : "کاربر از قبل وجود دارد.", 
+    "USER-AUTHORIZATION-FORBIDDEN" : "تغییر رمز:خطای دسترسی.",
+    "USER-UPDATE-PASSWORD-OTHER_NOT_FOUND" : "بازیابی رمز:رکورد مورد نظر یافت نشد.",
+    "USER-UPDATE-PASSWORD-OTHER_ROLE_NOT_FOUND" : "دسترسی برای کاربر مربوطه غیر مجاز است.",
+    "USER-UPDATE-PASSWORD-OTHERSـAUTHORIZATIONـFORBIDDEN" : "بازیابی رمز:خطای احراز هویت.",
+    "USER-UPDATE-PASSWORD-OTHER-ROLE_IS_NULL":"بازیابی رمز:گروه کاربری تعریف نشده است.",
+    "USER-UPDATE-RECORD_IS_NOT_FOUND":"بروز رسانی کاربر:رکورد مورد نظر یافت نشد.",
+
+    "COURSESESSION-CREATE-RECORD_IS_EXIST": "ایجاد جلسات: رکورد مورد نظر تکراری است.",
+    "COURSESESSION-UPDATE-RECORD_NOT_FOUND" : "بروز رسانی جلسات:رکورد مورد نظر یافت نشد.",
+    "COURSESESSION-DELETE-RECORD_NOT_FOUND" : "حذف جلسات:رکورد مورد نظر یافت نشد.",
+    "COURSESESSION-DELETE-IT_IS_USED_BEFORE":"حذف جلسات:قبلا ثبت شده است.",
+
+    "COURSESTUDENT-CREATE-RECORD_IS_EXIST": " رکورد مورد نظر وجود دارد. ",
+    "COURSESTUDENT-UPDATE-RECORD_NOT_FOUND" : "بروز رسانی جلسات دانش آموز:رکورد مورد نظر یافت نشد.",
+    "COURSESTUDENT-DELETE-RECORD_NOT_FOUND" : "حذف جلسات دانش آموز:رکورد مورد نظر یافت نشد.",
+    "COURSESTUDENTNOTREGISTERED-CREATE-RECORD_HAS_ERROR":"ایجادجلسات دانش آموز: خطا در هنگام ثبت.",
+    "COURSESTUDENT-UPDATE-ACTION_FORBIDEN":"بروز رسانی جلسات دانش آموز:خطای دسترسی.",
+
+    "FAULT-CREATE-RECORD_IS_EXIST": "ایجاد خطا: رکورد مورد نظر تکراری است.",
+    "FAULT-UPDATE-RECORD_NOT_FOUND" : "بروز رسانی خطا:رکورد مورد نظر یافت نشد.",
+    "FAULT-UPDATE-RECORD_IS_EXIST":"بروز رسانی خطا:رکورد مورد نظر وجود دارد.",
+    "FAULT-DELETE-RECORD_NOT_FOUND" : "حذف خطا: رکورد مورد نظر یافت نشد.",
+
+    "COUNSULTANT-DEFINITION-DETAIL-COPY_DATE_IS_NOT_IN_THIS_WEEK":"کپی برنامه روزانه: روز مورد در نظر در هفته جاری نیست.",
+    "COUNSULTANT-DEFINITION-DETAIL-COPY_THIS_DAY_NOT_FOUND":"کپی برنامه روزانه : روز مورد نظر یافت نشد.",
+    "COUNSULTANT-DEFINITION-DETAIL-CREATE_STUDENT_NOT_FOUND":"کپی دانش آموز:دانش آموز مورد نظر یافت نشد.",
+    "COUNSULTANT-DEFINITION-DETAIL-CREATE_NEXT_TIME_NOT_FOUND":"کپی دانش آموز: زمانبندی هفته بعد برای این دانش آموز وجود ندارد.",
+    "COUNSULTANT-DEFINITION-DETAIL-CREATE_NEXT_TIME_HAS_STUDENT":"کپی دانش آموز:تایم هفته آینده پر است.",
+    "CONSULTANTDEFINITIONDETAIL-CREATE_STEP_IS_INVALID":"ایجاد زمانبندی روزانه: گام برنامه اشتباه تعریف شده است.",
+    "COUNSULTANT-DEFINITION-DETAIL-DELETE_NOT_FOUND":"حذف برنامه زمانبندی: رکورد مورد نظر یافت نشد.",
+    "COUNSULTANT-DEFINITION-DETAIL-THIS_TIME_HAS_STUDENT":"حذف برنامه زمانبندی: این تایم دانش آموز ست شده است.",
+    "CONSULTANTDEFINITIONDETAIL-UPDATE-RECORD_NOT_FOUND":"حذف زمانبندی دانش آموز:بروز رسانی رکورد مورد نظر به علت وجود نداشتن رکورد با خطا مواجه شد.",
+    "CONSULTANTDEFINITIONDETAIL-UPDATE-STUDENT_STATUS_FILLED":"حذف زمانبندی دانش آموز: به علت وجود داشتن وضعیت دانش آموز امکان حذف وجود ندارد.",
+    "CONSULTANTDEFINITIONDETAIL-DIVISION_CANNOT_BE_UNDER_ZERO":"تقسیم زمانبندی مشاور: گام مربوطه نمیتواند منفی باشد و بابت این کار یک امتیاز منفی برای شما ثبت شد!!.",
+    "CONSULTANTDEFINITIONDETAIL-DIVISION_IS_NOT_POSSIBLE":"تقسیم زمانبندی مشاور: به علت تداخل زمانبندی امکان تقسیم جلسه وجود ندارد.",
+    "CONSULTANTDEFINITIONDETAIL-UPDATE_RECORD_NOT_FOUND":"بروز رسانی زمانبندی جلسات: رکورد مورد نظر یافت نشد.",
+
+    "CONSULTANTFINANCIAL-CREATE-RECORD_IS_EXIST":"ایجاد مالی مشاوران:رکورد مورد نظر تکراری است.",
+    "CONSULTANTFINANCIAL-DELETE-RECORD_NOT_FOUND":"حذف مالی مشاوران:رکورد مورد نظر یافت نشد.",
+    "CONSULTANTFINANCIAL-UPDATE-RECORD_NOT_FOUND":"بروزرسانی مالی مشاور: رکورد مورد نظر یافت نشد.",
+
+    "STUDENT-WARNING-RECORD_IS_EXIST":"ایجاد اطلاع دانش آموز:رکورد مورد نظر یافت نشد.",
+    "STUDENTWARNING-DELETE-RECORD_NOT_FOUND":"حذف اطلاع دانش آموز:رکورد مورد نظر یافت نشد.",
+    "STUDENTWARNINGHISTORY-UPDATE-RECORD_NOT_FOUND":"بروز رسانی سابقه دانش آموز:رکورد مورد نظر یافت نشد.",   
+
+    "COUNSULTANT-DEFINITION-DETAIL-GET_INVALID_ID":"نمایش جلسات مشاور:شماره رکورد مورد نظر اشتباه است."
+
+}

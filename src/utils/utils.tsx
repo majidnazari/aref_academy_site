@@ -1,8 +1,19 @@
 import { getUserData } from "utils/user";
+import { useTranslation } from 'react-i18next';
+import  translates  from '../../src/locales/fa.json';
+
+const translate = (alertText: string): string => {
+  alertText = alertText.trim();
+  return (alertText = (translates as Record<string, string>)[alertText]
+    ? (translates as Record<string, string>)[alertText]
+    : alertText);
+}
 
 export const generateErrorTextMessage = (body: any): string => {
+
   if (typeof body === "string") {
-    return body;
+    
+    return (translate(body));
   } else if (typeof body === "object") {
     let tmp = "";
     for (const key in body) {
