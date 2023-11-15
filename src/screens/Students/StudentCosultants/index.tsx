@@ -6,7 +6,7 @@ import {
   GET_A_STUDENT_CONSULTANTS,
   GET_CONSULTANT_FINANCIAL_OF_ONE_STUDENT,
 } from "./gql/query";
-import { DELETE_STUDENT_COURSE } from "./gql/mutation";
+import { DELETE_CONSULTANT_FINANCIAL } from "./gql/mutation";
 import {
   CircularProgress,
   Container,
@@ -114,11 +114,12 @@ const StudentFinancial = () => {
   const closeDialog = () => {
     setFinancialStudentStatusOpenDialog(false);
   };
-  const [deleteCourseStudent] = useMutation(DELETE_STUDENT_COURSE);
+  const [deleteConsultantFinancial] = useMutation(DELETE_CONSULTANT_FINANCIAL);
 
-  const deleteCourseStudentHandler = (id: number) => {
+  const deleteConsultantFinancialHandler = (id: number) => {
+    
     showConfirm(() => {
-      deleteCourseStudent({
+      deleteConsultantFinancial({
         variables: {
           id,
         },
@@ -264,7 +265,7 @@ const StudentFinancial = () => {
                       element.financial_status === "pending" ? (
                         <Button
                           size="small"
-                          onClick={() => deleteCourseStudentHandler(element.id)}
+                          onClick={() => deleteConsultantFinancialHandler(element.id)}
                           variant="contained"
                           startIcon={<DeleteIcon />}
                           color="error"
