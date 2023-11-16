@@ -103,14 +103,15 @@ const BranchesScreen = () => {
             variables: {
                 first: process.env.REACT_APP_USERS_PER_PAGE ? parseInt(process.env.REACT_APP_USERS_PER_PAGE) : 10,
                 page: value,
+                branch_id: branchId,
                 orderBy: [{
                     column: 'id',
                     order: 'DESC'
                 }]
             },
             updateQuery: (prev, { fetchMoreResult }) => {
-                setPageInfo(fetchMoreResult.getBranches.paginatorInfo);
-                setBranches(fetchMoreResult.getBranches.data);
+                setPageInfo(fetchMoreResult.getBranchClassRooms.paginatorInfo);
+                setBranches(fetchMoreResult.getBranchClassRooms.data);
             }
         });
     };

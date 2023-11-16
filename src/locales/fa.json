@@ -7,7 +7,8 @@
 
     "YEAR-CREATE-RECORD_IS_EXIST":"ایجاد سال تحصیلی:رکورد مورد نظر تکراری است.",
     "YEAR-UPDATE-RECORD_IS_EXIST":"سال تحصیلی تعریف شده از قبل وجود دارد.",
-    "YEAR-UPDATE-RECORD_NOT_FOUND":"بروز رسانی سال تحصیلی: رکورد مورد نظر یافت نشد.",     
+    "YEAR-UPDATE-RECORD_NOT_FOUND":"بروز رسانی سال تحصیلی: رکورد مورد نظر یافت نشد.",
+     
    
     "ABSENCEPRESENCE-CREATE-RECORD_IS_EXIST":"درج حضور غیاب:رکورد مورد نظر تکراری است.", 
     "COURSESTUDENTTOTALREPORT_EVENT_LISTENER_HAS_ERROR_CREATE" : "درج حضور غیاب:گزارش دوره های دانش آموز باخطا مواجه شد.",
@@ -54,10 +55,13 @@
     "USER-UPDATE-PASSWORD-OTHER-ROLE_IS_NULL":"بازیابی رمز:گروه کاربری تعریف نشده است.",
     "USER-UPDATE-RECORD_IS_NOT_FOUND":"بروز رسانی کاربر:رکورد مورد نظر یافت نشد.",
 
+
+
     "COURSESESSION-CREATE-RECORD_IS_EXIST": "ایجاد جلسات: رکورد مورد نظر تکراری است.",
     "COURSESESSION-UPDATE-RECORD_NOT_FOUND" : "بروز رسانی جلسات:رکورد مورد نظر یافت نشد.",
     "COURSESESSION-DELETE-RECORD_NOT_FOUND" : "حذف جلسات:رکورد مورد نظر یافت نشد.",
     "COURSESESSION-DELETE-IT_IS_USED_BEFORE":"حذف جلسات:قبلا ثبت شده است.",
+
 
     "COURSESTUDENT-CREATE-RECORD_IS_EXIST": " رکورد مورد نظر وجود دارد. ",
     "COURSESTUDENT-UPDATE-RECORD_NOT_FOUND" : "بروز رسانی جلسات دانش آموز:رکورد مورد نظر یافت نشد.",
@@ -84,14 +88,18 @@
     "CONSULTANTDEFINITIONDETAIL-DIVISION_IS_NOT_POSSIBLE":"تقسیم زمانبندی مشاور: به علت تداخل زمانبندی امکان تقسیم جلسه وجود ندارد.",
     "CONSULTANTDEFINITIONDETAIL-UPDATE_RECORD_NOT_FOUND":"بروز رسانی زمانبندی جلسات: رکورد مورد نظر یافت نشد.",
 
+
     "CONSULTANTFINANCIAL-CREATE-RECORD_IS_EXIST":"ایجاد مالی مشاوران:رکورد مورد نظر تکراری است.",
     "CONSULTANTFINANCIAL-DELETE-RECORD_NOT_FOUND":"حذف مالی مشاوران:رکورد مورد نظر یافت نشد.",
     "CONSULTANTFINANCIAL-UPDATE-RECORD_NOT_FOUND":"بروزرسانی مالی مشاور: رکورد مورد نظر یافت نشد.",
+
 
     "STUDENT-WARNING-RECORD_IS_EXIST":"ایجاد اطلاع دانش آموز:رکورد مورد نظر یافت نشد.",
     "STUDENTWARNING-DELETE-RECORD_NOT_FOUND":"حذف اطلاع دانش آموز:رکورد مورد نظر یافت نشد.",
     "STUDENTWARNINGHISTORY-UPDATE-RECORD_NOT_FOUND":"بروز رسانی سابقه دانش آموز:رکورد مورد نظر یافت نشد.",   
 
-    "COUNSULTANT-DEFINITION-DETAIL-GET_INVALID_ID":"نمایش جلسات مشاور:شماره رکورد مورد نظر اشتباه است."
+    "COUNSULTANT-DEFINITION-DETAIL-GET_INVALID_ID":"نمایش جلسات مشاور:شماره رکورد مورد نظر اشتباه است.",
+    "CONSULTANTDEFINITIONDETAIL-UPDATE_DAY_HAS_PASSED":"ویرایش جلسات در روزهای گذشته امکان پذیر نیست.",
+    "BRANCHCLASSROOM-DELETE-RECORD_USED_IN_CONSULTANT_DEFINITION_DETAIL":"حذف کلاس فیزیکی مراکز: این کلاس در تعاریف جلسات زمانبندی مشاور استفاده شده است."
 
 }
