@@ -54,6 +54,7 @@ export const GET_A_BRANCHE_CLASS_ROOM = gql`
         name
         description
         branch {
+          id
           name
         }
       }
