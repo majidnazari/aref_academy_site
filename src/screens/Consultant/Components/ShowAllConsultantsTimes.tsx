@@ -61,6 +61,7 @@ import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import VerticalSplitIcon from "@mui/icons-material/VerticalSplit";
 import TimeSpliterDialog from "./TimeSpliterDialog";
+import ShowPhone from "screens/Students/components/ShowPhone";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -607,7 +608,7 @@ const ShowAllConsultantsTimes = () => {
                                         pl: 1,
                                       }}
                                     >
-                                      {detail?.student?.phone}
+                                        <ShowPhone phone={detail?.student?.phone} /> 
                                     </Box>
                                     <Box
                                       display={"flex"}

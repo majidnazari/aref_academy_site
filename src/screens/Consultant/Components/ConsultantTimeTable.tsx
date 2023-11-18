@@ -55,6 +55,7 @@ import StudentStatusComponent from "./StudentStatusDialog";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ComponentDeleteStudentDialog from "./ComponentDeleteStudentDialog";
+import ShowPhone from "screens/Students/components/ShowPhone";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -1009,7 +1010,7 @@ const ConsultantTimeTable = () => {
                                       pl: 1,
                                     }}
                                   >
-                                    {detail?.student?.phone}
+                                     <ShowPhone phone={detail?.student?.phone} />
                                   </Box>
                                   <Box
                                     display={"flex"}
