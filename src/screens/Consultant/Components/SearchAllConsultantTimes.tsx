@@ -30,7 +30,13 @@ import momentja from "moment-jalaali";
 
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 
-const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
+const SearchAllConsultantTimes = ({
+  callBack,
+  disabled,
+}: {
+  callBack: Function;
+  disabled: boolean;
+}) => {
   const [search, setSearch] = useState<SearchAllConsultantProps>({});
 
   const [skip, setSkip] = useState<Boolean>(true);
@@ -118,7 +124,7 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
             <FormControl
               sx={{
                 mr: 1,
-                width:"100%"
+                width: "100%",
               }}
             >
               <Autocomplete
@@ -129,7 +135,7 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
                     {...params}
                     label=" مشاور "
                     variant="filled"
-                    //style={{ width: "100%" }}   
+                    //style={{ width: "100%" }}
                     onChange={(e) => {
                       if (e.target.value.trim().length >= 1) {
                         setSkip(false);
@@ -150,8 +156,8 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
                   />
                 )}
                 getOptionLabel={(option) => option.name}
-               // style={customStyles}
-               //style={{ width: "100%" }} 
+                // style={customStyles}
+                //style={{ width: "100%" }}
                 value={search?.consultant_id}
                 onChange={(_event, newTeam) => {
                   setSearch({
@@ -170,7 +176,6 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
               <DatePicker
                 label="از تاریخ"
                 value={search.target_date || moment().format("YYYY/MM/DD")}
-                 
                 onChange={(newValue) => {
                   if (newValue) {
                     setSearch({
@@ -183,9 +188,7 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
                   }
                 }}
                 renderInput={(params) => (
-                  <TextField {...params}  
-                  style={{ width: "100%" }}
-                  />
+                  <TextField {...params} style={{ width: "100%" }} />
                 )}
                 mask="____/__/__"
               />
@@ -196,7 +199,7 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
               variant="contained"
               color="info"
               size="large"
-              style={{ width: "100%" }} 
+              style={{ width: "100%" }}
               onClick={() => {
                 const tmp: any = { ...search };
                 for (const i in tmp) {
@@ -204,6 +207,7 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
                 }
                 callBack(tmp);
               }}
+              disabled={disabled}
             >
               جستجو
             </Button>
@@ -213,12 +217,12 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
               variant="contained"
               color="info"
               size="large"
-              style={{ width: "100%" }}               
+              style={{ width: "100%" }}
               onClick={() => {
                 // alert(selectedDate);
                 showPreviousWeek();
               }}
-              disabled={showNextWeekFlag}
+              disabled={showNextWeekFlag || disabled}
             >
               امروز
             </Button>
@@ -227,14 +231,14 @@ const SearchAllConsultantTimes = ({ callBack }: { callBack: Function }) => {
             <Button
               variant="contained"
               color="info"
-              style={{ width: "100%" }}               
+              style={{ width: "100%" }}
               onClick={() => {
                 showNextWeek();
               }}
-              disabled={!showNextWeekFlag}
+              disabled={!showNextWeekFlag || disabled}
               size="large"
             >
-               هفته آتی
+              هفته آتی
             </Button>
           </Grid>
         </Grid>

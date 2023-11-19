@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 const replaceAt = function (input: string, index: number, replacement: string) {
+  if (!input) return "";
   const out =
     input.substring(0, index) +
     replacement +

@@ -234,7 +234,8 @@ const ShowAllConsultantsTimes = () => {
     useState<string>();
   const [dialogrefreshData, setDialogRefreshData] = useState<boolean>(false);
   const [studentDialogOpen, setStudentDialogOpen] = useState<boolean>(false);
-  const [timeSpliterDialogOpen, setTimeSpliterDialogOpen] = useState<boolean>(false);
+  const [timeSpliterDialogOpen, setTimeSpliterDialogOpen] =
+    useState<boolean>(false);
   const [studentStatusDialogOpen, setStudentStatusDialogOpen] =
     useState<boolean>(false);
 
@@ -243,7 +244,7 @@ const ShowAllConsultantsTimes = () => {
   const navigate = useNavigate();
 
   const [nextWeekFlag, setNextWeekFlag] = useState<Boolean>(true);
- 
+
   const [searchData, setSearchData] = useState<SearchAllConsultantProps>({});
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
   const [studentStatus, setStudentStatus] = useState<string>("no_action");
@@ -275,7 +276,6 @@ const ShowAllConsultantsTimes = () => {
       fetchPolicy: "no-cache",
       skip: true,
     });
-  
 
   const closeDialog = () => {
     setStudentDialogOpen(false);
@@ -339,7 +339,6 @@ const ShowAllConsultantsTimes = () => {
   };
 
   const splitTimeHandler = (defenitionId: string) => {
-    
     setDialogConsultantTimeTableId(defenitionId);
     setTimeSpliterDialogOpen(true);
   };
@@ -410,7 +409,7 @@ const ShowAllConsultantsTimes = () => {
   };
   return (
     <Paper sx={{ width: "100%", mb: 2 }}>
-      <SearchAllConsultantTimes callBack={handleSearch} />
+      <SearchAllConsultantTimes callBack={handleSearch} disabled={searchLoading} />
 
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         {studentDialogOpen && (
@@ -432,403 +431,410 @@ const ShowAllConsultantsTimes = () => {
           />
         )}
         {timeSpliterDialogOpen && (
-          <TimeSpliterDialog            
+          <TimeSpliterDialog
             definitionId={dialogconsultantTimeTableId}
             refreshData={refreshConsultantDefinition}
             openTimeSpliterDialog={timeSpliterDialogOpen}
             closeTimeSplietrDialog={closeTimeSpliterDialog}
           />
         )}
-
-        <TableContainer component={Paper}>
-          <Table aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell
-                  align="center"
-                  width="50"
-                  sx={{
-                    fontSize: 25,
-                    fontWeight: 800,
-                    textAlign: "center",
-                  }}
-                >
-                  {" "}
-                  مشاوران{" "}
-                </StyledTableCell>
-                <StyledTableCell
-                  align="center"
-                  sx={{
-                    fontSize: 25,
-                    fontWeight: 800,
-                    textAlign: "center",
-                  }}
-                >
-                  {" "}
-                  برنامه روزانه مشاور
-                </StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {timeTable.map(
-                (element: getConsultantsTimeShowData, index: number) => (
-                  <TableRow key={index}>
-                    <StyledTableCell align="center">
-                      <a
-                        href="#"
-                        id="dateOfWeekString"
-                        onClick={() =>
-                          consultantRedirect(element.consultant?.id)
-                        }
-                      >
-                        <span> </span>
-                        {element.consultant?.first_name}
-                        {"    "}
-                        {element.consultant?.last_name} {"    "}
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </a>
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                      <Box sx={{ display: "flex", flexDirection: "row" }}>
-                        {element.details?.map(
-                          (detail: detailsData, index_details: number) => (
-                            <Box key={index_details}>
-                              <Box
-                                sx={{
-                                  border: 1,
-                                  borderColor: "#0288d1",
-                                  fontSize: 18,
-                                  fontWeight: 800,
-                                  textAlign: "left",
-                                  backgroundColor: "white",
-                                  color: "#0288d1",
-                                  borderRadius: "5px",
-                                  boxShadow: 3,
-                                  display: "inline-block",
-                                  ustifyContent: "flex-end",
-                                  alignItems: "flex-end",
-                                  p: 1,
-                                  width: 160,
-                                  m: 1,
-                                  direction: "rtl",
-                                  whiteSpace: "pre-wrap",
-                                }}
-                              >
-                                {detail.end_hour}-{detail.start_hour}
-                                <VerticalSplitIcon
-                                  sx={{
-                                    textAlign: "right",
-                                   // border: 1,
-                                    cursor: "pointer",
-                                  }}
-                                  onClick={() => splitTimeHandler(detail.id)}
-                                />
-                              </Box>
-
-                              <Box
-                                sx={convertStudentStatusTheme(
-                                  detail?.student_status
-                                )}
-                                key={index_details}
-                              >
+        {searchLoading ? (
+          <Box><CircularProgress /></Box>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell
+                    align="center"
+                    width="50"
+                    sx={{
+                      fontSize: 25,
+                      fontWeight: 800,
+                      textAlign: "center",
+                    }}
+                  >
+                    {" "}
+                    مشاوران{" "}
+                  </StyledTableCell>
+                  <StyledTableCell
+                    align="center"
+                    sx={{
+                      fontSize: 25,
+                      fontWeight: 800,
+                      textAlign: "center",
+                    }}
+                  >
+                    {" "}
+                    برنامه روزانه مشاور
+                  </StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {timeTable.map(
+                  (element: getConsultantsTimeShowData, index: number) => (
+                    <TableRow key={index}>
+                      <StyledTableCell align="center">
+                        <a
+                          href="#"
+                          id="dateOfWeekString"
+                          onClick={() =>
+                            consultantRedirect(element.consultant?.id)
+                          }
+                        >
+                          <span> </span>
+                          {element.consultant?.first_name}
+                          {"    "}
+                          {element.consultant?.last_name} {"    "}
+                          <span></span>
+                          <span></span>
+                          <span></span>
+                        </a>
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        <Box sx={{ display: "flex", flexDirection: "row" }}>
+                          {element.details?.map(
+                            (detail: detailsData, index_details: number) => (
+                              <Box key={index_details}>
                                 <Box
-                                  display="flex"
-                                  justifyContent="space-between"
-                                  alignItems="center"
+                                  sx={{
+                                    border: 1,
+                                    borderColor: "#0288d1",
+                                    fontSize: 18,
+                                    fontWeight: 800,
+                                    textAlign: "left",
+                                    backgroundColor: "white",
+                                    color: "#0288d1",
+                                    borderRadius: "5px",
+                                    boxShadow: 3,
+                                    display: "inline-block",
+                                    ustifyContent: "flex-end",
+                                    alignItems: "flex-end",
+                                    p: 1,
+                                    width: 160,
+                                    m: 1,
+                                    direction: "rtl",
+                                    whiteSpace: "pre-wrap",
+                                  }}
                                 >
-                                  <Button
-                                    startIcon={
-                                      <PersonAddAlt1Icon
-                                        sx={{ textAlign: "right" }}
-                                      />
-                                    }
+                                  {detail.end_hour}-{detail.start_hour}
+                                  <VerticalSplitIcon
                                     sx={{
-                                      color: "black",
-                                      fontSize: 13,
-                                      fontWeight: 800,
                                       textAlign: "right",
+                                      // border: 1,
+                                      cursor: "pointer",
                                     }}
-                                    onClick={() => handleAddStudent(detail.id)}
-                                  >
-                                    {" "}
-                                    {detail?.branchClassRoom_name}
-                                  </Button>
-                                  {/* <StudentStatusComponent
-                                  consultantTimeTableId={detail.id}                                  
-                                  refreshData={refreshStudent}
-                                /> */}
+                                    onClick={() => splitTimeHandler(detail.id)}
+                                  />
+                                </Box>
 
-                                  {detail?.student_id ? (
+                                <Box
+                                  sx={convertStudentStatusTheme(
+                                    detail?.student_status
+                                  )}
+                                  key={index_details}
+                                >
+                                  <Box
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                  >
                                     <Button
                                       startIcon={
-                                        <ManageAccountsIcon
-                                          sx={{ textAlign: "left" }}
+                                        <PersonAddAlt1Icon
+                                          sx={{ textAlign: "right" }}
                                         />
                                       }
                                       sx={{
                                         color: "black",
                                         fontSize: 13,
                                         fontWeight: 800,
-                                        textAlign: "left",
+                                        textAlign: "right",
                                       }}
                                       onClick={() =>
-                                        handleAddStudentStatus(detail.id)
+                                        handleAddStudent(detail.id)
                                       }
                                     >
                                       {" "}
+                                      {detail?.branchClassRoom_name}
                                     </Button>
-                                  ) : null}
-                                </Box>
+                                    {/* <StudentStatusComponent
+                                  consultantTimeTableId={detail.id}                                  
+                                  refreshData={refreshStudent}
+                                /> */}
 
-                                {detail?.student_id ? (
-                                  <Box>
-                                    {/* <Box>
+                                    {detail?.student_id ? (
+                                      <Button
+                                        startIcon={
+                                          <ManageAccountsIcon
+                                            sx={{ textAlign: "left" }}
+                                          />
+                                        }
+                                        sx={{
+                                          color: "black",
+                                          fontSize: 13,
+                                          fontWeight: 800,
+                                          textAlign: "left",
+                                        }}
+                                        onClick={() =>
+                                          handleAddStudentStatus(detail.id)
+                                        }
+                                      >
+                                        {" "}
+                                      </Button>
+                                    ) : null}
+                                  </Box>
+
+                                  {detail?.student_id ? (
+                                    <Box>
+                                      {/* <Box>
                                     کلاس : {detail.branchClassRoom_name}
                                   </Box> */}
-                                    <Box
-                                      sx={{
-                                        fontWeight: 800,
-                                        pl: 1,
-                                      }}
-                                    >
-                                      {detail?.student?.first_name}{" "}
-                                      {detail?.student?.last_name}
-                                    </Box>
-                                    {/* <Box>
+                                      <Box
+                                        sx={{
+                                          fontWeight: 800,
+                                          pl: 1,
+                                        }}
+                                      >
+                                        {detail?.student?.first_name}{" "}
+                                        {detail?.student?.last_name}
+                                      </Box>
+                                      {/* <Box>
                                     ثبت نامی :{" "}
                                     {detail?.student?.is_academy_student === 1
                                       ? " آکادمی"
                                       : "جذب"}{" "}
                                   </Box> */}
-                                    <Box
-                                      sx={{
-                                        fontWeight: 800,
-                                        pl: 1,
-                                      }}
-                                    >
-                                        <ShowPhone phone={detail?.student?.phone} /> 
-                                    </Box>
-                                    <Box
-                                      display={"flex"}
-                                      justifyContent={"space-between"}
-                                      mt={1}
-                                    >
-                                      <Button
-                                        color="success"
-                                        variant="contained"
+                                      <Box
                                         sx={{
-                                          fontSize: 13,
-                                        }}
-                                        onClick={() => {
-                                          ConsultantTimeTableStudentStatus({
-                                            variables: {
-                                              id: detail.id,
-                                              student_id: detail.student_id,
-                                              student_status: "present",
-                                            },
-                                          }).then(() => {
-                                            showSuccess(
-                                              "وضعیت دانش آموز با موفقیت به حاضر تغییر کرد."
-                                            );
-                                            refetch();
-                                          });
+                                          fontWeight: 800,
+                                          pl: 1,
                                         }}
                                       >
-                                        {"حاضر "}
-                                      </Button>
-                                      <Button
-                                        color="warning"
-                                        variant="contained"
-                                        sx={{
-                                          fontSize: 13,
-                                        }}
-                                        onClick={() => {
-                                          ConsultantTimeTableStudentStatus({
-                                            variables: {
-                                              id: detail.id,
-                                              student_id: detail.student_id,
-                                              student_status: "absent",
-                                            },
-                                          }).then(() => {
-                                            showSuccess(
-                                              "وضعیت دانش آموز با موفقیت به غایب تغییر کرد."
-                                            );
-                                            refetch();
-                                          });
-                                        }}
-                                      >
-                                        {"غایب "}
-                                      </Button>
-                                    </Box>
-                                    <Box>
-                                      <FormControl
-                                        sx={{
-                                          mt: 2,
-
-                                          backgroundColor: "white",
-                                          width: "100%",
-                                        }}
-                                      >
-                                        <Select
-                                          sx={{
-                                            height: 35,
-                                            backgroundColor: "white",
-                                            width: "100%",
-                                            fontSize: 13,
-                                          }}
-                                          labelId="week-label"
-                                          id="week-select"
-                                          // value={detail?.student_status}
-                                          // onClick={(e) => {
-                                          //   ConsultantTimeTableStudentStatus({
-                                          //     variables: {
-                                          //       id: detail.id,
-                                          //       student_id: detail.student_id,
-                                          //       student_status: e,
-                                          //     },
-                                          //   }).then(() => {
-                                          //     showSuccess(
-                                          //       "وضعیت دانش آموز با موفقیت به تاخیر تغییر کرد."
-                                          //     );
-                                          //     refetch();
-                                          //   });
-                                          // }}
-                                          value={detail.student_status}
-                                          onChange={(e) => {
-                                            changeStudentStatus(
-                                              detail.id,
-                                              detail.student_id,
-                                              e.target.value
-                                            );
-                                            // alert(detail.id);
-                                            // alert(detail.student_id);
-                                            // setStudentStatus(e.target.value);
-                                          }}
-                                          input={<OutlinedInput />}
-                                        >
-                                          <MenuItem value=""></MenuItem>
-
-                                          <MenuItem value="dellay5">
-                                            تاخیر ۵ دقیقه{" "}
-                                          </MenuItem>
-                                          <MenuItem value="dellay10">
-                                            تاخیر ۱۰ دقیقه
-                                          </MenuItem>
-                                          <MenuItem value="dellay15">
-                                            تاخیر ۱۵ دقیقه
-                                          </MenuItem>
-                                          <MenuItem value="dellay15more">
-                                            تاخیر بیشتر از ۱۵ دقیقه
-                                          </MenuItem>
-                                        </Select>
-                                      </FormControl>
-                                    </Box>
-
-                                    {detail?.student_id ? (
+                                        <ShowPhone
+                                          phone={detail?.student?.phone}
+                                        />
+                                      </Box>
                                       <Box
                                         display={"flex"}
                                         justifyContent={"space-between"}
+                                        mt={1}
                                       >
                                         <Button
-                                          color="error"
+                                          color="success"
                                           variant="contained"
+                                          sx={{
+                                            fontSize: 13,
+                                          }}
                                           onClick={() => {
-                                            showConfirm(async () =>
-                                              deleteConsultantTimeTableStudentId(
-                                                {
+                                            ConsultantTimeTableStudentStatus({
+                                              variables: {
+                                                id: detail.id,
+                                                student_id: detail.student_id,
+                                                student_status: "present",
+                                              },
+                                            }).then(() => {
+                                              showSuccess(
+                                                "وضعیت دانش آموز با موفقیت به حاضر تغییر کرد."
+                                              );
+                                              refetch();
+                                            });
+                                          }}
+                                        >
+                                          {"حاضر "}
+                                        </Button>
+                                        <Button
+                                          color="warning"
+                                          variant="contained"
+                                          sx={{
+                                            fontSize: 13,
+                                          }}
+                                          onClick={() => {
+                                            ConsultantTimeTableStudentStatus({
+                                              variables: {
+                                                id: detail.id,
+                                                student_id: detail.student_id,
+                                                student_status: "absent",
+                                              },
+                                            }).then(() => {
+                                              showSuccess(
+                                                "وضعیت دانش آموز با موفقیت به غایب تغییر کرد."
+                                              );
+                                              refetch();
+                                            });
+                                          }}
+                                        >
+                                          {"غایب "}
+                                        </Button>
+                                      </Box>
+                                      <Box>
+                                        <FormControl
+                                          sx={{
+                                            mt: 2,
+
+                                            backgroundColor: "white",
+                                            width: "100%",
+                                          }}
+                                        >
+                                          <Select
+                                            sx={{
+                                              height: 35,
+                                              backgroundColor: "white",
+                                              width: "100%",
+                                              fontSize: 13,
+                                            }}
+                                            labelId="week-label"
+                                            id="week-select"
+                                            // value={detail?.student_status}
+                                            // onClick={(e) => {
+                                            //   ConsultantTimeTableStudentStatus({
+                                            //     variables: {
+                                            //       id: detail.id,
+                                            //       student_id: detail.student_id,
+                                            //       student_status: e,
+                                            //     },
+                                            //   }).then(() => {
+                                            //     showSuccess(
+                                            //       "وضعیت دانش آموز با موفقیت به تاخیر تغییر کرد."
+                                            //     );
+                                            //     refetch();
+                                            //   });
+                                            // }}
+                                            value={detail.student_status}
+                                            onChange={(e) => {
+                                              changeStudentStatus(
+                                                detail.id,
+                                                detail.student_id,
+                                                e.target.value
+                                              );
+                                              // alert(detail.id);
+                                              // alert(detail.student_id);
+                                              // setStudentStatus(e.target.value);
+                                            }}
+                                            input={<OutlinedInput />}
+                                          >
+                                            <MenuItem value=""></MenuItem>
+
+                                            <MenuItem value="dellay5">
+                                              تاخیر ۵ دقیقه{" "}
+                                            </MenuItem>
+                                            <MenuItem value="dellay10">
+                                              تاخیر ۱۰ دقیقه
+                                            </MenuItem>
+                                            <MenuItem value="dellay15">
+                                              تاخیر ۱۵ دقیقه
+                                            </MenuItem>
+                                            <MenuItem value="dellay15more">
+                                              تاخیر بیشتر از ۱۵ دقیقه
+                                            </MenuItem>
+                                          </Select>
+                                        </FormControl>
+                                      </Box>
+
+                                      {detail?.student_id ? (
+                                        <Box
+                                          display={"flex"}
+                                          justifyContent={"space-between"}
+                                        >
+                                          <Button
+                                            color="error"
+                                            variant="contained"
+                                            onClick={() => {
+                                              showConfirm(async () =>
+                                                deleteConsultantTimeTableStudentId(
+                                                  {
+                                                    variables: {
+                                                      id: detail.id,
+                                                    },
+                                                  }
+                                                ).then(() => {
+                                                  showSuccess(
+                                                    "حذف با موفقیت انجام شد."
+                                                  );
+                                                  refetch();
+                                                })
+                                              );
+                                            }}
+                                            sx={{
+                                              mt: 2,
+                                              fontSize: 13,
+                                            }}
+                                          >
+                                            {" حذف "}
+                                          </Button>
+                                          <Button
+                                            color="info"
+                                            variant="contained"
+                                            onClick={() => {
+                                              showConfirm(async () =>
+                                                copyStudentToNextWeek({
                                                   variables: {
                                                     id: detail.id,
                                                   },
-                                                }
-                                              ).then(() => {
-                                                showSuccess(
-                                                  "حذف با موفقیت انجام شد."
-                                                );
-                                                refetch();
-                                              })
+                                                }).then(() => {
+                                                  showSuccess(
+                                                    "کپی با موفقیت انجام شد."
+                                                  );
+                                                  refetch();
+                                                })
+                                              );
+                                            }}
+                                            sx={{
+                                              mt: 2,
+                                              fontSize: 13,
+                                            }}
+                                          >
+                                            {"کپی"}
+                                          </Button>
+                                        </Box>
+                                      ) : null}
+                                    </Box>
+                                  ) : (
+                                    <Button
+                                      color="error"
+                                      variant="outlined"
+                                      onClick={() => {
+                                        showConfirm(async () =>
+                                          deleteOneSessionTimeTable({
+                                            variables: {
+                                              id: detail.id,
+                                            },
+                                          }).then(() => {
+                                            showSuccess(
+                                              "حذف  جلسه با موفقیت انجام شد."
                                             );
-                                          }}
-                                          sx={{
-                                            mt: 2,
-                                            fontSize: 13,
-                                          }}
-                                        >
-                                          {" حذف "}
-                                        </Button>
-                                        <Button
-                                          color="info"
-                                          variant="contained"
-                                          onClick={() => {
-                                            showConfirm(async () =>
-                                              copyStudentToNextWeek({
-                                                variables: {
-                                                  id: detail.id,
-                                                },
-                                              }).then(() => {
-                                                showSuccess(
-                                                  "کپی با موفقیت انجام شد."
-                                                );
-                                                refetch();
-                                              })
-                                            );
-                                          }}
-                                          sx={{
-                                            mt: 2,
-                                            fontSize: 13,
-                                          }}
-                                        >
-                                          {"کپی"}
-                                        </Button>
-                                      </Box>
-                                    ) : null}
-                                  </Box>
-                                ) : (
-                                  <Button
-                                    color="error"
-                                    variant="outlined"
-                                    onClick={() => {
-                                      showConfirm(async () =>
-                                        deleteOneSessionTimeTable({
-                                          variables: {
-                                            id: detail.id,
-                                          },
-                                        }).then(() => {
-                                          showSuccess(
-                                            "حذف  جلسه با موفقیت انجام شد."
-                                          );
-                                          refetch();
-                                        })
-                                      );
-                                    }}
-                                    sx={{
-                                      mt: 2,
-                                      fontSize: 13,
-                                    }}
-                                  >
-                                    {" حذف جلسه  "}
-                                  </Button>
-                                )}
+                                            refetch();
+                                          })
+                                        );
+                                      }}
+                                      sx={{
+                                        mt: 2,
+                                        fontSize: 13,
+                                      }}
+                                    >
+                                      {" حذف جلسه  "}
+                                    </Button>
+                                  )}
+                                </Box>
                               </Box>
-                            </Box>
-                          )
-                        )}
-                      </Box>
-                    </StyledTableCell>
-                  </TableRow>
-                )
-              )}
-            </TableBody>
-          </Table>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              m: 1,
-            }}
-          ></Box>
-        </TableContainer>
+                            )
+                          )}
+                        </Box>
+                      </StyledTableCell>
+                    </TableRow>
+                  )
+                )}
+              </TableBody>
+            </Table>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                m: 1,
+              }}
+            ></Box>
+          </TableContainer>
+        )}
       </Container>
     </Paper>
   );
