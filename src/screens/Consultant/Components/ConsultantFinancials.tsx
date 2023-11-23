@@ -448,6 +448,7 @@ const ConsultantFinancials = () => {
                     />
                   </StyledTableCell>
                   <StyledTableCell align="left">
+                    
                     {moment(element.created_at).format("jYYYY/jMM/jDD")}
                   </StyledTableCell>
                   <StyledTableCell align="left">

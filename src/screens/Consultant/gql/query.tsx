@@ -526,6 +526,7 @@ export const GET_CONSULTANT_FINANCIALS = gql`
         financial_status_updated_at
         user_id_student_status
         description
+        created_at
       }
     }
   }
