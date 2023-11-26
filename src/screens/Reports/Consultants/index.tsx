@@ -19,63 +19,18 @@ import { useQuery } from "@apollo/client";
 import PaginatorInfo from "interfaces/paginator-info.interface";
 import { NavLink } from "react-router-dom";
 import Typography from "@mui/material/Typography";
-import {
-  GET_COURSES,
-  GET_COURSES_STUDENTS,
-  GET_COURSES_TOTAL_REPORT,
-} from "./gql/query";
+import { GET_CONSULTANTS, GET_CONSULTANT_REPORT } from "./gql/query";
 import CourseName, { getCourseName } from "components/CourseName";
-import { Autocomplete, CircularProgress, TextField } from "@mui/material";
+import { Autocomplete, CircularProgress, Grid, TextField } from "@mui/material";
 import moment from "moment-jalaali";
 import StatusIcon from "components/StatusIcon";
-import { TotalReportDto } from "./dto/TotalReport.dto";
-import TotalReportSummary from "./components/TotalReportSummary";
+import { TotalReportDtos } from "./dto/TotalReport.dto";
+import ConsultantTotalReportSummary from "./components/ConsultantTotalReportSummary";
 import FinancialRefusedStatus from "components/FinancialRefusedStatus";
-
-interface ReportData {
-  student: {
-    id: number;
-    first_name: string;
-    last_name: string;
-    phone: string;
-  };
-  student_status: string;
-  user_creator: {
-    first_name: string;
-    last_name: string;
-  };
-  manager_status: string;
-  user_manager: {
-    first_name: string;
-    last_name: string;
-  };
-  financial_status: string;
-  user_financial: {
-    first_name: string;
-    last_name: string;
-  };
-  user_student_status: {
-    first_name: string;
-    last_name: string;
-  } | null;
-  created_at: string;
-  description: string;
-  transferred_course: {
-    name: string;
-    lesson: string;
-    type: string;
-    teacher: {
-      first_name: string;
-      last_name: string;
-    };
-    education_level: string;
-  };
-  financial_refused_status: string | null;
-}
-
-interface SearchData {
-  course_id: number;
-}
+import { SearchData } from "./dto/Search.dto";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import AdapterJalali from "@date-io/date-fns-jalali";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -96,7 +51,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
 }));
-const CoursesScreen = () => {
+const ConsultantReport = () => {
   const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
     count: 0,
     currentPage: 1,
@@ -107,20 +62,44 @@ const CoursesScreen = () => {
     perPage: 10,
     total: 0,
   });
-  const [courseOptions, setCourseOptions] = useState<any[]>([
+  const [consultantOptions, setConsultantOptions] = useState<any[]>([
     { label: "", id: "" },
   ]);
 
   const [refetchLoading, setRefetchLoading] = useState<boolean>(false);
   const [search, setSearch] = useState<SearchData>({
-    course_id: 0,
+    consultant_id: undefined,
+    session_date_from: undefined, //  moment().subtract(30,'days').format("YYYY-MM-DD"),
+    session_date_to: undefined, //  moment().format("YYYY-MM-DD"),
   });
-  const [report, setReport] = useState<ReportData[]>([]);
-  const [totalReport, setTotalReport] = useState<TotalReportDto[]>([]);
+  const [report, setReport] = useState<TotalReportDtos[]>([]);
+  const [totalReport, setTotalReport] = useState<TotalReportDtos[]>([]);
 
-  const { data: coursesData } = useQuery(GET_COURSES, {
+  const {
+    fetchMore,
+    refetch,
+    data: consultantData,
+  } = useQuery(GET_CONSULTANT_REPORT, {
     variables: {
-      first: 1000,
+      // first: 1000,
+      // page: 1,
+      // orderBy: [
+      //   {
+      //     column: "id",
+      //     order: "DESC",
+      //   },
+      // ],
+      fetchPolicy: "no-cache",
+    },
+    onCompleted(data) {
+      //console.log(data);
+      setTotalReport(data.getConsultantDefinitionDetailsGenerealReport);
+    },
+  });
+
+  const consultants = useQuery(GET_CONSULTANTS, {
+    variables: {
+      first: 100,
       page: 1,
       orderBy: [
         {
@@ -130,90 +109,66 @@ const CoursesScreen = () => {
       ],
       fetchPolicy: "no-cache",
     },
-  });
-
-  const { refetch: refetchTotalReport } = useQuery(GET_COURSES_TOTAL_REPORT, {
-    variables: {
-      course_id: -2,
+    onCompleted(data) {
+     // console.log("consultant are: ", data);
+      if (data?.getConsultants?.data) {
+        const tmp = [{ label: "", id: 0 }];
+        setConsultantOptions(tmp);
+        for (const i in data.getConsultants.data) {
+          const consultant = data.getConsultants.data[i];
+          tmp.push({
+            id: +consultant.id,
+            label: consultant.first_name + " " + consultant.last_name,
+          });
+        }
+      }
     },
-    fetchPolicy: "no-cache",
   });
 
-  const { fetchMore, refetch } = useQuery(GET_COURSES_STUDENTS, {
-    variables: {
-      first: process.env.REACT_APP_USERS_PER_PAGE
-        ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
-        : 10,
-      page: 1,
-      course_id: 0,
-      orderBy: [
-        {
-          column: "id",
-          order: "DESC",
-        },
-      ],
-    },
-    fetchPolicy: "no-cache",
-  });
-
-  const handleSearch = (): void => {
+  const handleSearch = (): void => {    
     setRefetchLoading(true);
-    let refetchData: SearchData = { ...search };
+    let refetchData: SearchData = { ...search };   
     refetch(refetchData as any)
       .then((res) => {
-        setReport(res.data.getCourseStudents.data);
-        setPageInfo(res.data.getCourseStudents.paginatorInfo);
+        setTotalReport(res.data.getConsultantDefinitionDetailsGenerealReport);
+        // setReport(res.data.getCourseStudents.data);
+        // setPageInfo(res.data.getCourseStudents.paginatorInfo);
         setRefetchLoading(false);
       })
       .catch((err) => {
         setRefetchLoading(false);
       });
 
-    refetchTotalReport(refetchData).then((res) => {
-     
-      setTotalReport(res.data.getCourseTotalReport);
-    });
+    // refetchTotalReport(refetchData).then((res) => {
+    //   setTotalReport(res.data.getConsultantDefinitionDetailsGenerealReport);
+    // });
   };
 
-  const handleChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ): void => {
-    fetchMore({
-      variables: {
-        first: process.env.REACT_APP_USERS_PER_PAGE
-          ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
-          : 10,
-        page: value,
-        orderBy: [
-          {
-            column: "id",
-            order: "DESC",
-          },
-        ],
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        setReport(fetchMoreResult.getCourseStudents.data);
-        setPageInfo(fetchMoreResult.getCourseStudents.paginatorInfo);
-      },
-    });
-  };
+  // const handleChange = (
+  //   event: React.ChangeEvent<unknown>,
+  //   value: number
+  // ): void => {
+  //   fetchMore({
+  //     variables: {
+  //       first: process.env.REACT_APP_USERS_PER_PAGE
+  //         ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
+  //         : 10,
+  //       page: value,
+  //       orderBy: [
+  //         {
+  //           column: "id",
+  //           order: "DESC",
+  //         },
+  //       ],
+  //     },
+  //     updateQuery: (prev, { fetchMoreResult }) => {
+  //       setReport(fetchMoreResult.getCourseStudents.data);
+  //       setPageInfo(fetchMoreResult.getCourseStudents.paginatorInfo);
+  //     },
+  //   });
+  // };
 
-  useEffect(() => {
-    if (coursesData?.getCourses?.data) {
-      const tmp = [{ label: "", id: 0 }];
-      setCourseOptions(tmp);
-      for (const i in coursesData.getCourses.data) {
-        const course = coursesData.getCourses.data[i];
-        tmp.push({
-          id: +course.id,
-          label: getCourseName(course),
-        });
-      }
-    }
-  }, [coursesData]);
-
-  if (!courseOptions) {
+  if (!consultantOptions) {
     return (
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Skeleton width="100%" height={100} />
@@ -228,7 +183,7 @@ const CoursesScreen = () => {
         component={"div"}
         sx={{ fontSize: 18, fontWeight: "bold", my: 2 }}
       >
-        گزارش کلاس‌ها
+        گزارش مشاوران
       </Typography>
       <Box
         sx={{
@@ -238,43 +193,96 @@ const CoursesScreen = () => {
         }}
         component={Paper}
       >
-        {courseOptions.length ? (
-          <Autocomplete
-            onChange={(event: any, newValue: any) => {
-              setSearch({ ...search, course_id: newValue?.id });
-            }}
-            disablePortal
-            id="combo-box-demo"
-            options={courseOptions}
-            sx={{ width: 500 }}
-            renderInput={(params) => (
-              <TextField {...params} label="انتخاب کلاس" />
-            )}
-          />
-        ) : null}
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSearch}
-          sx={{ mx: 2 }}
-          startIcon={<SearchIcon />}
-          disabled={refetchLoading}
-        >
-          جستجو
-          {refetchLoading && (
-            <CircularProgress
-              size={15}
-              style={{ marginRight: 10, color: "#fff" }}
-            />
-          )}
-        </Button>
-      </Box>     
+        {consultantOptions.length ? 
+        (<>
+              <Grid item xs={12} sm={6} md={3} xl={3}>
+                <Autocomplete
+                  onChange={(event: any, newValue: any) => {
+                    setSearch({ ...search, consultant_id: newValue?.id });
+                  }}
+                  disablePortal
+                  id="combo-box-demo"
+                  options={consultantOptions}
+                  sx={{ width: 500 }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="انتخاب مشاور" />
+                  )}
+                />
+              </Grid>
+            
 
-      {totalReport.length ? (
-        <TotalReportSummary totalReport={totalReport} />
-      ) : null}
+            <Grid item xs={12} sm={6} md={3} xl={3}>
+              <LocalizationProvider dateAdapter={AdapterJalali}>
+                <DatePicker
+                  label="از تاریخ"
+                  value={search.session_date_from || null }
+                  onChange={(newValue) => {                
+                    if (newValue) {
+                      setSearch({
+                        ...search,
+                        session_date_from: newValue as string,
+                      });
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} style={{ width: "100%" }} />
+                  )}
+                  mask="____/__/__"
+                />
+              </LocalizationProvider>
+            </Grid>
 
-      <TableContainer component={Paper}>
+            <Grid item xs={12} sm={6} md={3} xl={3}>
+              <LocalizationProvider dateAdapter={AdapterJalali}>
+                <DatePicker
+                  label="تا تاریخ"
+                  value={search.session_date_to || null}
+                  onChange={(newValue) => { 
+                               
+                    if (newValue) {
+                      setSearch({
+                        ...search,
+                        session_date_to: newValue as string,
+                      });
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} style={{ width: "100%" }} />
+                  )}
+                  mask="____/__/__"
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSearch}
+              sx={{ mx: 2 }}
+              startIcon={<SearchIcon />}
+              disabled={refetchLoading}
+            >
+              جستجو
+              {refetchLoading && (
+                <CircularProgress
+                  size={15}
+                  style={{ marginRight: 10, color: "#fff" }}
+                />
+              )}
+            </Button>
+          </>
+       ) 
+       :
+        null
+       }
+      </Box>
+
+      {totalReport.length
+        ? totalReport.map((element: TotalReportDtos, index: number) => (
+            <ConsultantTotalReportSummary totalReport={totalReport[index]} />
+          ))
+        : null}
+
+      {/* <TableContainer component={Paper}>
         <Table aria-label="customized table">
           <TableHead>
             <TableRow>
@@ -404,9 +412,9 @@ const CoursesScreen = () => {
             onChange={handleChange}
           />
         </Stack>
-      </TableContainer>
+      </TableContainer> */}
     </Container>
   );
 };
 
-export default CoursesScreen;
+export default ConsultantReport;

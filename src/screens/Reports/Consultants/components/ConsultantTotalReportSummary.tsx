@@ -1,14 +1,15 @@
 import { Grid, Paper, Box, Typography } from "@mui/material";
 import moment from "moment-jalaali";
-import { TotalReportDto } from "../dto/TotalReport.dto";
-import CoursePieChart from "./CoursePieChart";
+import { TotalReportDtos } from "../dto/TotalReport.dto";
+import ConsultantPieChart from "./ConsultantPieChart";
 
-const TotalReportSummary = ({
+const ConsultantTotalReportSummary = ({
   totalReport,
 }: {
-  totalReport: TotalReportDto[];
+  totalReport: TotalReportDtos;
 }) => {
   return (
+   
     <Grid container component={Paper} sx={{ my: 2 }}>
       <Grid item xs={12} sm={6} md={6}>
         <Box
@@ -17,19 +18,20 @@ const TotalReportSummary = ({
             justifyContent: "space-between",
           }}
         >
+           {/* { console.log("totalReport" , totalReport?.details[0].consultant?.last_name ) } */}
           <Typography
             sx={{
               p: 1,
             }}
           >
-            نام دبیر: {totalReport[0].teacher_name}
+            نام مشاور: {totalReport.consultant_fullname }
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد کل دانش آموزان: {totalReport[0].total_students}
+            تعداد کل دانش آموزان: {totalReport.total_consultant_students}
           </Typography>
         </Box>
 
@@ -44,20 +46,15 @@ const TotalReportSummary = ({
               p: 1,
             }}
           >
-            تاریخ جلسه نخست:{" "}
-            {totalReport[0].start_session !== ""
-              ? moment(totalReport[0].start_session).format("jYYYY/jMM/jDD")
-              : "--"}
+            تعداد کل جلسات مشاوره تعریف شده :{" "}
+            {totalReport.total_consultant_definition}
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            تاریخ جلسه پایانی:{" "}
-            {totalReport[0].end_session !== ""
-              ? moment(totalReport[0].end_session).format("jYYYY/jMM/jDD")
-              : "--"}
+            تعداد دانش آموزان حاضر : {totalReport.total_student_present}
           </Typography>
         </Box>
         <Box
@@ -71,14 +68,15 @@ const TotalReportSummary = ({
               p: 1,
             }}
           >
-            تعداد کل جلسات: {totalReport[0].total_session || "--"}
+            جمع ساعات دانش آموزان حاضر :{" "}
+            {totalReport.total_student_present_hours}
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد جلسات برگزار شده: {totalReport[0].total_done_session || "--"}
+            تعداد دانش آموزان غایب : {totalReport.total_student_absence}
           </Typography>
         </Box>
         <Box
@@ -92,8 +90,8 @@ const TotalReportSummary = ({
               p: 1,
             }}
           >
-            میانگین غیبت در جلسه:{" "}
-            {totalReport[0].avg_absent?.toFixed(2) || "--"}
+            جمع ساعات دانش آموزان غایب :{" "}
+            {totalReport.total_student_absence_hours}
           </Typography>
 
           <Typography
@@ -101,8 +99,7 @@ const TotalReportSummary = ({
               p: 1,
             }}
           >
-            میانگین تاخیر درهر جلسه :{" "}
-            {totalReport[0].avg_dellay?.toFixed(2) || "--"}
+            تعداد دانش آموزان تاخیر دار : {totalReport.total_student_delay}
           </Typography>
         </Box>
         <Box
@@ -116,16 +113,16 @@ const TotalReportSummary = ({
               p: 1,
             }}
           >
-            بازگشت وجه پس از انصراف:{" "}
-            {totalReport[0].total_just_returned || "--"}
+            مجموع ساعات تاخیر دانش آموزان:{" "}
+            {totalReport.total_student_delay_hours}
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            عدم بازگشت وجه پس از انصراف:{" "}
-            {totalReport[0].total_just_not_returned || "--"}
+            مجموع ساعات موظفی مشاور:{" "}
+            {totalReport.total_consultant_obligation_hours}
           </Typography>
         </Box>
         <Box
@@ -139,34 +136,35 @@ const TotalReportSummary = ({
               p: 1,
             }}
           >
-            پرداختی نداشته است - پس از انصراف:{" "}
-            {totalReport[0].total_just_noMoney || "--"}
+            مجموع ساعات حضور مشاور:{" "}
+            {totalReport.total_consultant_present_hours}
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد جابجایی : {totalReport[0].total_transferred || "--"}
+            مجموع ساعات عدم حضور مشاور:{" "}
+            {totalReport.total_consultant_earlier_hours +
+              totalReport.total_consultant_absence_hours}
           </Typography>
         </Box>
       </Grid>
       <Grid item xs={12} sm={1} md={1}></Grid>
       <Grid item xs={12} sm={5} md={5}>
-        <CoursePieChart
-          width="100%"
-          series={[
-            totalReport[0].total_approved,
-            totalReport[0].total_noMoney_semi_pending,
-            totalReport[0].total_noMoney,
-            totalReport[0].total_fired + totalReport[0].total_refused,
-            totalReport[0].total_pending,
+        <ConsultantPieChart
+          width="100%"        
+          series={[           
+            //totalReport.total_consultant_obligation_hours,
+            totalReport.total_consultant_present_hours,
+            totalReport.total_consultant_absence_hours ,
+            totalReport.total_consultant_earlier_hours,
           ]}
-        />       
-
+         
+        />
       </Grid>
     </Grid>
   );
 };
 
-export default TotalReportSummary;
+export default ConsultantTotalReportSummary;
