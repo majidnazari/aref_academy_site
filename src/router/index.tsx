@@ -69,6 +69,7 @@ import StudentsConsultantManagerScreen from "screens/Students/consultant_manager
 import ConsultantFinancials from "screens/Consultant/Components/ConsultantFinancials";
 import SelectOneConsultantsTimes from "screens/Consultant/Components/SelectOneConsultantsTimes";
 import ConsultantManagerDashboardIndex from "screens/Dashboard/ConsultantManagerDashboardIndex";
+import ConsultantReport from "screens/Reports/Consultants";
 
 const MainRouter = () => {
   const appContext = useContext(AuthContext);
@@ -225,6 +226,10 @@ const MainRouter = () => {
               element={<ReportsAbsencePresencesScreen />}
             />
             <Route
+              path="consultants"
+              element={<ConsultantReport />}
+            />
+             <Route
               path="absence-presences/:courseId/sessions"
               element={<ReportsCourseSessionsScreen />}
             />
