@@ -842,7 +842,7 @@ const ConsultantTimeTable = () => {
                 <TableRow key={index}>
                   <StyledTableCell align="center">
                     <>
-                      <a href="#" id="dateOfWeekString">
+                      <Box className="dateOfWeekString">
                         {moment_jalali(element.date?.toString()).format(
                           "jYYYY/jMM/jDD"
                         )}{" "}
@@ -854,7 +854,7 @@ const ConsultantTimeTable = () => {
                         <span></span>
                         <span></span>
                         <span></span>
-                      </a>
+                      </Box>
                           {
                           (week==="Current") && (typeof element.details !== 'undefined' && element.details.length > 0)
                           ? 

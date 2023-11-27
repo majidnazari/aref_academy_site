@@ -1,17 +1,8 @@
-import { useState } from "react";
-import Grid from "@mui/material/Grid";
+import { useLayoutEffect, useRef, useState } from "react";
 import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import ListItemText from "@mui/material/ListItemText";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import Checkbox from "@mui/material/Checkbox";
-import { dayOfWeeksObject } from "../../../constants/index";
-import AdapterJalali from "@date-io/date-fns-jalali";
-import TextField from "@mui/material/TextField";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
+import Select from "@mui/material/Select";
 import { Button, Container, TableContainer } from "@mui/material";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -26,53 +17,30 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
 import { useMutation, useQuery } from "@apollo/client";
-import FormHelperText from "@mui/material/FormHelperText";
 import { showConfirm, showSuccess } from "utils/swlAlert";
 import {
-  GET_BRANCH_CLASSROOMS,
   GET_CONSULTANT_SHOW_TIMES,
   GetConsultantStudentsByDefinitionId,
 } from "../gql/query";
 import {
   COPY_STUDENT_TO_NEXT_WEEK,
-  CREATE_CONSULTANT_DEFINITION_DETAIL,
   DELETE_CONSULTANTN_DEFINITION_STUDENT_ID,
   DELETE_ONE_SESSION_OF_TIME_TABLE,
   UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID,
 } from "../gql/mutation";
 import { useParams } from "react-router-dom";
 import StudentData from "utils/student";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ComponentStudentDialog from "./ComponentStudentDialog";
-import { Link, useNavigate } from "react-router-dom";
-import moment_jalali from "moment-jalaali";
+import { useNavigate } from "react-router-dom";
 import "../../../../src/assets/stringDate.css";
-import { DatePicker } from "@mui/x-date-pickers";
-import { SearchAllConsultantProps } from "../dto/search-consultant-showalltime";
 import SearchAllConsultantTimes from "./SearchAllConsultantTimes";
 import StudentStatusComponent from "./StudentStatusDialog";
 
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import HourglassDisabledIcon from "@mui/icons-material/HourglassDisabled";
-import CoPresentIcon from "@mui/icons-material/CoPresent";
-import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import VerticalSplitIcon from "@mui/icons-material/VerticalSplit";
 import TimeSpliterDialog from "./TimeSpliterDialog";
 import ShowPhone from "screens/Students/components/ShowPhone";
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -83,38 +51,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontSize: 14,
   },
 }));
-
-const daysOfWeek = [
-  "شنبه",
-  "یکشنبه",
-  "دوشنبه",
-  "سه شنبه",
-  "چهارشنبه",
-  "پنج شنبه",
-  "جمعه",
-];
-
-const consultantBox = {
-  backgroundColor: "#DDDBDA",
-  color: "black",
-  borderRadius: "5px",
-  boxShadow: 3,
-  display: "inline-block",
-  ustifyContent: "flex-end",
-  alignItems: "flex-end",
-  p: 2,
-  width: 160,
-  m: 1,
-  direction: "rtl",
-  whiteSpace: "pre-wrap",
-};
-
-interface ErrorData {
-  days?: string;
-  startTime?: string;
-  endTime?: string;
-  branch_classroom_id?: string;
-}
 
 interface ConsultantData {
   id: number;
@@ -176,17 +112,7 @@ const consultantNotFilledStudentBox = {
   mx: 1,
   p: 1,
 };
-const consultantFilledStudentBox = {
-  backgroundColor: "#1bebeb",
-  width: 160,
-  color: "black",
-  borderRadius: "5px",
-  boxShadow: 3,
-  cursor: "pointer",
-  minHeight: "240px",
-  mx: 1,
-  p: 1,
-};
+
 const consultantPresentStudentBox = {
   backgroundColor: "#ace1a3",
   width: 160,
@@ -227,25 +153,22 @@ const ShowAllConsultantsTimes = () => {
   const params = useParams<string>();
   const consultantId = params.consultantId;
 
-  const [studentId, setStudentId] = useState<number>();
   const [studentIds, setStudentIds] = useState<number[]>();
   const [timeTable, setTimeTable] = useState<getConsultantsTimeShowData[]>([]);
   const [dialogconsultantTimeTableId, setDialogConsultantTimeTableId] =
     useState<string>();
-  const [dialogrefreshData, setDialogRefreshData] = useState<boolean>(false);
   const [studentDialogOpen, setStudentDialogOpen] = useState<boolean>(false);
   const [timeSpliterDialogOpen, setTimeSpliterDialogOpen] =
     useState<boolean>(false);
   const [studentStatusDialogOpen, setStudentStatusDialogOpen] =
     useState<boolean>(false);
 
+  const [width, setWidth] = useState<string | number>(0);
+  const ref = useRef(null);
+
   const current_date = moment().format("YYYY-MM-DD");
-  const next_date = moment().add(7, "days").format("YYYY-MM-DD");
   const navigate = useNavigate();
 
-  const [nextWeekFlag, setNextWeekFlag] = useState<Boolean>(true);
-
-  const [searchData, setSearchData] = useState<SearchAllConsultantProps>({});
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
   const [studentStatus, setStudentStatus] = useState<string>("no_action");
 
@@ -254,7 +177,7 @@ const ShowAllConsultantsTimes = () => {
     target_date: current_date,
   });
 
-  const { fetchMore, refetch } = useQuery(GET_CONSULTANT_SHOW_TIMES, {
+  const { refetch } = useQuery(GET_CONSULTANT_SHOW_TIMES, {
     variables: {
       consultant_id: Number(consultantId),
       target_date: moment().format("YYYY-MM-DD"),
@@ -265,8 +188,9 @@ const ShowAllConsultantsTimes = () => {
     fetchPolicy: "no-cache",
   });
 
-  const { refetch: refetchConsultantStudentsByDefinitionId, data: students } =
-    useQuery(GetConsultantStudentsByDefinitionId, {
+  const { refetch: refetchConsultantStudentsByDefinitionId } = useQuery(
+    GetConsultantStudentsByDefinitionId,
+    {
       variables: {
         id: -1,
       },
@@ -275,7 +199,8 @@ const ShowAllConsultantsTimes = () => {
       },
       fetchPolicy: "no-cache",
       skip: true,
-    });
+    }
+  );
 
   const closeDialog = () => {
     setStudentDialogOpen(false);
@@ -347,44 +272,6 @@ const ShowAllConsultantsTimes = () => {
     UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
   );
 
-  const convertStudentStatus = (studentStatus: string) => {
-    switch (studentStatus) {
-      case "no_action":
-        return (
-          <HourglassDisabledIcon
-            sx={{
-              color: "black",
-              fontSize: 13,
-              fontWeight: 800,
-              textAlign: "right",
-            }}
-          />
-        );
-      case "present":
-        return (
-          <CoPresentIcon
-            sx={{
-              color: "black",
-              fontSize: 13,
-              fontWeight: 800,
-              textAlign: "right",
-            }}
-          />
-        );
-      case "absent":
-        return (
-          <CancelPresentationIcon
-            sx={{
-              color: "black",
-              fontSize: 13,
-              fontWeight: 800,
-              textAlign: "right",
-            }}
-          />
-        );
-    }
-  };
-
   const changeStudentStatus = (
     id: string,
     student_id: string,
@@ -407,9 +294,16 @@ const ShowAllConsultantsTimes = () => {
   const consultantRedirect = (consultant_id: number | undefined) => {
     navigate("/consultant/" + consultant_id + "/select-one");
   };
+
+  useLayoutEffect(() => {
+    setWidth((ref as any).current.offsetWidth - 20 || "300px");
+  }, []);
   return (
     <Paper sx={{ width: "100%", mb: 2 }}>
-      <SearchAllConsultantTimes callBack={handleSearch} disabled={searchLoading} />
+      <SearchAllConsultantTimes
+        callBack={handleSearch}
+        disabled={searchLoading}
+      />
 
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         {studentDialogOpen && (
@@ -439,10 +333,12 @@ const ShowAllConsultantsTimes = () => {
           />
         )}
         {searchLoading ? (
-          <Box><CircularProgress /></Box>
+          <Box>
+            <CircularProgress />
+          </Box>
         ) : (
           <TableContainer component={Paper}>
-            <Table aria-label="customized table">
+            <Table aria-label="customized table" sx={{ maxWidth: "100%" }}>
               <TableHead>
                 <TableRow>
                   <StyledTableCell
@@ -464,6 +360,7 @@ const ShowAllConsultantsTimes = () => {
                       fontWeight: 800,
                       textAlign: "center",
                     }}
+                    ref={ref}
                   >
                     {" "}
                     برنامه روزانه مشاور
@@ -475,9 +372,8 @@ const ShowAllConsultantsTimes = () => {
                   (element: getConsultantsTimeShowData, index: number) => (
                     <TableRow key={index}>
                       <StyledTableCell align="center">
-                        <a
-                          href="#"
-                          id="dateOfWeekString"
+                        <Box
+                          className="dateOfWeekString"
                           onClick={() =>
                             consultantRedirect(element.consultant?.id)
                           }
@@ -489,10 +385,17 @@ const ShowAllConsultantsTimes = () => {
                           <span></span>
                           <span></span>
                           <span></span>
-                        </a>
+                        </Box>
                       </StyledTableCell>
                       <StyledTableCell align="left">
-                        <Box sx={{ display: "flex", flexDirection: "row" }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            width: width,
+                            overflowX: "scroll",
+                          }}
+                        >
                           {element.details?.map(
                             (detail: detailsData, index_details: number) => (
                               <Box key={index_details}>
@@ -516,6 +419,7 @@ const ShowAllConsultantsTimes = () => {
                                     direction: "rtl",
                                     whiteSpace: "pre-wrap",
                                   }}
+                                  id={detail.id + "-" + detail.start_hour}
                                 >
                                   {detail.end_hour}-{detail.start_hour}
                                   <VerticalSplitIcon
