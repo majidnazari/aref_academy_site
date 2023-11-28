@@ -81,6 +81,7 @@ const ConsultantReport = () => {
     data: consultantData,
   } = useQuery(GET_CONSULTANT_REPORT, {
     variables: {
+      consultant_id: -1,
       // first: 1000,
       // page: 1,
       // orderBy: [
@@ -90,6 +91,7 @@ const ConsultantReport = () => {
       //   },
       // ],
       fetchPolicy: "no-cache",
+      skip: true,
     },
     onCompleted(data) {
       //console.log(data);
@@ -110,7 +112,7 @@ const ConsultantReport = () => {
       fetchPolicy: "no-cache",
     },
     onCompleted(data) {
-     // console.log("consultant are: ", data);
+      // console.log("consultant are: ", data);
       if (data?.getConsultants?.data) {
         const tmp = [{ label: "", id: 0 }];
         setConsultantOptions(tmp);
@@ -125,9 +127,9 @@ const ConsultantReport = () => {
     },
   });
 
-  const handleSearch = (): void => {    
+  const handleSearch = (): void => {
     setRefetchLoading(true);
-    let refetchData: SearchData = { ...search };   
+    let refetchData: SearchData = { ...search };
     refetch(refetchData as any)
       .then((res) => {
         setTotalReport(res.data.getConsultantDefinitionDetailsGenerealReport);
@@ -193,30 +195,29 @@ const ConsultantReport = () => {
         }}
         component={Paper}
       >
-        {consultantOptions.length ? 
-        (<>
-              <Grid item xs={12} sm={6} md={3} xl={3}>
-                <Autocomplete
-                  onChange={(event: any, newValue: any) => {
-                    setSearch({ ...search, consultant_id: newValue?.id });
-                  }}
-                  disablePortal
-                  id="combo-box-demo"
-                  options={consultantOptions}
-                  sx={{ width: 500 }}
-                  renderInput={(params) => (
-                    <TextField {...params} label="انتخاب مشاور" />
-                  )}
-                />
-              </Grid>
-            
+        {consultantOptions && consultantOptions?.length ? (
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={3} xl={3}>
+              <Autocomplete
+                onChange={(event: any, newValue: any) => {
+                  setSearch({ ...search, consultant_id: newValue?.id });
+                }}
+                disablePortal
+                id="combo-box-demo"
+                options={consultantOptions}
+                sx={{ width: "100%" }}
+                renderInput={(params) => (
+                  <TextField {...params} label="انتخاب مشاور" />
+                )}
+              />
+            </Grid>
 
             <Grid item xs={12} sm={6} md={3} xl={3}>
               <LocalizationProvider dateAdapter={AdapterJalali}>
                 <DatePicker
                   label="از تاریخ"
-                  value={search.session_date_from || null }
-                  onChange={(newValue) => {                
+                  value={search.session_date_from || null}
+                  onChange={(newValue) => {
                     if (newValue) {
                       setSearch({
                         ...search,
@@ -237,8 +238,7 @@ const ConsultantReport = () => {
                 <DatePicker
                   label="تا تاریخ"
                   value={search.session_date_to || null}
-                  onChange={(newValue) => { 
-                               
+                  onChange={(newValue) => {
                     if (newValue) {
                       setSearch({
                         ...search,
@@ -253,30 +253,38 @@ const ConsultantReport = () => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSearch}
-              sx={{ mx: 2 }}
-              startIcon={<SearchIcon />}
-              disabled={refetchLoading}
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              xl={3}
+              sx={{
+                alignItems: "center",
+              }}
             >
-              جستجو
-              {refetchLoading && (
-                <CircularProgress
-                  size={15}
-                  style={{ marginRight: 10, color: "#fff" }}
-                />
-              )}
-            </Button>
-          </>
-       ) 
-       :
-        null
-       }
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSearch}
+                sx={{ mx: 2 }}
+                startIcon={<SearchIcon />}
+                disabled={refetchLoading}
+              >
+                جستجو
+                {refetchLoading && (
+                  <CircularProgress
+                    size={15}
+                    style={{ marginRight: 10, color: "#fff" }}
+                  />
+                )}
+              </Button>
+            </Grid>
+          </Grid>
+        ) : null}
       </Box>
 
-      {totalReport.length
+      {totalReport?.length
         ? totalReport.map((element: TotalReportDtos, index: number) => (
             <ConsultantTotalReportSummary totalReport={totalReport[index]} />
           ))

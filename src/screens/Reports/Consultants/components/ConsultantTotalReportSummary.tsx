@@ -54,7 +54,7 @@ const ConsultantTotalReportSummary = ({
               p: 1,
             }}
           >
-            تعداد دانش آموزان حاضر : {totalReport.total_student_present}
+            تعداد جلسات دانش آموزان حاضر : {totalReport.total_student_present}
           </Typography>
         </Box>
         <Box
@@ -76,7 +76,7 @@ const ConsultantTotalReportSummary = ({
               p: 1,
             }}
           >
-            تعداد دانش آموزان غایب : {totalReport.total_student_absence}
+            تعداد جلسات دانش آموزان غایب : {totalReport.total_student_absence}
           </Typography>
         </Box>
         <Box
@@ -99,7 +99,7 @@ const ConsultantTotalReportSummary = ({
               p: 1,
             }}
           >
-            تعداد دانش آموزان تاخیر دار : {totalReport.total_student_delay}
+            تعداد جلسات دانش آموزان تاخیر دار : {totalReport.total_student_delay}
           </Typography>
         </Box>
         <Box
