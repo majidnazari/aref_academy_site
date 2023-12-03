@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import { Tabs, Tab } from "@mui/material";
 import FinancialReport from "./components/FinancialReport";
 import NoPayment from "./components/NoPayment";
+import ConsultantFinancialReport from "./components/ConsultantFinancialReport";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -52,6 +53,7 @@ export default function StudentCoursesAlarms() {
       >
         <Tab label="گزارش حسابداری" {...a11yProps(0)} />
         <Tab label="گزارش حضور بدون پرداخت" {...a11yProps(1)} />
+        <Tab label=" مشاوران " {...a11yProps(2)} />
       </Tabs>
 
       <TabPanel value={value} index={0}>
@@ -59,6 +61,9 @@ export default function StudentCoursesAlarms() {
       </TabPanel>
       <TabPanel value={value} index={1}>
         <NoPayment />
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        <ConsultantFinancialReport />
       </TabPanel>
     </Box>
   );

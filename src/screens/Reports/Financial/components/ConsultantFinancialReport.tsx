@@ -20,16 +20,18 @@ import StudentCoursesType from "interfaces/studentCourses.interface";
 import moment from "moment-jalaali";
 import { useState, useEffect } from "react";
 import { showError } from "utils/swlAlert";
-import { GET_COURSES_STUDENTS } from "../gql/query";
+import { GET_CONSULTANT_FINANCIAL_REPORT } from "../gql/query";
 import { visuallyHidden } from "@mui/utils";
 import SearchFinancial from "./SearchFinancial";
-import { SearchProps } from "../dto/search-dto";
+import { SearchConsultantProps, SearchProps } from "../dto/search-dto";
 import CircularProgress from "@mui/material/CircularProgress";
+import SearchConsultantFinancial from "./SearchConsultantFinancial";
+import ConsultantFinancialType from "interfaces/consultantFinancials.interface";
 
 interface Data {
   student: string;
-  course: string;
-  sum_total_present: string;
+  consultant: string;
+  // sum_total_present: string;
   student_status: string;
   manager_status: string;
   financial_status: string;
@@ -55,17 +57,17 @@ const headCells: readonly HeadCell[] = [
     label: "دانش آموز",
   },
   {
-    id: "course",
+    id: "consultant",
     sortable: false,
     disablePadding: false,
-    label: "درس",
+    label: "مشاور",
   },
-  {
-    id: "sum_total_present",
-    sortable: true,
-    disablePadding: false,
-    label: "تعداد حضور",
-  },
+  // {
+  //   id: "sum_total_present",
+  //   sortable: true,
+  //   disablePadding: false,
+  //   label: "تعداد حضور",
+  // },
   {
     id: "student_status",
     sortable: true,
@@ -157,7 +159,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-const FinancialReport = () => {
+const ConsultantFinancialReport = () => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("created_at");
   const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
@@ -170,31 +172,37 @@ const FinancialReport = () => {
     perPage: 10,
     total: 0,
   });
-  const [courseStudents, setCourseStudents] = useState<StudentCoursesType[]>(
-    []
-  );
-  const [searchData, setSearchData] = useState<SearchProps>({});
+  const [consultantFinancials, setConsultantFinancials] = useState<
+    ConsultantFinancialType[]
+  >([]);
+  const [searchData, setSearchData] = useState<SearchConsultantProps>({});
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
 
-  const { fetchMore, refetch, error } = useQuery(GET_COURSES_STUDENTS, {
-    variables: {
-      first: process.env.REACT_APP_USERS_PER_PAGE
-        ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
-        : 10,
-      page: 1,
-      orderBy: [
-        {
-          column: "financial_status_updated_at",
-          order: "DESC",
-        },
-      ],
-    },
-    fetchPolicy: "network-only",
-    onCompleted: (data) => {
-      setCourseStudents(data.getCourseStudents.data);
-      setPageInfo(data.getCourseStudents.paginatorInfo);
-    },
-  });
+  const { fetchMore, refetch, error } = useQuery(
+    GET_CONSULTANT_FINANCIAL_REPORT,
+    {
+      variables: {
+        first: process.env.REACT_APP_USERS_PER_PAGE
+          ? parseInt(process.env.REACT_APP_USERS_PER_PAGE)
+          : 10,
+        page: 1,
+        orderBy: [
+          {
+            column: "financial_status_updated_at",
+            order: "DESC",
+          },
+        ],
+      },
+      fetchPolicy: "network-only",
+      onCompleted: (data) => {
+        // console.log("data are :", data.getConsultantFinancials.data);
+        //console.log("pagination are :",data.getConsultantFinancials.paginatorInfo);
+
+        setConsultantFinancials(data.getConsultantFinancials.data);
+        setPageInfo(data.getConsultantFinancials.paginatorInfo);
+      },
+    }
+  );
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -226,19 +234,20 @@ const FinancialReport = () => {
     fetchMore({
       variables,
       updateQuery: (prev, { fetchMoreResult }) => {
-        setCourseStudents(fetchMoreResult.getCourseStudents.data);
-        setPageInfo(fetchMoreResult.getCourseStudents.paginatorInfo);
+        //console.log();
+        setConsultantFinancials(fetchMoreResult.getConsultantFinancials.data);
+        setPageInfo(fetchMoreResult.getConsultantFinancials.paginatorInfo);
       },
     }).catch((e) => {
       showError(e);
     });
   };
 
-  useEffect(() => {
-    if (error) {
-      console.log({ error });
-    }
-  }, [error]);
+  // useEffect(() => {
+  //   if (error) {
+  //     console.log({ error });
+  //   }
+  // }, [error]);
 
   useEffect(() => {
     setSearchLoading(true);
@@ -277,9 +286,11 @@ const FinancialReport = () => {
       setSearchLoading(false);
     });
   };
+
   return (
     <Paper sx={{ width: "100%", mb: 2 }}>
-      <SearchFinancial callBack={setSearchData} />
+      <SearchConsultantFinancial callBack={setSearchData} />
+      
       {searchLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <CircularProgress />
@@ -296,14 +307,14 @@ const FinancialReport = () => {
             order={order}
             orderBy={orderBy}
             onRequestSort={handleRequestSort}
-            rowCount={courseStudents.length}
+            rowCount={consultantFinancials.length}
           />
           <TableBody>
             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
         rows.slice().sort(getComparator(order, orderBy)) */}
             {
               //stableSort(courseStudents, getComparator(order, orderBy))
-              courseStudents.map((element, index) => {
+              consultantFinancials.map((element, index) => {
                 return (
                   <TableRow hover tabIndex={-1} key={index}>
                     <TableCell padding="checkbox">
@@ -314,24 +325,28 @@ const FinancialReport = () => {
                     <TableCell component="th" scope="row" padding="none">
                       {element?.student?.first_name +
                         " " +
-                        element?.student?.last_name}
+                        element?.student?.last_name + 
+                        " " + element?.student?.phone }
                     </TableCell>
                     <TableCell align="left">
-                      <CourseName course={element.course} />
+                      {element?.consultant?.first_name +
+                        " " +
+                        element?.consultant?.last_name}
+                      {/* <CourseName course={element.consultant} /> */}
                     </TableCell>
-                    <TableCell align="left">
+                    {/* <TableCell align="left">
                       {element.sum_total_present}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell align="left">
                       <StatusIcon status={element.student_status} />
                       <Typography
                         component={"div"}
                         sx={{ fontSize: 9, fontWeight: "bold" }}
                       >
-                        {element.user_student_status
-                          ? element.user_student_status?.first_name +
+                        {element.userStudentStatus
+                          ? element.userStudentStatus?.first_name +
                             " " +
-                            element.user_student_status?.last_name
+                            element.userStudentStatus?.last_name
                           : null}
                       </Typography>
                     </TableCell>
@@ -341,10 +356,10 @@ const FinancialReport = () => {
                         component={"div"}
                         sx={{ fontSize: 9, fontWeight: "bold" }}
                       >
-                        {element?.user_manager
-                          ? element.user_manager?.first_name +
+                        {element?.manager
+                          ? element.manager?.first_name +
                             " " +
-                            element.user_manager?.last_name
+                            element.manager?.last_name
                           : null}
                       </Typography>
                     </TableCell>
@@ -354,24 +369,22 @@ const FinancialReport = () => {
                         component={"div"}
                         sx={{ fontSize: 9, fontWeight: "bold" }}
                       >
-                        {element.user_financial
-                          ? element.user_financial?.first_name +
+                        {element.financial
+                          ? element.financial?.first_name +
                             " " +
-                            element.user_financial?.last_name
+                            element.financial?.last_name
                           : null}
                       </Typography>
                     </TableCell>
                     <TableCell align="left">
                       {" "}
-                      {element.user_creator?.first_name +
-                        " " +
-                        element.user_creator?.last_name}
+                      {element.user?.first_name + " " + element.user?.last_name}
                     </TableCell>
                     <TableCell align="left">
                       {moment(element.created_at).format("jYYYY/jMM/jDD")}
                     </TableCell>
-                    <TableCell align="left">                      
-                      {(element?.financial_status_updated_at) ?
+                    <TableCell align="left">
+                    {(element?.financial_status_updated_at) ?
                          moment(element.financial_status_updated_at).format("jYYYY/jMM/jDD")
                         : null 
                       }
@@ -394,4 +407,4 @@ const FinancialReport = () => {
   );
 };
 
-export default FinancialReport;
+export default ConsultantFinancialReport;

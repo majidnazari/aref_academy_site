@@ -61,18 +61,82 @@ export const GET_CONSULTANT_REPORT = gql`
   }
 `;
 
-
-export const GET_CONSULTANTS=gql`
-query GET_ALL_CONSULTANT($first:Int!  $page:Int){
-  getConsultants(
-    first:$first
-    page:$page
-  ){
-    data{
-      id
-      first_name
-      last_name
+export const GET_CONSULTANTS = gql`
+  query GET_ALL_CONSULTANT($first: Int!, $page: Int) {
+    getConsultants(first: $first, page: $page) {
+      data {
+        id
+        first_name
+        last_name
+      }
     }
   }
-}
+`;
+
+export const GET_CONSULTANT_FINANCIAL_REPORT = gql`
+  query GET_CONSULTANT_FINANCIAL_REPORT(
+    $date_from: String
+    $date_to: String
+    $consultant_id: Int
+    $description: String
+    $financial_refused_status: FinancialRefusedStatus
+    $financial_status: FinancialStatus
+    $manager_status: ManagerStatus
+    $student_id: Int
+    $student_status: StudentStatusConsultantFinancial
+    $total_present: Int
+    $first: Int!
+    $page: Int
+  ) {
+    getConsultantFinancials(
+      date_from: $date_from
+      date_to: $date_to
+      consultant_id: $consultant_id
+      description: $description
+      financial_refused_status: $financial_refused_status
+      financial_status: $financial_status
+      manager_status: $manager_status
+      student_id: $student_id
+      student_status: $student_status
+      total_present: $total_present
+      first: $first
+      page: $page
+    ) {
+      paginatorInfo {
+        count
+        currentPage
+        firstItem
+        hasMorePages
+        lastItem
+        perPage
+        total
+      }
+      data {
+        id
+        student_id
+        user_id_creator
+        branch_id
+        branch {
+          id
+          name
+        }
+        consultant_id
+        consultant {
+          id
+          first_name
+          last_name
+        }
+        year_id
+        manager_status
+        financial_status
+        student_status
+        financial_refused_status
+        user_id_manager
+        user_id_financial
+        user_id_student_status
+        description
+        financial_status_updated_at
+      }
+    }
+  }
 `;
