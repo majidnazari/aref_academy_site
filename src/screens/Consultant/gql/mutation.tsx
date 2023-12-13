@@ -34,6 +34,11 @@ export const UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID = gql`
     $consultant_status: String
     $session_status: String
     $absent_present_description: String
+    $compensatory_meet: Boolean
+    $single_meet: Boolean
+    $remote: Boolean
+    $compensatory_of_definition_detail_id: Int
+    $compensatory_for_definition_detail_id: Int
   ) {
     updateConsultantDefinitionDetail(
       input: {
@@ -43,6 +48,11 @@ export const UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID = gql`
         consultant_status: $consultant_status
         session_status: $session_status
         absent_present_description: $absent_present_description
+        compensatory_meet: $compensatory_meet
+        single_meet: $single_meet
+        remote: $remote
+        compensatory_of_definition_detail_id: $compensatory_of_definition_detail_id
+        compensatory_for_definition_detail_id: $compensatory_for_definition_detail_id
       }
     ) {
       id
@@ -57,6 +67,15 @@ export const UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID = gql`
       session_status
       consultant_status
       student_status
+
+      compensatory_meet
+      single_meet
+      remote
+      compensatory_of_definition_detail_id
+      compensatory_for_definition_detail_id
+
+      student_status_updated_at
+      user_id_student_status
     }
   }
 `;
@@ -225,6 +244,16 @@ export const Divide_Consultant_Definition_Detail_Time = gql`
       session_date
       start_hour
       end_hour
+    }
+  }
+`;
+
+export const REMOVE_COMPENTASORY_MEET = gql`
+  mutation REMOVE_COMPENSATORY($definition_detail_id: ID!) {
+    removeCompensatoryMeet(definition_detail_id: $definition_detail_id) {
+      id
+      compensatory_meet
+      compensatory_of_definition_detail_id
     }
   }
 `;

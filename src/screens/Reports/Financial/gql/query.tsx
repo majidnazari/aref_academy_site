@@ -137,3 +137,155 @@ export const GET_STUDENTS = gql`
     }
   }
 `;
+
+export const GET_CONSULTANT_FINANCIAL_REPORT = gql`
+  query GET_CONSULTANT_FINANCIAL_REPORT(
+  	$date_from:String
+    $date_to:String
+    $consultant_id:Int
+    $description:String
+    $financial_refused_status:FinancialRefusedStatus 
+    $financial_status:FinancialStatus
+    $manager_status:ManagerStatus
+    $student_id:Int
+    $student_status:StudentStatusConsultantFinancial    
+    $total_present:Int,
+    $first:Int!,
+    $page:Int,
+    $orderBy: [OrderByClause!]
+){
+  getConsultantFinancials(
+    date_from:$date_from
+    date_to: $date_to
+    consultant_id:$consultant_id
+    description:$description
+    financial_refused_status:$financial_refused_status
+    financial_status:$financial_status
+    manager_status:$manager_status
+    student_id:$student_id
+    student_status: $student_status    
+    total_present: $total_present,
+    first: $first,
+    page:$page,
+    orderBy: $orderBy   
+  
+  )
+  {
+    paginatorInfo{
+     count
+      currentPage
+      firstItem
+      hasMorePages
+      lastItem
+      lastPage
+      perPage      
+      total
+      
+    }
+    data{
+      id
+      student_id
+      student{
+        id
+        first_name
+        last_name
+        phone
+      }
+   		user_id_creator
+      branch_id
+      branch{
+        id
+        name
+      }
+      consultant_id
+      consultant{
+        id
+        first_name
+        last_name
+      }
+      year_id
+      year{
+        name
+      }
+      manager_status
+      financial_status
+      student_status
+      financial_refused_status
+      user_id_manager
+      user_id_financial
+      financial{
+        id
+        first_name
+        last_name
+      }
+      manager{
+        id
+        first_name
+        last_name
+      }
+      user{
+        id
+        first_name
+        last_name
+      }
+      userStudentStatus{
+        id
+        first_name
+        last_name
+      }
+      user_id_student_status
+      description
+      financial_status_updated_at
+      
+    }
+    
+  }
+}
+  
+`;
+
+export const GET_CONSULTANTS = gql`
+  query GET_CONSULTANTS(
+    $first: Int!
+    $page: Int!
+    $first_name: String
+    $last_name: String
+    $email: String
+  ) {
+    getConsultants(
+      first: $first
+      page: $page
+      first_name: $first_name
+      last_name: $last_name
+      email: $email
+    ) {
+      data {
+        id
+        first_name
+        last_name
+        email
+        group {
+          persian_name
+          __typename
+        }
+        branch {
+          name
+          __typename
+        }
+        __typename
+      }
+      paginatorInfo {
+        count
+        currentPage
+        firstItem
+        hasMorePages
+        lastItem
+        lastPage
+        perPage
+        total
+        __typename
+      }
+      __typename
+    }
+  }
+`;

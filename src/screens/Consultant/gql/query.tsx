@@ -27,7 +27,7 @@ export const GET_CONSULTANTS = gql`
   ) {
     getConsultants(
       first: $first
-      page: $page     
+      page: $page
       first_name: $first_name
       last_name: $last_name
       email: $email
@@ -152,8 +152,12 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
     ) {
       date
       details {
-        consultant_id
         id
+        consultant_id
+        compensatory_of_definition_detail_id
+        compensatory_of_definition_detail_session_date
+        compensatory_of_definition_detail_start_hour
+        compensatory_of_definition_detail_end_hour
         consultant_id
         consultant_first_name
         consultant_last_name
@@ -178,6 +182,14 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
         session_date
         branchClassRoom_name
         student_status
+
+        user_student_status_full_name
+        student_status_updated_at
+        compensatory_meet
+        single_meet
+        remote
+        compensatory_of_definition_detail_id
+        compensatory_for_definition_detail_id
       }
     }
   }
@@ -210,6 +222,7 @@ export const GET_CONSULTANT_DEFINITION_DETAIL = gql`
       consultant_status
       test_description
       user_id
+      compensatory_meet
     }
   }
 `;
@@ -296,6 +309,13 @@ export const GET_A_CONSULTANT_TIME_TABLE = gql`
   query GET_CONSULTANT_DEFINITION_DETAIL($id: ID!) {
     getConsultantDefinitionDetail(id: $id) {
       id
+      compensatory_of_definition_detail_id
+      compensatoryOfDefinitionDetail {
+        id
+        start_hour
+        end_hour
+        session_date
+      }
       consultant_id
       start_hour
       end_hour
@@ -535,5 +555,43 @@ export const GET_CONSULTANT_FINANCIALS = gql`
 export const GetConsultantStudentsByDefinitionId = gql`
   query GET_CONSULTANT_STUDENTS_BY_DEFINITION_ID($id: ID!) {
     GetConsultantStudentsByDefinitionId(id: $id)
+  }
+`;
+
+export const GET_GENERAL_CONSULTANT_DEFINITION_DETAILS = gql`
+  query GET_GENERAL_CONSULTANT_DEFINITION_DETAILS(
+    $first: Int!
+    $page: Int!
+    $consultant_id: Int!
+    $student_status: [StudentStatus]
+    $compensatory_for_definition_detail_id: Int
+  ) {
+    getGeneralConsultantDefinitionDetails(
+      first: $first
+      page: $page
+      consultant_id: $consultant_id
+      student_status: $student_status
+      compensatory_for_definition_detail_id: $compensatory_for_definition_detail_id
+    ) {
+      paginatorInfo {
+        count
+        currentPage
+        firstItem
+        hasMorePages
+        lastItem
+        lastPage
+        perPage
+        total
+      }
+      data {
+        id
+        consultant_id
+
+        session_date
+        start_hour
+        end_hour
+        compensatory_meet
+      }
+    }
   }
 `;
