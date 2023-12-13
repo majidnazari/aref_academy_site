@@ -319,6 +319,7 @@ const ShowAllConsultantsTimes = () => {
         {studentStatusDialogOpen && (
           <StudentStatusComponent
             consultantTimeTableId={dialogconsultantTimeTableId}
+            consultantId={consultantId}
             refreshData={refreshConsultantDefinition}
             openStudentStatusDialog={studentStatusDialogOpen}
             closeStudentStatusDialog={closeStudentStatusDialog}

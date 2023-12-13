@@ -16,6 +16,7 @@ import {
 } from "../gql/query";
 import {
   Autocomplete,
+  Box,
   CircularProgress,
   FormControl,
   Grid,
@@ -23,15 +24,25 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
+  Switch,
   Typography,
 } from "@mui/material";
 import { SearchProps } from "../dto/search-student-status";
-import { UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID } from "../gql/mutation";
-import { GET_CONSULTANT_DEFINITION_DETAIL } from "../gql/query";
+import {
+  REMOVE_COMPENTASORY_MEET,
+  UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID,
+} from "../gql/mutation";
+import {
+  GET_CONSULTANT_DEFINITION_DETAIL,
+  GET_GENERAL_CONSULTANT_DEFINITION_DETAILS,
+} from "../gql/query";
 
 import { showError, showSuccess } from "utils/swlAlert";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import getAbsentSessionDate from "./GetAbsentSessionDate";
+import momentj from 'moment-jalaali';
+
 
 interface detailsData {
   id: string;
@@ -48,13 +59,13 @@ interface detailsData {
 
 const StudentStatusComponent = ({
   consultantTimeTableId,
-
+  consultantId,
   refreshData,
   openStudentStatusDialog,
   closeStudentStatusDialog,
 }: {
   consultantTimeTableId: string | undefined;
-
+  consultantId: string | undefined;
   refreshData: Function;
   openStudentStatusDialog: boolean;
   closeStudentStatusDialog: Function;
@@ -64,6 +75,7 @@ const StudentStatusComponent = ({
   const [open, setOpen] = React.useState(openStudentStatusDialog);
   const [skip, setSkip] = useState<Boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
+  const [compensatoryFlag, setCompensatoryFlag] = useState<boolean>(false);
   const [studentName, setStudentName] = useState<string>("");
   const [loadingStudent, setLoadingStudent] = useState<boolean>(false);
   const [loadingConsultantStudent, setLoadingConsultantStudent] =
@@ -71,16 +83,22 @@ const StudentStatusComponent = ({
   const [studentOptions, setStudentOptions] = useState<any[]>([]);
   const [studentId, setStudentId] = useState<number>(1);
   const [studentFullName, setStudentFullName] = useState<string>();
+  const [compensatorOf, setCompensatorOf] = useState<number>();
+  const [compensatorOfDefinitionDetail, setCompensatorOfDefinitionDetail] = useState<String>("");
   const [search, setSearch] = useState<SearchProps>({});
   const [editConsultantTimeTable] = useMutation(
     UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
   );
+  const [removeCompentanspryMeet] = useMutation(REMOVE_COMPENTASORY_MEET);
   const [studentStatus, setStudentStatus] = useState<string>("no_action");
   const [consultantStatus, setConsultantStatus] = useState<string>("present");
   const [sessionStatus, setSessionStatus] = useState<string>("no_action");
   const [studentDescription, setStudentDescription] = useState<string>("");
   const [startHour, setStartHour] = useState<string>("");
   const [endtHour, setEndHour] = useState<string>("");
+  const [compensatoryOptions, setCompensatoryOptions] = useState<any[]>([
+    { label: "", id: "" },
+  ]);
 
   const customStyles = {
     width: 500,
@@ -138,8 +156,13 @@ const StudentStatusComponent = ({
         );
         setStartHour(data.getConsultantDefinitionDetail.start_hour);
         setEndHour(data.getConsultantDefinitionDetail.end_hour);
-        setConsultantStatus(data.getConsultantDefinitionDetail.consultant_status);
+        setConsultantStatus(
+          data.getConsultantDefinitionDetail.consultant_status
+        );
         setSessionStatus(data.getConsultantDefinitionDetail.session_status);
+        setCompensatoryFlag(
+          data.getConsultantDefinitionDetail.compensatory_meet
+        );
       },
       fetchPolicy: "no-cache",
     });
@@ -178,6 +201,32 @@ const StudentStatusComponent = ({
     }
   );
 
+  const { refetch: refetchCompensatory, loading: compensatoryLoading } =
+    useQuery(GET_GENERAL_CONSULTANT_DEFINITION_DETAILS, {
+      variables: {
+        first: 10,
+        page: 1,
+        consultant_id: Number(consultantId),
+        student_status: "absent",
+        compensatory_for_definition_detail_id: -2,
+        fetchPolicy: "network-only",
+      },
+      onCompleted: (data) => {
+        console.log(data.getGeneralConsultantDefinitionDetails.data);
+        const tmp = [{ label: "", id: 0 }];
+        setCompensatoryOptions(tmp);
+        for (const i in data.getGeneralConsultantDefinitionDetails.data) {
+          const absentSessions =
+            data.getGeneralConsultantDefinitionDetails.data[i];
+          tmp.push({
+            id: +absentSessions.id,
+            label: getAbsentSessionDate(absentSessions),
+          });
+        }
+      },
+      // skip: true,
+    });
+
   React.useEffect(() => {
     setLoadingStudent(true);
     refetchStudents({
@@ -199,16 +248,23 @@ const StudentStatusComponent = ({
       showError("دانش آموزی انتخاب نشده است.");
       return null;
     }
+    //alert(compensatoryFlag);
 
     setLoading(true);
     editConsultantTimeTable({
       variables: {
         id: consultantTimeTableId,
         student_id: studentId,
-        student_status: studentStatus,
-        consultant_status: consultantStatus,
-        session_status: sessionStatus,
-        absent_present_description: studentDescription,
+        student_status:
+          studentStatus === "no_action" ? undefined : studentStatus,
+        consultant_status:
+          consultantStatus === "no_action" ? undefined : consultantStatus,
+        session_status:
+          sessionStatus === "no_action" ? undefined : sessionStatus,
+        absent_present_description:
+          studentDescription != null ? studentDescription : undefined,
+        compensatory_of_definition_detail_id: compensatorOf,
+        compensatory_meet: compensatoryFlag,
       },
     })
       .then(() => {
@@ -236,6 +292,11 @@ const StudentStatusComponent = ({
     },
     onCompleted: (data) => {
       setOneTimeTable(data.getConsultantDefinitionDetail);
+      if(data.getConsultantDefinitionDetail?.compensatory_of_definition_detail_id){
+        const session_detail =`${momentj(data.getConsultantDefinitionDetail?.compensatoryOfDefinitionDetail.session_date).format("jYYYY/jMM/jDD") } - ${data.getConsultantDefinitionDetail?.compensatoryOfDefinitionDetail.start_hour} - ${data.getConsultantDefinitionDetail?.compensatoryOfDefinitionDetail.end_hour}` ;
+        setCompensatorOfDefinitionDetail(session_detail);
+      }
+      
     },
     fetchPolicy: "no-cache",
   });
@@ -262,7 +323,7 @@ const StudentStatusComponent = ({
           <FormControl sx={{ width: "100%" }}>
             <InputLabel id="session-status-label">
               {" "}
-              زود مرخص کردن دانش آموز از جلسه توسط مشاور 
+              زود مرخص کردن دانش آموز از جلسه توسط مشاور
             </InputLabel>
             <Select
               labelId="session-status-label"
@@ -270,25 +331,24 @@ const StudentStatusComponent = ({
               onChange={(e) => {
                 setSessionStatus(e.target.value);
               }}
-              input={<OutlinedInput label=" زود مرخص کردن دانش آموز از جلسه توسط مشاور " />}
+              input={
+                <OutlinedInput label=" زود مرخص کردن دانش آموز از جلسه توسط مشاور " />
+              }
               fullWidth
             >
               <MenuItem value={"no_action"}> بدون تغییر</MenuItem>
-              <MenuItem value={"earlier_5min_finished"}>
-                {" "}
-                 ۵ دقیقه ای{" "}
-              </MenuItem>
+              <MenuItem value={"earlier_5min_finished"}> ۵ دقیقه ای </MenuItem>
               <MenuItem value={"earlier_10min_finished"}>
                 {" "}
-                 ۱۰ دقیقه ای{" "}
+                ۱۰ دقیقه ای{" "}
               </MenuItem>
               <MenuItem value={"earlier_15min_finished"}>
                 {" "}
-                 ۱۵ دقیقه ای{" "}
+                ۱۵ دقیقه ای{" "}
               </MenuItem>
               <MenuItem value={"earlier_15min_more_finished"}>
                 {" "}
-                 بیشتر از ۱۵ دقیقه{" "}
+                بیشتر از ۱۵ دقیقه{" "}
               </MenuItem>
               {/* <MenuItem value={"later_5min_started"}>
                 {" "}
@@ -313,14 +373,19 @@ const StudentStatusComponent = ({
       <DialogContent>
         <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
           <FormControl sx={{ width: "100%" }}>
-            <InputLabel id="consultant-status-label"> با تاخیر شروع کردن جلسه دانش آموز توسط مشاور </InputLabel>
+            <InputLabel id="consultant-status-label">
+              {" "}
+              با تاخیر شروع کردن جلسه دانش آموز توسط مشاور{" "}
+            </InputLabel>
             <Select
               labelId="consultant-status-label"
               value={consultantStatus}
               onChange={(e) => {
                 setConsultantStatus(e.target.value);
               }}
-              input={<OutlinedInput label=" با تاخیر شروع کردن جلسه دانش آموز توسط مشاور  " />}
+              input={
+                <OutlinedInput label=" با تاخیر شروع کردن جلسه دانش آموز توسط مشاور  " />
+              }
               fullWidth
             >
               <MenuItem value={"no_action"}> بدون تغییر</MenuItem>
@@ -349,6 +414,66 @@ const StudentStatusComponent = ({
               }}
             />
           </FormControl>
+        </Grid>
+      </DialogContent>
+
+      <DialogContent>
+        <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+          <FormControl sx={{ width: "100%" }}>
+            <Box sx={{
+              mr:1
+            }}>
+              <Switch
+                checked={compensatoryFlag}
+                size="small"
+                onChange={(e) => {
+                  setCompensatoryFlag(!compensatoryFlag);
+                  //alert(timeTableId);
+                  // alert(consultantId);
+                  if (!e.target.checked) {
+                   // alert("should be removed" + timeTableId);
+                    //alert(e.target.checked);
+
+                    removeCompentanspryMeet({
+                      variables: {
+                        definition_detail_id: timeTableId,
+                      },
+                    }).then(() => {
+                      showSuccess("وضعیت جلسه از جبرانی خارج شد.");
+                      
+                    });
+                  }
+                }}
+              />{" "}
+              جلسه جبرانی{" "}
+            </Box>
+            <Box>
+              {compensatoryFlag && compensatoryOptions.length ? (
+                <Autocomplete
+                  onChange={(event: any, newValue: any) => {
+                    setCompensatorOfDefinitionDetail(newValue);
+                   // alert(newValue?.id);
+                    //setSearch({ ...search, course_id: newValue?.id });
+                    setCompensatorOf(newValue?.id);
+                  }}
+                  value={compensatorOfDefinitionDetail} 
+                  disablePortal
+                  id="combo-box-demo"
+                  options={compensatoryOptions}
+                  sx={{ width: "100%" }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="انتخاب جلسه غیبت شده برای جبرانی"
+                    />
+                  )}
+                />
+              ) : null}
+            </Box>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+          <FormControl sx={{ width: "100%" }}></FormControl>
         </Grid>
       </DialogContent>
 

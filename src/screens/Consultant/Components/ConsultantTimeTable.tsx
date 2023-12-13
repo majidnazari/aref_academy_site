@@ -12,7 +12,7 @@ import AdapterJalali from "@date-io/date-fns-jalali";
 import TextField from "@mui/material/TextField";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
-import { Button, Container, TableContainer } from "@mui/material";
+import { Button, Container, Switch, TableContainer } from "@mui/material";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import moment from "moment";
@@ -56,6 +56,8 @@ import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ComponentDeleteStudentDialog from "./ComponentDeleteStudentDialog";
 import ShowPhone from "screens/Students/components/ShowPhone";
+import momentj from 'moment-jalaali';
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -191,6 +193,14 @@ interface detailsData {
   session_date: string;
   branchClassRoom_name: string;
   student_status: string;
+
+  user_student_status_full_name: String;
+  student_status_updated_at: Date;
+  compensatory_of_definition_detail_id: number;
+  compensatory_for_definition_detail_id: number;
+  compensatory_meet: boolean;
+  single_meet: boolean;
+  remote: boolean;
 }
 
 const ConsultantTimeTable = () => {
@@ -223,6 +233,9 @@ const ConsultantTimeTable = () => {
   // const [studentDeleteDialogClose, setStudentDeleteDialogClose] =useState<boolean>(false);
 
   const [studentStatus, setStudentStatus] = useState<string>("no_action");
+  const [singleMeet, setSingleMeet] = useState<boolean>(false);
+  const [compensatoryMeet, setCompensatoryMeet] = useState<boolean>(false);
+  const [remoteMeet, setRemoteMeet] = useState<boolean>(false);
 
   const [listKey, setListKey] = useState<number>(0);
 
@@ -514,6 +527,7 @@ const ConsultantTimeTable = () => {
     student_id: string,
     student_status: string
   ) => {
+    
     ConsultantTimeTableStudentStatus({
       variables: {
         id: id,
@@ -522,10 +536,15 @@ const ConsultantTimeTable = () => {
       },
     }).then(() => {
       showSuccess("وضعیت دانش آموز با موفقیت به تاخیر تغییر کرد.");
-      refetch();
-      setStudentStatus(student_status);
+      refetch();      
       showPreviousWeekBeforeRefresh();
+      setStudentStatus(student_status);
+
     });
+  };
+
+  const checkCompensatory = (id: string) => {
+    alert(id);
   };
 
   return consultantFullName ? (
@@ -555,6 +574,7 @@ const ConsultantTimeTable = () => {
       {studentStatusDialogOpen && (
         <StudentStatusComponent
           consultantTimeTableId={dialogconsultantTimeTableId}
+          consultantId={consultantId}
           refreshData={refreshConsultantDefinition}
           openStudentStatusDialog={studentStatusDialogOpen}
           closeStudentStatusDialog={closeStudentStatusDialog}
@@ -855,17 +875,17 @@ const ConsultantTimeTable = () => {
                         <span></span>
                         <span></span>
                       </Box>
-                          {
-                          (week==="Current") && (typeof element.details !== 'undefined' && element.details.length > 0)
-                          ? 
-                          <Button
+                      {week === "Current" &&
+                      typeof element.details !== "undefined" &&
+                      element.details.length > 0 ? (
+                        <Button
                           color="primary"
                           variant="contained"
                           onClick={() => {
                             showConfirm(async () =>
                               //alert(element.date?.toString())
                               //alert(consultantId)
-  
+
                               copyOneDayConsultantTimeTable({
                                 variables: {
                                   consultant_id: Number(consultantId),
@@ -884,10 +904,8 @@ const ConsultantTimeTable = () => {
                           }}
                         >
                           {" کپی کل روز "}
-                          </Button>
-                          : 
-                          null}
-                      
+                        </Button>
+                      ) : null}
                     </>
                   </StyledTableCell>
                   <StyledTableCell align="left">
@@ -1010,7 +1028,7 @@ const ConsultantTimeTable = () => {
                                       pl: 1,
                                     }}
                                   >
-                                     <ShowPhone phone={detail?.student?.phone} />
+                                    <ShowPhone phone={detail?.student?.phone} />
                                   </Box>
                                   <Box
                                     display={"flex"}
@@ -1023,20 +1041,29 @@ const ConsultantTimeTable = () => {
                                       sx={{
                                         fontSize: 13,
                                       }}
+                                      // onClick={() => {
+                                      //   ConsultantTimeTableStudentStatus({
+                                      //     variables: {
+                                      //       id: detail.id,
+                                      //       student_id: detail.student_id,
+                                      //       student_status: "present",
+                                      //     },
+                                      //   }).then(() => {
+                                      //     showSuccess(
+                                      //       "وضعیت دانش آموز با موفقیت به حاضر تغییر کرد."
+                                      //     );
+                                      //     refetch();
+                                      //     showPreviousWeekBeforeRefresh();
+                                      //     setStudentStatus("present");
+
+                                      //   });
+                                      // }}
                                       onClick={() => {
-                                        ConsultantTimeTableStudentStatus({
-                                          variables: {
-                                            id: detail.id,
-                                            student_id: detail.student_id,
-                                            student_status: "present",
-                                          },
-                                        }).then(() => {
-                                          showSuccess(
-                                            "وضعیت دانش آموز با موفقیت به حاضر تغییر کرد."
-                                          );
-                                          refetch();
-                                          showPreviousWeekBeforeRefresh();
-                                        });
+                                        changeStudentStatus(
+                                          detail.id,
+                                          detail.student_id,
+                                          "present"
+                                        );                                        
                                       }}
                                     >
                                       {"حاضر "}
@@ -1047,20 +1074,30 @@ const ConsultantTimeTable = () => {
                                       sx={{
                                         fontSize: 13,
                                       }}
+                                      // onClick={() => {
+                                      //   ConsultantTimeTableStudentStatus({
+                                      //     variables: {
+                                      //       id: detail.id,
+                                      //       student_id: detail.student_id,
+                                      //       student_status: "absent",
+                                      //     },
+                                      //   }).then(() => {
+                                      //     showSuccess(
+                                      //       "وضعیت دانش آموز با موفقیت به غایب تغییر کرد."
+                                      //     );
+                                      //     refetch();
+                                      //     showPreviousWeekBeforeRefresh();
+                                      //     setStudentStatus("absent");
+
+                                      //   });
+                                      // }}
+
                                       onClick={() => {
-                                        ConsultantTimeTableStudentStatus({
-                                          variables: {
-                                            id: detail.id,
-                                            student_id: detail.student_id,
-                                            student_status: "absent",
-                                          },
-                                        }).then(() => {
-                                          showSuccess(
-                                            "وضعیت دانش آموز با موفقیت به غایب تغییر کرد."
-                                          );
-                                          refetch();
-                                          showPreviousWeekBeforeRefresh();
-                                        });
+                                        changeStudentStatus(
+                                          detail.id,
+                                          detail.student_id,
+                                          "absent"
+                                        );                                        
                                       }}
                                     >
                                       {"غایب "}
@@ -1129,7 +1166,6 @@ const ConsultantTimeTable = () => {
                                       </Select>
                                     </FormControl>
                                   </Box>
-
                                   {detail?.student_id ? (
                                     <Box
                                       display={"flex"}
@@ -1188,6 +1224,71 @@ const ConsultantTimeTable = () => {
                                       </Button>
                                     </Box>
                                   ) : null}
+                                  <Box>
+                                  <Switch
+                                    checked={
+                                      detail.single_meet === true
+                                        ? detail.single_meet
+                                        : false
+                                    }
+                                    size="small"
+                                    onClick={() => {
+                                      //alert(detail.single_meet);
+                                      ConsultantTimeTableStudentStatus({
+                                        variables: {
+                                          id: detail.id,
+                                          student_id: detail.student_id,
+                                          single_meet: !detail.single_meet,
+                                        },
+                                      }).then(() => {
+                                        showSuccess(
+                                          "وضعیت  تک جلسه تغییر کرد."
+                                        );
+                                        refetch();
+                                        showPreviousWeekBeforeRefresh();
+                                      });
+                                    }}
+                                  />  تک جلسه{" "}
+                                 </Box>
+                                 <Box>
+                                  <Switch
+                                    checked={
+                                      detail.remote === true
+                                        ? detail.remote
+                                        : false
+                                    }
+                                    size="small"
+                                    onClick={() => {
+                                      //alert(detail.remote);
+                                      ConsultantTimeTableStudentStatus({
+                                        variables: {
+                                          id: detail.id,
+                                          student_id: detail.student_id,
+                                          remote: !detail.remote,
+                                        },
+                                      }).then(() => {
+                                        showSuccess(
+                                          "وضعیت  تک جلسه تغییر کرد."
+                                        );
+                                        refetch();
+                                        showPreviousWeekBeforeRefresh();
+                                      });
+                                    }}
+                                  /> غیر حضوری {" "}
+                                </Box>
+                                {detail?.user_student_status_full_name ?
+                                  <Box>
+                                    {"کاربر ثبت کننده: "}
+                                  {detail.user_student_status_full_name} { "  " } 
+                                  <Box sx={{
+                                    direction:"rtl"
+                                  }}>
+                                  {detail?.student_status_updated_at ? momentj(detail.student_status_updated_at).format("jYYYY/jMM/jDD-HH:mm") : null}
+                                  </Box>
+                                  {/* {detail?.student_status_updated_at} */}
+                                  </Box>
+                                  : null 
+                                }
                                 </Box>
                               ) : (
                                 <Button
