@@ -64,8 +64,8 @@ const StudentStatusComponent = ({
   openStudentStatusDialog,
   closeStudentStatusDialog,
 }: {
-  consultantTimeTableId: string | undefined;
-  consultantId: string | undefined;
+  consultantTimeTableId?: string;
+  consultantId: string ;
   refreshData: Function;
   openStudentStatusDialog: boolean;
   closeStudentStatusDialog: Function;
@@ -90,7 +90,7 @@ const StudentStatusComponent = ({
     UPDATE_CONSULTANT_DEFINITION_DETAIL_STUDENT_ID
   );
   const [removeCompentanspryMeet] = useMutation(REMOVE_COMPENTASORY_MEET);
-  const [studentStatus, setStudentStatus] = useState<string>("no_action");
+  const [studentStatus, setStudentStatus] = useState<string>("absent");
   const [consultantStatus, setConsultantStatus] = useState<string>("present");
   const [sessionStatus, setSessionStatus] = useState<string>("no_action");
   const [studentDescription, setStudentDescription] = useState<string>("");
@@ -201,7 +201,8 @@ const StudentStatusComponent = ({
     }
   );
 
-  const { refetch: refetchCompensatory, loading: compensatoryLoading } =
+  // get absent sessions of one consultant 
+  const { loading: compensatoryLoading } =
     useQuery(GET_GENERAL_CONSULTANT_DEFINITION_DETAILS, {
       variables: {
         first: 10,
@@ -212,7 +213,7 @@ const StudentStatusComponent = ({
         fetchPolicy: "network-only",
       },
       onCompleted: (data) => {
-        console.log(data.getGeneralConsultantDefinitionDetails.data);
+        //console.log(data.getGeneralConsultantDefinitionDetails.data);
         const tmp = [{ label: "", id: 0 }];
         setCompensatoryOptions(tmp);
         for (const i in data.getGeneralConsultantDefinitionDetails.data) {
@@ -301,9 +302,10 @@ const StudentStatusComponent = ({
     fetchPolicy: "no-cache",
   });
 
-  return (
-    <Dialog open={openStudentStatusDialog} onClose={handleCancel}>
-      <DialogTitle minWidth={600}> تغییر وضعیت دانش آموز </DialogTitle>
+  // console.log("con id is:" + consultantId);
+  return (  
+    <Dialog   open={openStudentStatusDialog} onClose={handleCancel}>
+      <DialogTitle minWidth={600} > تغییر وضعیت دانش آموز </DialogTitle>
       <Grid> </Grid>
       <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
         <FormControl sx={{ width: "50%", alignItems: "center" }}>
@@ -420,16 +422,18 @@ const StudentStatusComponent = ({
       <DialogContent>
         <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
           <FormControl sx={{ width: "100%" }}>
+            {studentStatus!="absent" ?
             <Box sx={{
-              mr:1
+              mr:1,
+              mb:2
             }}>
               <Switch
                 checked={compensatoryFlag}
                 size="small"
                 onChange={(e) => {
                   setCompensatoryFlag(!compensatoryFlag);
-                  //alert(timeTableId);
-                  // alert(consultantId);
+                  console.log("time table:" , timeTableId);
+                   console.log("consult id:" , consultantId);
                   if (!e.target.checked) {
                    // alert("should be removed" + timeTableId);
                     //alert(e.target.checked);
@@ -447,6 +451,8 @@ const StudentStatusComponent = ({
               />{" "}
               جلسه جبرانی{" "}
             </Box>
+            : null 
+              }
             <Box>
               {compensatoryFlag && compensatoryOptions.length ? (
                 <Autocomplete

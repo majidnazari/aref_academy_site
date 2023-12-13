@@ -574,7 +574,7 @@ const ConsultantTimeTable = () => {
       {studentStatusDialogOpen && (
         <StudentStatusComponent
           consultantTimeTableId={dialogconsultantTimeTableId}
-          consultantId={consultantId}
+          consultantId={String(consultantId)}
           refreshData={refreshConsultantDefinition}
           openStudentStatusDialog={studentStatusDialogOpen}
           closeStudentStatusDialog={closeStudentStatusDialog}

@@ -340,6 +340,14 @@ export const GET_CONSULTANT_SHOW_TIMES = gql`
       details {
         student_id
         id
+        compensatory_of_definition_detail_id
+        compensatory_of_definition_detail_session_date
+        compensatory_of_definition_detail_start_hour
+        compensatory_of_definition_detail_end_hour
+        single_meet
+        remote
+        compensatory_meet
+
         student_id
         student_status
         student {
@@ -351,6 +359,8 @@ export const GET_CONSULTANT_SHOW_TIMES = gql`
         }
         branchClassRoom_name
         user_id
+        user_student_status_full_name
+        student_status_updated_at
         start_hour
         end_hour
       }

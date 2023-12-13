@@ -3,7 +3,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { Button, Container, TableContainer } from "@mui/material";
+import { Button, Container, Switch, TableContainer } from "@mui/material";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import moment from "moment";
@@ -41,6 +41,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import VerticalSplitIcon from "@mui/icons-material/VerticalSplit";
 import TimeSpliterDialog from "./TimeSpliterDialog";
 import ShowPhone from "screens/Students/components/ShowPhone";
+import momentj from "moment-jalaali";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -75,6 +76,16 @@ interface detailsData {
   session_date: string;
   branchClassRoom_name: string;
   student_status: string;
+  user_student_status_full_name: String;
+  student_status_updated_at: Date;
+
+  remote: boolean;
+  compensatory_meet: boolean;
+  single_meet: boolean;
+  compensatory_of_definition_detail_id: number;
+  compensatory_of_definition_detail_session_date: String;
+  compensatory_of_definition_detail_start_hour: String;
+  compensatory_of_definition_detail_end_hour: String;
 }
 class SearchData {
   consultant_id?: number;
@@ -151,9 +162,10 @@ const consultantDellayStudentBox = {
 
 const ShowAllConsultantsTimes = () => {
   const params = useParams<string>();
-  const consultantId = params.consultantId;
+  // const consultantId = params.consultantId;
 
   const [studentIds, setStudentIds] = useState<number[]>();
+  const [consId, setConsId] = useState<string>("");
   const [timeTable, setTimeTable] = useState<getConsultantsTimeShowData[]>([]);
   const [dialogconsultantTimeTableId, setDialogConsultantTimeTableId] =
     useState<string>();
@@ -179,7 +191,7 @@ const ShowAllConsultantsTimes = () => {
 
   const { refetch } = useQuery(GET_CONSULTANT_SHOW_TIMES, {
     variables: {
-      consultant_id: Number(consultantId),
+      // consultant_id: Number(consultantId),
       target_date: moment().format("YYYY-MM-DD"),
     },
     onCompleted: (data) => {
@@ -258,7 +270,9 @@ const ShowAllConsultantsTimes = () => {
     setStudentDialogOpen(true);
   };
 
-  const handleAddStudentStatus = (defenitionId: string) => {
+  const handleAddStudentStatus = (defenitionId: string,consultant_id: string) => {
+    
+    setConsId(consultant_id);
     setDialogConsultantTimeTableId(defenitionId);
     setStudentStatusDialogOpen(true);
   };
@@ -319,7 +333,7 @@ const ShowAllConsultantsTimes = () => {
         {studentStatusDialogOpen && (
           <StudentStatusComponent
             consultantTimeTableId={dialogconsultantTimeTableId}
-            consultantId={consultantId}
+            consultantId={consId}
             refreshData={refreshConsultantDefinition}
             openStudentStatusDialog={studentStatusDialogOpen}
             closeStudentStatusDialog={closeStudentStatusDialog}
@@ -378,14 +392,15 @@ const ShowAllConsultantsTimes = () => {
                           onClick={() =>
                             consultantRedirect(element.consultant?.id)
                           }
-                        >
+                        >                         
                           <span> </span>
                           {element.consultant?.first_name}
                           {"    "}
                           {element.consultant?.last_name} {"    "}
                           <span></span>
                           <span></span>
-                          <span></span>
+                          <span></span>                        
+
                         </Box>
                       </StyledTableCell>
                       <StyledTableCell align="left">
@@ -482,7 +497,7 @@ const ShowAllConsultantsTimes = () => {
                                           textAlign: "left",
                                         }}
                                         onClick={() =>
-                                          handleAddStudentStatus(detail.id)
+                                          handleAddStudentStatus(detail.id,String(element.consultant?.id))
                                         }
                                       >
                                         {" "}
@@ -691,6 +706,82 @@ const ShowAllConsultantsTimes = () => {
                                           >
                                             {"کپی"}
                                           </Button>
+                                        </Box>
+                                      ) : null}
+
+                                      <Box>
+                                        <Switch
+                                          checked={
+                                            detail.single_meet === true
+                                              ? detail.single_meet
+                                              : false
+                                          }
+                                          size="small"
+                                          onClick={() => {
+                                            //alert(detail.single_meet);
+                                            ConsultantTimeTableStudentStatus({
+                                              variables: {
+                                                id: detail.id,
+                                                student_id: detail.student_id,
+                                                single_meet:
+                                                  !detail.single_meet,
+                                              },
+                                            }).then(() => {
+                                              showSuccess(
+                                                "وضعیت  تک جلسه تغییر کرد."
+                                              );
+                                              refetch();
+                                              // showPreviousWeekBeforeRefresh();
+                                            });
+                                          }}
+                                        />{" "}
+                                        تک جلسه{" "}
+                                      </Box>
+                                      <Box>
+                                        <Switch
+                                          checked={
+                                            detail.remote === true
+                                              ? detail.remote
+                                              : false
+                                          }
+                                          size="small"
+                                          onClick={() => {
+                                            //alert(detail.remote);
+                                            ConsultantTimeTableStudentStatus({
+                                              variables: {
+                                                id: detail.id,
+                                                student_id: detail.student_id,
+                                                remote: !detail.remote,
+                                              },
+                                            }).then(() => {
+                                              showSuccess(
+                                                "وضعیت  تک جلسه تغییر کرد."
+                                              );
+                                              refetch();
+                                            });
+                                          }}
+                                        />{" "}
+                                        غیر حضوری{" "}
+                                      </Box>
+                                      {detail?.user_student_status_full_name ? (
+                                        <Box>
+                                          {"کاربر ثبت کننده: "}
+                                          {
+                                            detail.user_student_status_full_name
+                                          }{" "}
+                                          {"  "}
+                                          <Box
+                                            sx={{
+                                              direction: "rtl",
+                                            }}
+                                          >
+                                            {detail?.student_status_updated_at
+                                              ? momentj(
+                                                  detail.student_status_updated_at
+                                                ).format("jYYYY/jMM/jDD-HH:mm")
+                                              : null}
+                                          </Box>
+                                          {/* {detail?.student_status_updated_at} */}
                                         </Box>
                                       ) : null}
                                     </Box>
