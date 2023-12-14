@@ -568,18 +568,20 @@ export const GetConsultantStudentsByDefinitionId = gql`
   }
 `;
 
-export const GET_GENERAL_CONSULTANT_DEFINITION_DETAILS = gql`
-  query GET_GENERAL_CONSULTANT_DEFINITION_DETAILS(
+export const GET_ABSENT_PRESENT_STUDENT_SESSION = gql`
+  query GET_ABSENTPRESENT_STUDENT_SESSION(
     $first: Int!
     $page: Int!
     $consultant_id: Int!
+    $student_id: Int!
     $student_status: [StudentStatus]
     $compensatory_for_definition_detail_id: Int
   ) {
-    getGeneralConsultantDefinitionDetails(
+    getAbsentStudentSessionsConsultantDefinitionDetails(
       first: $first
       page: $page
       consultant_id: $consultant_id
+      student_id: $student_id
       student_status: $student_status
       compensatory_for_definition_detail_id: $compensatory_for_definition_detail_id
     ) {
@@ -596,7 +598,7 @@ export const GET_GENERAL_CONSULTANT_DEFINITION_DETAILS = gql`
       data {
         id
         consultant_id
-
+        student_id
         session_date
         start_hour
         end_hour

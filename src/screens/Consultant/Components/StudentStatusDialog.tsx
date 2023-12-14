@@ -13,6 +13,7 @@ import {
   GET_A_CONSULTANT_TIME_TABLE,
   GET_STUDENTS,
   GET_CONSULTANT_FINANCIALS,
+  GET_ABSENT_PRESENT_STUDENT_SESSION,
 } from "../gql/query";
 import {
   Autocomplete,
@@ -34,7 +35,6 @@ import {
 } from "../gql/mutation";
 import {
   GET_CONSULTANT_DEFINITION_DETAIL,
-  GET_GENERAL_CONSULTANT_DEFINITION_DETAILS,
 } from "../gql/query";
 
 import { showError, showSuccess } from "utils/swlAlert";
@@ -177,7 +177,7 @@ const StudentStatusComponent = ({
         ids: studentId,
         fetchPolicy: "network-only",
       },
-      onCompleted: (data) => {
+      onCompleted: (data) => {       
         const tmp =
           data.getStudents.data[0].first_name +
           " " +
@@ -203,22 +203,24 @@ const StudentStatusComponent = ({
 
   // get absent sessions of one consultant 
   const { loading: compensatoryLoading } =
-    useQuery(GET_GENERAL_CONSULTANT_DEFINITION_DETAILS, {
+    useQuery(GET_ABSENT_PRESENT_STUDENT_SESSION, {
       variables: {
         first: 10,
         page: 1,
         consultant_id: Number(consultantId),
+        student_id: studentId,
         student_status: "absent",
         compensatory_for_definition_detail_id: -2,
         fetchPolicy: "network-only",
       },
       onCompleted: (data) => {
+        //alert(studentId);
         //console.log(data.getGeneralConsultantDefinitionDetails.data);
         const tmp = [{ label: "", id: 0 }];
         setCompensatoryOptions(tmp);
-        for (const i in data.getGeneralConsultantDefinitionDetails.data) {
+        for (const i in data.getAbsentStudentSessionsConsultantDefinitionDetails.data) {
           const absentSessions =
-            data.getGeneralConsultantDefinitionDetails.data[i];
+            data.getAbsentStudentSessionsConsultantDefinitionDetails.data[i];
           tmp.push({
             id: +absentSessions.id,
             label: getAbsentSessionDate(absentSessions),
