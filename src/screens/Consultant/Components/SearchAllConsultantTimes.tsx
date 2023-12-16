@@ -47,10 +47,16 @@ const SearchAllConsultantTimes = ({
   const [nextWeekDate, setNextWeekDate] = useState<string>(
     moment().add(7, "days").format("YYYY/MM/DD")
   );
+  const [previousWeekDate, setPreviousWeekDate] = useState<string>(
+    moment().add(-7, "days").format("YYYY/MM/DD")
+  );
   const [today, setToday] = useState<string>(moment().format("YYYY/MM/DD"));
 
   const [consulatntId, setConsulatntId] = useState<number | undefined>();
   const [showNextWeekFlag, setShowNextWeekFlag] = useState<boolean>(true);
+  const [showPreviousWeekFlag, setShowPreviousWeekFlag] =
+    useState<boolean>(true);
+  const [showTodayFlag, setShowTodayFlag] = useState<boolean>(false);
 
   const { refetch: refetchConsultants } = useQuery(GET_CONSULTANTS, {
     variables: {
@@ -88,10 +94,26 @@ const SearchAllConsultantTimes = ({
       if (tmp[i] === "") tmp[i] = undefined;
     }
     setShowNextWeekFlag(false);
+    setShowTodayFlag(true);
+    setShowPreviousWeekFlag(true);
     callBack({ target_date: nextWeekDate, consultant_id: consulatntId });
   };
-
   const showPreviousWeek = () => {
+    setSearch({
+      ...search,
+      target_date: previousWeekDate as string,
+    });
+    const tmp: any = { ...search };
+    for (const i in tmp) {
+      if (tmp[i] === "") tmp[i] = undefined;
+    }
+    setShowNextWeekFlag(true);
+    setShowTodayFlag(true);
+    setShowPreviousWeekFlag(false);
+    callBack({ target_date: previousWeekDate, consultant_id: consulatntId });
+  };
+
+  const showTodayWeek = () => {
     setSearch({
       ...search,
       target_date: today as string,
@@ -102,7 +124,49 @@ const SearchAllConsultantTimes = ({
       if (tmp[i] === "") tmp[i] = undefined;
     }
     setShowNextWeekFlag(true);
+    setShowTodayFlag(false);
+    setShowPreviousWeekFlag(true);
     callBack({ target_date: today, consultant_id: consulatntId });
+  };
+
+  const searchbtn = () => {
+    const search_date = moment(search?.target_date).format("YYYY-MM-DD");
+    const next_date = moment().add(7, "days").format("YYYY-MM-DD");
+    const previous_date = moment().add(-7, "days").format("YYYY-MM-DD");
+    const today_date = moment().format("YYYY-MM-DD");
+
+    setShowNextWeekFlag(true);
+    setShowTodayFlag(true);
+    setShowPreviousWeekFlag(true);
+  
+
+    if((search_date > next_date)) {
+      setShowNextWeekFlag(false);
+      setShowTodayFlag(true);
+      setShowPreviousWeekFlag(true);
+    }
+    if((search_date < previous_date) ) {
+      setShowNextWeekFlag(true);
+      setShowTodayFlag(true);
+      setShowPreviousWeekFlag(false);
+    }
+    if((search_date === previous_date)) {
+      setShowNextWeekFlag(true);
+      setShowTodayFlag(true);
+      setShowPreviousWeekFlag(false);
+    }
+    if((search_date === today_date) ) {
+      setShowNextWeekFlag(true);
+      setShowTodayFlag(false);
+      setShowPreviousWeekFlag(true);
+    }
+    if((search_date === next_date) ) {
+      setShowNextWeekFlag(false);
+      setShowTodayFlag(true);
+      setShowPreviousWeekFlag(true);
+    }
+   
+     
   };
 
   const customStyles = {
@@ -174,7 +238,7 @@ const SearchAllConsultantTimes = ({
           <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
             <LocalizationProvider dateAdapter={AdapterJalali}>
               <DatePicker
-                label="از تاریخ"
+                label=" تاریخ"
                 value={search.target_date || moment().format("YYYY/MM/DD")}
                 onChange={(newValue) => {
                   if (newValue) {
@@ -182,9 +246,9 @@ const SearchAllConsultantTimes = ({
                       ...search,
                       target_date: newValue as string,
                     });
-                    setNextWeekDate(
-                      moment(newValue).add(7, "days").format("YYYY/MM/DD")
-                    );
+                    // setNextWeekDate(
+                    //   moment().add(7, "days").format("YYYY/MM/DD")
+                    // );
                   }
                 }}
                 renderInput={(params) => (
@@ -205,6 +269,7 @@ const SearchAllConsultantTimes = ({
                 for (const i in tmp) {
                   if (tmp[i] === "") tmp[i] = undefined;
                 }
+                searchbtn();
                 callBack(tmp);
               }}
               disabled={disabled}
@@ -216,17 +281,33 @@ const SearchAllConsultantTimes = ({
             <Button
               variant="contained"
               color="info"
+              style={{ width: "100%" }}
+              onClick={() => {
+                showPreviousWeek();
+              }}
+              disabled={!showPreviousWeekFlag || disabled}
+              size="large"
+            >
+              هفته قبل
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
+            <Button
+              variant="contained"
+              color="info"
               size="large"
               style={{ width: "100%" }}
               onClick={() => {
                 // alert(selectedDate);
-                showPreviousWeek();
+                showTodayWeek();
+                //showPreviousWeek();
               }}
-              disabled={showNextWeekFlag || disabled}
+              disabled={!showTodayFlag || disabled}
             >
               امروز
             </Button>
           </Grid>
+
           <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
             <Button
               variant="contained"
