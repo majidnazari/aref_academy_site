@@ -76,6 +76,7 @@ interface detailsData {
   session_date: string;
   branchClassRoom_name: string;
   student_status: string;
+  copy_to_next_week: boolean;
   user_student_status_full_name: String;
   student_status_updated_at: Date;
 
@@ -682,9 +683,11 @@ const ShowAllConsultantsTimes = () => {
                                           >
                                             {" حذف "}
                                           </Button>
+                                         
                                           <Button
                                             color="info"
                                             variant="contained"
+                                            disabled={detail.copy_to_next_week}
                                             onClick={() => {
                                               showConfirm(async () =>
                                                 copyStudentToNextWeek({
@@ -706,6 +709,7 @@ const ShowAllConsultantsTimes = () => {
                                           >
                                             {"کپی"}
                                           </Button>
+                                         
                                         </Box>
                                       ) : null}
 

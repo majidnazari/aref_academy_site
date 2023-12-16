@@ -182,7 +182,7 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
         session_date
         branchClassRoom_name
         student_status
-
+        copy_to_next_week
         user_student_status_full_name
         student_status_updated_at
         compensatory_meet
@@ -350,6 +350,7 @@ export const GET_CONSULTANT_SHOW_TIMES = gql`
 
         student_id
         student_status
+        copy_to_next_week
         student {
           first_name
           last_name
