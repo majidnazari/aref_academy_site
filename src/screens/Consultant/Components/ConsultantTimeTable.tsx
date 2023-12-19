@@ -1197,7 +1197,7 @@ const ConsultantTimeTable = () => {
                                         <Button
                                           color="info"
                                           variant="contained"
-                                          disabled={detail.copy_to_next_week}
+                                          disabled={detail.copy_to_next_week || detail.compensatory_meet}
                                           onClick={() => {
                                             showConfirm(async () =>
                                               copyStudentToNextWeek({
