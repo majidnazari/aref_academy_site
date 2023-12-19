@@ -29,6 +29,9 @@ import moment from "moment";
 import momentja from "moment-jalaali";
 
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import PreviousWeek, { PreviousWeekSearchBtn } from "./PreviousWeekSearchBtn";
+import NextWeekSearchBtn from "./NextWeekSearchBtn";
+import TodaySearchBtn from "./TodaySearchBtn";
 
 const SearchAllConsultantTimes = ({
   callBack,
@@ -84,20 +87,7 @@ const SearchAllConsultantTimes = ({
     },
   });
 
-  const showNextWeek = () => {
-    setSearch({
-      ...search,
-      target_date: nextWeekDate as string,
-    });
-    const tmp: any = { ...search };
-    for (const i in tmp) {
-      if (tmp[i] === "") tmp[i] = undefined;
-    }
-    setShowNextWeekFlag(false);
-    setShowTodayFlag(true);
-    setShowPreviousWeekFlag(true);
-    callBack({ target_date: nextWeekDate, consultant_id: consulatntId });
-  };
+
   const showPreviousWeek = () => {
     setSearch({
       ...search,
@@ -107,10 +97,15 @@ const SearchAllConsultantTimes = ({
     for (const i in tmp) {
       if (tmp[i] === "") tmp[i] = undefined;
     }
-    setShowNextWeekFlag(true);
-    setShowTodayFlag(true);
     setShowPreviousWeekFlag(false);
+    setShowTodayFlag(true);
+    setShowNextWeekFlag(true); 
+
     callBack({ target_date: previousWeekDate, consultant_id: consulatntId });
+
+    // alert("prev is:" +  showPreviousWeekFlag);
+    // alert("today is:" + showTodayFlag);
+    // alert("next is: " + showNextWeekFlag);
   };
 
   const showTodayWeek = () => {
@@ -123,51 +118,75 @@ const SearchAllConsultantTimes = ({
     for (const i in tmp) {
       if (tmp[i] === "") tmp[i] = undefined;
     }
-    setShowNextWeekFlag(true);
+
+    setShowPreviousWeekFlag(true);
     setShowTodayFlag(false);
-    setShowPreviousWeekFlag(true);
+    setShowNextWeekFlag(true);     
+
     callBack({ target_date: today, consultant_id: consulatntId });
+
+    // alert("prev is:" +  showPreviousWeekFlag);
+    // alert("today is:" + showTodayFlag);
+    // alert("next is: " + showNextWeekFlag);
   };
 
-  const searchbtn = () => {
-    const search_date = moment(search?.target_date).format("YYYY-MM-DD");
-    const next_date = moment().add(7, "days").format("YYYY-MM-DD");
-    const previous_date = moment().add(-7, "days").format("YYYY-MM-DD");
-    const today_date = moment().format("YYYY-MM-DD");
-
-    setShowNextWeekFlag(true);
-    setShowTodayFlag(true);
+  const showNextWeek = () => {
+    setSearch({
+      ...search,
+      target_date: nextWeekDate as string,
+    });
+    const tmp: any = { ...search };
+    for (const i in tmp) {
+      if (tmp[i] === "") tmp[i] = undefined;
+    }
     setShowPreviousWeekFlag(true);
-  
+    setShowTodayFlag(true);
+    setShowNextWeekFlag(false); 
 
-    if((search_date > next_date)) {
-      setShowNextWeekFlag(false);
-      setShowTodayFlag(true);
-      setShowPreviousWeekFlag(true);
-    }
-    if((search_date < previous_date) ) {
-      setShowNextWeekFlag(true);
-      setShowTodayFlag(true);
-      setShowPreviousWeekFlag(false);
-    }
-    if((search_date === previous_date)) {
-      setShowNextWeekFlag(true);
-      setShowTodayFlag(true);
-      setShowPreviousWeekFlag(false);
-    }
-    if((search_date === today_date) ) {
-      setShowNextWeekFlag(true);
-      setShowTodayFlag(false);
-      setShowPreviousWeekFlag(true);
-    }
-    if((search_date === next_date) ) {
-      setShowNextWeekFlag(false);
-      setShowTodayFlag(true);
-      setShowPreviousWeekFlag(true);
-    }
-   
-     
+    callBack({ target_date: nextWeekDate, consultant_id: consulatntId });
+
+    // alert("prev is:" +  showPreviousWeekFlag);
+    // alert("today is:" + showTodayFlag);
+    // alert("next is: " + showNextWeekFlag);
   };
+    
+
+  // const searchbtn = () => {
+  //   const search_date = moment(search?.target_date).format("YYYY-MM-DD");
+  //   const next_date = moment().add(7, "days").format("YYYY-MM-DD");
+  //   const previous_date = moment().add(-7, "days").format("YYYY-MM-DD");
+  //   const today_date = moment().format("YYYY-MM-DD");
+
+  //   setShowNextWeekFlag(true);
+  //   setShowTodayFlag(true);
+  //   setShowPreviousWeekFlag(true);
+
+  //   if (search_date > next_date) {
+  //     setShowNextWeekFlag(false);
+  //     setShowTodayFlag(true);
+  //     setShowPreviousWeekFlag(true);
+  //   }
+  //   if (search_date < previous_date) {
+  //     setShowNextWeekFlag(true);
+  //     setShowTodayFlag(true);
+  //     setShowPreviousWeekFlag(false);
+  //   }
+  //   if (search_date === previous_date) {
+  //     setShowNextWeekFlag(true);
+  //     setShowTodayFlag(true);
+  //     setShowPreviousWeekFlag(false);
+  //   }
+  //   if (search_date === today_date) {
+  //     setShowNextWeekFlag(true);
+  //     setShowTodayFlag(false);
+  //     setShowPreviousWeekFlag(true);
+  //   }
+  //   if (search_date === next_date) {
+  //     setShowNextWeekFlag(false);
+  //     setShowTodayFlag(true);
+  //     setShowPreviousWeekFlag(true);
+  //   }
+  // };
 
   const customStyles = {
     width: 200,
@@ -184,7 +203,7 @@ const SearchAllConsultantTimes = ({
       </Typography>
       <Box sx={{ mb: 1, marginLeft: 1 }}>
         <Grid container sx={{ p: 1 }} spacing={1}>
-          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
             <FormControl
               sx={{
                 mr: 1,
@@ -235,7 +254,7 @@ const SearchAllConsultantTimes = ({
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2}>
             <LocalizationProvider dateAdapter={AdapterJalali}>
               <DatePicker
                 label=" تاریخ"
@@ -258,7 +277,7 @@ const SearchAllConsultantTimes = ({
               />
             </LocalizationProvider>
           </Grid>
-          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
+          <Grid item xs={12} sm={6} md={3} xl={2} lg={2}>
             <Button
               variant="contained"
               color="info"
@@ -269,7 +288,7 @@ const SearchAllConsultantTimes = ({
                 for (const i in tmp) {
                   if (tmp[i] === "") tmp[i] = undefined;
                 }
-                searchbtn();
+                //searchbtn();
                 callBack(tmp);
               }}
               disabled={disabled}
@@ -277,8 +296,17 @@ const SearchAllConsultantTimes = ({
               جستجو
             </Button>
           </Grid>
-          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
-            <Button
+          <Grid item xs={12} sm={6} md={3} xl={2} lg={2}>
+            <PreviousWeekSearchBtn
+              search_date={
+                search?.target_date
+                  ? moment(search.target_date).format("YYYY-MM-DD")
+                  : moment().format("YYYY-MM-DD")
+              }
+              runPreviousWeek={showPreviousWeek}
+              disabled_flag={!showPreviousWeekFlag}
+            />
+            {/* <Button
               variant="contained"
               color="info"
               style={{ width: "100%" }}
@@ -289,27 +317,46 @@ const SearchAllConsultantTimes = ({
               size="large"
             >
               هفته قبل
-            </Button>
+            </Button> */}
           </Grid>
-          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
-            <Button
-              variant="contained"
-              color="info"
-              size="large"
-              style={{ width: "100%" }}
-              onClick={() => {
-                // alert(selectedDate);
-                showTodayWeek();
-                //showPreviousWeek();
-              }}
-              disabled={!showTodayFlag || disabled}
-            >
-              امروز
-            </Button>
+          <Grid item xs={12} sm={6} md={3} xl={2} lg={2}>
+            <TodaySearchBtn
+                search_date={
+                  search?.target_date
+                    ? moment(search.target_date).format("YYYY-MM-DD")
+                    : moment().format("YYYY-MM-DD")
+                }
+                runToday={showTodayWeek}
+                disabled_flag={showTodayFlag}
+              />
+            {/* 
+              <Button
+                variant="contained"
+                color="info"
+                size="large"
+                style={{ width: "100%" }}
+                onClick={() => {
+                  // alert(selectedDate);
+                  showTodayWeek();
+                  //showPreviousWeek();
+                }}
+                disabled={!showTodayFlag || disabled}
+              >
+                امروز
+            </Button> */}
           </Grid>
 
-          <Grid item xs={12} sm={6} md={2} xl={2} lg={2}>
-            <Button
+          <Grid item xs={12} sm={6} md={3} xl={2} lg={2}>
+            <NextWeekSearchBtn
+              search_date={
+                search?.target_date
+                  ? moment(search.target_date).format("YYYY-MM-DD")
+                  : moment().format("YYYY-MM-DD")
+              }
+              runNextWeek={showNextWeek}
+              disabled_flag={!showNextWeekFlag}
+            />
+            {/* <Button
               variant="contained"
               color="info"
               style={{ width: "100%" }}
@@ -320,7 +367,7 @@ const SearchAllConsultantTimes = ({
               size="large"
             >
               هفته آتی
-            </Button>
+            </Button> */}
           </Grid>
         </Grid>
       </Box>
