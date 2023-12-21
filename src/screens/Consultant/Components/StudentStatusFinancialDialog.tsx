@@ -58,6 +58,13 @@ const StudentStatusFinancialDialog = ({
   openConsultantFinancialDialog: boolean;
   closeConsultantFinancialDialog: Function;
 }) => {
+
+  const studentCoursePermission = ["admin", "financial", "consultant_manager"];
+  const financialPermission = ["admin", "financial"];
+  const managerPermission = ["admin", "consultant_manager"];
+  const user = getUserData();
+
+
   const params = useParams<string>();
   const consultantStudentFinancialId = consultantFinancialId;
   const [open, setOpen] = React.useState(openConsultantFinancialDialog);
@@ -153,7 +160,8 @@ const StudentStatusFinancialDialog = ({
     setOpen(true);
   };
 
-  const handleAdd = () => {
+  const handleAdd = () => {    
+
     if (studentId === 1) {
       showError("دانش آموزی انتخاب نشده است.");
       return null;
@@ -165,9 +173,9 @@ const StudentStatusFinancialDialog = ({
         id: consultantFinancialId,
         student_id: studentId,
         consultant_id: consultantId,
-        student_status: studentStatus,
-        financial_status: financialStatus,
-        manager_status: managerStatus,
+        student_status: studentStatus,        
+        financial_status: managerPermission.includes(user.group.name)? "pending" : financialStatus ,
+        manager_status:  managerPermission.includes(user.group.name)? managerStatus : undefined ,
         financial_refused_status: financialRefusedStatus,
         description: financialDescription,
         year_id: yearId,
@@ -202,9 +210,7 @@ const StudentStatusFinancialDialog = ({
     fetchPolicy: "no-cache",
   });
 
-  const studentCoursePermission = ["admin", "financial", "manager"];
-  const financialPermission = ["admin", "financial"];
-  const user = getUserData();
+  
 
   return (
     <Dialog open={openConsultantFinancialDialog} onClose={handleCancel}>
@@ -244,7 +250,7 @@ const StudentStatusFinancialDialog = ({
           </FormControl>
         </Grid>
       </DialogContent>
-
+      {managerPermission.includes(user.group.name) ? (
       <DialogContent>
         <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
           <FormControl sx={{ width: "100%" }}>
@@ -265,6 +271,7 @@ const StudentStatusFinancialDialog = ({
           </FormControl>
         </Grid>
       </DialogContent>
+      ) : null }
       {financialPermission.includes(user.group.name) ? (
         <>
           <DialogContent>
@@ -291,7 +298,7 @@ const StudentStatusFinancialDialog = ({
               </FormControl>
             </Grid>
           </DialogContent>
-
+          { studentStatus==="refused" ||  studentStatus==="fired" ? (
           <DialogContent>
             <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
               <FormControl sx={{ width: "100%" }}>
@@ -316,6 +323,7 @@ const StudentStatusFinancialDialog = ({
               </FormControl>
             </Grid>
           </DialogContent>
+          ) : null }
         </>
       ) : null}
 

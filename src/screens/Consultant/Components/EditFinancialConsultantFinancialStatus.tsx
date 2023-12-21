@@ -92,7 +92,7 @@ const EditFinancialConsultantFinancialStatus = ({
       onCompleted: (data) => {
        
         setStudentStatus(data.getConsultantFinancial.student_status);
-        setManagerStatus(data.getConsultantFinancial.manager_status);
+        //setManagerStatus(data.getConsultantFinancial.manager_status);
         setFinancialStatus(data.getConsultantFinancial.financial_status);
         setFinancialRefusedStatus(data.getConsultantFinancial.financial_refused_status);
 
