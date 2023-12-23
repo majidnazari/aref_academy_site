@@ -100,7 +100,7 @@ const EditManagerConsultantFinancialStatus = ({
        
         setStudentStatus(data.getConsultantFinancial.student_status);
         setManagerStatus(data.getConsultantFinancial.manager_status);
-        setFinancialStatus(data.getConsultantFinancial.financial_status);
+        //setFinancialStatus(data.getConsultantFinancial.financial_status);
         setFinancialDescription(data.getConsultantFinancial.description);
 
         setConsultantId(data.getConsultantFinancial.consultant_id);
@@ -129,7 +129,7 @@ const EditManagerConsultantFinancialStatus = ({
   //   setOpen(true);
   // };
 
-  const handleAdd = () => {
+  const handleAdd = () => {    
     editConsultantfinancial({
       variables: {
         consultant_id: consultantId,
