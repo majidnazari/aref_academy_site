@@ -32,13 +32,53 @@ export const CREATE_STUDENT_CONSULTANT = gql`
   }
 `;
 
-
-export const DELETE_CONSULTANT_FINANCIAL=gql`
-mutation DELETE_CONSULTANT_FINANCIAL($id:ID!)
-{
-  deleteConsultantFinancial(id:$id)
-  {
-    id    
+export const DELETE_CONSULTANT_FINANCIAL = gql`
+  mutation DELETE_CONSULTANT_FINANCIAL($id: ID!) {
+    deleteConsultantFinancial(id: $id) {
+      id
+    }
   }
-}
+`;
+
+export const CREATE_STUDENT_INFO = gql`
+  mutation CREATE_STUDENT_INFO(
+    $student_id: Int!
+    $school_name: String
+    $first_name: String
+    $last_name: String
+    $nationality_code: String
+    $phone: String
+    $major: StudentMajor
+    $education_level: String
+    $concours_year: String
+  ) {
+    createStudentInfo(
+      input: {
+        student_id: $student_id
+        school_name: $school_name
+        first_name: $first_name
+        last_name: $last_name
+        nationality_code: $nationality_code
+        phone: $phone
+        major: $major
+        education_level: $education_level
+        concours_year: $concours_year
+      }
+    ) {
+      id
+      student_id
+      first_name
+      last_name
+      major
+      education_level
+      school_name
+      user_id_creator
+      UserCreator {
+        first_name
+        last_name
+      }
+      phone
+      concours_year
+    }
+  }
 `;

@@ -44,10 +44,24 @@ interface EditStudentFinancial {
   openConsultantFinancialDialog: boolean;
 }
 
+interface StudentDetailsType {
+  id: string,
+  first_name?: string,
+  last_name?: string,
+  phone?: string,
+  nationality_code?: string,
+  major?: string,
+  level?: string,
+  egucation_level?: string,
+  concours_year?: string,
+  school?: string,
+}
+
 const StudentFinancial = () => {
   const navigate = useNavigate();
   const { studentId } = useParams<string>();
   const [studentConsultants, setStudentConsultants] = useState<any[]>([]);
+  const [studentinfo, setStudentinfo] = useState<StudentDetailsType>(null!);
   const [pageInfo, setPageInfo] = useState<PaginatorInfo>({
     count: 0,
     currentPage: 1,
@@ -76,6 +90,10 @@ const StudentFinancial = () => {
     variables: {
       id: studentId,
     },
+    onCompleted: (data) => {
+      setStudentinfo(data.getStudent);
+      //console.log(data.getStudent);
+    }
   });
   const [editConsultantfinancial] = useMutation(UPDATE_CONSULTANT_FINANCIAL);
 
@@ -284,7 +302,7 @@ const StudentFinancial = () => {
       </TableContainer>
 
       {!loading && studentData.getStudent.nationality_code ? (
-        <AddStudentConsultant studentId={studentId} refetch={refetch} />
+        <AddStudentConsultant studentId={studentId} refetch={refetch} studentDetails={studentinfo}/>
       ) : (
         <Alert severity="error">
           جهت افزودن درس به این دانش آموز کد ملی را در قسمت
