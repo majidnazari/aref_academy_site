@@ -17,17 +17,33 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { GET_CONSULTANTS, GET_A_STUDENT, GET_YEARS } from "../gql/query";
 import { useQuery, useMutation } from "@apollo/client";
-import { CREATE_STUDENT_CONSULTANT } from "../gql/mutation";
+import { CREATE_STUDENT_CONSULTANT, CREATE_STUDENT_INFO } from "../gql/mutation";
 import { useState } from "react";
 import { showSuccess } from "utils/swlAlert";
 import { vmsNationalCode } from "utils/utils";
 
+
+interface StudentDetailsType {
+  id: string,
+  first_name?: string,
+  last_name?: string,
+  phone?: string,
+  nationality_code?: string,
+  major?: string,
+  level?: string,
+  egucation_level?: string,
+  concours_year?: string,
+  school?: string,
+}
+
 interface Props {
   studentId: string | undefined;
   refetch: Function;
+  studentDetails:StudentDetailsType
 }
 
-const AddStudentConsultant = ({ studentId, refetch }: Props) => {
+const AddStudentConsultant = ({ studentId, refetch,studentDetails }: Props) => {
+ 
   const [consultantId, setConsultantId] = useState<string | undefined>("");
   const [isValidStudent, setIsValidStudent] = useState<boolean>(false);
   const [yearId, setYearId] = useState<string>("");
@@ -99,6 +115,33 @@ const AddStudentConsultant = ({ studentId, refetch }: Props) => {
     CREATE_STUDENT_CONSULTANT
   );
 
+  const [createStudentInfo, { loading: addStudentInfoLoading }] = useMutation( 
+    CREATE_STUDENT_INFO
+  );
+
+  const insertStudentInfo = () => {   
+    // console.log(studentDetails);
+    const input = {
+      variables: {
+        student_id:Number(studentDetails.id),//30689 , // parseInt(studentDetails.id),
+        school_name: studentDetails.school,
+        first_name: studentDetails.first_name,
+        last_name: studentDetails.last_name, 
+        nationality_code: studentDetails.nationality_code, 
+        phone: studentDetails.phone, 
+        major: studentDetails.major,
+        education_level: studentDetails.egucation_level, 
+        concours_year: studentDetails.concours_year
+      },
+    };
+    createStudentInfo(input);
+    // .then(() => {
+    //   showSuccess("دانش آموز با موفقیت اضافه شد");
+      
+    // });
+  };
+  
+
   const insertStudentConsultant = () => {
     if (!isValidStudent) {
       return;
@@ -111,8 +154,10 @@ const AddStudentConsultant = ({ studentId, refetch }: Props) => {
         student_status: "ok",
       },
     };
+    insertStudentInfo();
     createStudentConsultant(input).then(() => {
-      showSuccess("مشاور با موفقیت اضافه شد");
+      
+      showSuccess("مشاور با موفقیت اضافه شد");     
       refetch();
     });
   };
