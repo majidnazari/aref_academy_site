@@ -190,6 +190,10 @@ export const GET_CONSULTANT_DEFINITION_DETAILS = gql`
         remote
         compensatory_of_definition_detail_id
         compensatory_for_definition_detail_id
+        consultant_financial{
+          id
+          financial_status
+        }
       }
     }
   }
@@ -364,6 +368,10 @@ export const GET_CONSULTANT_SHOW_TIMES = gql`
         student_status_updated_at
         start_hour
         end_hour
+        consultant_financial {
+          id
+          financial_status
+        }
       }
     }
   }
@@ -604,6 +612,14 @@ export const GET_ABSENT_PRESENT_STUDENT_SESSION = gql`
         start_hour
         end_hour
         compensatory_meet
+
+        financial {
+          id
+          student_id
+          consultant_id
+          financial_status
+          student_status
+        }
       }
     }
   }

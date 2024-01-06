@@ -59,6 +59,11 @@ interface ConsultantData {
   last_name?: string;
 }
 
+interface ConsultantFinancial {
+  id: string;
+  financial_status: string;
+}
+
 interface getConsultantsTimeShowData {
   consultant?: ConsultantData;
   details?: detailsData[];
@@ -87,6 +92,7 @@ interface detailsData {
   compensatory_of_definition_detail_session_date: String;
   compensatory_of_definition_detail_start_hour: String;
   compensatory_of_definition_detail_end_hour: String;
+  consultant_financial: ConsultantFinancial;
 }
 class SearchData {
   consultant_id?: number;
@@ -109,6 +115,31 @@ const convertStudentStatusTheme = (student_status: string) => {
   }
 };
 
+const converConsultantFinancial = (finnacial_status: string) => {
+  switch (finnacial_status) {
+    case "approved":
+      return "پرداخت کرده";
+    case "semi_approved":
+      return "عدم تسویه کامل";
+    case "pending":
+      return "در انتظار پرداخت";
+    default:
+      return "ندارد";
+  }
+};
+
+const converConsultantFinancialCode = (finnacial_status: string) => {
+  switch (finnacial_status) {
+    case "approved":
+      return "green";
+    case "semi_approved":
+      return "orange";
+    case "pending":
+      return "red";
+    default:
+      return "#8E02FC";
+  }
+};
 const consultantNotFilledStudentBox = {
   display: "flex",
   flexDirection: "column",
@@ -271,8 +302,10 @@ const ShowAllConsultantsTimes = () => {
     setStudentDialogOpen(true);
   };
 
-  const handleAddStudentStatus = (defenitionId: string,consultant_id: string) => {
-    
+  const handleAddStudentStatus = (
+    defenitionId: string,
+    consultant_id: string
+  ) => {
     setConsId(consultant_id);
     setDialogConsultantTimeTableId(defenitionId);
     setStudentStatusDialogOpen(true);
@@ -393,15 +426,14 @@ const ShowAllConsultantsTimes = () => {
                           onClick={() =>
                             consultantRedirect(element.consultant?.id)
                           }
-                        >                         
+                        >
                           <span> </span>
                           {element.consultant?.first_name}
                           {"    "}
                           {element.consultant?.last_name} {"    "}
                           <span></span>
                           <span></span>
-                          <span></span>                        
-
+                          <span></span>
                         </Box>
                       </StyledTableCell>
                       <StyledTableCell align="left">
@@ -498,7 +530,10 @@ const ShowAllConsultantsTimes = () => {
                                           textAlign: "left",
                                         }}
                                         onClick={() =>
-                                          handleAddStudentStatus(detail.id,String(element.consultant?.id))
+                                          handleAddStudentStatus(
+                                            detail.id,
+                                            String(element.consultant?.id)
+                                          )
                                         }
                                       >
                                         {" "}
@@ -683,11 +718,14 @@ const ShowAllConsultantsTimes = () => {
                                           >
                                             {" حذف "}
                                           </Button>
-                                         
+
                                           <Button
                                             color="info"
                                             variant="contained"
-                                            disabled={detail.copy_to_next_week || detail.compensatory_meet}
+                                            disabled={
+                                              detail.copy_to_next_week ||
+                                              detail.compensatory_meet
+                                            }
                                             onClick={() => {
                                               showConfirm(async () =>
                                                 copyStudentToNextWeek({
@@ -709,7 +747,6 @@ const ShowAllConsultantsTimes = () => {
                                           >
                                             {"کپی"}
                                           </Button>
-                                         
                                         </Box>
                                       ) : null}
 
@@ -766,6 +803,19 @@ const ShowAllConsultantsTimes = () => {
                                           }}
                                         />{" "}
                                         غیر حضوری{" "}
+                                      </Box>
+                                      <Box bgcolor={converConsultantFinancialCode(
+                                          detail?.consultant_financial
+                                            ?.financial_status
+                                        )}
+                                        sx={{
+                                          m: 1                                          
+                                        }}
+                                      >
+                                        {converConsultantFinancial(
+                                          detail?.consultant_financial
+                                            ?.financial_status
+                                        )}
                                       </Box>
                                       {detail?.user_student_status_full_name ? (
                                         <Box>

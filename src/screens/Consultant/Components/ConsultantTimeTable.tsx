@@ -167,6 +167,31 @@ const convertStudentStatusTheme = (student_status: string) => {
   }
 };
 
+const converConsultantFinancial = (finnacial_status: string) => {
+  switch (finnacial_status) {
+    case "approved":
+      return "پرداخت کرده";
+    case "semi_approved":
+      return "عدم تسویه کامل";
+    case "pending":
+      return "در انتظار پرداخت";
+    default:
+      return "ندارد";
+  }
+};
+
+const converConsultantFinancialCode = (finnacial_status: string) => {
+  switch (finnacial_status) {
+    case "approved":
+      return "green";
+    case "semi_approved":
+      return "orange";
+    case "pending":
+      return "red";
+    default:
+      return "#8E02FC";
+  }
+};
 interface ErrorData {
   days?: string;
   startTime?: string;
@@ -178,6 +203,10 @@ interface getConsultantDefinitionDetailsData {
   id: number;
   date?: string;
   details?: detailsData[];
+}
+interface ConsultantFinancial {
+  id: string;
+  financial_status: string;
 }
 
 interface detailsData {
@@ -200,6 +229,7 @@ interface detailsData {
   compensatory_meet: boolean;
   single_meet: boolean;
   remote: boolean;
+  consultant_financial: ConsultantFinancial;
 }
 
 const ConsultantTimeTable = () => {
@@ -1277,6 +1307,19 @@ const ConsultantTimeTable = () => {
                                     />{" "}
                                     غیر حضوری{" "}
                                   </Box>
+                                  <Box bgcolor={converConsultantFinancialCode(
+                                          detail?.consultant_financial
+                                            ?.financial_status
+                                        )}
+                                        sx={{
+                                          m: 1                                          
+                                        }}
+                                      >
+                                        {converConsultantFinancial(
+                                          detail?.consultant_financial
+                                            ?.financial_status
+                                        )}
+                                      </Box>
                                   {detail?.user_student_status_full_name ? (
                                     <Box>
                                       {"کاربر ثبت کننده: "}
