@@ -1312,8 +1312,10 @@ const ConsultantTimeTable = () => {
                                             ?.financial_status
                                         )}
                                         sx={{
-                                          m: 1                                          
+                                          my: 1,
+                                          px:1                                          
                                         }}
+                                        borderRadius={1}
                                       >
                                         {converConsultantFinancial(
                                           detail?.consultant_financial

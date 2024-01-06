@@ -221,7 +221,7 @@ const ShowAllConsultantsTimes = () => {
     target_date: current_date,
   });
 
-  const { refetch } = useQuery(GET_CONSULTANT_SHOW_TIMES, {
+  const { refetch,loading:timeTableLoading } = useQuery(GET_CONSULTANT_SHOW_TIMES, {
     variables: {
       // consultant_id: Number(consultantId),
       target_date: moment().format("YYYY-MM-DD"),
@@ -381,7 +381,9 @@ const ShowAllConsultantsTimes = () => {
             closeTimeSplietrDialog={closeTimeSpliterDialog}
           />
         )}
-        {searchLoading ? (
+
+        {timeTableLoading && <CircularProgress />}
+        {searchLoading  ? (
           <Box>
             <CircularProgress />
           </Box>
@@ -809,8 +811,10 @@ const ShowAllConsultantsTimes = () => {
                                             ?.financial_status
                                         )}
                                         sx={{
-                                          m: 1                                          
+                                          my: 1,
+                                          px:1                                          
                                         }}
+                                        borderRadius={1}
                                       >
                                         {converConsultantFinancial(
                                           detail?.consultant_financial
