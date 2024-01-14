@@ -232,12 +232,20 @@ interface detailsData {
   consultant_financial: ConsultantFinancial;
 }
 
+enum Week {
+  Current= 'Current',
+  Next= 'Next',
+  Next2week= 'Next2week',
+  Next3week= 'Next3week',
+  Next4week= 'Next4week',
+};
+
 const ConsultantTimeTable = () => {
   const params = useParams<string>();
   const consultantId = params.consultantId;
 
   const [days, setDays] = useState<string[]>([]);
-  const [week, setWeek] = useState<"Current" | "Next">("Current");
+  const [week, setWeek] = useState<Week>(Week.Current);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndtTime] = useState<Date | null>(null);
   const [step, setStep] = useState<string>("15");
@@ -452,7 +460,7 @@ const ConsultantTimeTable = () => {
         setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
         //setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
         setNextWeekFlag(false);
-        setWeek("Next");
+        setWeek(Week.Next);
       },
     });
   };
@@ -482,7 +490,7 @@ const ConsultantTimeTable = () => {
         setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
         // setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
         setNextWeekFlag(true);
-        setWeek("Current");
+        setWeek(Week.Current);
       },
     });
   };
@@ -646,14 +654,17 @@ const ConsultantTimeTable = () => {
               id="week-select"
               value={week}
               onChange={(e) => {
-                setWeek(e.target.value as "Current" | "Next");
+                setWeek(e.target.value as Week);
                 changeWeek();
                 //nextWeek();
               }}
               input={<OutlinedInput label="هفته" />}
             >
               <MenuItem value="Current">جاری</MenuItem>
-              <MenuItem value="Next">آتی</MenuItem>
+              <MenuItem value="Next">یک هفته بعد</MenuItem>
+              <MenuItem value="Next2week">دو هفته بعد</MenuItem>
+              <MenuItem value="Next3week">سه هفته بعد</MenuItem>
+              <MenuItem value="Next4week">چهار هفته بعد</MenuItem>
             </Select>
             {error.days ? (
               <FormHelperText error>{error.days}</FormHelperText>
