@@ -12,7 +12,13 @@ import AdapterJalali from "@date-io/date-fns-jalali";
 import TextField from "@mui/material/TextField";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
-import { Button, Container, Switch, TableContainer } from "@mui/material";
+import {
+  Button,
+  Container,
+  Stack,
+  Switch,
+  TableContainer,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import moment from "moment";
@@ -57,6 +63,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ComponentDeleteStudentDialog from "./ComponentDeleteStudentDialog";
 import ShowPhone from "screens/Students/components/ShowPhone";
 import momentj from "moment-jalaali";
+import { format } from "path";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -233,12 +240,12 @@ interface detailsData {
 }
 
 enum Week {
-  Current= 'Current',
-  Next= 'Next',
-  Next2week= 'Next2week',
-  Next3week= 'Next3week',
-  Next4week= 'Next4week',
-};
+  Current = "Current",
+  Next = "Next",
+  Next2week = "Next2week",
+  Next3week = "Next3week",
+  Next4week = "Next4week",
+}
 
 const ConsultantTimeTable = () => {
   const params = useParams<string>();
@@ -319,8 +326,14 @@ const ConsultantTimeTable = () => {
     },
   });
 
+  // const current_date = moment().format("YYYY-MM-DD");
+  // const next_date = moment().add(7, "days").format("YYYY-MM-DD");
+
   const current_date = moment().format("YYYY-MM-DD");
   const next_date = moment().add(7, "days").format("YYYY-MM-DD");
+  const next2week_date = moment().add(14, "days").format("YYYY-MM-DD");
+  const next3week_date = moment().add(21, "days").format("YYYY-MM-DD");
+  const next4week_date = moment().add(28, "days").format("YYYY-MM-DD");
 
   const { fetchMore, refetch } = useQuery(GET_CONSULTANT_DEFINITION_DETAILS, {
     variables: {
@@ -401,7 +414,7 @@ const ConsultantTimeTable = () => {
     const variables = {
       //consultant_id: +(id as string),
       days: daysTmp,
-      week,
+      week:week,
       start_hour: moment(startTime).format("HH:mm"),
       end_hour: moment(endTime).format("HH:mm"),
       step: +step,
@@ -413,10 +426,11 @@ const ConsultantTimeTable = () => {
         refetch();
         setLoading(false);
         showSuccess("زمانبندی جدید با موفقیت ایجاد شد");
-        showPreviousWeekBeforeRefresh();
+        //showPreviousWeekBeforeRefresh();
       })
       .finally(() => {
         setLoading(false);
+        changeWeek(week);
       });
   };
 
@@ -500,7 +514,8 @@ const ConsultantTimeTable = () => {
   };
   const refreshConsultantDefinition = () => {
     refetch();
-    showPreviousWeekBeforeRefresh();
+    //showPreviousWeekBeforeRefresh();
+    changeWeek(week);
   };
   const convertDayIntoShamsi = (day: string) => {
     switch (day) {
@@ -521,18 +536,25 @@ const ConsultantTimeTable = () => {
     }
   };
 
-  const changeWeek = () => {
-    if (week === "Current") {
-      nextWeek();
-    }
-    if (week === "Next") {
-      previousWeek();
-    }
+  const changeWeek = (inputWeek: Week) => {
+    setTimeTable([]);
+    fetchMore({
+      variables: {
+        week: inputWeek,
+        consultant_id: Number(consultantId),
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        setTimeTable(fetchMoreResult.getConsultantDefinitionDetails);
+        // setToday(fetchMoreResult.getCourseSessionOrderbyDate.today);
+        //setNextWeekFlag(true);
+        //setWeek(Week.Current);
+      },
+    });
   };
 
-  const copyPlan = () => {
-    if (week === "Next") {
-      showError("امکان کپی هفته بعد وجود ندارد.");
+  const copyPlan = (inputWeek:Week) => {
+    if (week === "Current") {
+      showError("امکان کپی به هفته جاری وجود ندارد.");
       return null;
     }
 
@@ -541,23 +563,25 @@ const ConsultantTimeTable = () => {
       insertCopyMultiConsultantTimes({
         variables: {
           consultant_id: consultantId ? Number(consultantId) : 0,
+          week:inputWeek
         },
       }).then(() => {
         refetch();
         //nextWeek();
         showSuccess("کپی زمانبندی جدید با موفقیت ایجاد شد");
+        changeWeek(inputWeek);
       });
     });
   };
 
-  const showPreviousWeekBeforeRefresh = () => {
-    if (week === "Current") {
-      previousWeek();
-    }
-    if (week === "Next") {
-      nextWeek();
-    }
-  };
+  // const showPreviousWeekBeforeRefresh = () => {
+  //   if (week === "Current") {
+  //     previousWeek();
+  //   }
+  //   if (week === "Next") {
+  //     nextWeek();
+  //   }
+  // };
 
   const changeStudentStatus = (
     id: string,
@@ -573,14 +597,15 @@ const ConsultantTimeTable = () => {
     }).then(() => {
       showSuccess("وضعیت دانش آموز با موفقیت به تاخیر تغییر کرد.");
       refetch();
-      showPreviousWeekBeforeRefresh();
+      changeWeek(week);
+      //showPreviousWeekBeforeRefresh();
       setStudentStatus(student_status);
     });
   };
 
-  const checkCompensatory = (id: string) => {
-    alert(id);
-  };
+  // const checkCompensatory = (id: string) => {
+  //   alert(id);
+  // };
 
   return consultantFullName ? (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -655,7 +680,7 @@ const ConsultantTimeTable = () => {
               value={week}
               onChange={(e) => {
                 setWeek(e.target.value as Week);
-                changeWeek();
+                changeWeek(e.target.value as Week);
                 //nextWeek();
               }}
               input={<OutlinedInput label="هفته" />}
@@ -765,11 +790,12 @@ const ConsultantTimeTable = () => {
           sx={{
             display: "flex",
             justifyContent: "end",
-            width: "30%",
+            //width: "30%",
           }}
         >
-          <FormControl sx={{ width: "30%" }}>
+          <FormControl >
             <Button
+             size="small"
               onClick={() => {
                 insertMultiSessions();
               }}
@@ -779,22 +805,79 @@ const ConsultantTimeTable = () => {
               {loading ? <CircularProgress size={15} color="primary" /> : null}
               ذخیره
             </Button>
-            {nextWeekFlag ? (
-              <Button
-                onClick={() => {
-                  copyPlan();
-                }}
-                variant="contained"
-                disabled={loading}
-                sx={{
-                  mt: 1,
-                }}
-              >
-                {loading ? (
-                  <CircularProgress size={15} color="primary" />
-                ) : null}
-                کپی برنامه به هفته بعد
-              </Button>
+           
+            {nextWeekFlag || true ? (
+              <Stack direction="row">
+                <Button
+                  onClick={() => {
+                    copyPlan(week);
+                  }}
+                  size="small"
+                  variant="contained"
+                  disabled={loading}
+                  sx={{
+                    mt: 1,
+                  }}
+                >
+                  {loading ? (
+                    <CircularProgress size={15} color="primary" />
+                  ) : null}
+                  کپی  از هفته جاری به
+                </Button>
+                <FormControl sx={{ width: "100%" }}>
+                  
+                  <Select
+                   size="small"
+                    labelId="week-label"
+                    id="week_select_to_create"
+                    value={week}
+                    sx={{
+                      mt: 1,
+                    }}
+                    onChange={(e) => {
+                      setWeek(e.target.value as Week);
+                      changeWeek(e.target.value as Week);
+                      //nextWeek();
+                    }}
+                                     >
+                    <MenuItem value="Current">
+                      جاری{" "}
+                      {momentj(current_date)
+                        .subtract(2, "days")
+                        .format("jYYYY/jMM/jDD")}
+                    </MenuItem>
+                    <MenuItem value="Next">
+                      یک هفته بعد{" "}
+                      {momentj(next_date)
+                        .subtract(2, "days")
+                        .format("jYYYY/jMM/jDD")}
+                    </MenuItem>
+                    <MenuItem value="Next2week">
+                      دو هفته بعد{" "}
+                      {momentj(next2week_date)
+                        .subtract(2, "days")
+                        .format("jYYYY/jMM/jDD")}
+                    </MenuItem>
+                    <MenuItem value="Next3week">
+                      سه هفته بعد{" "}
+                      {momentj(next3week_date)
+                        .subtract(2, "days")
+                        .format("jYYYY/jMM/jDD")}
+                    </MenuItem>
+                    <MenuItem value="Next4week">
+                      چهار هفته بعد{" "}
+                      {momentj(next4week_date)
+                        .subtract(2, "days")
+                        .format("jYYYY/jMM/jDD")}
+                    </MenuItem>
+                  </Select>
+                  {error.days ? (
+                    <FormHelperText error>{error.days}</FormHelperText>
+                  ) : (
+                    ""
+                  )}
+                </FormControl>
+              </Stack>
             ) : null}
           </FormControl>
         </Grid>
@@ -808,7 +891,7 @@ const ConsultantTimeTable = () => {
         <Table>
           <TableBody>
             <TableRow>
-              <StyledTableCell
+              {/* <StyledTableCell
                 align="center"
                 sx={{
                   fontSize: 25,
@@ -835,8 +918,68 @@ const ConsultantTimeTable = () => {
                     هفته جاری
                   </Button>
                 </Box>
-              </StyledTableCell>
+              </StyledTableCell> */}
               <StyledTableCell
+                align="center"
+                sx={{
+                  fontSize: 25,
+                  fontWeight: 300,
+                  textAlign: "center",
+                  backgroundColor: "white",
+                }}
+              >
+                <FormControl sx={{ width: "30%" }}>
+                  <InputLabel id="week-label">انتخاب هفته برای نمایش </InputLabel>
+                  <Select
+                    labelId="week-label"
+                    id="week-select"
+                    value={week}
+                    onChange={(e) => {
+                      setWeek(e.target.value as Week);
+                      changeWeek(e.target.value as Week);
+                      //nextWeek();
+                    }}
+                    input={<OutlinedInput label="انتخاب هفته برای نمایش " />}
+                  >
+                    <MenuItem value="Current">
+                      جاری{" "}
+                      {momentj(current_date)
+                        .subtract(2, "days")
+                        .format("jYYYY/jMM/jDD")}
+                    </MenuItem>
+                    <MenuItem value="Next">
+                      یک هفته بعد{" "}
+                      {momentj(next_date)
+                        .subtract(2, "days")
+                        .format("jYYYY/jMM/jDD")}
+                    </MenuItem>
+                    <MenuItem value="Next2week">
+                      دو هفته بعد{" "}
+                      {momentj(next2week_date)
+                        .subtract(2, "days")
+                        .format("jYYYY/jMM/jDD")}
+                    </MenuItem>
+                    <MenuItem value="Next3week">
+                      سه هفته بعد{" "}
+                      {momentj(next3week_date)
+                        .subtract(2, "days")
+                        .format("jYYYY/jMM/jDD")}
+                    </MenuItem>
+                    <MenuItem value="Next4week">
+                      چهار هفته بعد{" "}
+                      {momentj(next4week_date)
+                        .subtract(2, "days")
+                        .format("jYYYY/jMM/jDD")}
+                    </MenuItem>
+                  </Select>
+                  {error.days ? (
+                    <FormHelperText error>{error.days}</FormHelperText>
+                  ) : (
+                    ""
+                  )}
+                </FormControl>
+              </StyledTableCell>
+              {/* <StyledTableCell
                 align="center"
                 sx={{
                   fontSize: 25,
@@ -863,7 +1006,7 @@ const ConsultantTimeTable = () => {
                     هفته آتی
                   </Button>
                 </Box>
-              </StyledTableCell>
+              </StyledTableCell> */}
             </TableRow>
           </TableBody>
         </Table>
@@ -932,7 +1075,8 @@ const ConsultantTimeTable = () => {
                               }).then(() => {
                                 showSuccess("کپی  کل روز با موفقیت انجام شد.");
                                 refetch();
-                                showPreviousWeekBeforeRefresh();
+                                changeWeek(week);
+                                //showPreviousWeekBeforeRefresh();
                               })
                             );
                           }}
@@ -1223,7 +1367,8 @@ const ConsultantTimeTable = () => {
                                                 "حذف با موفقیت انجام شد."
                                               );
                                               refetch();
-                                              showPreviousWeekBeforeRefresh();
+                                              changeWeek(week);
+                                              //showPreviousWeekBeforeRefresh();
                                             })
                                           );
                                         }}
@@ -1234,34 +1379,38 @@ const ConsultantTimeTable = () => {
                                       >
                                         {" حذف "}
                                       </Button>
-                                      
-                                        <Button
-                                          color="info"
-                                          variant="contained"
-                                          disabled={detail.copy_to_next_week || detail.compensatory_meet}
-                                          onClick={() => {
-                                            showConfirm(async () =>
-                                              copyStudentToNextWeek({
-                                                variables: {
-                                                  id: detail.id,
-                                                },
-                                              }).then(() => {
-                                                showSuccess(
-                                                  "کپی با موفقیت انجام شد."
-                                                );
-                                                refetch();
-                                                showPreviousWeekBeforeRefresh();
-                                              })
-                                            );
-                                          }}
-                                          sx={{
-                                            mt: 2,
-                                            fontSize: 13,
-                                          }}
-                                        >
-                                          {"کپی"}{detail.copy_to_next_week}
-                                        </Button>
-                                     
+
+                                      <Button
+                                        color="info"
+                                        variant="contained"
+                                        disabled={
+                                          detail.copy_to_next_week ||
+                                          detail.compensatory_meet
+                                        }
+                                        onClick={() => {
+                                          showConfirm(async () =>
+                                            copyStudentToNextWeek({
+                                              variables: {
+                                                id: detail.id,
+                                              },
+                                            }).then(() => {
+                                              showSuccess(
+                                                "کپی با موفقیت انجام شد."
+                                              );
+                                              refetch();
+                                              changeWeek(week);
+                                              //showPreviousWeekBeforeRefresh();
+                                            })
+                                          );
+                                        }}
+                                        sx={{
+                                          mt: 2,
+                                          fontSize: 13,
+                                        }}
+                                      >
+                                        {"کپی"}
+                                        {detail.copy_to_next_week}
+                                      </Button>
                                     </Box>
                                   ) : null}
                                   <Box>
@@ -1285,7 +1434,8 @@ const ConsultantTimeTable = () => {
                                             "وضعیت  تک جلسه تغییر کرد."
                                           );
                                           refetch();
-                                          showPreviousWeekBeforeRefresh();
+                                          changeWeek(week);
+                                          //showPreviousWeekBeforeRefresh();
                                         });
                                       }}
                                     />{" "}
@@ -1312,27 +1462,29 @@ const ConsultantTimeTable = () => {
                                             "وضعیت  تک جلسه تغییر کرد."
                                           );
                                           refetch();
-                                          showPreviousWeekBeforeRefresh();
+                                          changeWeek(week);
+                                          //showPreviousWeekBeforeRefresh();
                                         });
                                       }}
                                     />{" "}
                                     غیر حضوری{" "}
                                   </Box>
-                                  <Box bgcolor={converConsultantFinancialCode(
-                                          detail?.consultant_financial
-                                            ?.financial_status
-                                        )}
-                                        sx={{
-                                          my: 1,
-                                          px:1                                          
-                                        }}
-                                        borderRadius={1}
-                                      >
-                                        {converConsultantFinancial(
-                                          detail?.consultant_financial
-                                            ?.financial_status
-                                        )}
-                                      </Box>
+                                  <Box
+                                    bgcolor={converConsultantFinancialCode(
+                                      detail?.consultant_financial
+                                        ?.financial_status
+                                    )}
+                                    sx={{
+                                      my: 1,
+                                      px: 1,
+                                    }}
+                                    borderRadius={1}
+                                  >
+                                    {converConsultantFinancial(
+                                      detail?.consultant_financial
+                                        ?.financial_status
+                                    )}
+                                  </Box>
                                   {detail?.user_student_status_full_name ? (
                                     <Box>
                                       {"کاربر ثبت کننده: "}
@@ -1370,7 +1522,8 @@ const ConsultantTimeTable = () => {
                                           "حذف  جلسه با موفقیت انجام شد."
                                         );
                                         refetch();
-                                        showPreviousWeekBeforeRefresh();
+                                        changeWeek(week);
+                                        //showPreviousWeekBeforeRefresh();
                                       })
                                     );
                                   }}

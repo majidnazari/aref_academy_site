@@ -182,9 +182,13 @@ export const DELETE_CONSULTANTN_DEFINITION_STUDENT_ID = gql`
 `;
 
 export const CPOY_TIME_TABLE_OF_CONSULTANT = gql`
-  mutation COPY_CONSULATNT_TIME_TABLE($consultant_id: Int!) {
+  mutation COPY_CONSULATNT_TIME_TABLE($consultant_id: Int! , $week: String) {
     createConsultantDefinitionDetailCopyCurrentWeekPlan(
-      input: { consultant_id: $consultant_id }
+      input: { 
+        consultant_id: $consultant_id 
+        week: $week
+        
+        }
     ) {
       id
       session_date
