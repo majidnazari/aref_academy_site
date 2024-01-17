@@ -793,7 +793,7 @@ const ConsultantTimeTable = () => {
             //width: "30%",
           }}
         >
-          <FormControl >
+          <FormControl sx={{ width: "50%" }} >
             <Button
              size="small"
               onClick={() => {
@@ -806,8 +806,8 @@ const ConsultantTimeTable = () => {
               ذخیره
             </Button>
            
-            {nextWeekFlag || true ? (
-              <Stack direction="row">
+            {week==="Current" ? (
+              <Stack direction="row" spacing={1}>
                 <Button
                   onClick={() => {
                     copyPlan(week);

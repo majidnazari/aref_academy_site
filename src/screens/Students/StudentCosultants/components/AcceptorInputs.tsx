@@ -20,7 +20,7 @@ interface StudentCourseFormData {
   description?: string;
 }
 
-const ManagerInputs = ({ setFormData, studentCourse }: EditProps) => {
+const AcceptorInputs = ({ setFormData, studentCourse }: EditProps) => {
   const [mystudentCourse, setMystudentCourse] = useState<StudentCourseFormData>(
     {
       student_status: studentCourse.student_status,
@@ -95,4 +95,4 @@ const ManagerInputs = ({ setFormData, studentCourse }: EditProps) => {
   );
 };
 
-export default ManagerInputs;
+export default AcceptorInputs;

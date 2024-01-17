@@ -18,6 +18,7 @@ import {
   Autocomplete,
   CircularProgress,
   FormControl,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -58,12 +59,11 @@ const StudentStatusFinancialDialog = ({
   openConsultantFinancialDialog: boolean;
   closeConsultantFinancialDialog: Function;
 }) => {
-
   const studentCoursePermission = ["admin", "financial", "consultant_manager"];
   const financialPermission = ["admin", "financial"];
   const managerPermission = ["admin", "consultant_manager"];
+  const acceptorPermission = ["consultant_acceptor"];
   const user = getUserData();
-
 
   const params = useParams<string>();
   const consultantStudentFinancialId = consultantFinancialId;
@@ -160,8 +160,7 @@ const StudentStatusFinancialDialog = ({
     setOpen(true);
   };
 
-  const handleAdd = () => {    
-
+  const handleAdd = () => {
     if (studentId === 1) {
       showError("دانش آموزی انتخاب نشده است.");
       return null;
@@ -173,9 +172,15 @@ const StudentStatusFinancialDialog = ({
         id: consultantFinancialId,
         student_id: studentId,
         consultant_id: consultantId,
-        student_status: studentStatus,        
-        financial_status: managerPermission.includes(user.group.name)? "pending" : financialStatus ,
-        manager_status:  managerPermission.includes(user.group.name)? managerStatus : undefined ,
+        student_status: studentStatus,
+        financial_status:
+          managerPermission.includes(user.group.name) ||
+          acceptorPermission.includes(user.group.name)
+            ? undefined
+            : financialStatus,
+        manager_status: managerPermission.includes(user.group.name)
+          ? managerStatus
+          : undefined,
         financial_refused_status: financialRefusedStatus,
         description: financialDescription,
         year_id: yearId,
@@ -210,8 +215,6 @@ const StudentStatusFinancialDialog = ({
     fetchPolicy: "no-cache",
   });
 
-  
-
   return (
     <Dialog open={openConsultantFinancialDialog} onClose={handleCancel}>
       <DialogTitle minWidth={600}> تغییر وضعیت دانش آموز </DialogTitle>
@@ -228,50 +231,89 @@ const StudentStatusFinancialDialog = ({
           </Typography>
         </FormControl> */}
       </Grid>
-      <DialogContent>
-        <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
-          <FormControl sx={{ width: "100%" }}>
-            <InputLabel id="student-status-label"> وضعیت دانش آموز </InputLabel>
-            <Select
-              labelId="student-status-label"
-              value={studentStatus}
-              onChange={(e) => {
-                setStudentStatus(e.target.value);
-              }}
-              input={<OutlinedInput label=" وضعیت دانش آموز " />}
-              fullWidth
-            >
-              <MenuItem value={""}> </MenuItem>
-              <MenuItem value={"ok"}> تایید </MenuItem>
-              <MenuItem value={"refused"}> انصراف </MenuItem>
-              <MenuItem value={"fired"}> اخراج </MenuItem>
-              <MenuItem value={"financial_pending"}> عدم تسویه مالی</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-      </DialogContent>
+      {acceptorPermission.includes(user.group.name) ? (
+        <DialogContent>
+          <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+            <FormControl sx={{ width: "100%" }}>
+              <InputLabel id="student-status-label">
+                {" "}
+                وضعیت دانش آموز{" "}
+              </InputLabel>
+              <Select
+                labelId="student-status-label"
+                value={studentStatus}
+                onChange={(e) => {
+                  setStudentStatus(e.target.value);
+                }}
+                input={<OutlinedInput label=" وضعیت دانش آموز " />}
+                fullWidth
+              >
+                <MenuItem value={""}> </MenuItem>
+                <MenuItem value={"ok"}> تایید </MenuItem>
+                <MenuItem value={"refuse_pending"}> درخواست انصراف </MenuItem>
+                <MenuItem value={"fire_pending"}> درخواست اخراج </MenuItem>
+              </Select>
+            </FormControl>
+            <FormHelperText error>
+              با تغییر وضعیت دانش آموز تایید مدیر به حالت تعلیق در می‌آید و نیاز
+              به تایید مجدد این بخش خواهد بود
+            </FormHelperText>
+          </Grid>
+        </DialogContent>
+      ) : null}
       {managerPermission.includes(user.group.name) ? (
-      <DialogContent>
-        <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
-          <FormControl sx={{ width: "100%" }}>
-            <InputLabel id="manager-status-label"> تایید مدیر</InputLabel>
-            <Select
-              labelId="manager-status-label"
-              value={managerStatus}
-              onChange={(e) => {
-                setManagerStatus(e.target.value);
-              }}
-              input={<OutlinedInput label=" وضعیت تایید مدیر" />}
-              fullWidth
-            >
-              <MenuItem value={""}> </MenuItem>
-              <MenuItem value={"pending"}> عدم تایید </MenuItem>
-              <MenuItem value={"approved"}> تایید </MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-      </DialogContent>
-      ) : null }
+        <DialogContent>
+          <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+            <FormControl sx={{ width: "100%" }}>
+              <InputLabel id="student-status-label">
+                {" "}
+                وضعیت دانش آموز{" "}
+              </InputLabel>
+              <Select
+                labelId="student-status-label"
+                value={studentStatus}
+                onChange={(e) => {
+                  setStudentStatus(e.target.value);
+                }}
+                input={<OutlinedInput label=" وضعیت دانش آموز " />}
+                fullWidth
+              >
+                <MenuItem value={""}> </MenuItem>
+                <MenuItem value={"ok"}> تایید </MenuItem>
+                <MenuItem value={"refused"}> انصراف </MenuItem>
+                <MenuItem value={"fired"}> اخراج </MenuItem>
+                <MenuItem value={"financial_pending"}> عدم تسویه مالی</MenuItem>
+              </Select>
+            </FormControl>
+            <FormHelperText error sx={{ px: 1 }}>
+              با تغییر وضعیت دانش آموز تایید حسابداری به حالت تعلیق در می‌آید و
+              نیاز به تایید مجدد این بخش خواهد بود
+            </FormHelperText>
+          </Grid>
+        </DialogContent>
+      ) : null}
+      {managerPermission.includes(user.group.name) ? (
+        <DialogContent>
+          <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+            <FormControl sx={{ width: "100%" }}>
+              <InputLabel id="manager-status-label"> تایید مدیر</InputLabel>
+              <Select
+                labelId="manager-status-label"
+                value={managerStatus}
+                onChange={(e) => {
+                  setManagerStatus(e.target.value);
+                }}
+                input={<OutlinedInput label=" وضعیت تایید مدیر" />}
+                fullWidth
+              >
+                <MenuItem value={""}> </MenuItem>
+                <MenuItem value={"pending"}> عدم تایید </MenuItem>
+                <MenuItem value={"approved"}> تایید </MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </DialogContent>
+      ) : null}
       {financialPermission.includes(user.group.name) ? (
         <>
           <DialogContent>
@@ -298,32 +340,32 @@ const StudentStatusFinancialDialog = ({
               </FormControl>
             </Grid>
           </DialogContent>
-          { studentStatus==="refused" ||  studentStatus==="fired" ? (
-          <DialogContent>
-            <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
-              <FormControl sx={{ width: "100%" }}>
-                <InputLabel id="financial-refused-status-label">
-                  {" "}
-                  وضعیت اخراج دانش آموز{" "}
-                </InputLabel>
-                <Select
-                  labelId="financial-refused-status-label"
-                  value={financialRefusedStatus}
-                  onChange={(e) => {
-                    setFinancialRefusedStatus(e.target.value);
-                  }}
-                  input={<OutlinedInput label=" وضعیت اخراج دانش آموز" />}
-                  fullWidth
-                >
-                  <MenuItem value={""}> </MenuItem>
-                  <MenuItem value={"noMoney"}> پول نداده </MenuItem>
-                  <MenuItem value={"not_returned"}> پولی ما ندادیم </MenuItem>
-                  <MenuItem value={"returned"}> ما تسویه کردیم </MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </DialogContent>
-          ) : null }
+          {studentStatus === "refused" || studentStatus === "fired" ? (
+            <DialogContent>
+              <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
+                <FormControl sx={{ width: "100%" }}>
+                  <InputLabel id="financial-refused-status-label">
+                    {" "}
+                    وضعیت اخراج دانش آموز{" "}
+                  </InputLabel>
+                  <Select
+                    labelId="financial-refused-status-label"
+                    value={financialRefusedStatus}
+                    onChange={(e) => {
+                      setFinancialRefusedStatus(e.target.value);
+                    }}
+                    input={<OutlinedInput label=" وضعیت اخراج دانش آموز" />}
+                    fullWidth
+                  >
+                    <MenuItem value={""}> </MenuItem>
+                    <MenuItem value={"noMoney"}> پول نداده </MenuItem>
+                    <MenuItem value={"not_returned"}> پولی ما ندادیم </MenuItem>
+                    <MenuItem value={"returned"}> ما تسویه کردیم </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </DialogContent>
+          ) : null}
         </>
       ) : null}
 

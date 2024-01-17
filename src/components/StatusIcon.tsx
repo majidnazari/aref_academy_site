@@ -5,7 +5,7 @@ import PlaylistRemoveIcon from "@mui/icons-material/PlaylistRemove";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import PendingIcon from "@mui/icons-material/Pending";
-import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import LocalAtmIcon from "@mui/icons-material/LocalAtm";
 
 interface PropType {
   status: string;
@@ -28,6 +28,12 @@ const StatusIcon = ({ status }: PropType) => {
     case "fired":
       return <DoNotDisturbOnIcon color="error" />;
     case "fired_pending":
+      return <PendingIcon color="error" />;
+    case "refuse_pending":
+      return <PendingIcon color="error" />;
+    case "fired":
+      return <DoNotDisturbOnIcon color="error" />;
+    case "fire_pending":
       return <PendingIcon color="error" />;
     case "financial_pending":
       return <LocalAtmIcon color="warning" />;

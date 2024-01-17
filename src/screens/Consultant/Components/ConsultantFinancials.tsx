@@ -39,6 +39,7 @@ import EditManagerConsultantFinancialStatus from "./EditManagerConsultantFinanci
 import EditAdminConsultantFinancialStatus from "./EditAdminConsultantFinancialStatus";
 import { generateQueryOptions } from "utils/utils";
 import { visuallyHidden } from "@mui/utils";
+import EditAcceptorConsultantFinancialStatus from "./EditAcceptorConsultantFinancialStatus";
 
 interface EditConsultantFinancial {
   openDialog: boolean;
@@ -159,7 +160,7 @@ const ConsultantFinancials = () => {
           />
         );
 
-      default:
+      case "consultant_manager":
         return (
           <EditManagerConsultantFinancialStatus
             consultantFinancialId={consultantFinancialId}
@@ -170,6 +171,17 @@ const ConsultantFinancials = () => {
             }
           />
         );
+        default:
+          return (
+            <EditAcceptorConsultantFinancialStatus
+              consultantFinancialId={consultantFinancialId}
+              refreshData={refreshConsultantFinancialHandler}
+              openConsultantFinancialDialog={opensultantFinancialStatusDialog}
+              closeConsultantFinancialDialog={
+                closeConsultantFinancialDialogHnadler
+              }
+            />
+          );
     }
   };
 
