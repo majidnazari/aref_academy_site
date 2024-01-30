@@ -6,12 +6,16 @@ export const GET_CONSULTANT_REPORT = gql`
     $session_date_from: String
     $session_date_to: String
     $student_id: Int
+    $education_level:Int
+
   ) {
     getConsultantDefinitionDetailsGenerealReport(
       consultant_id: $consultant_id
       session_date_from: $session_date_from
       session_date_to: $session_date_to
       student_id: $student_id
+      education_level:$education_level
+
     ) {
       consultant_fullname
       total_consultant_students

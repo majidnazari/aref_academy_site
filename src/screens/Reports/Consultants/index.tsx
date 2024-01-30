@@ -21,7 +21,16 @@ import { NavLink } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import { GET_CONSULTANTS, GET_CONSULTANT_REPORT } from "./gql/query";
 import CourseName, { getCourseName } from "components/CourseName";
-import { Autocomplete, CircularProgress, Grid, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  CircularProgress,
+  FormControl,
+  Grid,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  TextField,
+} from "@mui/material";
 import moment from "moment-jalaali";
 import StatusIcon from "components/StatusIcon";
 import { TotalReportDtos } from "./dto/TotalReport.dto";
@@ -71,8 +80,10 @@ const ConsultantReport = () => {
     consultant_id: undefined,
     session_date_from: undefined, //  moment().subtract(30,'days').format("YYYY-MM-DD"),
     session_date_to: undefined, //  moment().format("YYYY-MM-DD"),
+    education_level: undefined,
   });
   const [report, setReport] = useState<TotalReportDtos[]>([]);
+  const [educationlevel, setEducationLevel] = useState<Number | undefined>(6);
   const [totalReport, setTotalReport] = useState<TotalReportDtos[]>([]);
 
   const {
@@ -252,6 +263,48 @@ const ConsultantReport = () => {
                   mask="____/__/__"
                 />
               </LocalizationProvider>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3} xl={3}>
+              <FormControl
+                sx={{
+                  mt: 2,
+
+                  backgroundColor: "white",
+                  width: "100%",
+                }}
+              >
+                <Select
+                  sx={{
+                    height: 35,
+                    backgroundColor: "white",
+                    width: "100%",
+                    fontSize: 13,
+                  }}
+                  labelId="week-label"
+                  id="week-select"
+                  value={educationlevel}
+                  onChange={(newValue) => {
+
+                    setEducationLevel(Number(newValue.target.value));
+                    setSearch({
+                      ...search,
+                      education_level: newValue ? Number(newValue.target.value) : 6 ,
+                    });
+                  }}
+                  input={<OutlinedInput />}
+                >
+                  <MenuItem value=""></MenuItem>
+                  <MenuItem value="6"> 6 </MenuItem>
+                  <MenuItem value="7"> 7 </MenuItem>
+                  <MenuItem value="8"> 8 </MenuItem>
+                  <MenuItem value="9"> 9 </MenuItem>
+                  <MenuItem value="10"> 10 </MenuItem>
+                  <MenuItem value="11"> 11 </MenuItem>
+                  <MenuItem value="12"> 12 </MenuItem>
+                  <MenuItem value="13"> فارغ </MenuItem>
+                  <MenuItem value="14"> دانشجو </MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid
               item

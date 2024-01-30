@@ -3,4 +3,5 @@ export class SearchData {
    // student_id?: number;
    session_date_from?: string;
    session_date_to?: string;
+   education_level?: number;
   }
