@@ -83,7 +83,7 @@ const ConsultantReport = () => {
     education_level: undefined,
   });
   const [report, setReport] = useState<TotalReportDtos[]>([]);
-  const [educationlevel, setEducationLevel] = useState<Number | undefined>(6);
+  const [educationlevel, setEducationLevel] = useState<Number | undefined>();
   const [totalReport, setTotalReport] = useState<TotalReportDtos[]>([]);
 
   const {
@@ -141,6 +141,7 @@ const ConsultantReport = () => {
   const handleSearch = (): void => {
     setRefetchLoading(true);
     let refetchData: SearchData = { ...search };
+    refetchData.education_level =refetchData.education_level===0 ? undefined  : refetchData.education_level;
     refetch(refetchData as any)
       .then((res) => {
         setTotalReport(res.data.getConsultantDefinitionDetailsGenerealReport);
@@ -264,18 +265,17 @@ const ConsultantReport = () => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item xs={12} sm={6} md={3} xl={3}>
+            <Grid item xs={12} sm={6} md={1} xl={1}>
               <FormControl
                 sx={{
-                  mt: 2,
-
+                 
                   backgroundColor: "white",
                   width: "100%",
                 }}
               >
                 <Select
                   sx={{
-                    height: 35,
+                   
                     backgroundColor: "white",
                     width: "100%",
                     fontSize: 13,
@@ -288,12 +288,12 @@ const ConsultantReport = () => {
                     setEducationLevel(Number(newValue.target.value));
                     setSearch({
                       ...search,
-                      education_level: newValue ? Number(newValue.target.value) : 6 ,
+                      education_level: newValue ? Number(newValue.target.value) : undefined ,
                     });
                   }}
                   input={<OutlinedInput />}
                 >
-                  <MenuItem value=""></MenuItem>
+                  <MenuItem value="0"> همه</MenuItem>
                   <MenuItem value="6"> 6 </MenuItem>
                   <MenuItem value="7"> 7 </MenuItem>
                   <MenuItem value="8"> 8 </MenuItem>
@@ -301,7 +301,7 @@ const ConsultantReport = () => {
                   <MenuItem value="10"> 10 </MenuItem>
                   <MenuItem value="11"> 11 </MenuItem>
                   <MenuItem value="12"> 12 </MenuItem>
-                  <MenuItem value="13"> فارغ </MenuItem>
+                  <MenuItem value="13"> فارغ التحصیل </MenuItem>
                   <MenuItem value="14"> دانشجو </MenuItem>
                 </Select>
               </FormControl>
@@ -310,8 +310,8 @@ const ConsultantReport = () => {
               item
               xs={12}
               sm={6}
-              md={3}
-              xl={3}
+              md={2}
+              xl={2}
               sx={{
                 alignItems: "center",
               }}
