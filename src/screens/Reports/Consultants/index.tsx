@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Container from '@mui/material/Container'
 import Paper from '@mui/material/Paper'
-
 import Skeleton from '@mui/material/Skeleton'
 import Button from '@mui/material/Button'
 import SearchIcon from '@mui/icons-material/Search'
