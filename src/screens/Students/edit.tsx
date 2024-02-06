@@ -51,12 +51,7 @@ const StudentEditScreen = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<ErrorData>({})
   const [editStudent] = useMutation(EDIT_STUDENT)
-
-  const [cityOptions, setCityOptions] = useState<CityType[]>([])
-  const [skip, setSkip] = useState<Boolean>(true)
-  const [loadingCity, setLoadingCity] = useState<boolean>(false)
-  const [cityName, setCityName] = useState<string>('')
-
+  const [cityOptions, setCityOptions] = useState<CityType[] | undefined>(undefined)
   const navigate = useNavigate()
 
   useQuery(GET_A_STUDENT, {
@@ -75,6 +70,9 @@ const StudentEditScreen = () => {
         }
       }
       setStudentInfo(studentInfoRead)
+      refetchCities().then((res) => {
+        setCityOptions(res.data.getCities.data)
+      })
     },
   })
 
@@ -92,13 +90,14 @@ const StudentEditScreen = () => {
       })
   }
 
-  const { data: citydata, loading: cityLoading } = useQuery(GET_CITIES, {
+  const { refetch: refetchCities } = useQuery(GET_CITIES, {
     variables: {
-      first: 500,
+      first: 1000,
       page: 1,
       name: '',
       fetchPolicy: 'network-only',
     },
+    skip: true,
   })
 
   const validateForm = () => {
@@ -136,6 +135,7 @@ const StudentEditScreen = () => {
   const handleChangeMajor = (e: SelectChangeEvent<string>) => {
     setStudentInfo({ ...studentInfo, major: e.target.value })
   }
+
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <h1> ویرایش دانش‌آموز </h1>
@@ -290,42 +290,25 @@ const StudentEditScreen = () => {
               width: '100%',
             }}
           >
-            {cityLoading && <CircularProgress size={15} />}
-            {citydata && (
+            {!cityOptions && <CircularProgress size={15} />}
+            {cityOptions && (
               <Autocomplete
                 id="city_id"
-                options={citydata.getCities.data}
+                options={cityOptions}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     label=" شهر "
                     variant="filled"
-                    //style={{ width: "100%" }}
-                    onChange={(e) => {
-                      // alert('inner changes is:' + e.target.value.trim())
-                      if (e.target.value.trim().length >= 1) {
-                        setSkip(false)
-                        setCityName(e.target.value.trim())
-
-                        //setConsultantName(e.target.value.trim())
-                      }
-                    }}
                     InputProps={{
                       ...params.InputProps,
-                      endAdornment: (
-                        <>
-                          {/* {loadingCities ? <CircularProgress color="inherit" size={10} /> : null} */}
-                          {params.InputProps.endAdornment}
-                        </>
-                      ),
+                      endAdornment: <>{params.InputProps.endAdornment}</>,
                     }}
                   />
                 )}
                 getOptionLabel={(option) => option?.name}
-                // style={customStyles}
                 style={{ width: '100%' }}
-                defaultValue={citydata.getCities.data.find((item: any) => item.id === String(studentInfo?.cities_id))}
-                //value={studentInfo?.cities_id ? +studentInfo?.cities_id : null}
+                defaultValue={cityOptions.find((item) => item.id === String(studentInfo?.cities_id))}
                 onChange={(_event, newTeam) => {
                   setStudentInfo({
                     ...studentInfo,
