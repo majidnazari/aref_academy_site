@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@apollo/client": "^3.6.2",
+    "@apollo/client": "^3.6.0",
     "@date-io/date-fns-jalali": "^2.14.0",
     "@date-io/jalaali": "^2.14.0",
     "@emotion/react": "^11.8.2",
