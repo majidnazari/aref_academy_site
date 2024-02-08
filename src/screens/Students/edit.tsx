@@ -1,124 +1,141 @@
-import { useState } from "react";
-import Container from "@mui/material/Container";
-import TextField from "@mui/material/TextField";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import { EDIT_STUDENT } from "./gql/mutation";
-import { useMutation, useQuery } from "@apollo/client";
-import { GET_A_STUDENT } from "./gql/query";
-import { showSuccess } from "../../utils/swlAlert";
-import { Grid } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
-import { useNavigate } from "react-router-dom";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
-import { educationLevelsObject, majorObject } from "../../constants";
-import { useParams } from "react-router-dom";
-import StudentData from "./dto/student-data";
-import { vmsNationalCode } from "utils/utils";
+import { useState } from 'react'
+import Container from '@mui/material/Container'
+import TextField from '@mui/material/TextField'
+import AddCircleIcon from '@mui/icons-material/AddCircle'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import Box from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
+import Button from '@mui/material/Button'
+import { EDIT_STUDENT } from './gql/mutation'
+import { useMutation, useQuery } from '@apollo/client'
+import { GET_A_STUDENT, GET_CITIES } from './gql/query'
+import { showSuccess } from '../../utils/swlAlert'
+import { Autocomplete, Grid } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
+import { useNavigate } from 'react-router-dom'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
+import { educationLevelsObject, majorObject } from '../../constants'
+import { useParams } from 'react-router-dom'
+import StudentData from './dto/student-data'
+import { vmsNationalCode } from 'utils/utils'
+import CityType from './dto/city-data'
 
 interface ErrorData {
-  first_name?: string;
-  last_name?: string;
-  phone?: string;
-  egucation_level?: string;
-  nationality_code?: string;
+  first_name?: string
+  last_name?: string
+  phone?: string
+  egucation_level?: string
+  nationality_code?: string
 }
 
 const StudentEditScreen = () => {
-  const { studentId } = useParams<string>();
+  const { studentId } = useParams<string>()
   const [studentInfo, setStudentInfo] = useState<StudentData>({
-    id: "0",
-    first_name: "",
-    last_name: "",
-    phone: "",
-    mother_phone: "",
-    father_phone: "",
-    home_phone: "",
-    major: "",
-    egucation_level: "",
-    parents_job_title: "",
-    nationality_code: "",
-    concours_year: "",
-  });
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<ErrorData>({});
-  const [editStudent] = useMutation(EDIT_STUDENT);
- 
-  const navigate = useNavigate();
+    id: '0',
+    first_name: '',
+    last_name: '',
+    phone: '',
+    mother_phone: '',
+    father_phone: '',
+    home_phone: '',
+    major: '',
+    egucation_level: '',
+    parents_job_title: '',
+    nationality_code: '',
+    concours_year: '',
+    cities_id: 0,
+  })
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<ErrorData>({})
+  const [editStudent] = useMutation(EDIT_STUDENT)
+
+  const [cityOptions, setCityOptions] = useState<CityType[]>([])
+  const [skip, setSkip] = useState<Boolean>(true)
+  const [loadingCity, setLoadingCity] = useState<boolean>(false)
+  const [cityName, setCityName] = useState<string>('')
+
+  const navigate = useNavigate()
+
   useQuery(GET_A_STUDENT, {
     variables: {
       id: studentId,
     },
     onCompleted: (data) => {
-      let studentInfoRead = data.getStudent;
+      let studentInfoRead = data.getStudent
       for (let key in data.getStudent) {
-        if (key === "__typename") {
-          continue;
+        if (key === '__typename') {
+          continue
         }
         studentInfoRead = {
           ...studentInfoRead,
-          [key]: data.getStudent[key] ? data.getStudent[key] : "",
-        };
+          [key]: data.getStudent[key] ? data.getStudent[key] : '',
+        }
       }
-      setStudentInfo(studentInfoRead);
+      setStudentInfo(studentInfoRead)
     },
-  });
+  })
 
   const editStudentHandler = () => {
-    if (!validateForm()) return;
-    setLoading(true);
+    if (!validateForm()) return
+    setLoading(true)
     editStudent({
       variables: studentInfo,
     })
       .then(() => {
-        showSuccess("ویرایش با موفقبت انجام شد.");
+        showSuccess('ویرایش با موفقبت انجام شد.')
       })
       .finally(() => {
-        setLoading(false);
-      });
-  };
+        setLoading(false)
+      })
+  }
+
+  const { data: citydata, loading: cityLoading } = useQuery(GET_CITIES, {
+    variables: {
+      first: 500,
+      page: 1,
+      name: '',
+      fetchPolicy: 'network-only',
+    },
+  })
 
   const validateForm = () => {
-    let out = true;
-    let result: ErrorData = {};
-    setError({});
+    let out = true
+    let result: ErrorData = {}
+    setError({})
     if (!studentInfo.first_name) {
-      result = { ...result, first_name: "نام را وارد کنید." };
-      out = false;
+      result = { ...result, first_name: 'نام را وارد کنید.' }
+      out = false
     }
     if (!studentInfo.last_name) {
-      result = { ...result, last_name: "نام خانوادگی را وارد کنید." };
-      out = false;
+      result = { ...result, last_name: 'نام خانوادگی را وارد کنید.' }
+      out = false
     }
     if (!vmsNationalCode(studentInfo.nationality_code)) {
-      result = { ...result, nationality_code: "کدملی را صحیح وارد کنید." };
-      out = false;
+      result = { ...result, nationality_code: 'کدملی را صحیح وارد کنید.' }
+      out = false
     }
     if (!studentInfo.phone) {
-      result = { ...result, phone: "تلفن همراه را وارد کنید." };
-      out = false;
+      result = { ...result, phone: 'تلفن همراه را وارد کنید.' }
+      out = false
     }
     if (!studentInfo.egucation_level) {
-      result = { ...result, egucation_level: "مقطع را وارد کنید." };
-      out = false;
+      result = { ...result, egucation_level: 'مقطع را وارد کنید.' }
+      out = false
     }
-    setError(result);
-    return out;
-  };
+    setError(result)
+    return out
+  }
 
   const handleChangeEducationLevel = (e: SelectChangeEvent<string>) => {
-    setStudentInfo({ ...studentInfo, egucation_level: e.target.value });
-  };
+    setStudentInfo({ ...studentInfo, egucation_level: e.target.value })
+  }
 
   const handleChangeMajor = (e: SelectChangeEvent<string>) => {
-    setStudentInfo({ ...studentInfo, major: e.target.value });
-  };
+    setStudentInfo({ ...studentInfo, major: e.target.value })
+  }
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <h1> ویرایش دانش‌آموز </h1>
@@ -129,11 +146,9 @@ const StudentEditScreen = () => {
             fullWidth
             label="نام"
             value={studentInfo.first_name}
-            onChange={(e: any) =>
-              setStudentInfo({ ...studentInfo, first_name: e.target.value })
-            }
+            onChange={(e: any) => setStudentInfo({ ...studentInfo, first_name: e.target.value })}
             error={error.first_name ? true : false}
-            helperText={error.first_name ? error.first_name : ""}
+            helperText={error.first_name ? error.first_name : ''}
             variant="filled"
           />
         </Grid>
@@ -142,11 +157,9 @@ const StudentEditScreen = () => {
             fullWidth
             label="نام خانوادگی"
             value={studentInfo.last_name}
-            onChange={(e: any) =>
-              setStudentInfo({ ...studentInfo, last_name: e.target.value })
-            }
+            onChange={(e: any) => setStudentInfo({ ...studentInfo, last_name: e.target.value })}
             error={error.last_name ? true : false}
-            helperText={error.last_name ? error.last_name : ""}
+            helperText={error.last_name ? error.last_name : ''}
             variant="filled"
           />
         </Grid>
@@ -162,7 +175,7 @@ const StudentEditScreen = () => {
               })
             }
             error={error.nationality_code ? true : false}
-            helperText={error.nationality_code ? error.nationality_code : ""}
+            helperText={error.nationality_code ? error.nationality_code : ''}
             variant="filled"
           />
         </Grid>
@@ -171,11 +184,9 @@ const StudentEditScreen = () => {
             fullWidth
             label="تلفن"
             value={studentInfo.phone}
-            onChange={(e: any) =>
-              setStudentInfo({ ...studentInfo, phone: e.target.value })
-            }
+            onChange={(e: any) => setStudentInfo({ ...studentInfo, phone: e.target.value })}
             error={error.phone ? true : false}
-            helperText={error.phone ? error.phone : ""}
+            helperText={error.phone ? error.phone : ''}
             variant="filled"
           />
         </Grid>
@@ -184,9 +195,7 @@ const StudentEditScreen = () => {
             fullWidth
             label="تلفن پدر"
             value={studentInfo.father_phone}
-            onChange={(e: any) =>
-              setStudentInfo({ ...studentInfo, father_phone: e.target.value })
-            }
+            onChange={(e: any) => setStudentInfo({ ...studentInfo, father_phone: e.target.value })}
             variant="filled"
           />
         </Grid>
@@ -195,9 +204,7 @@ const StudentEditScreen = () => {
             fullWidth
             label="تلفن مادر"
             value={studentInfo.mother_phone}
-            onChange={(e: any) =>
-              setStudentInfo({ ...studentInfo, mother_phone: e.target.value })
-            }
+            onChange={(e: any) => setStudentInfo({ ...studentInfo, mother_phone: e.target.value })}
             variant="filled"
           />
         </Grid>
@@ -206,14 +213,12 @@ const StudentEditScreen = () => {
             fullWidth
             label="تلفن منزل"
             value={studentInfo.home_phone}
-            onChange={(e: any) =>
-              setStudentInfo({ ...studentInfo, home_phone: e.target.value })
-            }
+            onChange={(e: any) => setStudentInfo({ ...studentInfo, home_phone: e.target.value })}
             variant="filled"
           />
         </Grid>
         <Grid item xs={12} md={4} lg={4}>
-          <FormControl sx={{ width: "100%" }}>
+          <FormControl sx={{ width: '100%' }}>
             <Select
               defaultValue=""
               id="grouped-select"
@@ -234,7 +239,7 @@ const StudentEditScreen = () => {
           </FormControl>
         </Grid>
         <Grid item xs={12} md={4} lg={4}>
-          <FormControl sx={{ width: "100%" }}>
+          <FormControl sx={{ width: '100%' }}>
             <Select
               defaultValue=""
               value={studentInfo.egucation_level}
@@ -252,11 +257,7 @@ const StudentEditScreen = () => {
                 </MenuItem>
               ))}
             </Select>
-            {error.egucation_level ? (
-              <FormHelperText error>{error.egucation_level}</FormHelperText>
-            ) : (
-              ""
-            )}
+            {error.egucation_level ? <FormHelperText error>{error.egucation_level}</FormHelperText> : ''}
           </FormControl>
         </Grid>
         <Grid item xs={12} md={4} lg={4}>
@@ -278,16 +279,67 @@ const StudentEditScreen = () => {
             fullWidth
             label="سال کنکور"
             value={studentInfo.concours_year}
-            onChange={(e: any) =>
-              setStudentInfo({ ...studentInfo, concours_year: e.target.value })
-            }
+            onChange={(e: any) => setStudentInfo({ ...studentInfo, concours_year: e.target.value })}
             variant="filled"
           />
+        </Grid>
+        <Grid item xs={12} sm={6} md={6} xl={2} lg={2}>
+          <FormControl
+            sx={{
+              mr: 1,
+              width: '100%',
+            }}
+          >
+            {cityLoading && <CircularProgress size={15} />}
+            {citydata && (
+              <Autocomplete
+                id="city_id"
+                options={citydata.getCities.data}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label=" شهر "
+                    variant="filled"
+                    //style={{ width: "100%" }}
+                    onChange={(e) => {
+                      // alert('inner changes is:' + e.target.value.trim())
+                      if (e.target.value.trim().length >= 1) {
+                        setSkip(false)
+                        setCityName(e.target.value.trim())
+
+                        //setConsultantName(e.target.value.trim())
+                      }
+                    }}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {/* {loadingCities ? <CircularProgress color="inherit" size={10} /> : null} */}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+                getOptionLabel={(option) => option?.name}
+                // style={customStyles}
+                style={{ width: '100%' }}
+                defaultValue={citydata.getCities.data.find((item: any) => item.id === String(studentInfo?.cities_id))}
+                //value={studentInfo?.cities_id ? +studentInfo?.cities_id : null}
+                onChange={(_event, newTeam) => {
+                  setStudentInfo({
+                    ...studentInfo,
+                    cities_id: newTeam?.id ? +newTeam.id : undefined,
+                  })
+                }}
+              />
+            )}
+          </FormControl>
         </Grid>
       </Grid>
       <Box mt={2}>
         <Button
-          sx={{ float: "left" }}
+          sx={{ float: 'left' }}
           variant="contained"
           startIcon={<AddCircleIcon />}
           color="primary"
@@ -298,7 +350,7 @@ const StudentEditScreen = () => {
           {loading ? <CircularProgress size={15} color="primary" /> : null}
         </Button>
         <Button
-          sx={{ float: "right" }}
+          sx={{ float: 'right' }}
           variant="contained"
           color="secondary"
           onClick={() => navigate(-1)} //</Box>navigate(`/students`)}
@@ -309,7 +361,7 @@ const StudentEditScreen = () => {
         </Button>
       </Box>
     </Container>
-  );
-};
+  )
+}
 
-export default StudentEditScreen;
+export default StudentEditScreen

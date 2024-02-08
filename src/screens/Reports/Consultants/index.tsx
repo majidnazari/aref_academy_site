@@ -183,7 +183,7 @@ const ConsultantReport = () => {
                     setEducationLevel(Number(newValue.target.value))
                     setSearch({
                       ...search,
-                      education_level: newValue ? Number(newValue.target.value) : undefined,
+                      education_level: newValue ? +newValue.target.value : undefined,
                     })
                   }}
                   input={<OutlinedInput />}
