@@ -46,7 +46,7 @@ const StudentEditScreen = () => {
     parents_job_title: '',
     nationality_code: '',
     concours_year: '',
-    cities_id: 0,
+    cities_id: undefined,
   })
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<ErrorData>({})

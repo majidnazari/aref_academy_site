@@ -1,108 +1,105 @@
-import { useContext, useEffect, useState } from "react";
-import DashboardScreen from "../screens/Dashboard";
+import { useContext, useEffect, useState } from 'react'
+import DashboardScreen from '../screens/Dashboard'
 
-import UsersScreen from "../screens/Users";
-import UsersEditScreen from "../screens/Users/edit";
-import UsersCreateScreen from "../screens/Users/create";
+import UsersScreen from '../screens/Users'
+import UsersEditScreen from '../screens/Users/edit'
+import UsersCreateScreen from '../screens/Users/create'
 
-import YearsScreen from "../screens/Years";
-import YearsEditScreen from "../screens/Years/edit";
-import YearsCreateScreen from "../screens/Years/create";
+import YearsScreen from '../screens/Years'
+import YearsEditScreen from '../screens/Years/edit'
+import YearsCreateScreen from '../screens/Years/create'
 
-import CoursesScreen from "../screens/Courses";
-import CoursesEditScreen from "../screens/Courses/edit";
-import CoursesCreateScreen from "../screens/Courses/create";
-import CourseSessionsScreen from "../screens/Courses/sessions";
-import CourseSessionsEditScreen from "../screens/Courses/editSession";
+import CoursesScreen from '../screens/Courses'
+import CoursesEditScreen from '../screens/Courses/edit'
+import CoursesCreateScreen from '../screens/Courses/create'
+import CourseSessionsScreen from '../screens/Courses/sessions'
+import CourseSessionsEditScreen from '../screens/Courses/editSession'
 
-import FaultsScreen from "../screens/Faults";
-import FaultsEditScreen from "../screens/Faults/edit";
-import FaultsCreateScreen from "../screens/Faults/create";
+import FaultsScreen from '../screens/Faults'
+import FaultsEditScreen from '../screens/Faults/edit'
+import FaultsCreateScreen from '../screens/Faults/create'
 
-import ConsultantScreen from "../screens/Consultant";
-import AddConsultantStudent from "screens/Consultant/addStudent";
+import ConsultantScreen from '../screens/Consultant'
+import AddConsultantStudent from 'screens/Consultant/addStudent'
 
-import BranchesScreen from "../screens/Branches";
-import BranchesEditScreen from "../screens/Branches/edit";
-import BranchesCreateScreen from "../screens/Branches/create";
-import BranchesClassRoomsScreen from "../screens/Branches/ClassRooms";
-import BranchesClassRoomEditScreen from "../screens/Branches/ClassRooms/edit";
-import BranchesClassRoomCreateScreen from "../screens/Branches/ClassRooms/create";
+import BranchesScreen from '../screens/Branches'
+import BranchesEditScreen from '../screens/Branches/edit'
+import BranchesCreateScreen from '../screens/Branches/create'
+import BranchesClassRoomsScreen from '../screens/Branches/ClassRooms'
+import BranchesClassRoomEditScreen from '../screens/Branches/ClassRooms/edit'
+import BranchesClassRoomCreateScreen from '../screens/Branches/ClassRooms/create'
 
-import StudentsScreen from "../screens/Students";
-import StudentEditScreen from "../screens/Students/edit";
-import StudentCreateScreen from "../screens/Students/create";
-import StudentCourses from "../screens/Students/StudentCourses";
-import StudentWarnings from "../screens/Students/StudentWarnings";
-import StudentCosultants from "../screens/Students/StudentCosultants";
+import StudentsScreen from '../screens/Students'
+import StudentEditScreen from '../screens/Students/edit'
+import StudentCreateScreen from '../screens/Students/create'
+import StudentCourses from '../screens/Students/StudentCourses'
+import StudentWarnings from '../screens/Students/StudentWarnings'
+import StudentCosultants from '../screens/Students/StudentCosultants'
 
-import SigninScreen from "../screens/Signin";
-import SignoutScreen from "../screens/Signout";
+import SigninScreen from '../screens/Signin'
+import SignoutScreen from '../screens/Signout'
 
-import LessonsScreen from "../screens/Lessons";
-import LessonsEditScreen from "../screens/Lessons/edit";
-import LessonsCreateScreen from "../screens/Lessons/create";
+import LessonsScreen from '../screens/Lessons'
+import LessonsEditScreen from '../screens/Lessons/edit'
+import LessonsCreateScreen from '../screens/Lessons/create'
 
-import ReportsCoursesScreen from "../screens/Reports/Courses";
-import ReportsAbsencePresencesScreen from "../screens/Reports/AbsencePresences";
-import ReportsCourseSessionsScreen from "../screens/Reports/AbsencePresences/sessions";
-import ReportsAbsencePresenceListstudents from "../screens/Reports/AbsencePresences/listStudentsScreen";
-import ReporstJuryScreen from "../screens/Reports/AbsencePresences/jury";
-import ReporstFinancialScreen from "../screens/Reports/Financial";
+import ReportsCoursesScreen from '../screens/Reports/Courses'
+import ReportsAbsencePresencesScreen from '../screens/Reports/AbsencePresences'
+import ReportsCourseSessionsScreen from '../screens/Reports/AbsencePresences/sessions'
+import ReportsAbsencePresenceListstudents from '../screens/Reports/AbsencePresences/listStudentsScreen'
+import ReporstJuryScreen from '../screens/Reports/AbsencePresences/jury'
+import ReporstFinancialScreen from '../screens/Reports/Financial'
 
-import StudentCoursesAlarmsScreen from "../screens/Alarms/studentCoursesAlarms";
+import StudentCoursesAlarmsScreen from '../screens/Alarms/studentCoursesAlarms'
 
-import ListTodayCourses from "screens/AbsencePresences/listTodayCourses";
-import ListStudentsScreen from "screens/AbsencePresences/listStudentsScreen";
+import ListTodayCourses from 'screens/AbsencePresences/listTodayCourses'
+import ListStudentsScreen from 'screens/AbsencePresences/listStudentsScreen'
 
-import Main from "../Layout/main";
-import NoMatch from "../Layout/404";
-import { Routes, Route } from "react-router-dom";
-import { AuthContext } from "../components/AppContext";
-import ConsultantTimeTable from "screens/Consultant/Components/ConsultantTimeTable";
-import ComponentStudentDialog from "screens/Consultant/Components/ComponentStudentDialog";
-import ShowAllConsultantsTimes from "screens/Consultant/Components/ShowAllConsultantsTimes";
-import { getUserData } from "utils/user";
-import { group } from "console";
-import ConsultantStudentManager from "screens/Dashboard/ConsultantStudentManager";
-import StudentsConsultantManagerScreen from "screens/Students/consultant_manager/index_consultant_manager";
-import ConsultantFinancials from "screens/Consultant/Components/ConsultantFinancials";
-import SelectOneConsultantsTimes from "screens/Consultant/Components/SelectOneConsultantsTimes";
-import ConsultantManagerDashboardIndex from "screens/Dashboard/ConsultantManagerDashboardIndex";
-import ConsultantReport from "screens/Reports/Consultants";
-import ConsultantFinancialReport from "screens/Reports/Financial/components/ConsultantFinancialReport";
+import Main from '../Layout/main'
+import NoMatch from '../Layout/404'
+import { Routes, Route } from 'react-router-dom'
+import { AuthContext } from '../components/AppContext'
+import ConsultantTimeTable from 'screens/Consultant/Components/ConsultantTimeTable'
+import ComponentStudentDialog from 'screens/Consultant/Components/ComponentStudentDialog'
+import ShowAllConsultantsTimes from 'screens/Consultant/Components/ShowAllConsultantsTimes'
+import { getUserData } from 'utils/user'
+import { group } from 'console'
+import ConsultantStudentManager from 'screens/Dashboard/ConsultantStudentManager'
+import StudentsConsultantManagerScreen from 'screens/Students/consultant_manager/index_consultant_manager'
+import ConsultantFinancials from 'screens/Consultant/Components/ConsultantFinancials'
+import SelectOneConsultantsTimes from 'screens/Consultant/Components/SelectOneConsultantsTimes'
+import ConsultantManagerDashboardIndex from 'screens/Dashboard/ConsultantManagerDashboardIndex'
+import ConsultantReport from 'screens/Reports/Consultants'
+import ConsultantFinancialReport from 'screens/Reports/Financial/components/ConsultantFinancialReport'
+import ConsultantReport_2 from 'screens/Reports/Consultants/index_2'
 
 const MainRouter = () => {
-  const appContext = useContext(AuthContext);
-  const [isLogged, setisLogged] = useState(false);
-  const [dashboardName, setDashboardName] = useState<string>("");
+  const appContext = useContext(AuthContext)
+  const [isLogged, setisLogged] = useState(false)
+  const [dashboardName, setDashboardName] = useState<string>('')
   useEffect(() => {
-    const getRoute= getUserData();
-    setDashboardName(getRoute.group.name);
-    setisLogged(appContext.isLoggedIn);
-  }, [appContext.isLoggedIn]);
+    const getRoute = getUserData()
+    setDashboardName(getRoute.group.name)
+    setisLogged(appContext.isLoggedIn)
+  }, [appContext.isLoggedIn])
 
-  const convertNameComponent = (dashboardName:string) => {
-
-    switch(dashboardName){
-      case "consultant_manager":
+  const convertNameComponent = (dashboardName: string) => {
+    switch (dashboardName) {
+      case 'consultant_manager':
         return <ConsultantManagerDashboardIndex />
-        //return <ShowAllConsultantsTimes />
-       // return <ConsultantStudentManager />
+      //return <ShowAllConsultantsTimes />
+      // return <ConsultantStudentManager />
       default:
         return <DashboardScreen />
     }
-   
   }
   return (
     <Routes>
       {isLogged ? (
         <Route element={<Main />}>
-         
-          <Route index element={convertNameComponent(dashboardName)  } /> 
+          <Route index element={convertNameComponent(dashboardName)} />
 
           {/* <Route index element={<DashboardScreen />} /> */}
-          
 
           <Route path="users">
             <Route path="" element={<UsersScreen />} />
@@ -122,14 +119,8 @@ const MainRouter = () => {
             <Route path="" element={<CoursesScreen />} />
             <Route path="edit/:courseId" element={<CoursesEditScreen />} />
             <Route path="create" element={<CoursesCreateScreen />} />
-            <Route
-              path=":courseId/sessions"
-              element={<CourseSessionsScreen />}
-            />
-            <Route
-              path=":courseId/sessions/:sessionId"
-              element={<CourseSessionsEditScreen />}
-            />
+            <Route path=":courseId/sessions" element={<CourseSessionsScreen />} />
+            <Route path=":courseId/sessions/:sessionId" element={<CourseSessionsEditScreen />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
 
@@ -157,10 +148,7 @@ const MainRouter = () => {
 
           <Route path="consultant">
             <Route path="" element={<ConsultantScreen />} />
-            <Route
-              path=":consultantId/timetable"
-              element={<ConsultantTimeTable />}
-            />
+            <Route path=":consultantId/timetable" element={<ConsultantTimeTable />} />
             {/* <Route
               path=":consultantId/timetable"
               element={<ConsultantTimeTable />}
@@ -169,13 +157,8 @@ const MainRouter = () => {
             <Route path=":consultantId/select-one" element={<SelectOneConsultantsTimes />} />
             {/* <Route path=":consultantTimeTableId/setStudent" element={<ComponentStudentDialog  />} /> */}
 
-            <Route
-              path=":userId/add-user-consultant"
-              element={
-                <AddConsultantStudent title="افزودن دانش آموز به مشاور" />
-              }
-            />         
-            
+            <Route path=":userId/add-user-consultant" element={<AddConsultantStudent title="افزودن دانش آموز به مشاور" />} />
+
             <Route path="*" element={<NoMatch />} />
           </Route>
 
@@ -183,32 +166,20 @@ const MainRouter = () => {
             <Route path="" element={<BranchesScreen />} />
             <Route path="edit/:branchId" element={<BranchesEditScreen />} />
             <Route path="create" element={<BranchesCreateScreen />} />
-            <Route
-              path=":branchId/class-rooms"
-              element={<BranchesClassRoomsScreen />}
-            />
-            <Route
-              path=":branchId/class-rooms/:classRoomsId"
-              element={<BranchesClassRoomEditScreen />}
-            />
-            <Route
-              path=":branchId/class-rooms/create"
-              element={<BranchesClassRoomCreateScreen />}
-            />
+            <Route path=":branchId/class-rooms" element={<BranchesClassRoomsScreen />} />
+            <Route path=":branchId/class-rooms/:classRoomsId" element={<BranchesClassRoomEditScreen />} />
+            <Route path=":branchId/class-rooms/create" element={<BranchesClassRoomCreateScreen />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
 
           <Route path="students">
             <Route path="" element={<StudentsScreen />} />
             <Route path="consultant_manager" element={<StudentsConsultantManagerScreen />} />
-            
+
             <Route path="edit/:studentId" element={<StudentEditScreen />} />
             <Route path="create" element={<StudentCreateScreen />} />
             <Route path=":studentId/courses" element={<StudentCourses />} />
-            <Route
-              path=":studentId/cosultants"
-              element={<StudentCosultants />}
-            />
+            <Route path=":studentId/cosultants" element={<StudentCosultants />} />
             <Route path=":studentId/warnings" element={<StudentWarnings />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
@@ -222,31 +193,13 @@ const MainRouter = () => {
 
           <Route path="reports">
             <Route path="courses" element={<ReportsCoursesScreen />} />
-            <Route
-              path="absence-presences"
-              element={<ReportsAbsencePresencesScreen />}
-            />
-            <Route
-              path="consultants"
-              element={<ConsultantReport />}
-            />
-             <Route
-              path="consultant-financial"
-              element={<ConsultantFinancialReport />}
-            />
-             <Route
-              path="absence-presences/:courseId/sessions"
-              element={<ReportsCourseSessionsScreen />}
-            />
-            <Route
-              path="absence-presences/details/:courseId/:courseSessionId"
-              element={<ReportsAbsencePresenceListstudents />}
-            />
+            <Route path="absence-presences" element={<ReportsAbsencePresencesScreen />} />
+            <Route path="consultants" element={<ConsultantReport_2 />} />
+            <Route path="consultant-financial" element={<ConsultantFinancialReport />} />
+            <Route path="absence-presences/:courseId/sessions" element={<ReportsCourseSessionsScreen />} />
+            <Route path="absence-presences/details/:courseId/:courseSessionId" element={<ReportsAbsencePresenceListstudents />} />
 
-            <Route
-              path="absence-presences/jury/:courseId"
-              element={<ReporstJuryScreen />}
-            />
+            <Route path="absence-presences/jury/:courseId" element={<ReporstJuryScreen />} />
 
             <Route path="financial" element={<ReporstFinancialScreen />} />
 
@@ -254,23 +207,14 @@ const MainRouter = () => {
           </Route>
 
           <Route path="alarms">
-            <Route
-              path="student-courses"
-              element={<StudentCoursesAlarmsScreen />}
-            />
-             <Route
-              path="consultant-financial"
-              element={<ConsultantFinancials />}
-            />
+            <Route path="student-courses" element={<StudentCoursesAlarmsScreen />} />
+            <Route path="consultant-financial" element={<ConsultantFinancials />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
 
           <Route path="absence-presences">
             <Route path="" element={<ListTodayCourses />} />
-            <Route
-              path="list-students/:courseId/:courseSessionId"
-              element={<ListStudentsScreen />}
-            />
+            <Route path="list-students/:courseId/:courseSessionId" element={<ListStudentsScreen />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
 
@@ -281,6 +225,6 @@ const MainRouter = () => {
         <Route path="*" element={<SigninScreen />} />
       )}
     </Routes>
-  );
-};
-export default MainRouter;
+  )
+}
+export default MainRouter
