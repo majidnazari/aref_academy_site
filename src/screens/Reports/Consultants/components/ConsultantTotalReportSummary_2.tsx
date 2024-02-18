@@ -1,10 +1,11 @@
 import { Grid, Paper, Box, Typography } from '@mui/material'
 import moment from 'moment-jalaali'
-import { TotalReportDtos } from '../dto/TotalReport.dto'
+// import { TotalReportDtos } from '../dto/totalReport.consultant_statics?.dto'
 import ConsultantPieChart from './ConsultantPieChart'
-import { TotalConsultantReport } from '../dto/TotalConsultantReport.dto'
+import { AllTotalConsultantReport, TotalConsultantReport } from '../dto/TotalConsultantReport.dto'
+import ConsultantPieChart_2 from './ConsultantPieChart_2'
 
-const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: TotalConsultantReport }) => {
+const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: AllTotalConsultantReport }) => {
   return (
     <Grid container component={Paper} sx={{ my: 2 }}>
       <Grid item xs={12} sm={6} md={6}>
@@ -14,20 +15,20 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: TotalCon
             justifyContent: 'space-between',
           }}
         >
-          {/* { console.log("totalReport" , totalReport?.details[0].consultant?.last_name ) } */}
+          {/* {console.log('totalReport.consultant_statics?', totalReport.consultant_statics?)} */}
           <Typography
             sx={{
               p: 1,
             }}
           >
-            نام مشاور: {totalReport.consultant_id}
+            نام مشاور: {totalReport.consultant_statics?.consultant_id}
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد کل دانش آموزان ثبت نام شده: {totalReport.sum_students_registered}
+            تعداد کل دانش آموزان ثبت نام شده: {totalReport.consultant_statics?.sum_students_registered}
           </Typography>
         </Box>
 
@@ -42,35 +43,14 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: TotalCon
               p: 1,
             }}
           >
-            تعداد کل تایید مالی: {totalReport.sum_financial_financial_status_approved}
+            تعداد کل تایید مالی: {totalReport.consultant_statics?.sum_financial_financial_status_approved}
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد کل عدم پرداخت کامل : {totalReport.sum_financial_financial_status_semi_approved}
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Typography
-            sx={{
-              p: 1,
-            }}
-          >
-            تعداد کل پرداخت نشده: {totalReport.sum_financial_financial_status_pending}
-          </Typography>
-          <Typography
-            sx={{
-              p: 1,
-            }}
-          >
-            تعداد کل انصراف : {totalReport.sum_financial_student_status_refused}
+            تعداد کل عدم پرداخت کامل : {totalReport.consultant_statics?.sum_financial_financial_status_semi_approved}
           </Typography>
         </Box>
         <Box
@@ -84,7 +64,28 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: TotalCon
               p: 1,
             }}
           >
-            تعداد کل انسانی : {totalReport.sum_students_major_humanities}
+            تعداد کل پرداخت نشده: {totalReport.consultant_statics?.sum_financial_financial_status_pending}
+          </Typography>
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            تعداد کل انصراف : {totalReport.consultant_statics?.sum_financial_student_status_refused}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            تعداد کل انسانی : {totalReport.consultant_statics?.sum_students_major_humanities}
           </Typography>
 
           <Typography
@@ -92,7 +93,7 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: TotalCon
               p: 1,
             }}
           >
-            تعداد کل تجربی: {totalReport.sum_students_major_experimental}
+            تعداد کل تجربی: {totalReport.consultant_statics?.sum_students_major_experimental}
           </Typography>
         </Box>
         <Box
@@ -106,35 +107,14 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: TotalCon
               p: 1,
             }}
           >
-            تعداد کل ریاضی: {totalReport.sum_students_major_mathematics}
+            تعداد کل ریاضی: {totalReport.consultant_statics?.sum_students_major_mathematics}
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد کل هنر: {totalReport.sum_students_major_art}
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Typography
-            sx={{
-              p: 1,
-            }}
-          >
-            تعداد کل سایر : {totalReport.sum_students_major_other}
-          </Typography>
-          <Typography
-            sx={{
-              p: 1,
-            }}
-          >
-            تعداد کل دانش آموزان مقطع ششم:{totalReport.sum_students_education_level_6}
+            تعداد کل هنر: {totalReport.consultant_statics?.sum_students_major_art}
           </Typography>
         </Box>
         <Box
@@ -148,35 +128,14 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: TotalCon
               p: 1,
             }}
           >
-            تعداد کل دانش آموزان مقطع هفتم: {totalReport.sum_students_education_level_7}
+            تعداد کل سایر : {totalReport.consultant_statics?.sum_students_major_other}
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد کل دانش آموزان مقطع هشتم:{totalReport.sum_students_education_level_8}
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Typography
-            sx={{
-              p: 1,
-            }}
-          >
-            تعداد کل دانش آموزان مقطع نهم: {totalReport.sum_students_education_level_9}
-          </Typography>
-          <Typography
-            sx={{
-              p: 1,
-            }}
-          >
-            تعداد کل دانش آموزان مقطع دهم:{totalReport.sum_students_education_level_10}
+            تعداد کل دانش آموزان مقطع ششم:{totalReport.consultant_statics?.sum_students_education_level_6}
           </Typography>
         </Box>
         <Box
@@ -190,35 +149,14 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: TotalCon
               p: 1,
             }}
           >
-            تعداد کل دانش آموزان مقطع یازدهم: {totalReport.sum_students_education_level_11}
+            تعداد کل دانش آموزان مقطع هفتم: {totalReport.consultant_statics?.sum_students_education_level_7}
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد کل دانش آموزان مقطع دوازدهم:{totalReport.sum_students_education_level_12}
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Typography
-            sx={{
-              p: 1,
-            }}
-          >
-            تعداد کل دانش آموزان مقطع فارغ: {totalReport.sum_students_education_level_13}
-          </Typography>
-          <Typography
-            sx={{
-              p: 1,
-            }}
-          >
-            تعداد کل دانش آموزان دانشجو:{totalReport.sum_students_education_level_14}
+            تعداد کل دانش آموزان مقطع هشتم:{totalReport.consultant_statics?.sum_students_education_level_8}
           </Typography>
         </Box>
         <Box
@@ -232,35 +170,14 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: TotalCon
               p: 1,
             }}
           >
-            تعداد کل تک جلسه : {totalReport.sum_single_meet_1}
+            تعداد کل دانش آموزان مقطع نهم: {totalReport.consultant_statics?.sum_students_education_level_9}
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد کل غیر حضوری : {totalReport.sum_remote_1}
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Typography
-            sx={{
-              p: 1,
-            }}
-          >
-            تعداد کل جلسات جبرانی : {totalReport.sum_compensatory_meet_1}
-          </Typography>
-          <Typography
-            sx={{
-              p: 1,
-            }}
-          >
-            تعداد کل جلسات تعریف شده مشاور : {totalReport.sum_is_defined_consultant_session}
+            تعداد کل دانش آموزان مقطع دهم:{totalReport.consultant_statics?.sum_students_education_level_10}
           </Typography>
         </Box>
         <Box
@@ -274,14 +191,14 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: TotalCon
               p: 1,
             }}
           >
-            زمان کل جلسات تعریف شده(ساعت) : {(Number(totalReport.sum_is_defined_consultant_session_in_minutes) / 60).toFixed(1)}
+            تعداد کل دانش آموزان مقطع یازدهم: {totalReport.consultant_statics?.sum_students_education_level_11}
           </Typography>
           <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد کل جلسات برگزار شده : {totalReport.sum_is_filled_consultant_session}
+            تعداد کل دانش آموزان مقطع دوازدهم:{totalReport.consultant_statics?.sum_students_education_level_12}
           </Typography>
         </Box>
         <Box
@@ -295,31 +212,120 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: TotalCon
               p: 1,
             }}
           >
-            زمان کل جلسات برگزار شده(ساعت) : {(Number(totalReport.sum_is_filled_consultant_session_in_minutes) / 60).toFixed(1)}
+            تعداد کل دانش آموزان مقطع فارغ: {totalReport.consultant_statics?.sum_students_education_level_13}
+          </Typography>
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            تعداد کل دانش آموزان دانشجو:{totalReport.consultant_statics?.sum_students_education_level_14}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            تعداد کل تک جلسه : {totalReport.consultant_statics?.sum_single_meet_1}
+          </Typography>
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            تعداد کل غیر حضوری : {totalReport.consultant_statics?.sum_remote_1}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            تعداد کل جلسات جبرانی : {totalReport.consultant_statics?.sum_compensatory_meet_1}
+          </Typography>
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            تعداد کل جلسات تعریف شده مشاور : {totalReport.consultant_statics?.sum_is_defined_consultant_session}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            زمان کل جلسات تعریف شده(ساعت) :{' '}
+            {(Number(totalReport.consultant_statics?.sum_is_defined_consultant_session_in_minutes) / 60).toFixed(1)}
+          </Typography>
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            تعداد کل جلسات برگزار شده : {totalReport.consultant_statics?.sum_is_filled_consultant_session}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            زمان کل جلسات برگزار شده(ساعت) :{' '}
+            {(Number(totalReport.consultant_statics?.sum_is_filled_consultant_session_in_minutes) / 60).toFixed(1)}
           </Typography>
           {/* <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد کل جلسات برگزار شده : {totalReport.sum_is_filled_consultant_session}
+            تعداد کل جلسات برگزار شده : {totalReport.consultant_statics?.sum_is_filled_consultant_session}
           </Typography> */}
         </Box>
       </Grid>
       <Grid item xs={12} sm={1} md={1}></Grid>
-      {/* <Grid item xs={12} sm={5} md={5}>
-        <ConsultantPieChart
+      <Grid item xs={12} sm={5} md={5}>
+        <ConsultantPieChart_2
           width="100%"
-          series={
-            [
-              //totalReport.total_consultant_obligation_hours,
-              // totalReport.total_consultant_present_hours,
-              // totalReport.total_consultant_absence_hours,
-              // totalReport.total_consultant_earlier_hours,
-            ]
-          }
+          series={[
+            totalReport.consultant_statics?.sum_financial_financial_status_approved
+              ? totalReport.consultant_statics?.sum_financial_financial_status_approved
+              : 0,
+            totalReport.consultant_statics?.sum_financial_financial_status_semi_approved
+              ? totalReport.consultant_statics?.sum_financial_financial_status_semi_approved
+              : 0,
+            totalReport.consultant_statics?.sum_financial_financial_status_pending
+              ? totalReport.consultant_statics?.sum_financial_financial_status_pending
+              : 0,
+          ]}
         />
-      </Grid> */}
+      </Grid>
     </Grid>
   )
 }

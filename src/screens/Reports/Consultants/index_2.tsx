@@ -16,7 +16,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import AdapterJalali from '@date-io/date-fns-jalali'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import moment from 'moment'
-import { TotalConsultantReport } from './dto/TotalConsultantReport.dto'
+import { AllTotalConsultantReport, TotalConsultantReport } from './dto/TotalConsultantReport.dto'
 import { SearchConsultantReport } from './dto/SearchConsultantReport.dto'
 import ConsultantTotalReportSummary_2 from './components/ConsultantTotalReportSummary_2'
 
@@ -31,7 +31,7 @@ const ConsultantReport_2 = () => {
     //education_level: 0,
   })
   const [educationlevel, setEducationLevel] = useState<number>(0)
-  const [totalReport, setTotalReport] = useState<TotalConsultantReport>()
+  const [totalReport, setTotalReport] = useState<AllTotalConsultantReport[]>()
 
   const { refetch } = useQuery(CONSULTANT_REPORT, {
     variables: {
@@ -228,7 +228,11 @@ const ConsultantReport_2 = () => {
         ) : null}
       </Box>
 
-      {totalReport ? <ConsultantTotalReportSummary_2 totalReport={totalReport} /> : null}
+      {totalReport?.length
+        ? totalReport.map((element: AllTotalConsultantReport, index: number) => (
+            <ConsultantTotalReportSummary_2 totalReport={totalReport[index]} />
+          ))
+        : null}
     </Container>
   )
 }
