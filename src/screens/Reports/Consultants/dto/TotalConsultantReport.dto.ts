@@ -76,6 +76,7 @@ export class TotalConsultantReport {
 
 export class AllTotalConsultantReport {
   consultant_id?: number
+  consultant_fullname?: String
   consultant_statics?: TotalConsultantReport
 }
 

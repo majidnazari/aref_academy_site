@@ -21,7 +21,7 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: AllTotal
               p: 1,
             }}
           >
-            نام مشاور: {totalReport.consultant_statics?.consultant_id}
+            نام مشاور: {totalReport.consultant_fullname}
           </Typography>
           <Typography
             sx={{

@@ -83,6 +83,7 @@ const ConsultantReport_2 = () => {
     refetch(refetchData)
       .then((res) => {
         setTotalReport(res.data.getConsultantReport)
+        //console.log(res?.data.getConsultantReport)
         setRefetchLoading(false)
       })
       .catch((err) => {

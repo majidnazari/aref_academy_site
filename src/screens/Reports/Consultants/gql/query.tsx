@@ -287,8 +287,10 @@ export const CONSULTANT_REPORT = gql`
       sum_financial_financial_refused_status_noMoney: $sum_financial_financial_refused_status_noMoney
     ) {
       consultant_id
+      consultant_fullname
       consultant_statics {
         consultant_id
+
         sum_students_registered
 
         sum_students_major_humanities
