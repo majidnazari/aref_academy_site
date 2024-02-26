@@ -300,13 +300,45 @@ const ConsultantTotalReportSummary_2 = ({ totalReport }: { totalReport: AllTotal
             زمان کل جلسات برگزار شده(ساعت) :{' '}
             {(Number(totalReport.consultant_statics?.sum_is_filled_consultant_session_in_minutes) / 60).toFixed(1)}
           </Typography>
-          {/* <Typography
+          <Typography
             sx={{
               p: 1,
             }}
           >
-            تعداد کل جلسات برگزار شده : {totalReport.consultant_statics?.sum_is_filled_consultant_session}
-          </Typography> */}
+            تعداد کل جلسات غایب (دانش آموز) : {totalReport.consultant_statics?.sum_student_status_absent}
+          </Typography> 
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography
+            sx={{
+              p: 1,
+            }}
+          >
+            تعداد کل جلسات غایب (مشاور):  {totalReport.consultant_statics?.sum_consultant_status_absent }
+          </Typography>
+          <Typography
+              sx={{
+                p: 1,
+              }}
+            >
+             زمان کل تاخیر و تعجیل جلسات مشاور (ساعت): 
+             {((
+              (Number(totalReport.consultant_statics?.sum_session_status_earlier_5min_finished) * 5 ) +
+              (Number(totalReport.consultant_statics?.sum_session_status_earlier_10min_finished )* 10) +
+              (Number(totalReport.consultant_statics?.sum_session_status_earlier_15min_finished )* 15) +
+              (Number(totalReport.consultant_statics?.sum_session_status_earlier_15min_more_finished) * 20) +
+              (Number(totalReport.consultant_statics?.sum_session_status_later_5min_started )* 5 )+
+              (Number(totalReport.consultant_statics?.sum_session_status_later_10min_started) * 10 )+
+              (Number(totalReport.consultant_statics?.sum_session_status_later_15min_started) * 15) +
+              (Number(totalReport.consultant_statics?.sum_session_status_later_15min_more_started) * 20 )
+              ) / 60).toFixed(1)}
+        </Typography>
+         
         </Box>
       </Grid>
       <Grid item xs={12} sm={1} md={1}></Grid>
