@@ -113,12 +113,14 @@ export const GET_CONSULTANT_FINANCIAL_AND_STUDENT_INFOS = gql`
         }
         user_id_student_status
         consultant_definition_detail_id
-        consultantDefinitionDetails {
+        definitionDetail{
           id
-          start_hour
-          end_hour
+          consultant_id
+          student_id
+          remote
           session_date
-          __typename
+          single_meet
+          compensatory_meet
         }
         description
         financial_status
@@ -147,39 +149,71 @@ export const GET_CONSULTANTS = gql`
   }
 `
 
+// export const GET_STUDENTS = gql`
+//   query GET_STUDENTS(
+//     $first: Int!
+//     $page: Int!
+//     $first_name: String
+//     $last_name: String
+//     $orderBy: [OrderByClause!]
+//     $phone: String
+//     $nationality_code: String
+//     $cities_id: Int
+//   ) {
+//     getStudents(
+//       first: $first
+//       page: $page
+//       first_name: $first_name
+//       last_name: $last_name
+//       orderBy: $orderBy
+//       phone: $phone
+//       nationality_code: $nationality_code
+//       cities_id: $cities_id
+//     ) {
+//       data {
+//         id
+//         first_name
+//         last_name
+//         phone
+//         mother_phone
+//         father_phone
+//         home_phone
+//         major
+//         egucation_level
+//         parents_job_title
+//         nationality_code
+//       }
+//       paginatorInfo {
+//         count
+//         currentPage
+//         firstItem
+//         hasMorePages
+//         lastItem
+//         lastPage
+//         perPage
+//         total
+//       }
+//     }
+//   }
+// `
 export const GET_STUDENTS = gql`
   query GET_STUDENTS(
     $first: Int!
     $page: Int!
-    $first_name: String
-    $last_name: String
+    $full_name: String
     $orderBy: [OrderByClause!]
-    $phone: String
-    $nationality_code: String
-    $cities_id: Int
   ) {
     getStudents(
       first: $first
       page: $page
-      first_name: $first_name
-      last_name: $last_name
+      full_name: $full_name
       orderBy: $orderBy
-      phone: $phone
-      nationality_code: $nationality_code
-      cities_id: $cities_id
     ) {
       data {
         id
         first_name
         last_name
         phone
-        mother_phone
-        father_phone
-        home_phone
-        major
-        egucation_level
-        parents_job_title
-        nationality_code
       }
       paginatorInfo {
         count
@@ -193,4 +227,4 @@ export const GET_STUDENTS = gql`
       }
     }
   }
-`
+`;

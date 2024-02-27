@@ -22,6 +22,7 @@ export class ConsultantStudentDTO {
   student_status?: string
   financial_refused_status?: string
   financial_status_updated_at?: string
+  definitionDetail?:definitionDetail
 }
 
 export class StudentInfos {
@@ -35,6 +36,15 @@ export class StudentInfos {
   major?: string
   education_level?: string
   concours_year?: string
+}
+export class definitionDetail {
+    id!:string
+    consultant_id?:number
+    student_id?:number
+    remote?:boolean
+    session_date?:string
+    single_meet?:boolean
+    compensatory_meet?:boolean
 }
 
 export class Year {

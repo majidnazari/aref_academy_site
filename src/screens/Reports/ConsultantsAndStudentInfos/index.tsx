@@ -21,55 +21,24 @@ import { NavLink } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
 import { GET_CONSULTANTS, GET_STUDENTS, GET_CONSULTANT_FINANCIAL_AND_STUDENT_INFOS } from './gql/query'
 import CourseName, { getCourseName } from 'components/CourseName'
-import { Autocomplete, CircularProgress, Grid, TextField } from '@mui/material'
+import { Autocomplete, CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import moment from 'moment-jalaali'
 import StatusIcon from 'components/StatusIcon'
-import { ConsultantStudentDTO } from './dto/ConsultantStudentDTO'
-
-interface ReportData {
-  student: {
-    id: number
-    first_name: string
-    last_name: string
-    phone: string
-  }
-  student_status: string
-  user_creator: {
-    first_name: string
-    last_name: string
-  }
-  manager_status: string
-  user_manager: {
-    first_name: string
-    last_name: string
-  }
-  financial_status: string
-  user_financial: {
-    first_name: string
-    last_name: string
-  }
-  user_student_status: {
-    first_name: string
-    last_name: string
-  } | null
-  created_at: string
-  description: string
-  transferred_course: {
-    name: string
-    lesson: string
-    type: string
-    teacher: {
-      first_name: string
-      last_name: string
-    }
-    education_level: string
-  }
-  financial_refused_status: string | null
-}
+import { ConsultantStudentDTO, definitionDetail } from './dto/ConsultantStudentDTO'
+import { SelectChangeEvent } from '@material-ui/core'
 
 interface SearchData {
   consultant_id?: number
   student_id?: number
+  nationality_code?: string
+  phone?: string
+  education_level?: string
+  major?:string
+  student_status?:string
+  manager_status?:string
+  financial_status?:string
+  school_name?:string
+  definitionDetail?:definitionDetail
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -104,7 +73,7 @@ const ConsultantsAndStudentInfosReport = () => {
   })
   const [consultants, setconsultants] = useState<any[]>([{ label: '', id: '' }])
   const [studentds, setStudentds] = useState<any[]>([{ name: '', id: '' }])
-  const [studentName, setStudentName] = useState<string>('')
+  const [studentName, setStudentName] = useState<string>("")
 
   const [refetchLoading, setRefetchLoading] = useState<boolean>(false)
   const [loadingStudent, setLoadingStudent] = useState<boolean>(false)
@@ -112,8 +81,16 @@ const ConsultantsAndStudentInfosReport = () => {
   const [search, setSearch] = useState<SearchData>({
     consultant_id: undefined,
     student_id: undefined,
+    nationality_code:undefined,
+    phone:undefined,
+    education_level:undefined,
+    major:undefined,
+    student_status:undefined,
+    manager_status:undefined,
+    financial_status:undefined,
+    school_name:undefined,
+    definitionDetail:undefined
   })
-  const [report, setReport] = useState<ReportData[]>([])
   const [consultantStudents, setConsultantStudents] = useState<ConsultantStudentDTO[]>([])
 
   const { data: consultantData } = useQuery(GET_CONSULTANTS, {
@@ -148,7 +125,7 @@ const ConsultantsAndStudentInfosReport = () => {
     variables: {
       first: 10,
       page: 1,
-      full_name: '',
+      full_name: "",
       fetchPolicy: 'network-only',
     },
     onCompleted: (data) => {
@@ -161,18 +138,10 @@ const ConsultantsAndStudentInfosReport = () => {
         })
         return item
       })
-      // console.log(tmp);
-
+      console.log(" students are in fetch student: " , tmp);
       setStudentds(tmp)
     },
   })
-
-  // const { refetch: refetchTotalReport } = useQuery(GET_COURSES_TOTAL_REPORT, {
-  //   variables: {
-  //     course_id: -2,
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // })
 
   const { fetchMore, refetch } = useQuery(GET_CONSULTANT_FINANCIAL_AND_STUDENT_INFOS, {
     variables: {
@@ -195,7 +164,7 @@ const ConsultantsAndStudentInfosReport = () => {
     refetch(refetchData as any)
       .then((res) => {
         setConsultantStudents(res.data.getConsultantFinancialsAndStudentInfosReport.data)
-        setPageInfo(res.data.setConsultantStudents.paginatorInfo)
+        setPageInfo(res.data.getConsultantFinancialsAndStudentInfosReport.paginatorInfo)
         setRefetchLoading(false)
       })
       .catch((err) => {
@@ -220,135 +189,441 @@ const ConsultantsAndStudentInfosReport = () => {
         ],
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        setReport(fetchMoreResult.getCourseStudents.data)
-        setPageInfo(fetchMoreResult.getCourseStudents.paginatorInfo)
+        //setReport(fetchMoreResult.getCourseStudents.data)
+        setPageInfo(fetchMoreResult.getConsultantFinancialsAndStudentInfosReport.paginatorInfo)
       },
     })
   }
 
+  const handleChangeEducationLevel = (event: SelectChangeEvent<string>) => {
+    setSearch({
+      ...search,
+      education_level: event.target.value,
+    })
+  }
+  const handleChangeMajor = (event: SelectChangeEvent<string>) => {
+    setSearch({
+      ...search,
+      major: event.target.value !="" ?  event.target.value : undefined,
+    })
+  }
+  const handleChangeStudentStatus = (event: SelectChangeEvent<string>) => {
+   
+    setSearch({
+      ...search,
+      student_status:  event.target.value !="" ?  event.target.value : undefined,
+    })
+  }
+  const handleChangeManagerStatus = (event: SelectChangeEvent<string>) => {
+    setSearch({
+      ...search,
+      manager_status: event.target.value !="" ?  event.target.value : undefined,
+    })
+  }
+  const handleChangeFinancialStatus = (event: SelectChangeEvent<string>) => {
+    setSearch({
+      ...search,
+      financial_status: event.target.value !="" ?  event.target.value : undefined,
+    })
+  }
+  const handleChangeSessionConsultantStatus = (event: SelectChangeEvent<definitionDetail>) => {
+    setSearch({
+      ...search,
+      //definitionDetail : event.target.value !="" ?  convertSessionValue(event.target.value) : undefined,
+    })
+  }
+  
+  const convertSessionValue=(SessionValue : definitionDetail)=>{
+
+    if(SessionValue.remote){
+      return "remote";
+    }
+    if(SessionValue.single_meet){
+      return "single_meet";
+    }
+    if(SessionValue.compensatory_meet){
+      return "compensatory_meet";
+    }
+
+    return '';
+      // switch(SessionValue){
+      //   case "remote":
+      //     return "remote";
+      //   case "single_meet":
+      //     return "single_meet";
+      //   case "compensatory_meet":
+      //     return "compensatory_meet";
+      //   default :
+      //     return "";    
+      // }
+  }
   useEffect(() => {
-    setLoadingStudent(true)
+    //alert(studentName);
+    setLoadingStudent(true);
     refetchStudents({
-      first: 1000,
-      page: 1,
-      full_name: studentName,
+        first: 100,
+        page: 1,
+        full_name: studentName      
     }).then(() => {
-      setLoadingStudent(false)
+      setLoadingStudent(false);
+      
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentName])
 
-  useEffect(() => {
-    if (consultantData?.getConsultants?.data) {
-      const tmp = [{ label: '', id: 0 }]
-      setconsultants(tmp)
-      for (const i in consultantData.getConsultants.data) {
-        const consultant = consultantData.getConsultants.data[i]
-        tmp.push({
-          id: +consultant.id,
-          label: consultant.first_name + ' ' + consultant.last_name,
-        })
-      }
-    }
-  }, [consultantData])
-
-  // if (!consultantData) {
-  //   return (
-  //     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-  //       <Skeleton width="100%" height={100} />
-  //       <Skeleton variant="rectangular" width="100%" height={300} />
-  //     </Container>
-  //   )
-  // }
+  // useEffect(() => {
+  //   if (consultantData?.getConsultants?.data) {
+  //     const tmp = [{ label: '', id: 0 }]
+  //     setconsultants(tmp)
+  //     for (const i in consultantData.getConsultants.data) {
+  //       const consultant = consultantData.getConsultants.data[i]
+  //       tmp.push({
+  //         id: +consultant.id,
+  //         label: consultant.first_name + ' ' + consultant.last_name,
+  //       })
+  //     }
+  //   }
+  // }, [consultantData])
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Typography component={'div'} sx={{ fontSize: 18, fontWeight: 'bold', my: 2 }}>
         گزارش دانش آموزان مشاوران
       </Typography>
-      <Grid item xs={12} md={4}>
-        <Box
-          sx={{
-            padding: 2,
-          }}
-          component={Paper}
-        >
-          {consultants.length ? (
-            <Autocomplete
-              onChange={(event: any, newValue: any) => {
-                setSearch({ ...search, consultant_id: newValue?.id })
-              }}
-              disablePortal
-              id="combo-box-demo"
-              options={consultants}
-              sx={{ width: 500 }}
-              renderInput={(params) => <TextField {...params} label="انتخاب مشاور" />}
-            />
-          ) : null}
-        </Box>
-      </Grid>
-      <Grid item xs={12} md={4}>
-        <Box
-          sx={{
-            padding: 2,
-          }}
-          component={Paper}
-        >
-          {studentds.length ? (
-            <Autocomplete
-              id="student-names"
-              options={studentds}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="دانش آموز"
-                  variant="outlined"
-                  onChange={(e) => {
-                    if (e.target.value.trim().length >= 1) {
-                      //setSkip(false)
-                      setStudentName(e.target.value.trim())
+      <Box sx={{ mb: 1, marginLeft: 1 }}>
+        <Grid container sx={{ p: 1 }} spacing={1}>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <FormControl
+                    sx={{
+                      mr: 1,
+                      width: "100%",
+                    }}
+               >
+                {consultants.length ? (
+                  <Autocomplete
+                    onChange={(_event: any, newValue: any) => {
+                      setSearch({ ...search, consultant_id: newValue?.id })
+                    }}
+                    disablePortal
+                    id="combo-box-demo"
+                    options={consultants}
+                    
+                    renderInput={(params) => <TextField {...params} label="انتخاب مشاور" />}
+                  />
+                ) : null}
+              </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <FormControl
+                    sx={{
+                      mr: 1,
+                      width: "100%",
+                    }}
+                  >
+                    {studentds.length ? (
+                      <Autocomplete
+                        id="student-names"
+                        options={studentds}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="دانش آموز"
+                            variant="outlined"
+                            onChange={(e) => {
+                              if (e.target.value.trim().length >= 1) {
+                                //setSkip(false)
+                                setStudentName(e.target.value.trim())
+                              }
+                            }}
+                            InputProps={{
+                              ...params.InputProps,
+                              endAdornment: (
+                                <React.Fragment>
+                                  {loadingStudent ? <CircularProgress color="inherit" /> : null}
+                                  {params.InputProps.endAdornment}
+                                </React.Fragment>
+                              ),
+                            }}
+                          />
+                        )}
+                        getOptionLabel={(option) => option.name}
+                        value={search?.student_id}
+                        onChange={(_event, newTeam) => {
+                          setSearch({
+                            ...search,
+                            student_id: newTeam?.id ? +newTeam.id : undefined,
+                          })
+                        }}
+                      />
+                    ) : null}
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <FormControl
+                    sx={{
+                      mr: 1,
+                      width: "100%",
+                    }}
+               >
+               <TextField
+                    fullWidth
+                    label="کد ملی "
+                    value={search.nationality_code}
+                    onChange={(e: any) =>
+                      setSearch({ ...search, nationality_code: e.target.value })
                     }
-                  }}
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <React.Fragment>
-                        {loadingStudent ? <CircularProgress color="inherit" /> : null}
-                        {params.InputProps.endAdornment}
-                      </React.Fragment>
-                    ),
-                  }}
-                />
-              )}
-              getOptionLabel={(option) => option.name}
-              value={search?.student_id}
-              onChange={(_event, newTeam) => {
-                setSearch({
-                  ...search,
-                  student_id: newTeam?.id ? +newTeam.id : undefined,
-                })
-              }}
-            />
-          ) : null}
-        </Box>
-      </Grid>
-      <Grid item xs={12} md={4}>
-        <Box>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSearch}
-            sx={{ mx: 2 }}
-            startIcon={<SearchIcon />}
-            disabled={refetchLoading}
-          >
-            جستجو
-            {refetchLoading && <CircularProgress size={15} style={{ marginRight: 10, color: '#fff' }} />}
-          </Button>
-        </Box>
-      </Grid>
-      {/* {totalReport.length ? <TotalReportSummary totalReport={totalReport} /> : null} */}
-
+                    variant="filled"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSearch();
+                      }
+                    }}
+                  />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <FormControl
+                    sx={{
+                      mr: 1,
+                      width: "100%",
+                    }}
+               >
+               <TextField
+                    fullWidth
+                    label="موبایل"
+                    value={search.phone}
+                    onChange={(e: any) =>
+                      setSearch({ ...search, phone: e.target.value })
+                    }
+                    variant="filled"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSearch();
+                      }
+                    }}
+                  />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <FormControl
+                    sx={{
+                      mr: 1,
+                      width: "100%",
+                    }}
+               >
+               
+               <InputLabel id="education-level-id">مقطع تحصیلی</InputLabel>
+                  <Select
+                    labelId="gender-select-id"
+                    id="genderId"
+                    label="مقطع تحصیلی"
+                    value={search.education_level || ''}
+                    onChange={handleChangeEducationLevel}
+                    variant="filled"
+                  >
+                    <MenuItem value={''}>همه</MenuItem>
+                    <MenuItem value="6">۶</MenuItem>
+                    <MenuItem value="7">۷</MenuItem>
+                    <MenuItem value="8">۸</MenuItem>
+                    <MenuItem value="9">۹</MenuItem>
+                    <MenuItem value="10">۱۰</MenuItem>
+                    <MenuItem value="11">۱۱</MenuItem>
+                    <MenuItem value="12">۱۲</MenuItem>
+                    <MenuItem value="13">۱۳</MenuItem>
+                    <MenuItem value="14">۱۴</MenuItem>
+                  </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <FormControl
+                    sx={{
+                      mr: 1,
+                      width: "100%",
+                    }}
+               >
+               <TextField
+                    fullWidth
+                    label=" مدرسه "
+                    value={search.school_name}
+                    onChange={(e: any) =>
+                      setSearch({ ...search, school_name: e.target.value })
+                    }
+                    variant="filled"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSearch();
+                      }
+                    }}
+                  />
+            </FormControl>
+          </Grid>
+          {/* <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <Box>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSearch}
+                sx={{ mx: 2 }}
+                startIcon={<SearchIcon />}
+                disabled={refetchLoading}
+              >
+                جستجو
+                {refetchLoading && <CircularProgress size={15} style={{ marginRight: 10, color: '#fff' }} />}
+              </Button>
+            </Box>
+          </Grid> */}
+          {/* {totalReport.length ? <TotalReportSummary totalReport={totalReport} /> : null} */}
+        </Grid>    
+      </Box>
+      <Box sx={{ mb: 1, marginLeft: 1 }}>
+        <Grid container sx={{ p: 1 }} spacing={1}>          
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <FormControl
+                    sx={{
+                      mr: 1,
+                      width: "100%",
+                    }}
+               >
+               
+               <InputLabel id="education-level-id">رشته تحصیلی</InputLabel>
+                  <Select
+                    labelId="gender-select-id"
+                    id="genderId"
+                    label="رشته تحصیلی"
+                    value={search.major || ''}
+                    onChange={handleChangeMajor}
+                    variant="filled"
+                  >
+                    <MenuItem value={''}>همه</MenuItem>
+                    <MenuItem value="mathematics">ریاضی</MenuItem>
+                    <MenuItem value="experimental">تجربی</MenuItem>
+                    <MenuItem value="humanities">انسانی</MenuItem>
+                    <MenuItem value="art">هنر</MenuItem>
+                    <MenuItem value="other">سایر</MenuItem>
+                   
+                  </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <FormControl
+                    sx={{
+                      mr: 1,
+                      width: "100%",
+                    }}
+               >
+               
+               <InputLabel id="student-status"> وضعیت دانش آموز</InputLabel>
+                  <Select
+                    labelId="student-status-select-id"
+                    id="genderId"
+                    label="وضعیت دانش آموز"
+                    value={search.student_status || ''}
+                    onChange={handleChangeStudentStatus}
+                    variant="filled"
+                  >
+                    <MenuItem value={''}>همه</MenuItem>
+                    <MenuItem value="ok">تایید شده</MenuItem>
+                    <MenuItem value="refused">انصراف داده</MenuItem>
+                    <MenuItem value="fired">اخراج شده</MenuItem>
+                    <MenuItem value="financial_pending">در انتظار تایید مالی</MenuItem>
+                    <MenuItem value="fire_pending">درخواست اخراج</MenuItem>
+                    <MenuItem value="refuse_pending">درخواست انصراف</MenuItem>
+                   
+                  </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <FormControl
+                    sx={{
+                      mr: 1,
+                      width: "100%",
+                    }}
+               >
+               
+               <InputLabel id="manager-status"> وضعیت تایید مدیر </InputLabel>
+                  <Select
+                    labelId="manager-status-select-id"
+                    id="manager-statusId"
+                    label="وضعیت تایید مدیر "
+                    value={search.manager_status || ''}
+                    onChange={handleChangeManagerStatus}
+                    variant="filled"
+                  >
+                    <MenuItem value={''}>همه</MenuItem>
+                    <MenuItem value="approved">تایید شده</MenuItem>
+                    <MenuItem value="pending">عدم تایید </MenuItem>                    
+                   
+                  </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <FormControl
+                    sx={{
+                      mr: 1,
+                      width: "100%",
+                    }}
+               >
+               
+               <InputLabel id="financial-status"> وضعیت تایید مالی </InputLabel>
+                  <Select
+                    labelId="financial_status-select-id"
+                    id="financial_statusId"
+                    label="وضعیت تایید مالی "
+                    value={search.financial_status || ''}
+                    onChange={handleChangeFinancialStatus}
+                    variant="filled"
+                  >
+                    <MenuItem value={''}>همه</MenuItem>
+                    <MenuItem value="approved">تایید شده</MenuItem>
+                    <MenuItem value="pending">عدم تایید </MenuItem>                    
+                    <MenuItem value="semi_approved">عدم پرداخت کامل </MenuItem>                    
+                   
+                  </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <FormControl
+                    sx={{
+                      mr: 1,
+                      width: "100%",
+                    }}
+               >
+               
+               <InputLabel id="SessionConsultantStatus">  وضعیت جلسه مشاوره</InputLabel>
+                  <Select
+                    labelId="SessionConsultantStatus-select-id"
+                    id="SessionConsultantStatusId"
+                    label="وضعیت تایید مالی "
+                    //value={convertSessionValue(search?.definitionDetail)}
+                    onChange={handleChangeSessionConsultantStatus}
+                    variant="filled"
+                  >
+                    <MenuItem value={''}>همه</MenuItem>
+                    <MenuItem value="single_meet">تک جلسه </MenuItem>
+                    <MenuItem value="remote">غیر حصوری  </MenuItem>                    
+                    <MenuItem value="compensatory_meet">جبرانی</MenuItem>                    
+                   
+                  </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} xl={2} lg={2} >
+            <Box>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSearch}
+                sx={{ mx: 2 }}
+                startIcon={<SearchIcon />}
+                disabled={refetchLoading}
+              >
+                جستجو
+                {refetchLoading && <CircularProgress size={15} style={{ marginRight: 10, color: '#fff' }} />}
+              </Button>
+            </Box>
+          </Grid>
+          
+        </Grid>    
+      </Box>               
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
           <TableHead>
