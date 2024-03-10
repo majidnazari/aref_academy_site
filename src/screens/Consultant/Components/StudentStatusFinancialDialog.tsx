@@ -172,7 +172,7 @@ const StudentStatusFinancialDialog = ({
         financial_refused_status:
           managerPermission.includes(user.group.name) || acceptorPermission.includes(user.group.name)
             ? undefined
-            : financialStatus,
+            : financialRefusedStatus,
         description: financialDescription,
         year_id: yearId,
       },
@@ -208,7 +208,7 @@ const StudentStatusFinancialDialog = ({
 
   return (
     <Dialog open={openConsultantFinancialDialog} onClose={handleCancel}>
-      <DialogTitle minWidth={600}> تغییر وضعیت دانش آموز </DialogTitle>
+      <DialogTitle minWidth={600}> وضعیت دانش آموز </DialogTitle>
       <Grid> </Grid>
       <Grid item xs={12} sm={6} lg={6} md={6} xl={6}>
         <FormControl sx={{ width: '50%', alignItems: 'center' }}>
