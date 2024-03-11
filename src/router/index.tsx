@@ -72,6 +72,7 @@ import ConsultantManagerDashboardIndex from 'screens/Dashboard/ConsultantManager
 import ConsultantReport from 'screens/Reports/Consultants'
 import ConsultantFinancialReport from 'screens/Reports/Financial/components/ConsultantFinancialReport'
 import ConsultantReport_2 from 'screens/Reports/Consultants/index_2'
+import ConsultantsAndStudentInfosReport from 'screens/Reports/ConsultantsAndStudentInfos'
 
 const MainRouter = () => {
   const appContext = useContext(AuthContext)
@@ -196,6 +197,7 @@ const MainRouter = () => {
             <Route path="absence-presences" element={<ReportsAbsencePresencesScreen />} />
             <Route path="consultants" element={<ConsultantReport_2 />} />
             <Route path="consultant-financial" element={<ConsultantFinancialReport />} />
+            <Route path="consultantsAndStudentInfos" element={<ConsultantsAndStudentInfosReport />} />
             <Route path="absence-presences/:courseId/sessions" element={<ReportsCourseSessionsScreen />} />
             <Route path="absence-presences/details/:courseId/:courseSessionId" element={<ReportsAbsencePresenceListstudents />} />
 
