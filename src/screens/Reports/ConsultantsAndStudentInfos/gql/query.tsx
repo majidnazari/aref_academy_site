@@ -113,15 +113,15 @@ export const GET_CONSULTANT_FINANCIAL_AND_STUDENT_INFOS = gql`
         }
         user_id_student_status
         consultant_definition_detail_id
-        definitionDetail{
-          id
-          consultant_id
-          student_id
-          remote
-          session_date
-          single_meet
-          compensatory_meet
-        }
+        # definitionDetail{
+        #   id
+        #   consultant_id
+        #   student_id
+        #   remote
+        #   session_date
+        #   single_meet
+        #   compensatory_meet
+        # }
         description
         financial_status
         manager_status
@@ -197,18 +197,8 @@ export const GET_CONSULTANTS = gql`
 //   }
 // `
 export const GET_STUDENTS = gql`
-  query GET_STUDENTS(
-    $first: Int!
-    $page: Int!
-    $full_name: String
-    $orderBy: [OrderByClause!]
-  ) {
-    getStudents(
-      first: $first
-      page: $page
-      full_name: $full_name
-      orderBy: $orderBy
-    ) {
+  query GET_STUDENTS($first: Int!, $page: Int!, $full_name: String, $orderBy: [OrderByClause!]) {
+    getStudents(first: $first, page: $page, full_name: $full_name, orderBy: $orderBy) {
       data {
         id
         first_name
@@ -227,4 +217,4 @@ export const GET_STUDENTS = gql`
       }
     }
   }
-`;
+`
